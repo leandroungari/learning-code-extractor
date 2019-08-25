@@ -2,7 +2,6 @@ package repository;
 
 import static org.junit.Assert.assertEquals;
 
-import java.io.File;
 import java.io.IOException;
 
 import org.eclipse.jgit.api.errors.GitAPIException;
@@ -25,11 +24,7 @@ public class GetAllCommits {
     	"https://github.com/danilofes/refactoring-toy-example.git"
     );
     
-    File folder = new File(
-    	"/home/leandroungari/refactoring-toy-example"
-    );
-    
-    if(repo.cloneRepository(folder)) {
+    if(repo.cloneRepository("/home/leandroungari/refactoring-toy-example")) {
       System.out.println("Repositório clonado!");
     }
     else {

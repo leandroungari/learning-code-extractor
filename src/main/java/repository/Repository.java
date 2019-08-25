@@ -21,10 +21,30 @@ public class Repository {
 
 	private Git git;
 	private String url;
-	private File localFolder;
+	private File folder;
 	
 	
 	public Repository() {
+		
+	}
+	
+	public Repository(String url, String localFolder) throws FileAlreadyExistsException {
+		
+		folder = new File(localFolder);
+		if(folder.exists()) {
+			
+			if(isRepository()) {
+				
+				try {
+					git = Git.open(folder);
+				} catch (IOException e) {			
+					e.printStackTrace();
+				}
+			}
+			else throw new FileAlreadyExistsException(
+		     "This folder already exists!"
+		  );
+		}
 		
 	}
 	
@@ -37,6 +57,8 @@ public class Repository {
 		this.url = url;
 	}
 	
+	
+	
 	/**
 	 * It verifies if the local folder is
 	 * a git repository
@@ -46,7 +68,7 @@ public class Repository {
 	 */
 	private boolean isRepository() {
 	  
-	  String local = localFolder.getAbsolutePath(); 
+	  String local = folder.getAbsolutePath(); 
     
 	  if(local.endsWith("/")) local += ".git/";
     else local += "/.git/";
@@ -65,21 +87,20 @@ public class Repository {
 	 * @throws InvalidRemoteException 
 	 * @throws IOException 
 	 */
-	public Boolean cloneRepository(File localFolder) 
+	public Boolean cloneRepository(String localFolder) 
 		throws UndefinedLocalRepositoryPathException, 
 		       InvalidRemoteException, 
 		       TransportException, 
 		       GitAPIException, 
 		       IOException {
 	  
-	  this.localFolder = localFolder;
+	  folder = new File(localFolder);
 	  
-	  if(localFolder.exists()) {
+	  if(folder.exists()) {
 	    
 	    if(isRepository()) {
 	    	
-	    	git = Git.open(localFolder);
-	    	
+	    	git = Git.open(folder);
 	    	return false; 
 	    }
 	    
@@ -93,7 +114,7 @@ public class Repository {
 			git = Git
 				.cloneRepository()
 				.setURI(url)
-				.setDirectory(localFolder)
+				.setDirectory(folder)
 				.call();
 			
 			return true;
@@ -125,11 +146,14 @@ public class Repository {
 	    walk.close();
 	  	    
 	  } catch (IOException e) {
-      // TODO Auto-generated catch block
       e.printStackTrace();
     }
 	  
 	  
 	  return list;
+	}
+	
+	public Commit commit(String commitId) {
+		return new Commit(git, commitId);
 	}
 }

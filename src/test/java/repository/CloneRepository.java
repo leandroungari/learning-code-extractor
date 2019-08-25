@@ -2,8 +2,6 @@ package repository;
 
 import static org.junit.Assert.*;
 
-import java.io.File;
-
 import org.junit.Test;
 
 import repository.Repository;
@@ -16,7 +14,7 @@ public class CloneRepository {
         //https://github.com/danilofes/refactoring-toy-example.git
 
         var repo = new Repository("https://github.com/danilofes/refactoring-toy-example.git");
-        var result = repo.cloneRepository(new File("/home/leandroungari/refactoring-toy-example"));
+        var result = repo.cloneRepository("/home/leandroungari/refactoring-toy-example");
 
         assertEquals(result, true);
     }
