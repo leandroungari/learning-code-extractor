@@ -15,24 +15,30 @@ public class Commit {
 
 	private Git git;
 	private String id;
+	private RevCommit commit;
 	
-	public Commit(Git git, String commitId) {
+	public Commit(String commitId) {
 		
 		id = commitId;
-		this.git = git;
+		this.git = null;
+		commit = null;
 	}
 	
 	private RevCommit build() {
 		
 		try {
-			var walk = new RevWalk(git.getRepository());
-			var rev = walk.parseCommit(ObjectId.fromString(id));
-			walk.close();
+			if(commit == null) {
+				var walk = new RevWalk(git.getRepository());
+				commit = walk.parseCommit(
+					ObjectId.fromString(id)
+				);
+				walk.close();
+			}
 			
-			return rev;
+			return commit;
 			
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
+			
 			e.printStackTrace();
 		}
 		
@@ -70,4 +76,18 @@ public class Commit {
 			.filter(file -> file.endsWith(ext))
 			.collect(Collectors.toList());
 	}
+
+	protected void setRepository(Git repo) {
+		
+		git = repo;
+	}
+	
+	public File file(String name) {
+		
+		var file = new File(name);
+		file.build(git, id);
+		return file;
+	}
+	
+	
 }

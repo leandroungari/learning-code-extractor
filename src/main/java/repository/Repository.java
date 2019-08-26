@@ -154,6 +154,9 @@ public class Repository {
 	}
 	
 	public Commit commit(String commitId) {
-		return new Commit(git, commitId);
+		
+		var c = new Commit(commitId);
+		c.setRepository(git);
+		return c;
 	}
 }
