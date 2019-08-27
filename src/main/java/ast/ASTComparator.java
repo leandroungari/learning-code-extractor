@@ -1,11 +1,17 @@
 package ast;
 
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map.Entry;
+
+import com.github.gumtreediff.tree.ITree;
+import com.github.gumtreediff.tree.TreeContext;
 
 import ast.exception.NonExecutedComparisionException;
 import gumtree.spoon.AstComparator;
 import gumtree.spoon.diff.Diff;
 import gumtree.spoon.diff.operations.Operation;
+import spoon.reflect.declaration.CtElement;
 
 public class ASTComparator {
 
@@ -39,6 +45,15 @@ public class ASTComparator {
 			);
 		
 		return diff.getAllOperations();
+	}
+	
+	public CtElement source() {
+		
+		return diff.commonAncestor();
+	}
+	
+	public CtElement destination() {
+		return diff.changedNode();
 	}
 	
 	
