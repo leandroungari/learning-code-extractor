@@ -28,7 +28,8 @@ public class Repository {
 		
 	}
 	
-	public Repository(String url, String localFolder) throws FileAlreadyExistsException {
+	public Repository(String url, String localFolder) 
+		throws FileAlreadyExistsException {
 		
 		folder = new File(localFolder);
 		if(folder.exists()) {
@@ -66,7 +67,7 @@ public class Repository {
 	 * !!It can be improved !!
 	 * @return Whether the local folder is a repo
 	 */
-	private boolean isRepository() {
+	private Boolean isRepository() {
 	  
 	  String local = folder.getAbsolutePath(); 
     
@@ -155,8 +156,6 @@ public class Repository {
 	
 	public Commit commit(String commitId) {
 		
-		var c = new Commit(commitId);
-		c.setRepository(git);
-		return c;
+		return Commit.create(commitId, git);
 	}
 }
