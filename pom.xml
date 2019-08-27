@@ -1,7 +1,17 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <modelVersion>4.0.0</modelVersion>
-  <groupId>edu.leandroungari</groupId>
-  <artifactId>learning-code-extractor</artifactId>
-  <version>0.0.1-SNAPSHOT</version>
-  <name>Learning Code Extractor</name>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>edu.leandroungari</groupId>
+	<artifactId>learning-code-extractor</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+	<name>Learning Code Extractor</name>
+	<dependencies>
+		<!-- https://mvnrepository.com/artifact/fr.inria.gforge.spoon.labs/gumtree-spoon-ast-diff -->
+		<dependency>
+			<groupId>fr.inria.gforge.spoon.labs</groupId>
+			<artifactId>gumtree-spoon-ast-diff</artifactId>
+			<version>1.20</version>
+		</dependency>
+	</dependencies>
 </project>
