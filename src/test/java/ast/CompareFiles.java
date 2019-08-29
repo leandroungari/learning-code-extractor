@@ -1,7 +1,6 @@
+package ast;
 import org.junit.Test;
 
-import ast.ASTComparator;
-import ast.SourceCodeFile;
 import ast.exception.NonExecutedComparisionException;
 import gumtree.spoon.diff.operations.Operation;
 
@@ -73,22 +72,38 @@ public class CompareFiles {
 				"\n" + 
 				"}";
 		
-		var sc2 = SourceCodeFile.create("DogManager.java", file2);
-		var sc1 = SourceCodeFile.create("DogManager.java", file1);
+		var sc1 = SourceCodeFile.create(
+			"DogManager.java", 
+			file1
+		);
 		
-		var comparator = new ASTComparator(sc2, sc1);
+		var sc2 = SourceCodeFile.create(
+			"DogManager.java", 
+			file2
+		);
+		
+		var comparator = new ASTComparator(sc1, sc2);
 		comparator.execute();
 		
 		System.out.println("=== Sequência de Edição ===");
 		
-		for(Operation o: comparator.editScript()) {
-			//System.out.println(o.toString());
-			System.out.println(o.getAction());
-			System.out.println(o.getSrcNode());
-			System.out.println(o.getDstNode());
-			o.getSrcNode().getParent().
+		for(Operation<?> o: comparator.editScript()) {
 			
+			System.out.println(o.getAction());
+			System.out.println(o.getAction().getNode().toShortString());
+			if(o.getSrcNode() != null) {
+				
+				
+				
+			}
+			if(o.getDstNode() != null) {
+				
+				
+			}
 		}
+		
+		System.out.println("=== Mapeamentos ===");
+		
 		
 	}
 	

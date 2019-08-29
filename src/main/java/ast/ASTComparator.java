@@ -1,17 +1,12 @@
 package ast;
 
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map.Entry;
-
-import com.github.gumtreediff.tree.ITree;
-import com.github.gumtreediff.tree.TreeContext;
 
 import ast.exception.NonExecutedComparisionException;
 import gumtree.spoon.AstComparator;
 import gumtree.spoon.diff.Diff;
 import gumtree.spoon.diff.operations.Operation;
-import spoon.reflect.declaration.CtElement;
+import spoon.reflect.declaration.CtType;
 
 public class ASTComparator {
 
@@ -22,9 +17,9 @@ public class ASTComparator {
 	
 	private Diff diff;
 	
-	public ASTComparator(SourceCodeFile a, SourceCodeFile b) {
-		this.a = a;
-		this.b = b;
+	public ASTComparator(SourceCodeFile oldSource, SourceCodeFile newSource) {
+		this.a = oldSource;
+		this.b = newSource;
 	}
 	
 	public void execute() {
@@ -33,6 +28,21 @@ public class ASTComparator {
 			a.content(),
 			b.content()
 		);
+		
+		/*comparator.getCtType(a.content()).asIterable().forEach(e -> {
+			System.out.println(e.toString());
+		});*/
+		
+		
+		
+		/*for(var a: diff.getMappingsComp()) {
+			System.out.println("//");
+			System.out.println(a.first.toShortString());
+			System.out.println(a.getFirst().getType() + " -- " + a.getFirst().getLabel());
+			System.out.println(a.second.toShortString());
+			
+		}*/
+		
 	}
 	
 	@SuppressWarnings("rawtypes")
@@ -47,13 +57,13 @@ public class ASTComparator {
 		return diff.getAllOperations();
 	}
 	
-	public CtElement source() {
+	public CtType<?> source() {
 		
-		return diff.commonAncestor();
+		return comparator.getCtType(a.content());
 	}
 	
-	public CtElement destination() {
-		return diff.changedNode();
+	public CtType<?> destination() {
+		return comparator.getCtType(b.content());
 	}
 	
 	
