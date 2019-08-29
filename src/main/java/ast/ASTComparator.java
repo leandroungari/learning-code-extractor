@@ -29,19 +29,14 @@ public class ASTComparator {
 			b.content()
 		);
 		
-		/*comparator.getCtType(a.content()).asIterable().forEach(e -> {
-			System.out.println(e.toString());
-		});*/
 		
+		/*for(var mapping: diff.getMappingsComp()) {
+			System.out.println(mapping.getFirst().toShortString());
+			System.out.println(mapping.getFirst().getLabel());
+			System.out.println(mapping.getFirst().getType());
+		};*/
 		
-		
-		/*for(var a: diff.getMappingsComp()) {
-			System.out.println("//");
-			System.out.println(a.first.toShortString());
-			System.out.println(a.getFirst().getType() + " -- " + a.getFirst().getLabel());
-			System.out.println(a.second.toShortString());
-			
-		}*/
+		//-1888507161
 		
 	}
 	

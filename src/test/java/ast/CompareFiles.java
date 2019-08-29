@@ -3,6 +3,9 @@ import org.junit.Test;
 
 import ast.exception.NonExecutedComparisionException;
 import gumtree.spoon.diff.operations.Operation;
+import spoon.reflect.visitor.CtDequeScanner;
+import spoon.reflect.visitor.CtIterator;
+import spoon.reflect.visitor.CtScanner;
 
 public class CompareFiles {
 
@@ -85,24 +88,48 @@ public class CompareFiles {
 		var comparator = new ASTComparator(sc1, sc2);
 		comparator.execute();
 		
-		System.out.println("=== Sequência de Edição ===");
+		/*System.out.println("abaixo");
+		comparator.editScript().listIterator().forEachRemaining(a -> {
+			System.out.println(a.toString());
+			System.out.println(a.getSrcNode().);
+		});*/
 		
-		for(Operation<?> o: comparator.editScript()) {
-			
+		/*
+		comparator.editScript().forEach(o -> {
+			System.out.println("////////////");
+			var first = o.getSrcNode().descendantIterator().next();
+			System.out.println(first);
+		});
+		*/
+		
+		comparator.editScript().forEach(o -> {
+			System.out.println("////////////");
 			System.out.println(o.getAction());
-			System.out.println(o.getAction().getNode().toShortString());
-			if(o.getSrcNode() != null) {
+			var source = o.getSrcNode();
+			if (source != null) {
 				
-				
-				
+				var first = o.getSrcNode()
+					.descendantIterator().next();
+				System.out.println(first);
+				System.out.println(first.getRoleInParent());
 			}
-			if(o.getDstNode() != null) {
-				
-				
+			
+			var destination = o.getDstNode();
+			if(destination != null) {
+				var first = o.getDstNode()
+						.descendantIterator().next();
+				System.out.println(first);
+				System.out.println(first.getRoleInParent());
 			}
-		}
+			
+			
+			
+		});
 		
-		System.out.println("=== Mapeamentos ===");
+		
+		
+		
+		
 		
 		
 	}
