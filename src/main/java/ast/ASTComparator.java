@@ -1,8 +1,9 @@
 package ast;
 
+import java.util.ArrayList;
 import java.util.List;
 
-import ast.exception.NonExecutedComparisionException;
+import ast.mapping.Mapping;
 import gumtree.spoon.AstComparator;
 import gumtree.spoon.diff.Diff;
 import gumtree.spoon.diff.operations.Operation;
@@ -17,47 +18,43 @@ public class ASTComparator {
 	
 	private Diff diff;
 	
-	public ASTComparator(SourceCodeFile oldSource, SourceCodeFile newSource) {
-		this.a = oldSource;
-		this.b = newSource;
-	}
-	
-	public void execute() {
-		
+	public ASTComparator(
+		SourceCodeFile oldSource, 
+		SourceCodeFile newSource
+		) {
+		a = oldSource;
+		b = newSource;
+
 		diff = comparator.compare(
 			a.content(),
 			b.content()
 		);
-		
-		
-		/*for(var mapping: diff.getMappingsComp()) {
-			System.out.println(mapping.getFirst().toShortString());
-			System.out.println(mapping.getFirst().getLabel());
-			System.out.println(mapping.getFirst().getType());
-		};*/
-		
-		//-1888507161
-		
 	}
 	
+	public List<Mapping> mappings() {
+		
+		var list = new ArrayList<Mapping>();
+		
+		editScript().forEach(o -> {
+			list.add(Mapping.create(o));
+		});
+		
+		return list;
+	}
+
+	
 	@SuppressWarnings("rawtypes")
-	public List<Operation> editScript() 
-		throws NonExecutedComparisionException {
-		
-		if(diff == null) 
-			throw new NonExecutedComparisionException(
-				"You must execute the comparision between sources files."
-			);
-		
+	private List<Operation> editScript() {
+
 		return diff.getAllOperations();
 	}
 	
-	public CtType<?> source() {
+	public CtType<?> sourceTree() {
 		
 		return comparator.getCtType(a.content());
 	}
 	
-	public CtType<?> destination() {
+	public CtType<?> destinationTree() {
 		return comparator.getCtType(b.content());
 	}
 	

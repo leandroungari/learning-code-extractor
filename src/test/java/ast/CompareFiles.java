@@ -1,17 +1,11 @@
 package ast;
 import org.junit.Test;
 
-import ast.exception.NonExecutedComparisionException;
-import gumtree.spoon.diff.operations.Operation;
-import spoon.reflect.visitor.CtDequeScanner;
-import spoon.reflect.visitor.CtIterator;
-import spoon.reflect.visitor.CtScanner;
-
 public class CompareFiles {
 
 	
 	@Test
-	public void run() throws NonExecutedComparisionException {
+	public void run() {
 		
 		var file1 = "package org;\n" + 
 				"import org.animals.Dog;\n" + 
@@ -86,51 +80,19 @@ public class CompareFiles {
 		);
 		
 		var comparator = new ASTComparator(sc1, sc2);
-		comparator.execute();
 		
-		/*System.out.println("abaixo");
-		comparator.editScript().listIterator().forEachRemaining(a -> {
-			System.out.println(a.toString());
-			System.out.println(a.getSrcNode().);
-		});*/
+		System.out.println("=== Source tree ===");
+		System.out.println(comparator.sourceTree().toString());
+		System.out.println("=== Destination tree ===");
+		System.out.println(comparator.destinationTree().toString());
 		
-		/*
-		comparator.editScript().forEach(o -> {
-			System.out.println("////////////");
-			var first = o.getSrcNode().descendantIterator().next();
-			System.out.println(first);
-		});
-		*/
-		
-		comparator.editScript().forEach(o -> {
-			System.out.println("////////////");
-			System.out.println(o.getAction());
-			var source = o.getSrcNode();
-			if (source != null) {
-				
-				var first = o.getSrcNode()
-					.descendantIterator().next();
-				System.out.println(first);
-				System.out.println(first.getRoleInParent());
-			}
+		System.out.println("=== Mappings ===");
+		for(var mapping: comparator.mappings()) {
 			
-			var destination = o.getDstNode();
-			if(destination != null) {
-				var first = o.getDstNode()
-						.descendantIterator().next();
-				System.out.println(first);
-				System.out.println(first.getRoleInParent());
-			}
-			
-			
-			
-		});
-		
-		
-		
-		
-		
-		
+			System.out.println(mapping.type().toString());
+			System.out.println(mapping.source().pattern());
+			System.out.println(mapping.destination().pattern());
+		}
 		
 	}
 	
