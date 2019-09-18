@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.jgit.api.Git;
+import org.eclipse.jgit.api.ListBranchCommand.ListMode;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.api.errors.InvalidRemoteException;
 import org.eclipse.jgit.api.errors.TransportException;
@@ -122,6 +123,41 @@ public class Repository {
 		}
 		else 
 		  throw new UndefinedLocalRepositoryPathException();
+	}
+	
+	/**
+	 * Get a list of remote branches 
+	 * of repository
+	 * @throws GitAPIException
+	 */
+	public List<Branch> branches() throws GitAPIException {
+		
+		var gitFactory = new Git(git.add().getRepository());
+		var branches = gitFactory.branchList()
+				.setListMode(ListMode.REMOTE).call();
+		
+		
+		List<Branch> list = new ArrayList<>();
+		for(var branch: branches) {
+	
+			list.add(Branch.create(
+				branch.getName(), 
+				branch.getObjectId()
+			));
+		}
+		
+		gitFactory.close();
+		return list;
+	}
+	
+	public Branch branch(String name) throws IOException {
+		
+		var ref = git
+			.getRepository()
+			.getRefDatabase()
+			.findRef(name);
+		
+		return Branch.create(ref.getName(), ref.getObjectId());
 	}
 	
 	public List<String> allCommitsIDs() {
