@@ -15,7 +15,7 @@ import org.eclipse.jgit.lib.Ref;
 import org.eclipse.jgit.revwalk.RevCommit;
 import org.eclipse.jgit.revwalk.RevWalk;
 
-import repository.exception.UndefinedLocalRepositoryPathException;
+import repository.exception.GitRepositoryException;
 
 
 public class Repository {
@@ -24,51 +24,80 @@ public class Repository {
 	private String url;
 	private File folder;
 	
+	private static Repository current;
 	
-	public Repository() {
+	private Repository(String url, File folder) 
+		throws GitRepositoryException {
 		
-	}
-	
-	public Repository(String url, String localFolder) 
-		throws FileAlreadyExistsException {
-		
-		folder = new File(localFolder);
-		if(folder.exists()) {
+		if (url != null) {
 			
-			if(isRepository()) {
-				
-				try {
-					git = Git.open(folder);
-				} catch (IOException e) {			
-					e.printStackTrace();
-				}
-			}
-			else throw new FileAlreadyExistsException(
-		     "This folder already exists!"
-		  );
+			git = cloneRepository(url, folder); 
+		}
+		else if (folder != null) {
+			
+			if(!isRepository(folder)) throw 
+				new GitRepositoryException(
+					"This local folder is not a git repository!"
+				);
+			
+			git = open(folder);
 		}
 		
-	}
-	
-	/**
-	 * 
-	 * @param url 
-	 */
-	public Repository(String url) {
-		
 		this.url = url;
+		this.folder = folder;
 	}
 	
+	private Git open(File folder) {
+		try {
+			return Git.open(folder);
+		} catch (IOException e) {
+			System.err.println(e.getMessage());
+		}
+		
+		return null;
+	}
 	
+	/*
+	public static Repository create(String url) {
+		
+		if(url == null) throw 
+			new NullPointerException("The URL must not be null!");
+		
+		current = new Repository(url, null);
+		return current;
+	}*/
+	
+	public static Repository create(File folder) 
+		throws GitRepositoryException {
+		
+		if(folder == null) throw 
+			new NullPointerException("The folder must not be null!");
+		
+		current = new Repository(null, folder);
+		return current;
+	}
+	
+	public static Repository create(String url, File folder) 
+		throws GitRepositoryException {
+		
+		if (url == null || folder == null) throw
+			new NullPointerException("The folder or url must not be empty!");
+		
+		current = new Repository(url, folder);	
+		return current;
+	}
+	
+	public Repository get() {
+		return this;
+	}
 	
 	/**
 	 * It verifies if the local folder is
 	 * a git repository
 	 * 
-	 * !!It can be improved !!
 	 * @return Whether the local folder is a repo
 	 */
-	private Boolean isRepository() {
+	private boolean isRepository(File folder) {
 	  
 	  String local = folder.getAbsolutePath(); 
     
@@ -89,40 +118,20 @@ public class Repository {
 	 * @throws InvalidRemoteException 
 	 * @throws IOException 
 	 */
-	public Boolean cloneRepository(String localFolder) 
-		throws UndefinedLocalRepositoryPathException, 
-		       InvalidRemoteException, 
-		       TransportException, 
-		       GitAPIException, 
-		       IOException {
+	public Git cloneRepository(String url, File local) {
 	  
-	  folder = new File(localFolder);
-	  
-	  if(folder.exists()) {
-	    
-	    if(isRepository()) {
-	    	
-	    	git = Git.open(folder);
-	    	return false; 
-	    }
-	    
-	    throw new FileAlreadyExistsException(
-	      "This folder already exists!"
-	    );
-	  }
+			try {
+				return Git
+					.cloneRepository()
+					.setURI(url)
+					.setDirectory(local)
+					.call();
+			} catch (GitAPIException e) {
 		
-		if (url != null) {
+				System.err.println(e.getMessage());
+			}
 			
-			git = Git
-				.cloneRepository()
-				.setURI(url)
-				.setDirectory(folder)
-				.call();
-			
-			return true;
-		}
-		else 
-		  throw new UndefinedLocalRepositoryPathException();
+			return null;
 	}
 	
 	/**
@@ -135,7 +144,6 @@ public class Repository {
 		var gitFactory = new Git(git.add().getRepository());
 		var branches = gitFactory.branchList()
 				.setListMode(ListMode.REMOTE).call();
-		
 		
 		List<Branch> list = new ArrayList<>();
 		for(var branch: branches) {
@@ -160,6 +168,13 @@ public class Repository {
 		return Branch.create(ref.getName(), ref.getObjectId());
 	}
 	
+	
+	@Deprecated
+	/**
+	 * This method must be removed after, because
+	 * we implement the commits extraction by branches
+	 * 
+	 */
 	public List<String> allCommitsIDs() {
 	  
 	  var list = new ArrayList<String>();
@@ -190,6 +205,7 @@ public class Repository {
 	  return list;
 	}
 	
+	@Deprecated
 	public Commit commit(String commitId) {
 		
 		return Commit.create(commitId, git);
