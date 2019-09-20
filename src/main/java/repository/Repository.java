@@ -87,8 +87,28 @@ public class Repository {
 		return current;
 	}
 	
-	public Repository get() {
-		return this;
+	/**
+	 * It gets the current repository
+	 * @return repository
+	 */
+	public static Repository get() {
+		return current;
+	}
+	
+	/**
+	 * It returns the remote url
+	 * @return url
+	 */
+	public String url() {
+		return url;
+	}
+	
+	/**
+	 * It returns repository folder
+	 * @return
+	 */
+	public File folder() {
+		return folder;
 	}
 	
 	/**
