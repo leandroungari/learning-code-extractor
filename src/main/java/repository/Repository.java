@@ -2,18 +2,13 @@ package repository;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.FileAlreadyExistsException;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.eclipse.jgit.api.Git;
-import org.eclipse.jgit.api.ListBranchCommand.ListMode;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.api.errors.InvalidRemoteException;
 import org.eclipse.jgit.api.errors.TransportException;
-import org.eclipse.jgit.lib.Ref;
-import org.eclipse.jgit.revwalk.RevCommit;
-import org.eclipse.jgit.revwalk.RevWalk;
 
 import repository.exception.GitRepositoryException;
 
@@ -26,6 +21,12 @@ public class Repository {
 	
 	private static Repository current;
 	
+	/**
+	 * It instanciates a new repo
+	 * @param url
+	 * @param folder
+	 * @throws GitRepositoryException
+	 */
 	private Repository(String url, File folder) 
 		throws GitRepositoryException {
 		
@@ -47,6 +48,12 @@ public class Repository {
 		this.folder = folder;
 	}
 	
+	
+	/**
+	 * We get a repo from a local folder
+	 * @param folder
+	 * @return
+	 */
 	private Git open(File folder) {
 		try {
 			return Git.open(folder);
@@ -57,16 +64,12 @@ public class Repository {
 		return null;
 	}
 	
-	/*
-	public static Repository create(String url) {
-		
-		if(url == null) throw 
-			new NullPointerException("The URL must not be null!");
-		
-		current = new Repository(url, null);
-		return current;
-	}*/
-	
+	/**
+	 * It obtains a repository from a local folder
+	 * @param folder
+	 * @return
+	 * @throws GitRepositoryException
+	 */
 	public static Repository create(File folder) 
 		throws GitRepositoryException {
 		
@@ -81,7 +84,9 @@ public class Repository {
 		throws GitRepositoryException {
 		
 		if (url == null || folder == null) throw
-			new NullPointerException("The folder or url must not be empty!");
+			new NullPointerException(
+				"The folder or url must not be empty!"
+			);
 		
 		current = new Repository(url, folder);	
 		return current;
@@ -138,7 +143,7 @@ public class Repository {
 	 * @throws InvalidRemoteException 
 	 * @throws IOException 
 	 */
-	public Git cloneRepository(String url, File local) {
+	private Git cloneRepository(String url, File local) {
 	  
 			try {
 				return Git
@@ -155,79 +160,45 @@ public class Repository {
 	}
 	
 	/**
+	 * Unset the current repository
+	 */
+	public void close() {
+		current = null;
+	}
+	
+	/**
 	 * Get a list of remote branches 
 	 * of repository
 	 * @throws GitAPIException
+	 * @throws GitRepositoryException 
 	 */
-	public List<Branch> branches() throws GitAPIException {
+	public List<Branch> branches() throws 
+		GitAPIException {
 		
-		var gitFactory = new Git(git.add().getRepository());
-		var branches = gitFactory.branchList()
-				.setListMode(ListMode.REMOTE).call();
-		
-		List<Branch> list = new ArrayList<>();
-		for(var branch: branches) {
-	
-			list.add(Branch.create(
-				branch.getName(), 
-				branch.getObjectId()
-			));
-		}
-		
-		gitFactory.close();
-		return list;
+		var factory = new GitFactory();
+		return factory.branches().stream().map(ref -> {
+			return Branch.create(
+				ref.getName(), 
+				ref.getObjectId()
+			);
+		})
+		.collect(Collectors.toList());
 	}
 	
 	public Branch branch(String name) throws IOException {
 		
-		var ref = git
-			.getRepository()
-			.getRefDatabase()
-			.findRef(name);
+		var factory = new GitFactory();
+		var ref = factory.branch(name);
 		
 		return Branch.create(ref.getName(), ref.getObjectId());
 	}
 	
-	
-	@Deprecated
 	/**
-	 * This method must be removed after, because
-	 * we implement the commits extraction by branches
-	 * 
+	 * It shares an instance of git repository internally.
+	 * @return
 	 */
-	public List<String> allCommitsIDs() {
-	  
-	  var list = new ArrayList<String>();
-	  
-	  try {
-	    var allRefs = git
-	        .getRepository()
-	        .getRefDatabase()
-	        .getRefs();
-	    
-	    var walk = new RevWalk(git.getRepository());
-	    for(Ref ref: allRefs) {
-	      walk.markStart(walk.parseCommit(ref.getObjectId()));
-	    }
-	    
-	    
-	    for(RevCommit commit : walk) {
-	      list.add(commit.getName());
-	    }
-	    
-	    walk.close();
-	  	    
-	  } catch (IOException e) {
-      e.printStackTrace();
-    }
-	  
-	  
-	  return list;
+	Git git() {
+		return git;
 	}
 	
-	@Deprecated
-	public Commit commit(String commitId) {
-		
-		return Commit.create(commitId, git);
-	}
 }
