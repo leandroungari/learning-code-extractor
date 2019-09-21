@@ -15,15 +15,15 @@ import org.eclipse.jgit.treewalk.TreeWalk;
 
 public class Commit {
 
-	private Git git;
-	private String id;
-	private RevCommit commit;
+	private ObjectId id;
 	
-	public Commit(String commitId) {
+	public static Commit create(ObjectId commitId) {
 		
+		return new Commit(commitId);
+	}
+	
+	private Commit(ObjectId commitId) {
 		id = commitId;
-		this.git = null;
-		commit = null;
 	}
 	
 	public String id() {
@@ -49,12 +49,6 @@ public class Commit {
 		}
 		
 		return null;
-	}
-	
-	public static Commit create(String id, Git git) {
-		var c = new Commit(id);
-		c.setRepository(git);
-		return c;
 	}
 	
 	public List<String> allFiles() {
