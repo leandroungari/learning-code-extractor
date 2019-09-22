@@ -17,13 +17,12 @@ import org.eclipse.jgit.revwalk.RevCommit;
 import org.eclipse.jgit.revwalk.RevWalk;
 import org.eclipse.jgit.treewalk.CanonicalTreeParser;
 import org.eclipse.jgit.treewalk.TreeWalk;
+import org.eclipse.jgit.treewalk.filter.PathFilter;
 
 
 public class GitFactory {
 
 	private static Git git;
-	private static RevWalk walk;
-	private static TreeWalk treeWalk;
 	
 	public GitFactory() {
 		
@@ -48,16 +47,12 @@ public class GitFactory {
 	
 	public RevWalk walk() {
 		
-		if(walk == null) 
-			walk = new RevWalk(git.getRepository());
-		return walk;
+		return new RevWalk(git.getRepository());
 	}
 	
 	public TreeWalk treeWalk() {
-		
-		if(treeWalk == null)
-			treeWalk = new TreeWalk(git.getRepository());
-		return treeWalk;
+			
+		return new TreeWalk(git.getRepository());
 	}
 	
 	public RevCommit commit(ObjectId id) 
@@ -65,7 +60,11 @@ public class GitFactory {
 						IncorrectObjectTypeException, 
 						IOException {
 		
-		return walk.parseCommit(id);
+		var walk = walk();
+		var commit = walk.parseCommit(id);
+		walk.close();
+		
+		return commit;
 	}
 	
 	public RevCommit commit(ObjectId id, Integer num) 
@@ -76,9 +75,13 @@ public class GitFactory {
 		var revWalk = walk();
 		
 		revWalk.markStart(commit(id));
-		return revWalk
+		var commit = revWalk
 			.next()
 			.getParent(0);
+		
+		revWalk.close();
+		
+		return commit;
 	}
 	
 	public void commitStart(
@@ -88,11 +91,11 @@ public class GitFactory {
 						IncorrectObjectTypeException, 
 						IOException {
 		
+		var walk = walk();
 		walk.markStart(commit(id));
 		walk.forEach(action);
+		walk.close();
 	}
-	
-	
 	
 	public void treeStart(
 			ObjectId id,
@@ -108,8 +111,10 @@ public class GitFactory {
 		treeWalker.setPostOrderTraversal(false);
 		
 		while(treeWalker.next()) {
-			action.accept(treeWalk);
+			action.accept(treeWalk());
 		}
+		
+		treeWalker.close();
 	}
 	
 	public CanonicalTreeParser createTreeParser(ObjectId id) {
@@ -123,7 +128,7 @@ public class GitFactory {
 			treeParser.reset(reader, treeId);
 			
 		} catch (IOException e) {
-			e.printStackTrace();
+			System.err.println(e.getMessage());
 		}
 		
 		return treeParser;
@@ -142,6 +147,24 @@ public class GitFactory {
 		.call()
 		.stream()
 		.forEach(action);
+	}
+	
+	public File filterFile(ObjectId commitId, String filename) 
+		throws MissingObjectException, 
+						IncorrectObjectTypeException, 
+						IOException {
+		
+		var tree = commit(commitId).getTree();
+		var treeWalk = treeWalk();
+		treeWalk.addTree(tree);
+		treeWalk.setRecursive(true);
+		treeWalk.setFilter(PathFilter.create(filename));
+		
+		var id = treeWalk.getObjectId(0);
+		
+		treeWalk.close();
+		
+		return new File(filename, id);
 	}
 
 	public String fileContent(ObjectId id) 

@@ -53,7 +53,7 @@ public class Branch {
 		var list = new ArrayList<Commit>();
 		try {
 			
-			factory.start(id).forEachRemaining(revcommit -> {
+			factory.commitStart(id, revcommit -> {
 				list.add(Commit.create(id));
 			});
 

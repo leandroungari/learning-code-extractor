@@ -5,13 +5,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.lib.ObjectId;
-import org.eclipse.jgit.revwalk.RevCommit;
-import org.eclipse.jgit.revwalk.RevWalk;
 import org.eclipse.jgit.treewalk.CanonicalTreeParser;
-import org.eclipse.jgit.treewalk.TreeWalk;
 
 public class Commit {
 
@@ -26,121 +22,53 @@ public class Commit {
 		id = commitId;
 	}
 	
-	public String id() {
+	public ObjectId id() {
 		return id;
 	}
 	
-	private RevCommit build() {
-		
-		try {
-			if(commit == null) {
-				var walk = new RevWalk(git.getRepository());
-				commit = walk.parseCommit(
-					ObjectId.fromString(id)
-				);
-				walk.close();
-			}
-			
-			return commit;
-			
-		} catch (IOException e) {
-			
-			e.printStackTrace();
-		}
-		
-		return null;
-	}
 	
-	public List<String> allFiles() {
+	public List<File> allFiles() {
 		
-		var list = new ArrayList<String>();
-		
+		var list = new ArrayList<File>();
+		var factory = new GitFactory();
+	
 		try {
-			
-			var walk = new TreeWalk(git.getRepository());
-			walk.addTree(build().getTree());
-			walk.setRecursive(true);
-			walk.setPostOrderTraversal(false);
-			
-			while(walk.next()) {
-				list.add(walk.getPathString());
-			}
-			
-			walk.close();
+			factory.treeStart(id, walk -> {
+				list.add(new File(
+					walk.getPathString(), 
+					walk.getObjectId(0)
+				));
+			});
 			
 		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		
+			System.err.println(e.getMessage());
+		}				
 		return list;
 	}
 	
-	public List<String> allFilesByExtension(String ext) {
+	public List<File> allFilesByExtension(String ext) {
 		
 		return allFiles()
 			.stream()
-			.filter(file -> file.endsWith(ext))
+			.filter(file -> file.name().endsWith(ext))
 			.collect(Collectors.toList());
-	}
-
-	private void setRepository(Git repo) {
-		
-		git = repo;
-	}
-	
-	public File file(String name) {
-		
-		var file = new File(name);
-		file.build(git, id);
-		return file;
 	}
 	
 	public CanonicalTreeParser createTreeParser() {
 	
-		var walk = new RevWalk(git.getRepository());
-		//Creating a tree reader
-		var reader = git.getRepository().newObjectReader();
-				
-		var treeParser = new CanonicalTreeParser();
-		try {
-			
-			RevCommit newCommit = walk.parseCommit(ObjectId.fromString(id));
-			
-			ObjectId newTreeId = newCommit.getTree();
-			treeParser.reset(reader, newTreeId);
-			
-		} catch (IOException e) {
-			
-			e.printStackTrace();
-		}
-		
-		walk.close();
-		return treeParser;
+		var factory = new GitFactory();
+		return factory.createTreeParser(id);
 	}
 	
 	public Commit before() {
 		
-		var revWalk = new RevWalk(git.getRepository());
-		
-		String beforeId = "";
+		var factory = new GitFactory();
 		try {
-			
-			revWalk.markStart(build());
-			beforeId = revWalk
-				.next()
-				.getParent(0)
-				.getName();
-			
-		} catch (
-			ArrayIndexOutOfBoundsException | IOException e
-		) {
-			
-			revWalk.close();
-			return null;
+			return Commit.create(factory.commit(id, 1));
+		} catch (IOException e) {
+			System.err.println(e.getMessage());
 		}
-			
-		revWalk.close();
-		return Commit.create(beforeId, git);
+		return null;
 	}
 	
 	public List<Diff> diff() {
@@ -148,32 +76,32 @@ public class Commit {
 		var list = new ArrayList<Diff>();
 		var otherCommit = before();
 		
-		//Creating parser for old and new tree and its own ids
-		var oldTreeParser = otherCommit.createTreeParser();
-		var newTreeParser = this.createTreeParser();
+		var oldTree = otherCommit.createTreeParser();
+		var newTree = this.createTreeParser();
 		
+		var factory = new GitFactory();
 	  try {
-			git
-				.diff()
-				.setNewTree(newTreeParser)
-				.setOldTree(oldTreeParser)
-				.call()
-				.stream()
-				.forEach(a -> list.add(Diff.build(a)));
 			
-			return list;
+			factory.diff(
+				oldTree, 
+				newTree, 
+				a -> list.add(Diff.build(a))
+			);	
 			
 		} catch (GitAPIException e) {
-			e.printStackTrace();
+			System.err.println(e.getMessage());
 		}
 		
-		return null;
+	  return list;
+	}
+	
+	public File filter(String filename) {
+		
+		return new File(filename, );
 	}
 	
 	@Override
 	public String toString() {
-		return id;
+		return id.toString();
 	}
-	
-	
 }
