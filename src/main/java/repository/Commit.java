@@ -97,7 +97,15 @@ public class Commit {
 	
 	public File filter(String filename) {
 		
-		return new File(filename, );
+		var factory = new GitFactory();
+		try {
+			return factory.filterFile(id, filename);
+		} catch (IOException e) {
+		
+			System.err.println(e.getMessage());
+		}
+		
+		return null;
 	}
 	
 	@Override
