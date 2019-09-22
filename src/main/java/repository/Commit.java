@@ -7,7 +7,12 @@ import java.util.stream.Collectors;
 
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.lib.ObjectId;
+import org.eclipse.jgit.revwalk.RevCommit;
 import org.eclipse.jgit.treewalk.CanonicalTreeParser;
+
+import repository.commit.CommitInfo;
+import repository.commit.Diff;
+import repository.commit.File;
 
 public class Commit {
 
@@ -106,6 +111,40 @@ public class Commit {
 		}
 		
 		return null;
+	}
+	
+	public CommitInfo info() {
+		
+		var factory = new GitFactory();
+		RevCommit commit = null;
+		
+		try {
+			commit = factory.commit(id);
+		} catch (IOException e) {
+			System.err.println(e.getMessage());
+		}
+		
+		var name = commit
+			.getAuthorIdent()
+			.getName();
+		
+		var email = commit
+			.getAuthorIdent()
+			.getEmailAddress();
+		
+		var message = commit
+			.getShortMessage();
+		
+		var date = commit
+			.getAuthorIdent()
+			.getWhen();
+		
+		return CommitInfo
+			.create(id)
+			.setAuthorName(name)
+			.setEmail(email)
+			.setShortMessage(message)
+			.setDate(date);
 	}
 	
 	@Override

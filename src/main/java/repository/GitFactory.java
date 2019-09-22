@@ -19,6 +19,8 @@ import org.eclipse.jgit.treewalk.CanonicalTreeParser;
 import org.eclipse.jgit.treewalk.TreeWalk;
 import org.eclipse.jgit.treewalk.filter.PathFilter;
 
+import repository.commit.File;
+
 
 public class GitFactory {
 
@@ -177,5 +179,4 @@ public class GitFactory {
 		return new String(loader.getBytes());
 	}
 
-	
 }

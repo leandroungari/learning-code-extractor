@@ -1,8 +1,10 @@
-package repository;
+package repository.commit;
 
 import java.io.IOException;
 
 import org.eclipse.jgit.lib.ObjectId;
+
+import repository.GitFactory;
 
 public class File {
 
