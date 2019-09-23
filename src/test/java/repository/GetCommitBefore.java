@@ -2,73 +2,60 @@ package repository;
 
 import static org.junit.Assert.assertEquals;
 
+import java.io.File;
 import java.io.IOException;
-import java.nio.file.FileAlreadyExistsException;
 
-import org.eclipse.jgit.errors.IncorrectObjectTypeException;
-import org.eclipse.jgit.errors.MissingObjectException;
 import org.junit.Before;
 import org.junit.Test;
+
+import repository.exception.GitRepositoryException;
 
 public class GetCommitBefore {
 
 	private Repository repo;
 	
 	@Before
-	public void start() throws FileAlreadyExistsException {
+	public void before() throws GitRepositoryException {
 		
-		repo = new Repository(
-			"https://github.com/danilofes/refactoring-toy-example.git",
-			"/home/leandroungari/refactoring-toy-example"
+		repo = Repository.create(
+			new File("/home/leandroungari/Documents/repositories/truth")
 		);
 	}
 	
-	
 	@Test
-	public void intermediateCommit() 
-		throws MissingObjectException, 
-					  IncorrectObjectTypeException, 
-					  IOException {
-
-		var id = repo
-			.commit("9a5c33b16d07d62651ea80552e8782974c96bb8a")
-			.before()
-			.id();
-			
-		System.out.println(id + " -- " + "a5a7f852e45c7cadc8d1524bd4d14a1e39785aa5");
-		assertEquals(id, "a5a7f852e45c7cadc8d1524bd4d14a1e39785aa5");
-		//a5a7f852e45c7cadc8d1524bd4d14a1e39785aa5
+	public void mostRecentCommit() throws IOException {
+		
+		//current
+		//7a58a45ba139f0b7e56bc2ffbf7733fa5351666c
+		//before
+		//cf94032329283f44d0d91ee986bdfb9111298b2b
+		var before = repo
+			.branch("refs/remotes/origin/master")
+			.commit("7a58a45ba139f0b7e56bc2ffbf7733fa5351666c")
+			.before();
+		
+		assertEquals(
+			"cf94032329283f44d0d91ee986bdfb9111298b2b",
+			before.id().getName()
+		);
 	}
 	
 	@Test
-	public void mostRecentCommit() 
-		throws MissingObjectException, 
-					  IncorrectObjectTypeException, 
-					  IOException {
-
-		var id = repo
-			.commit("d4bce13a443cf12da40a77c16c1e591f4f985b47")
-			.before()
-			.id();
+	public void mostRecentCommitBefore() throws IOException {
 		
-		System.out.println(id + " -- " + "9a5c33b16d07d62651ea80552e8782974c96bb8a");
-		assertEquals(id, "9a5c33b16d07d62651ea80552e8782974c96bb8a");
-		//9a5c33b16d07d62651ea80552e8782974c96bb8a
-	}
-	
-	@Test
-	public void initialCommit() 
-		throws MissingObjectException, 
-					  IncorrectObjectTypeException, 
-					  IOException {
-
-		var id = repo
-			.commit("819b202bfb09d4142dece04d4039f1708735019b")
+		//current
+		//7a58a45ba139f0b7e56bc2ffbf7733fa5351666c
+		//before of before
+		//30e3c4336541f826a105bbaffab28b04582ed1f9
+		var before = repo
+			.branch("refs/remotes/origin/master")
+			.commit("7a58a45ba139f0b7e56bc2ffbf7733fa5351666c")
 			.before()
-			.id();
+			.before();
 		
-		System.out.println(id + " -- " + null);
-		assertEquals(id, null);
-		//null
+		assertEquals(
+			"30e3c4336541f826a105bbaffab28b04582ed1f9",
+			before.id().getName()
+		);
 	}
 }

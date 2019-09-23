@@ -1,22 +1,22 @@
 package repository;
 
-import static org.junit.Assert.*;
+import java.io.File;
 
 import org.junit.Test;
-
-import repository.Repository;
 
 public class CloneRepository {
 
     @Test
-    public void cloneRepository() throws Exception {
+    public void start() throws Exception {
         //https://github.com/apache/tomcat.git
         //https://github.com/danilofes/refactoring-toy-example.git
+    		//https://github.com/google/guava.git
 
-        var repo = new Repository("https://github.com/danilofes/refactoring-toy-example.git");
-        var result = repo.cloneRepository("/home/leandroungari/refactoring-toy-example");
+        Repository.create(
+        	"https://github.com/google/guava.git",
+        	new File("/home/leandroungari/Documents/repositories/guava") 
+        );
 
-        assertEquals(result, true);
     }
 
 }

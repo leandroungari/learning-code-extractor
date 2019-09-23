@@ -1,4 +1,4 @@
-package repository;
+package repository.commit;
 
 import org.eclipse.jgit.diff.DiffEntry;
 import com.google.gson.Gson;
