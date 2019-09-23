@@ -17,7 +17,9 @@ public class GetAllBranchs {
 	private Repository repo;
 	
 	@Before
-	public void before() throws FileAlreadyExistsException, GitRepositoryException {
+	public void before() 
+		throws FileAlreadyExistsException, 
+						GitRepositoryException {
 		
 		repo = Repository.create(
 			"https://github.com/google/truth.git",
