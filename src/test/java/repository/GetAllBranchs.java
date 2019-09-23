@@ -2,6 +2,7 @@ package repository;
 
 import static org.junit.Assert.assertEquals;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.FileAlreadyExistsException;
 
@@ -9,16 +10,18 @@ import org.eclipse.jgit.api.errors.GitAPIException;
 import org.junit.Before;
 import org.junit.Test;
 
+import repository.exception.GitRepositoryException;
+
 public class GetAllBranchs {
 
 	private Repository repo;
 	
 	@Before
-	public void before() throws FileAlreadyExistsException {
+	public void before() throws FileAlreadyExistsException, GitRepositoryException {
 		
-		repo = new Repository(
+		repo = Repository.create(
 			"https://github.com/google/truth.git",
-  		"/home/leandroungari/Documents/repositories/truth"
+  		new File("/home/leandroungari/Documents/repositories/truth")
 		);
 	}
 	

@@ -12,45 +12,44 @@ import org.eclipse.jgit.api.errors.TransportException;
 
 import repository.exception.GitRepositoryException;
 
-
 public class Repository {
 
 	private Git git;
 	private String url;
 	private File folder;
-	
+
 	private static Repository current;
-	
+
 	/**
 	 * It instanciates a new repo
+	 * 
 	 * @param url
 	 * @param folder
 	 * @throws GitRepositoryException
 	 */
-	private Repository(String url, File folder) 
-		throws GitRepositoryException {
-		
-		if (url != null) {
-			
-			git = cloneRepository(url, folder); 
-		}
-		else if (folder != null) {
-			
-			if(!isRepository(folder)) throw 
-				new GitRepositoryException(
-					"This local folder is not a git repository!"
-				);
-			
+	private Repository(String url, File folder)
+			throws GitRepositoryException {
+
+		if (folder != null) {
+
+			if (!isRepository(folder))
+				throw new GitRepositoryException(
+						"This local folder is not a git repository!");
+
 			git = open(folder);
 		}
-		
+		else if (url != null) {
+
+			git = cloneRepository(url, folder);
+		} 
+
 		this.url = url;
 		this.folder = folder;
 	}
-	
-	
+
 	/**
 	 * We get a repo from a local folder
+	 * 
 	 * @param folder
 	 * @return
 	 */
@@ -60,145 +59,145 @@ public class Repository {
 		} catch (IOException e) {
 			System.err.println(e.getMessage());
 		}
-		
+
 		return null;
 	}
-	
+
 	/**
 	 * It obtains a repository from a local folder
+	 * 
 	 * @param folder
 	 * @return
 	 * @throws GitRepositoryException
 	 */
-	public static Repository create(File folder) 
-		throws GitRepositoryException {
-		
-		if(folder == null) throw 
-			new NullPointerException("The folder must not be null!");
-		
+	public static Repository create(File folder)
+			throws GitRepositoryException {
+
+		if (folder == null)
+			throw new NullPointerException(
+					"The folder must not be null!");
+
 		current = new Repository(null, folder);
 		return current;
 	}
-	
-	public static Repository create(String url, File folder) 
-		throws GitRepositoryException {
-		
-		if (url == null || folder == null) throw
-			new NullPointerException(
-				"The folder or url must not be empty!"
-			);
-		
-		current = new Repository(url, folder);	
+
+	public static Repository create(String url, File folder)
+			throws GitRepositoryException {
+
+		if (url == null || folder == null)
+			throw new NullPointerException(
+					"The folder or url must not be empty!");
+
+		current = new Repository(url, folder);
 		return current;
 	}
-	
+
 	/**
 	 * It gets the current repository
+	 * 
 	 * @return repository
 	 */
 	public static Repository get() {
 		return current;
 	}
-	
+
 	/**
 	 * It returns the remote url
+	 * 
 	 * @return url
 	 */
 	public String url() {
 		return url;
 	}
-	
+
 	/**
 	 * It returns repository folder
+	 * 
 	 * @return
 	 */
 	public File folder() {
 		return folder;
 	}
-	
+
 	/**
-	 * It verifies if the local folder is
-	 * a git repository
+	 * It verifies if the local folder is a git repository
 	 * 
 	 * @return Whether the local folder is a repo
 	 */
 	private boolean isRepository(File folder) {
-	  
-	  String local = folder.getAbsolutePath(); 
-    
-	  if(local.endsWith("/")) local += ".git/";
-    else local += "/.git/";
-    
-    var gitFolder = new File(local);
-    
-    return gitFolder.exists();
+
+		String local = folder.getAbsolutePath();
+
+		if (local.endsWith("/"))
+			local += ".git/";
+		else
+			local += "/.git/";
+
+		var gitFolder = new File(local);
+
+		return gitFolder.exists();
 	}
-	
+
 	/**
 	 * It clones the repository to a specified folder
+	 * 
 	 * @param localFolder Local folder
-	 * @return 
-	 * @throws GitAPIException 
-	 * @throws TransportException 
-	 * @throws InvalidRemoteException 
-	 * @throws IOException 
+	 * @return
+	 * @throws GitAPIException
+	 * @throws TransportException
+	 * @throws InvalidRemoteException
+	 * @throws IOException
 	 */
 	private Git cloneRepository(String url, File local) {
-	  
-			try {
-				return Git
-					.cloneRepository()
-					.setURI(url)
-					.setDirectory(local)
-					.call();
-			} catch (GitAPIException e) {
-		
-				System.err.println(e.getMessage());
-			}
-			
-			return null;
+
+		try {
+			return Git.cloneRepository().setURI(url)
+					.setDirectory(local).call();
+		} catch (GitAPIException e) {
+
+			System.err.println(e.getMessage());
+		}
+
+		return null;
 	}
-	
+
 	/**
 	 * Unset the current repository
 	 */
 	public void close() {
 		current = null;
 	}
-	
+
 	/**
-	 * Get a list of remote branches 
-	 * of repository
+	 * Get a list of remote branches of repository
+	 * 
 	 * @throws GitAPIException
-	 * @throws GitRepositoryException 
+	 * @throws GitRepositoryException
 	 */
-	public List<Branch> branches() throws 
-		GitAPIException {
-		
+	public List<Branch> branches() throws GitAPIException {
+
 		var factory = new GitFactory();
 		return factory.branches().stream().map(ref -> {
-			return Branch.create(
-				ref.getName(), 
-				ref.getObjectId()
-			);
-		})
-		.collect(Collectors.toList());
+			return Branch.create(ref.getName(),
+					ref.getObjectId());
+		}).collect(Collectors.toList());
 	}
-	
+
 	public Branch branch(String name) throws IOException {
-		
+
 		var factory = new GitFactory();
 		var ref = factory.branch(name);
-		
+
 		return Branch.create(ref.getName(), ref.getObjectId());
 	}
-	
+
 	/**
 	 * It shares an instance of git repository internally.
+	 * 
 	 * @return
 	 */
 	Git git() {
 		return git;
 	}
-	
+
 }
