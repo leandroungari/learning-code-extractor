@@ -1,27 +1,59 @@
 package repository;
 
+import java.io.File;
+import java.io.IOException;
 import java.nio.file.FileAlreadyExistsException;
 
+import org.junit.Before;
 import org.junit.Test;
+
+import repository.exception.GitRepositoryException;
 
 public class GetContentFile {
 
-	@Test
-	public void run() throws FileAlreadyExistsException {
+private Repository repo;
+	
+	@Before
+	public void before() 
+		throws FileAlreadyExistsException, 
+						GitRepositoryException {
 		
-		var repo = new Repository(
-			"https://github.com/danilofes/refactoring-toy-example.git",
-			"/home/leandroungari/refactoring-toy-example"
+		repo = Repository.create(
+			"https://github.com/google/truth.git",
+  		new File("/home/leandroungari/Documents/repositories/truth")
 		);
-		
-		
-		//src/org/DogManager.java
-		//d4bce13a443cf12da40a77c16c1e591f4f985b47
-		var source = repo
-			.commit("d4bce13a443cf12da40a77c16c1e591f4f985b47")
-			.file("src/org/DogManager.java")	
-			.get();
-		
-		System.out.println(source);
 	}
+	
+	@Test
+	public void listFiles() throws IOException {
+		
+		//7a58a45ba139f0b7e56bc2ffbf7733fa5351666c
+		//
+		System.out.println("\n=== List of files ===");
+		repo
+		.branch("refs/remotes/origin/master")
+		.commit("7a58a45ba139f0b7e56bc2ffbf7733fa5351666c")
+		.allFiles()
+		.forEach(file -> {
+			System.out.println(file.name());
+		});
+
+	}
+	
+	@Test
+	public void contentFile() throws IOException {
+		
+		//core/src/main/java/com/google/common/truth/AbstractArraySubject.java
+		
+		var file = repo
+		.branch("refs/remotes/origin/master")
+		.commit("7a58a45ba139f0b7e56bc2ffbf7733fa5351666c")
+		.filter("core/src/main/java/com/google/common/truth/AbstractArraySubject.java");
+	
+		System.out.println("\n=== ID ===");
+		System.out.println(file.id().getName());
+		System.out.println("\n=== Content of file ===");
+		System.out.println(file.get());
+	}
+	
 }

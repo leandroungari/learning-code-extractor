@@ -1,5 +1,6 @@
 package repository;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.List;
 import java.util.function.Consumer;
@@ -162,6 +163,9 @@ public class GitFactory {
 		treeWalk.setRecursive(true);
 		treeWalk.setFilter(PathFilter.create(filename));
 		
+		if (!treeWalk.next()) {
+      throw new FileNotFoundException("This file does not exists!");
+		}
 		var id = treeWalk.getObjectId(0);
 		
 		treeWalk.close();
