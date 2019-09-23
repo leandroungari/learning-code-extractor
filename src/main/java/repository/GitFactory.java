@@ -113,7 +113,7 @@ public class GitFactory {
 		treeWalker.setPostOrderTraversal(false);
 		
 		while(treeWalker.next()) {
-			action.accept(treeWalk());
+			action.accept(treeWalker);
 		}
 		
 		treeWalker.close();
