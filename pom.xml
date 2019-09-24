@@ -12,7 +12,7 @@
 			<groupId>fr.inria.gforge.spoon.labs</groupId>
 			<artifactId>gumtree-spoon-ast-diff</artifactId>
 			<version>1.20</version>
-    </dependency>
+		</dependency>
 		<!-- https://mvnrepository.com/artifact/org.eclipse.jgit/org.eclipse.jgit -->
 		<dependency>
 			<groupId>org.eclipse.jgit</groupId>
@@ -32,5 +32,12 @@
 			<artifactId>gson</artifactId>
 			<version>2.8.5</version>
 		</dependency>
+		<!-- https://mvnrepository.com/artifact/com.github.mauricioaniche/ck -->
+		<dependency>
+			<groupId>com.github.mauricioaniche</groupId>
+			<artifactId>ck</artifactId>
+			<version>0.3.1</version>
+		</dependency>
+
 	</dependencies>
 </project>
