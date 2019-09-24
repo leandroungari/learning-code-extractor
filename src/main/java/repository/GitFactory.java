@@ -32,6 +32,27 @@ public class GitFactory {
 		if(git == null) git = Repository.get().git();
 	}
 	
+public String absoluteFolder() {
+		
+		String absolutePath = git
+			.getRepository()
+			.getDirectory()
+			.getAbsolutePath();
+		
+		return absolutePath.substring(0, absolutePath.length() - 4);
+	}
+	
+	public String folder() {
+		
+		var list = git
+		.getRepository()
+		.getDirectory()
+		.getAbsolutePath()
+		.split(java.util.regex.Pattern.quote("/"));
+		
+		return list[list.length - 2];
+	}
+	
 	public List<Ref> branches() throws GitAPIException {
 		
 		return git
