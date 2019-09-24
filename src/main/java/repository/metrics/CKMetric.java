@@ -1,8 +1,12 @@
-package repository.metric;
+package repository.metrics;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTParser;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jgit.lib.ObjectId;
@@ -10,31 +14,31 @@ import org.eclipse.jgit.lib.ObjectId;
 import com.github.mauricioaniche.ck.CK;
 import com.github.mauricioaniche.ck.CKNotifier;
 import com.github.mauricioaniche.ck.MetricsExecutor;
+import com.github.mauricioaniche.ck.util.MetricsFinder;
 
-import repository.File;
+import repository.commit.File;
+import repository.GitFactory;
 
 public class CKMetric extends CK {
 
 	public CKMetric() {
 		super();
 	}
-	
-	public void calculate(ObjectId commitId,
-			CKNotifier notifier) {
 
-		var factory = new GitFactory();
-
-		// It inits the metrics executor
-		MetricsExecutor storage = new MetricsExecutor(
-				classLevelMetrics, methodLevelMetrics, notifier);
-
+	private List<File> obtainingFiles(
+		GitFactory factory, 
+		ObjectId commitId, 
+		String fileExtension) {
+		
 		var list = new ArrayList<File>();
 		try {
 			factory.treeStart(commitId, walk -> {
-				var file = new File(walk.getPathString(),
-						walk.getObjectId(0));
+				var file = new File(
+					walk.getPathString(), 
+					walk.getObjectId(0)
+				);
 
-				if (file.name().endsWith(".java"))
+				if (file.name().endsWith(fileExtension))
 					list.add(file);
 
 			});
@@ -42,8 +46,32 @@ public class CKMetric extends CK {
 
 			System.err.println(e.getMessage());
 		}
+		
+		return list;
+	}
+	
+	public MetricsExecutor executor(CKNotifier notifier) {
+		
+		MetricsFinder finder = new MetricsFinder();
+		
+		return new MetricsExecutor(
+			() -> finder.allClassLevelMetrics(),
+			() -> finder.allMethodLevelMetrics(), 
+			notifier
+		);
+	}
+	
+	
+	public void calculate(
+		ObjectId commitId, 
+		CKNotifier notifier) {
 
-		for (var file : list) {
+		var factory = new GitFactory();
+		var folder = factory.folder();
+
+		var storage = executor(notifier);
+
+		for (var file : obtainingFiles(factory, commitId, ".java")) {
 			ASTParser parser = ASTParser.newParser(AST.JLS11);
 			parser.setSource(file.get().toCharArray());
 
@@ -51,19 +79,19 @@ public class CKMetric extends CK {
 			parser.setCompilerOptions(options);
 			parser.setUnitName("/" + folder + "/" + file.name());
 			parser.setEnvironment(
-					new String[] { factory.absoluteFolder() },
-					new String[] { "" }, new String[] { "UTF-8" },
-					true);
+				new String[] { factory.absoluteFolder() }, 
+				new String[] { "" }, 
+				new String[] { "UTF-8" },
+				true
+			);
 
 			parser.setResolveBindings(true);
 			parser.setBindingsRecovery(true);
 
-			JavaCore.setComplianceOptions(JavaCore.VERSION_11,
-					options);
+			JavaCore.setComplianceOptions(JavaCore.VERSION_11, options);
 			var unit = (CompilationUnit) parser.createAST(null);
 
-			storage.acceptAST(
-					factory.absoluteFolder() + file.name(), unit);
+			storage.acceptAST(factory.absoluteFolder() + file.name(), unit);
 		}
 
 	}
