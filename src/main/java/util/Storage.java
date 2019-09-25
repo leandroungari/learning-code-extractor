@@ -17,7 +17,7 @@ public class Storage {
 	
 	public void file(String filename, String data) {
 	  
-	  FileUtil.createFolder(new File(filename));
+	  FileUtil.createFolder(new File(path));
 	  FileUtil.createFile(
 	    path + "/" + filename, 
 	    data

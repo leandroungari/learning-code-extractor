@@ -1,14 +1,13 @@
 package util;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
 public class FileUtil {
 
 	public static void createFolder(File file) {
-		
+	
 		if(!folderExists(file)) file.mkdirs(); 
 	}
 	
@@ -20,7 +19,7 @@ public class FileUtil {
 	public static void createFile(String path, String data) {
 		
 		try {
-      var out = new FileOutputStream(path);
+      var out = new FileOutputStream(new File(path));
       out.write(data.getBytes());
       out.close();
     } catch (IOException e) {
