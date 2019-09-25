@@ -1,6 +1,7 @@
 package repository.metrics;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 
 import org.eclipse.jgit.api.errors.GitAPIException;
 
@@ -29,12 +30,17 @@ public class MetricsAnalyzer
 	}
 	
 	@Override
-	public void localFolder(File folder) {
+	public MetricsAnalyzer localFolder(File folder) {
 	  this.folder = folder;
+	  return this;
 	}
 	
 	@Override
-	public void run() {
+	public void run() throws FileNotFoundException {
+		
+		if(folder == null) throw new FileNotFoundException(
+			"You must define a local folder!"
+		); 
 		
 	  var storage = new Storage(
 	    folder.getAbsolutePath() + "/" + name
@@ -76,9 +82,18 @@ public class MetricsAnalyzer
 	  .calculate(
 	    commit.id(), 
 	    result -> {
+	    	
+	    	var position = result
+	    		.getFile()
+	    		.lastIndexOf(name) + name.length() + 1;
+	    	
+	    	var text = result
+	    		.getFile()
+		      .substring(position);
+	    	
 	      data
 	      .addFiles(
-	        result.getFile(), 
+	      	text, 
 	        result
 	      );	      
 	    }
@@ -91,7 +106,7 @@ public class MetricsAnalyzer
 	  );
 	}
 	
-	public void store(
+	private void store(
 	  Storage storage, 
 	  String filename, 
 	  MetricsData obj) {
