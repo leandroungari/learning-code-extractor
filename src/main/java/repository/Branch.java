@@ -1,6 +1,5 @@
 package repository;
 
-import java.io.Console;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -55,8 +54,7 @@ public class Branch {
 		try {
 			
 			factory.commitStart(id, revcommit -> {
-		
-				list.add(Commit.create(revcommit.getId()));
+				list.add(Commit.create(id));
 			});
 
 		} catch (IOException e) {

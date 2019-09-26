@@ -19,9 +19,9 @@ import com.github.mauricioaniche.ck.util.MetricsFinder;
 import repository.commit.File;
 import repository.GitFactory;
 
-class CKMetric extends CK {
+public class CKMetric extends CK {
 
-	CKMetric() {
+	public CKMetric() {
 		super();
 	}
 
@@ -50,7 +50,7 @@ class CKMetric extends CK {
 		return list;
 	}
 	
-	private MetricsExecutor executor(CKNotifier notifier) {
+	public MetricsExecutor executor(CKNotifier notifier) {
 		
 		MetricsFinder finder = new MetricsFinder();
 		
