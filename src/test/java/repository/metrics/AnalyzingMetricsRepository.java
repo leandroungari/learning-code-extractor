@@ -33,6 +33,7 @@ public class AnalyzingMetricsRepository {
 		.localFolder(new File(
 			"/home/leandroungari/Documents/data/metrics"
 		))
+		.enableLogs(false)
 		.run();
 	}
 }

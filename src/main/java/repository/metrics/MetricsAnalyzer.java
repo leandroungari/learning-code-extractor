@@ -54,11 +54,17 @@ public class MetricsAnalyzer
 	  );
 	  try {
 	    
+	    long startTime = System.currentTimeMillis();
+	    
       repo
       .branches()
       .forEach(branch -> {
         this.processing(storage, branch);
       });
+      
+      long endTime = System.currentTimeMillis();
+
+      System.out.println("That took " + (endTime - startTime)/1000.0 + " seconds");
       
     } catch (GitAPIException e) {
       System.err.println(e.getMessage());
