@@ -3,6 +3,8 @@ package repository.metrics;
 import java.io.File;
 import java.io.FileNotFoundException;
 
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
 import org.eclipse.jgit.api.errors.GitAPIException;
 
 import com.google.gson.Gson;
@@ -35,6 +37,11 @@ public class MetricsAnalyzer
 	  return this;
 	}
 	
+	public MetricsAnalyzer enableLogs(boolean value) {
+		if(!value) Logger.getRootLogger().setLevel(Level.OFF);
+		return this;
+	}
+	
 	@Override
 	public void run() throws FileNotFoundException {
 		
@@ -62,8 +69,13 @@ public class MetricsAnalyzer
 	  Storage storage, 
 	  Branch branch) {
 	  
-	  branch
-	  .commits()
+	  var list = branch
+	  	  .commits();
+	  
+	  System.out.println(branch.name());
+	  System.out.println("It has " + list.size() + " commit(s).");
+	  
+	  list
 	  .forEach(commit -> {
 	    this.processing(
 	      storage.folder(branch.id().getName()),
@@ -77,7 +89,7 @@ public class MetricsAnalyzer
 	  Commit commit) {
 	  
 	  var data = new MetricsData();
-	  
+	  System.out.println(commit.id().getName());
 	  new CKMetric()
 	  .calculate(
 	    commit.id(), 
