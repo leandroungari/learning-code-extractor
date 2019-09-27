@@ -168,7 +168,6 @@ public class MetricsAnalyzer
 	  .folder(branch)
 	  .get(commit + ".json");
 	  
-	  System.out.println(data);
 	  return gson.fromJson(data, MetricsData.class);	  
 	}
 
