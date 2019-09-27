@@ -2,6 +2,9 @@ package repository.metrics;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.ArrayList;
+import java.util.concurrent.CompletableFuture;
+import java.util.stream.Collectors;
 
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
@@ -55,15 +58,25 @@ public class MetricsAnalyzer
 	  try {
 	    
 	    long startTime = System.currentTimeMillis();
-	    
-      repo
+	    var list = repo
       .branches()
-      .forEach(branch -> {
-        this.processing(storage, branch);
-      });
+      .stream()
+      .map(branch -> 
+        CompletableFuture
+        .runAsync(
+           () -> this.processing(storage, branch)
+        )
+      )
+      .collect(Collectors.toList());
+	    
+	    CompletableFuture.allOf(
+	      list.toArray(new CompletableFuture[list.size()])
+	    ).join();
       
       long endTime = System.currentTimeMillis();
-
+      //That took 18.454 seconds
+      //That took 16.267 seconds
+      //That took 13.625 seconds
       System.out.println("That took " + (endTime - startTime)/1000.0 + " seconds");
       
     } catch (GitAPIException e) {
@@ -74,20 +87,33 @@ public class MetricsAnalyzer
 	private void processing(
 	  Storage storage, 
 	  Branch branch) {
+
+	  var commits = branch
+	  .commits();
 	  
-	  var list = branch
-	  	  .commits();
-	  
-	  System.out.println(branch.name());
-	  System.out.println("It has " + list.size() + " commit(s).");
-	  
-	  list
-	  .forEach(commit -> {
-	    this.processing(
-	      storage.folder(branch.id().getName()),
-	      commit
-	    );
-	  });
+	  for(Integer i = 0; i < commits.size(); i+= 4) {
+	    
+	    var list = commits
+	    .subList(
+	      i, 
+	      (i+4 < commits.size() ? i+4 : commits.size())
+	    )
+	    .stream()
+	    .map(commit ->
+	      CompletableFuture
+	      .runAsync(() -> 
+	        this.processing(
+	          storage.folder(branch.id().getName()),
+	          commit
+	      ))
+	    )
+	    .collect(Collectors.toList());
+	      
+	    CompletableFuture
+	    .allOf(list.toArray(new CompletableFuture[list.size()]))
+	    .join();
+	  }
+
 	}
 	
 	private void processing(
@@ -95,7 +121,7 @@ public class MetricsAnalyzer
 	  Commit commit) {
 	  
 	  var data = new MetricsData();
-	  System.out.println(commit.id().getName());
+	  
 	  new CKMetric()
 	  .calculate(
 	    commit.id(), 
