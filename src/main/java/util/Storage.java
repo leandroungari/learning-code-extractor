@@ -23,4 +23,9 @@ public class Storage {
 	    data
 	  );
 	}
+	
+	public String get(String filename) {
+	  
+	  return FileUtil.readFile(path + "/" + filename);
+	}
 }

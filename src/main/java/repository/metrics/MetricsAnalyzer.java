@@ -2,7 +2,6 @@ package repository.metrics;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.util.ArrayList;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
@@ -26,13 +25,9 @@ public class MetricsAnalyzer
 	private String name;
 	private Repository repo;
 	
-	public MetricsAnalyzer(
-		String repositoryName, 
-		Repository repo) {
-	  
-		this.name = repositoryName;
-		this.repo = repo;
-	}
+	public MetricsAnalyzer() { }
+	
+	
 	
 	@Override
 	public MetricsAnalyzer localFolder(File folder) {
@@ -161,5 +156,31 @@ public class MetricsAnalyzer
     storage.file(filename, data);
 	}
 	
+	public MetricsData get(
+	  String branch,
+	  String commit) {
+	
+	  var gson = new Gson();
+	  
+	  var data = new Storage(
+	    folder.getAbsolutePath() + "/" + name
+	  )
+	  .folder(branch)
+	  .get(commit + ".json");
+	  
+	  return gson.fromJson(data, MetricsData.class);	  
+	}
+
+  @Override
+  public MetricsAnalyzer repository(Repository r) {
+    this.repo = r;
+    return this;
+  }
+
+  @Override
+  public MetricsAnalyzer repositoryName(String name) {
+    this.name = name;
+    return this;
+  }
 
 }
