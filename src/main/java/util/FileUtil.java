@@ -1,6 +1,8 @@
 package util;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
@@ -26,6 +28,19 @@ public class FileUtil {
       System.err.println(e.getMessage());
     }
 		
+	}
+	
+	public static String readFile(String path) {
+	  
+	  try {
+      var in = new FileInputStream(new File(path));
+      var data = new String(in.readAllBytes());
+      in.close();
+      return data;
+    } catch (IOException e) {
+      System.err.println(e.getMessage());
+    }
+	  return null;
 	}
 	
 }

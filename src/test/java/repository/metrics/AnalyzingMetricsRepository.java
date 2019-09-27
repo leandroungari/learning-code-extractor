@@ -23,13 +23,12 @@ public class AnalyzingMetricsRepository {
 	@Test
 	public void entireRepository() throws FileNotFoundException {
 		
-		var analyzer = new MetricsAnalyzer(
-			"refactoring-toy-example", 
-			repo
-		);
-		
-		
+		var analyzer = new MetricsAnalyzer();
+		 
+  
 		analyzer
+		.repository(repo)
+		.repositoryName("refactoring-toy-example")
 		.localFolder(new File(
 			"/home/leandroungari/Documents/data/metrics"
 		))

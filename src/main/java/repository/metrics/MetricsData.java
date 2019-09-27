@@ -47,5 +47,11 @@ public class MetricsData {
     );
   }
   
+  public String[] getMetrics() {
+    return metrics;
+  }
   
+  public HashMap<String, Integer[]> getFiles() {
+    return files;
+  }
 }
