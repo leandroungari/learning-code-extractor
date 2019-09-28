@@ -23,20 +23,20 @@ public class CommitInfo {
 		return info;
 	}
 	
-	public ObjectId id() {
-		return id;
+	public String getId() {
+		return id.getName();
 	}
 	
-	public String authorName() {
+	public String getAuthorName() {
 		
 		return name;
 	}
 	
-	public String email() {
+	public String getEmail() {
 		return email;
 	}
 	
-	public String date() {
+	public String getDate() {
 		return date;
 	}
 	
