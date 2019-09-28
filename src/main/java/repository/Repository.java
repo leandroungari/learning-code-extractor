@@ -9,6 +9,7 @@ import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.api.errors.InvalidRemoteException;
 import org.eclipse.jgit.api.errors.TransportException;
+import org.eclipse.jgit.lib.ObjectId;
 
 import repository.exception.GitRepositoryException;
 
@@ -189,6 +190,16 @@ public class Repository {
 		var ref = factory.branch(name);
 
 		return Branch.create(ref.getName(), ref.getObjectId());
+	}
+	
+	public Branch branch(ObjectId id) 
+	  throws GitAPIException {
+	  
+	  return branches()
+	    .stream()
+	    .filter(branch -> branch.id().equals(id))
+	    .collect(Collectors.toList())
+	    .get(0);
 	}
 
 	/**

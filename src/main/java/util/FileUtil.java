@@ -2,9 +2,9 @@ package util;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 
 public class FileUtil {
 
@@ -41,6 +41,21 @@ public class FileUtil {
       System.err.println(e.getMessage());
     }
 	  return null;
+	}
+	
+	public static ArrayList<String> listOfFolders(File parentFolder) {
+	  
+	  var list = new ArrayList<String>();
+	  if(parentFolder.exists() && 
+	     parentFolder.isDirectory()) {
+	    
+	    for(File f: parentFolder.listFiles()) {
+	      
+	      if(f.isDirectory()) list.add(f.getName());
+	    }
+	  }
+	  
+	  return list;
 	}
 	
 }
