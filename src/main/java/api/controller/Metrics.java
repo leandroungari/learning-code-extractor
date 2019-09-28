@@ -1,14 +1,17 @@
 package api.controller;
 
 import java.io.File;
+import java.util.ArrayList;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+
 import repository.metrics.MetricsAnalyzer;
 import repository.metrics.MetricsData;
+import util.FileUtil;
 
 @RestController()
 public class Metrics {
@@ -39,6 +42,15 @@ public class Metrics {
       branch, 
       commit
     );
+  }
+  
+  @GetMapping("/metrics/listRepositories")
+  @ResponseBody
+  public ArrayList<String> list() {
+    
+    return FileUtil.listOfFolders(new File(
+      "/home/leandroungari/Documents/data/metrics"
+    ));
   }
   
 }
