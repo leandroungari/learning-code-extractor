@@ -1,11 +1,12 @@
 package commandline;
 
-import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.Arrays;
 
-import repository.Repository;
+import commandline.executors.Download;
+import commandline.executors.Extract;
+import commandline.executors.Test;
 import repository.exception.GitRepositoryException;
-import repository.metrics.MetricsAnalyzer;
 
 public class CommandLine {
 
@@ -13,60 +14,28 @@ public class CommandLine {
 		throws GitRepositoryException, 
 						FileNotFoundException {
 		
+		Executor executor = null;
+		var params = Arrays.copyOfRange(args, 1, args.length);
+		
 		switch (args[0]) {
 
 		case "test":
-			this.test();
+			executor = new Test();
 			break;
 		
 		case "download":
 			
-			this.download(args[1], args[2]);
+			executor = new Download();
 			break;
 			
 		case "extract":
-			this.extract(args[1], args[2], args[3]);
+			executor = new Extract();
+		}
+		
+		if(executor != null) {
+			
+			executor.param(params);
+			executor.run();
 		}
 	}
-	
-	private void test() {
-		System.out.println("Testing ...");
-	}
-
-	private void download(String url, String localFolder) 
-		throws GitRepositoryException {
-		
-		System.out.println(url + localFolder);
-		
-		Repository.create(
-      url,
-      new File(localFolder) 
-    );
-	}
-	
-	private void extract(
-		String sourceRepo, 
-		String repositoryName, 
-		String metricsFolder 
-	) throws GitRepositoryException, 
-						FileNotFoundException {
-		
-		var repo = Repository.create(new File(
-			sourceRepo
-		));
-		
-		var analyzer = new MetricsAnalyzer();
-		 
-		analyzer
-		.repository(repo)
-		.repositoryName(repositoryName)
-		.localFolder(new File(
-			metricsFolder
-		))
-		.enableLogs(false)
-		.run();
-	}
-	
-	
-
 }
