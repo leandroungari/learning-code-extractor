@@ -1,5 +1,7 @@
 package main;
 
+import java.io.FileNotFoundException;
+
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.ComponentScan;
@@ -17,7 +19,8 @@ import repository.exception.GitRepositoryException;
 public class Main {
 
   public static void main(String[] args) 
-  	throws GitRepositoryException {
+  	throws GitRepositoryException, 
+  					FileNotFoundException {
     
   	if (args.length == 0) {
   		runAPI(args);

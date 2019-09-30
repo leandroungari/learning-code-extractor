@@ -30,8 +30,12 @@ public class Repository {
 	 */
 	private Repository(String url, File folder)
 			throws GitRepositoryException {
+		
+		if (url != null) {
 
-		if (folder != null) {
+			git = cloneRepository(url, folder);
+		} 
+		else if (folder != null) {
 
 			if (!isRepository(folder))
 				throw new GitRepositoryException(
@@ -39,10 +43,6 @@ public class Repository {
 
 			git = open(folder);
 		}
-		else if (url != null) {
-
-			git = cloneRepository(url, folder);
-		} 
 
 		this.url = url;
 		this.folder = folder;
