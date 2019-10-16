@@ -7,16 +7,13 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
-import org.springframework.web.servlet.config.annotation.CorsRegistry;
-import org.springframework.web.servlet.config.annotation.EnableWebMvc;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import commandline.CommandLine;
+import core.SettingsExecutor;
 import repository.exception.GitRepositoryException;
 
 /**
@@ -32,6 +29,9 @@ public class Main {
   	throws GitRepositoryException, 
   					FileNotFoundException {
     
+  	var settingExec = new SettingsExecutor();
+  	settingExec.start(SettingsExecutor.USER_FOLDER);
+  	
   	if (args.length == 0) {
   		runAPI(args);
   	}
@@ -48,7 +48,8 @@ public class Main {
   	);
   }
   
-  @Bean
+  @SuppressWarnings({ "rawtypes", "unchecked" })
+	@Bean
   public FilterRegistrationBean corsFilter() {
       UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
       CorsConfiguration config = new CorsConfiguration().applyPermitDefaultValues();
