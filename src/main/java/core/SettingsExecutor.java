@@ -1,0 +1,69 @@
+package core;
+
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.LinkOption;
+import java.nio.file.Paths;
+
+import util.FileUtil;
+
+public class SettingsExecutor {
+	
+	private static String base;
+	private static File folder;
+	public static final int USER_FOLDER = 1;
+	public static final int CURRENT_FOLDER = 2;
+	
+	public SettingsExecutor () {
+		
+	}
+	
+	public File baseFolder() {
+		return folder;
+	}
+	
+	public void start(int option) {
+		
+		selectOption(option);
+		createFolder();
+	}
+	
+	private void selectOption(Integer optionFolder) {
+		if(optionFolder == USER_FOLDER) {
+			setBase(FileUtil.userFolder() + "/.learning-code-extractor");
+		}
+		else {
+			setBase(FileUtil.currentFolder() + "/.learning-code-extractor");
+		}
+	}
+	
+	private void createFolder() {
+		
+		folder = new File(getBase());
+		if(!FileUtil.folderExists(folder)) {
+			
+			FileUtil.createFolder(folder);
+			if(System.getProperty("os.name").contains("Windows")) {
+				
+				var path = Paths.get(getBase());
+				
+				try {
+					Files.setAttribute(path, "dos:hidden", true, LinkOption.NOFOLLOW_LINKS);
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+			
+		}
+	}
+
+	private String getBase() {
+		return base;
+	}
+
+	private void setBase(String base) {
+		SettingsExecutor.base = base;
+	}
+
+}
