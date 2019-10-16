@@ -27,6 +27,7 @@ public class SettingsExecutor {
 		
 		selectOption(option);
 		createFolder();
+		createAdditionalFolder();
 	}
 	
 	private void selectOption(Integer optionFolder) {
@@ -56,6 +57,14 @@ public class SettingsExecutor {
 			}
 			
 		}
+	}
+	
+	private void createAdditionalFolder() {
+		
+		String path = baseFolder().getAbsolutePath();
+		FileUtil.createFolder(new File(path + "/repositories"));
+		FileUtil.createFolder(new File(path + "/metadata"));
+		FileUtil.createFolder(new File(path + "/metrics"));
 	}
 
 	private String getBase() {
