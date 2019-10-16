@@ -31,7 +31,7 @@ public class Branch {
 	 * It gets branch id
 	 * @return
 	 */
-	public ObjectId getId() {
+	public ObjectId id() {
 		return id;
 	}
 	
@@ -39,17 +39,10 @@ public class Branch {
 	 * It gets branch identifier
 	 * @return
 	 */
-	public String getName() {
+	public String name() {
 		return name;
 	}
 	
-	public void setName(String name) {
-		this.name = name;
-	}
-	
-	public void setId(ObjectId id) {
-		this.id = id;
-	}
 	
 	/**
 	 * It list all commits in this branch

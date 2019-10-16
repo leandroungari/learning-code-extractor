@@ -28,4 +28,9 @@ public class Storage {
 	  
 	  return FileUtil.readFile(path + "/" + filename);
 	}
+	
+	public boolean exists(String fileOrFolder) {
+		
+		return FileUtil.folderExists(new File(path + "/" + fileOrFolder));
+	}
 }

@@ -2,9 +2,11 @@ package core;
 
 import java.io.File;
 import java.util.List;
+import java.util.stream.Collectors;
+
 import org.eclipse.jgit.api.errors.GitAPIException;
 
-import repository.Branch;
+import core.data.Branch;
 import repository.Repository;
 import repository.exception.GitRepositoryException;
 
@@ -26,6 +28,13 @@ public class RepositoryExecutor {
 	    repositoryName
 	  ));
 	    
-	  return repo.branches();
+	  return repo
+	  	.branches()
+	  	.stream()
+	  	.map(branch -> new Branch(
+	  		branch.name(), 
+	  		branch.id()
+	  	))
+	  	.collect(Collectors.toList());
 	}
 }

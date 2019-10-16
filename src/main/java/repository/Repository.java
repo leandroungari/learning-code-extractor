@@ -197,7 +197,7 @@ public class Repository {
 	  
 	  return branches()
 	    .stream()
-	    .filter(branch -> branch.getId().equals(id))
+	    .filter(branch -> branch.id().equals(id))
 	    .collect(Collectors.toList())
 	    .get(0);
 	}
