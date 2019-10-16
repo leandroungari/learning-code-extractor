@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import core.RepositoryExecutor;
-import repository.Branch;
+import core.data.Branch;
 import repository.Repository;
 import repository.commit.CommitInfo;
 import repository.exception.GitRepositoryException;
