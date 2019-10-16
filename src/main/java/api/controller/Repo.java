@@ -12,30 +12,26 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import core.RepositoryExecutor;
+import repository.Branch;
 import repository.Repository;
 import repository.commit.CommitInfo;
 import repository.exception.GitRepositoryException;
 
 @RestController
 public class Repo {
+	
+	private static RepositoryExecutor exec = 
+		new RepositoryExecutor();
 
-  @GetMapping("/repo/{repositoryName}")
+  @GetMapping("/repo/{repositoryName}/branches")
   @ResponseBody
-  public List<String> allBranches(
+  public List<Branch> allBranches(
     @PathVariable String repositoryName) 
     throws GitRepositoryException, 
             GitAPIException {
     
-    var repo = Repository.create(new File(
-      "/home/leandroungari/Documents/data/repositories/" +
-      repositoryName
-    ));
-    
-    return repo
-      .branches()
-      .stream()
-      .map(branch -> branch.id().getName())
-      .collect(Collectors.toList());
+    return exec.branches(repositoryName);
   }
   
   @GetMapping("/repo/{repositoryName}/{branchId}")

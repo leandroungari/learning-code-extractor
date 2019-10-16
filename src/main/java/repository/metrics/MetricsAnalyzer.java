@@ -98,7 +98,7 @@ public class MetricsAnalyzer
 	      CompletableFuture
 	      .runAsync(() -> 
 	        this.processing(
-	          storage.folder(branch.id().getName()),
+	          storage.folder(branch.getId().getName()),
 	          commit
 	      ))
 	    )

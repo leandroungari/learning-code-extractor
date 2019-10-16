@@ -11,7 +11,12 @@ import util.FileUtil;
 public class SettingsExecutor {
 	
 	private static String base;
+	
 	private static File folder;
+	private static File metrics;
+	private static File metadata;
+	private static File repositories;
+	
 	public static final int USER_FOLDER = 1;
 	public static final int CURRENT_FOLDER = 2;
 	
@@ -21,6 +26,18 @@ public class SettingsExecutor {
 	
 	public File baseFolder() {
 		return folder;
+	}
+	
+	public File metadataFolder() {
+		return metadata;
+	}
+	
+	public File repositoriesFolder() {
+		return repositories;
+	}
+	
+	public File metricsFolder() {
+		return metrics;
 	}
 	
 	public void start(int option) {
@@ -62,9 +79,14 @@ public class SettingsExecutor {
 	private void createAdditionalFolder() {
 		
 		String path = baseFolder().getAbsolutePath();
-		FileUtil.createFolder(new File(path + "/repositories"));
-		FileUtil.createFolder(new File(path + "/metadata"));
-		FileUtil.createFolder(new File(path + "/metrics"));
+		
+		repositories = new File(path + "/repositories");
+		metadata = new File(path + "/metadata");
+		metrics = new File(path + "/metrics");
+		
+		FileUtil.createFolder(repositories);
+		FileUtil.createFolder(metadata);
+		FileUtil.createFolder(metrics);
 	}
 
 	private String getBase() {

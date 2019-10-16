@@ -31,7 +31,7 @@ public class Branch {
 	 * It gets branch id
 	 * @return
 	 */
-	public ObjectId id() {
+	public ObjectId getId() {
 		return id;
 	}
 	
@@ -39,8 +39,16 @@ public class Branch {
 	 * It gets branch identifier
 	 * @return
 	 */
-	public String name() {
+	public String getName() {
 		return name;
+	}
+	
+	public void setName(String name) {
+		this.name = name;
+	}
+	
+	public void setId(ObjectId id) {
+		this.id = id;
 	}
 	
 	/**
