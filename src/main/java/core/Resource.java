@@ -36,12 +36,12 @@ public class Resource {
 				.get(ResourceType.LIST_OF_BRANCHES);
 		
 		case LIST_OF_COMMITS:
-			return branch + "/" + 
-			options.get(ResourceType.LIST_OF_COMMITS);
+			return options
+					.get(ResourceType.LIST_OF_COMMITS);
 			
 		case COMMIT_INFO:
-			return branch + "/" + 
-				options.get(ResourceType.COMMIT_INFO);
+			return 	options
+					.get(ResourceType.COMMIT_INFO);
 			
 		default:
 			return null;
@@ -51,6 +51,7 @@ public class Resource {
 	private Resource(String name, ResourceType code) {
 		this.code = code;
 		this.repository = name;
+		this.branch = "";
 	}
 
 	public static Resource create(
@@ -61,7 +62,7 @@ public class Resource {
 	}
 	
 	public Resource branch(String id) {
-		repository = id;
+		branch = "/" + id;
 		return this;
 	}
 
@@ -101,13 +102,13 @@ public class Resource {
 
 		return storage
 			.folder(repository)
-			.exists(options.get(code));
+			.exists(getOptions());
 	}
 
 	public <T> T read(Class<T> type) {
 
 		String content = typeOfStorage()
-			.folder(repository)
+			.folder(repository + branch)
 			.get(getOptions());
 
 		var gson = new Gson();
@@ -118,9 +119,9 @@ public class Resource {
 
 		var gson = new Gson();
 		var content = gson.toJson(data);
-
+		
 		typeOfStorage()
-		.folder(repository)
+		.folder(repository + branch)
 		.file(getOptions(), content);
 	}
 
