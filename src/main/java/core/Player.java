@@ -65,7 +65,7 @@ public class Player {
 		.branch(branch);
 		
 		if(!resource.exists()) {
-			exec.commits(repository, branch);
+			exec.commitInfo(repository, branch, commit);
 		}
 		
 		var listOfCommits = resource
