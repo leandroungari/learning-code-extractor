@@ -12,6 +12,7 @@ import core.Player;
 import core.data.Branch;
 import core.data.Commit;
 import core.data.CommitInfo;
+import core.data.DiffFile;
 import repository.exception.GitRepositoryException;
 
 @RestController
@@ -56,4 +57,19 @@ public class Repo {
 			commit);
 	}
 
+	
+	@GetMapping("/repo/{repository}/{branch}/{commit}/diffFiles")
+	@ResponseBody
+	public DiffFile[] diffFiles(
+		@PathVariable String repository,
+		@PathVariable String branch,
+		@PathVariable String commit)
+		throws GitRepositoryException,
+		GitAPIException, IOException {
+
+		return player.diffFilesFromCommit(
+			repository, 
+			branch, 
+			commit);
+	}
 }

@@ -9,6 +9,7 @@ import org.eclipse.jgit.lib.ObjectId;
 import core.data.Branch;
 import core.data.Commit;
 import core.data.CommitInfo;
+import core.data.DiffFile;
 import repository.Repository;
 import repository.exception.GitRepositoryException;
 
@@ -106,7 +107,7 @@ public class RepositoryExecutor {
 				
 				var info = repo
 					.branch(ObjectId.fromString(branch))
-					.commit(commit).info();
+					.commit(ObjectId.fromString(commit)).info();
 				
 				listOfCommits[i].setInfo(new CommitInfo(
 					info.getAuthorName(),
@@ -120,5 +121,34 @@ public class RepositoryExecutor {
 		}
 		
 		resource.write(listOfCommits);
+	}
+	
+	public void diffFiles(
+		String repository,
+		String branch,
+		String commit) 
+			throws GitRepositoryException, 
+							GitAPIException {
+		
+		var repo = Repository.create(new File(
+			settings.repositoriesFolder() + "/" +
+			repository
+		));
+		
+		var diffList = repo
+			.branch(ObjectId.fromString(branch))
+			.commit(ObjectId.fromString(commit))
+			.diff();
+		
+		var result = diffList
+			.stream().map(diff -> {
+				return new DiffFile(diff.type(), diff.oldPath(), diff.newPath());
+			})
+			.collect(Collectors.toList());
+		
+		Resource
+		.create(repository, ResourceType.DIFF_FILES)
+		.branch(branch)
+		.write(result);
 	}
 }

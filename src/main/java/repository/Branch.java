@@ -67,8 +67,8 @@ public class Branch {
 		return list;
 	}
 	
-	public Commit commit(String id) {
+	public Commit commit(ObjectId id) {
 		
-		return Commit.create(ObjectId.fromString(id));
+		return Commit.create(id);
 	}
 }

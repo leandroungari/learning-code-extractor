@@ -5,6 +5,7 @@ import static org.junit.Assert.assertEquals;
 import java.io.File;
 import java.io.IOException;
 
+import org.eclipse.jgit.lib.ObjectId;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -31,7 +32,7 @@ public class GetCommitBefore {
 		//cf94032329283f44d0d91ee986bdfb9111298b2b
 		var before = repo
 			.branch("refs/remotes/origin/master")
-			.commit("7a58a45ba139f0b7e56bc2ffbf7733fa5351666c")
+			.commit(ObjectId.fromString("7a58a45ba139f0b7e56bc2ffbf7733fa5351666c"))
 			.before();
 		
 		assertEquals(
@@ -49,7 +50,7 @@ public class GetCommitBefore {
 		//30e3c4336541f826a105bbaffab28b04582ed1f9
 		var before = repo
 			.branch("refs/remotes/origin/master")
-			.commit("7a58a45ba139f0b7e56bc2ffbf7733fa5351666c")
+			.commit(ObjectId.fromString("7a58a45ba139f0b7e56bc2ffbf7733fa5351666c"))
 			.before()
 			.before();
 		

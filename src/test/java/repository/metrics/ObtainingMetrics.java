@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.FileAlreadyExistsException;
 
+import org.eclipse.jgit.lib.ObjectId;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -44,7 +45,7 @@ public class ObtainingMetrics {
 		System.out.println("\n=== Current commit in master ===");
 		var commitId = repo
 			.branch("refs/remotes/origin/master")
-			.commit("d4bce13a443cf12da40a77c16c1e591f4f985b47")
+			.commit(ObjectId.fromString("d4bce13a443cf12da40a77c16c1e591f4f985b47"))
 			.id();
 		
 		new CKMetric().calculate(commitId, result -> {
@@ -58,7 +59,7 @@ public class ObtainingMetrics {
 		System.out.println("\n=== 2nd commit in master ===");
 		var commitId = repo
 			.branch("refs/remotes/origin/master")
-			.commit("d4bce13a443cf12da40a77c16c1e591f4f985b47")
+			.commit(ObjectId.fromString("d4bce13a443cf12da40a77c16c1e591f4f985b47"))
 			.before()
 			.id();
 		

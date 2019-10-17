@@ -5,6 +5,7 @@ import static org.junit.Assert.assertTrue;
 import java.io.File;
 import java.io.IOException;
 
+import org.eclipse.jgit.lib.ObjectId;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -31,7 +32,7 @@ public class GetAllFilesByCommit {
 		
 		var number = repo
 			.branch("refs/remotes/origin/master")
-			.commit("7a58a45ba139f0b7e56bc2ffbf7733fa5351666c")
+			.commit(ObjectId.fromString("7a58a45ba139f0b7e56bc2ffbf7733fa5351666c"))
 			.allFiles()
 			.size();
 		
@@ -44,7 +45,7 @@ public class GetAllFilesByCommit {
 		
 		var number = repo
 			.branch("refs/remotes/origin/master")
-			.commit("7a58a45ba139f0b7e56bc2ffbf7733fa5351666c")
+			.commit(ObjectId.fromString("7a58a45ba139f0b7e56bc2ffbf7733fa5351666c"))
 			.allFilesByExtension(".java")
 			.size();
 		

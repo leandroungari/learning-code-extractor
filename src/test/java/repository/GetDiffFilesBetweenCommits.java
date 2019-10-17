@@ -6,6 +6,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.FileAlreadyExistsException;
 
+import org.eclipse.jgit.lib.ObjectId;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -31,7 +32,7 @@ public class GetDiffFilesBetweenCommits {
 		
 		var diff = repo
 		.branch("refs/remotes/origin/master")
-		.commit("7a58a45ba139f0b7e56bc2ffbf7733fa5351666c")
+		.commit(ObjectId.fromString("7a58a45ba139f0b7e56bc2ffbf7733fa5351666c"))
 		.diff();
 		
 		assertEquals(2, diff.size());

@@ -22,31 +22,13 @@ public class Resource {
 			),
 			Map.entry(
 				ResourceType.COMMIT_INFO, "commits.json"
+			),
+			Map.entry(
+				ResourceType.DIFF_FILES, "commits.json"
 			)
 		);
 
 	private SettingsExecutor settings = new SettingsExecutor();
-
-	private String getOptions() {
-		
-		switch(code) {
-		
-		case LIST_OF_BRANCHES:
-			return options
-				.get(ResourceType.LIST_OF_BRANCHES);
-		
-		case LIST_OF_COMMITS:
-			return options
-					.get(ResourceType.LIST_OF_COMMITS);
-			
-		case COMMIT_INFO:
-			return 	options
-					.get(ResourceType.COMMIT_INFO);
-			
-		default:
-			return null;
-		}
-	}
 	
 	private Resource(String name, ResourceType code) {
 		this.code = code;
@@ -73,6 +55,7 @@ public class Resource {
 		case LIST_OF_BRANCHES:
 		case LIST_OF_COMMITS:
 		case COMMIT_INFO:
+		case DIFF_FILES:
 			
 			return new Storage(
 				settings
@@ -102,14 +85,14 @@ public class Resource {
 
 		return storage
 			.folder(repository)
-			.exists(getOptions());
+			.exists(options.get(code));
 	}
 
 	public <T> T read(Class<T> type) {
 
 		String content = typeOfStorage()
 			.folder(repository + branch)
-			.get(getOptions());
+			.get(options.get(code));
 
 		var gson = new Gson();
 		return gson.fromJson(content, type);
@@ -122,7 +105,7 @@ public class Resource {
 		
 		typeOfStorage()
 		.folder(repository + branch)
-		.file(getOptions(), content);
+		.file(options.get(code), content);
 	}
 
 }

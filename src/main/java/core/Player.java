@@ -5,6 +5,7 @@ import org.eclipse.jgit.api.errors.GitAPIException;
 import core.data.Branch;
 import core.data.Commit;
 import core.data.CommitInfo;
+import core.data.DiffFile;
 import repository.exception.GitRepositoryException;
 
 public class Player {
@@ -82,5 +83,23 @@ public class Player {
 		}
 		
 		return null;
+	}
+	
+	public DiffFile[] diffFilesFromCommit(
+		String repository,
+		String branch,
+		String commit
+		) throws GitRepositoryException, 
+							GitAPIException {
+		
+		var resource = Resource
+			.create(repository, ResourceType.DIFF_FILES)
+			.branch(branch);
+		
+		if(!resource.exists()) {
+			exec.diffFiles(repository, branch, commit);
+		}
+		
+		return resource.read(DiffFile[].class);
 	}
 }
