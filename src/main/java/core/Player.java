@@ -10,10 +10,11 @@ import repository.exception.GitRepositoryException;
 
 public class Player {
   
-  private RepositoryExecutor exec;
+  private RepositoryExecutor repoExec;
+  private MetricsExecutor metricExec;
   
   public Player() {
-    exec = new RepositoryExecutor();
+    repoExec = new RepositoryExecutor();
   }
 	
 	public Branch[] branches(
@@ -27,7 +28,7 @@ public class Player {
 		);
 		
 		if(!resource.exists()) {
-		  exec.branches(repositoryName);
+		  repoExec.branches(repositoryName);
 		}
 		
 		return resource.read(Branch[].class);
@@ -46,7 +47,7 @@ public class Player {
 		.branch(branch);
 		
 		if(!resource.exists()) {
-			exec.commits(repository, branch);
+			repoExec.commits(repository, branch);
 		}
 		
 		return resource.read(Commit[].class);
@@ -66,7 +67,7 @@ public class Player {
 		.branch(branch);
 		
 		if(!resource.exists()) {
-			exec.commitInfo(repository, branch, commit);
+			repoExec.commitInfo(repository, branch, commit);
 		}
 		
 		var listOfCommits = resource
@@ -97,7 +98,7 @@ public class Player {
 			.branch(branch);
 		
 		if(!resource.exists()) {
-			exec.diffFiles(repository, branch, commit);
+			repoExec.diffFiles(repository, branch, commit);
 		}
 		
 		return resource.read(DiffFile[].class);

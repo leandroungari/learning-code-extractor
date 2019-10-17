@@ -34,6 +34,7 @@ public class Metrics {
     
     analyzer
     .repositoryName(repositoryName)
+    .enableLogs(false)
     .localFolder(new File(
       "/home/leandroungari/Documents/data/metrics"
     ));
