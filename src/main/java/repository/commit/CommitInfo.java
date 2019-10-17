@@ -40,7 +40,7 @@ public class CommitInfo {
 		return date;
 	}
 	
-	public String shortMessage() {
+	public String getShortMessage() {
 		return shortMessage;
 	}
 	

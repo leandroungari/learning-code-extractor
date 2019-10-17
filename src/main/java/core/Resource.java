@@ -1,7 +1,5 @@
 package core;
 
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import com.google.gson.Gson;
@@ -11,74 +9,119 @@ import util.Storage;
 public class Resource {
 
 	private String repository;
-	private Integer code;
-	
-	private static final Integer LIST_OF_BRANCHES = 0;
-	private static Map<Integer, String> options = Map.ofEntries(
-		Map.entry(LIST_OF_BRANCHES, "branches.json")
-	);
-	
+	private String branch;
+	private ResourceType code;
+
+	private static Map<ResourceType, String> options = Map
+		.ofEntries(
+			Map.entry(
+				ResourceType.LIST_OF_BRANCHES,"branches.json"
+			),
+			Map.entry(
+				ResourceType.LIST_OF_COMMITS, "commits.json"
+			),
+			Map.entry(
+				ResourceType.COMMIT_INFO, "commits.json"
+			)
+		);
+
 	private SettingsExecutor settings = new SettingsExecutor();
+
+	private String getOptions() {
+		
+		switch(code) {
+		
+		case LIST_OF_BRANCHES:
+			return options
+				.get(ResourceType.LIST_OF_BRANCHES);
+		
+		case LIST_OF_COMMITS:
+			return branch + "/" + 
+			options.get(ResourceType.LIST_OF_COMMITS);
+			
+		case COMMIT_INFO:
+			return branch + "/" + 
+				options.get(ResourceType.COMMIT_INFO);
+			
+		default:
+			return null;
+		}
+	}
 	
-	private Resource(String name, Integer code) {
+	private Resource(String name, ResourceType code) {
 		this.code = code;
 		this.repository = name;
 	}
-	
-	public static Resource create(String repository, Integer resourceCode) {
-		
+
+	public static Resource create(
+		String repository,
+		ResourceType resourceCode) {
+
 		return new Resource(repository, resourceCode);
 	}
 	
+	public Resource branch(String id) {
+		repository = id;
+		return this;
+	}
+
 	private Storage typeOfStorage() {
-		if (code < 1000) {
+		
+		switch(code) {
+		
+		case LIST_OF_BRANCHES:
+		case LIST_OF_COMMITS:
+		case COMMIT_INFO:
 			
 			return new Storage(
-				settings.metadataFolder().getAbsolutePath()
-			);
-		}
-		else if (code < 2000) {
+				settings
+				.metadataFolder()
+				.getAbsolutePath());
 			
-			return new Storage(
-					settings.repositoriesFolder().getAbsolutePath()
-			);
-		}
-		else {
+			/*
+			 * return new Storage(
+				settings
+				.repositoriesFolder()
+				.getAbsolutePath());
+			 */
 			
-			return new Storage(
-				settings.metricsFolder().getAbsolutePath()
-			);
+			/*
+			 * return new Storage(settings.metricsFolder()
+				.getAbsolutePath());
+			 */
+			default:
+				return null;
 		}
-	}
 	
+	}
+
 	public boolean exists() {
-		
+
 		Storage storage = typeOfStorage();
-		
+
 		return storage
-				.folder(repository)
-				.exists(options.get(code));
+			.folder(repository)
+			.exists(options.get(code));
 	}
-	
+
 	public <T> T read(Class<T> type) {
-		
+
 		String content = typeOfStorage()
-		.folder(repository)
-		.get(options.get(code));
-		
+			.folder(repository)
+			.get(getOptions());
+
 		var gson = new Gson();
 		return gson.fromJson(content, type);
 	}
-	
+
 	public <T> void write(T data) {
-		
+
 		var gson = new Gson();
 		var content = gson.toJson(data);
-		
+
 		typeOfStorage()
 		.folder(repository)
-		.file(options.get(code), content);
+		.file(getOptions(), content);
 	}
-	
-	
+
 }

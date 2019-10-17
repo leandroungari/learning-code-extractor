@@ -1,12 +1,14 @@
 package core;
 
 import java.io.File;
-import java.util.List;
 import java.util.stream.Collectors;
 
 import org.eclipse.jgit.api.errors.GitAPIException;
+import org.eclipse.jgit.lib.ObjectId;
 
 import core.data.Branch;
+import core.data.Commit;
+import core.data.CommitInfo;
 import repository.Repository;
 import repository.exception.GitRepositoryException;
 
@@ -19,16 +21,16 @@ public class RepositoryExecutor {
 		settings = new SettingsExecutor();
 	}
 	
-	public List<Branch> branches(String repositoryName) 
-		throws GitAPIException, 
-						GitRepositoryException {
+	public void branches(String repositoryName) 
+	    throws GitAPIException, 
+					    GitRepositoryException {
 		
 		var repo = Repository.create(new File(
 	    settings.repositoriesFolder() + "/" +
 	    repositoryName
 	  ));
 	    
-	  return repo
+	  var list = repo
 	  	.branches()
 	  	.stream()
 	  	.map(branch -> new Branch(
@@ -36,5 +38,87 @@ public class RepositoryExecutor {
 	  		branch.id()
 	  	))
 	  	.collect(Collectors.toList());
+	  
+	  Resource
+	  .create(
+	    repositoryName, 
+	    ResourceType.LIST_OF_BRANCHES
+	  )
+	  .write(list); 
+	}
+	
+	public void commits(
+		String repository,
+		String branch) 
+		throws GitAPIException, 
+						GitRepositoryException {
+		
+		var repo = Repository.create(new File(
+			settings.repositoriesFolder() + "/"
+			+ repository
+		));
+
+		var list = repo
+			.branch(ObjectId.fromString(branch))
+			.commits().stream()
+			.map(commit -> new Commit(
+				ObjectId.fromString(
+					commit.id().getName()
+				)
+			))
+			.collect(Collectors.toList());
+		
+		Resource
+		.create(
+			repository, 
+			ResourceType.LIST_OF_COMMITS
+		)
+		.branch(branch)
+		.write(list);
+	}
+	
+	public void commitInfo(
+		String repository,
+		String branch,
+		String commit) 
+		throws GitAPIException, 
+						GitRepositoryException {
+	
+		var repo = Repository.create(new File(
+			settings.repositoriesFolder() + "/"
+			+ repository
+		));
+		
+		var resource = Resource.create(
+			repository, 
+			ResourceType.COMMIT_INFO
+		)
+		.branch(branch);
+		
+		var listOfCommits = resource
+			.read(Commit[].class);
+		
+		for(int i = 0; i < listOfCommits.length; i++) {
+			if(listOfCommits[i].getId()
+				.getName().equals(commit) && 
+				listOfCommits[i].getInfo() == null
+				) {
+				
+				var info = repo
+					.branch(ObjectId.fromString(branch))
+					.commit(commit).info();
+				
+				listOfCommits[i].setInfo(new CommitInfo(
+					info.getAuthorName(),
+					info.getEmail(),
+					info.getShortMessage(),
+					info.getDate()
+				));
+				
+				break;
+			}
+		}
+		
+		resource.write(listOfCommits);
 	}
 }
