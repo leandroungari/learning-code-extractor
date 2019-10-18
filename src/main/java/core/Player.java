@@ -1,5 +1,7 @@
 package core;
 
+import java.util.List;
+
 import org.eclipse.jgit.api.errors.GitAPIException;
 
 import core.data.Branch;
@@ -7,14 +9,18 @@ import core.data.Commit;
 import core.data.CommitInfo;
 import core.data.DiffFile;
 import repository.exception.GitRepositoryException;
+import util.FileUtil;
 
 public class Player {
   
   private RepositoryExecutor repoExec;
   private MetricsExecutor metricExec;
+  private SettingsExecutor settingsExec;
   
   public Player() {
     repoExec = new RepositoryExecutor();
+    metricExec = new MetricsExecutor();
+    settingsExec = new SettingsExecutor();
   }
 	
 	public Branch[] branches(
@@ -102,5 +108,12 @@ public class Player {
 		}
 		
 		return resource.read(DiffFile[].class);
+	}
+	
+	public List<String> availableRepositories() {
+		
+		return FileUtil.listOfFolders(
+      settingsExec.metricsFolder()
+    );
 	}
 }

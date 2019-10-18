@@ -1,5 +1,7 @@
 package core;
 
+import util.FileUtil;
+
 public class MetricsExecutor {
 
 	private SettingsExecutor settings;
@@ -9,10 +11,13 @@ public class MetricsExecutor {
 		settings = new SettingsExecutor();
 	}
 	
+	
+	
 	public void analyzeAllFilesInACommit(
 		String repository,
 		String branch,
 		String commit) {
 		
 	}
+	
 }
