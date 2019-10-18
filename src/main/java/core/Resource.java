@@ -4,12 +4,14 @@ import java.util.Map;
 
 import com.google.gson.Gson;
 
+import util.FileUtil;
 import util.Storage;
 
 public class Resource {
 
 	private String repository;
 	private String branch;
+	private String filename;
 	private ResourceType code;
 
 	private static Map<ResourceType, String> options = Map
@@ -25,6 +27,12 @@ public class Resource {
 			),
 			Map.entry(
 				ResourceType.DIFF_FILES, "commits.json"
+			),
+			Map.entry(
+				ResourceType.METRICS_DIFF_FILES, "diff - "
+			),
+			Map.entry(
+				ResourceType.METRICS_ALL_FILES, ""
 			)
 		);
 
@@ -34,6 +42,7 @@ public class Resource {
 		this.code = code;
 		this.repository = name;
 		this.branch = "";
+		this.filename = "";
 	}
 
 	public static Resource create(
@@ -44,7 +53,17 @@ public class Resource {
 	}
 	
 	public Resource branch(String id) {
-		branch = "/" + id;
+		branch += "/" + id;
+		return this;
+	}
+	
+	public Resource folder(String name) {
+		branch += "/" + name;
+		return this;
+	}
+	
+	public Resource name(String name) {
+		filename = name + ".json";
 		return this;
 	}
 
@@ -69,10 +88,11 @@ public class Resource {
 				.getAbsolutePath());
 			 */
 			
-			/*
-			 * return new Storage(settings.metricsFolder()
+		case METRICS_DIFF_FILES:
+		case METRICS_ALL_FILES:
+			 return new Storage(settings.metricsFolder()
 				.getAbsolutePath());
-			 */
+			 
 			default:
 				return null;
 		}
@@ -105,7 +125,16 @@ public class Resource {
 		
 		typeOfStorage()
 		.folder(repository + branch)
-		.file(options.get(code), content);
+		.file(options.get(code) + filename, content);
+	}
+	
+	public void delete() {
+		
+		FileUtil
+		.deleteFolder(
+			typeOfStorage()
+			.getFile(options.get(code) + filename)
+		);
 	}
 
 }

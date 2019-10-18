@@ -10,8 +10,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import core.Player;
+import core.data.MetricsData;
 import repository.metrics.MetricsAnalyzer;
-import repository.metrics.MetricsData;
 import util.FileUtil;
 
 @RestController()

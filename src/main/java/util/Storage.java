@@ -29,6 +29,11 @@ public class Storage {
 	  return FileUtil.readFile(path + "/" + filename);
 	}
 	
+	public File getFile(String filename) {
+		
+		return new File(path + "/" + filename);
+	}
+	
 	public boolean exists(String fileOrFolder) {
 		return FileUtil.folderExists(new File(path + "/" + fileOrFolder));
 	}
