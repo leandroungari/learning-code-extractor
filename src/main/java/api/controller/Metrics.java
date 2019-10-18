@@ -48,7 +48,7 @@ public class Metrics {
     );
   }
   
-  @GetMapping("/metrics/avaliableRepositories")
+  @GetMapping("/metrics/availableRepositories")
   @ResponseBody
   public List<String> list() {
     
