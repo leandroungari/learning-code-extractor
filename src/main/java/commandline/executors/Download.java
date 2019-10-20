@@ -1,16 +1,15 @@
 package commandline.executors;
 
-import java.io.File;
-
 import commandline.Executor;
-import repository.Repository;
+import core.Player;
 import repository.exception.GitRepositoryException;
 
 public class Download implements Executor{
 
 	private String url;
-	private String folder;
+	private String repository;
 	private boolean isHelper;
+	private Player player = new Player();
 	
 	@Override
 	public void run() {
@@ -21,13 +20,10 @@ public class Download implements Executor{
 		else {
 			
 			try {
-				Repository.create(
-				  url,
-				  new File(folder) 
-				);
+				player.download(repository, url);
 			} catch (GitRepositoryException e) {
-				System.err.println("== Download Executor ==");
-				System.err.println("Git Repository error");
+				
+				e.printStackTrace();
 			}
 		}
 	}
@@ -39,8 +35,8 @@ public class Download implements Executor{
 			isHelper = true;
 		}
 		else {
-			url = params[0];
-			folder = params[1];
+			repository = params[0];
+			url = params[1];
 		}
 	}
 
@@ -48,9 +44,9 @@ public class Download implements Executor{
 	public void helper() {
 		
 		System.out.println("This command downloads the specified repository in a local folder");
-		System.out.println("download [url] [folder]");
+		System.out.println("download [repository] [url]");
+		System.out.println(" - [repository] Name of repository");
 		System.out.println(" - [url] The URL of git to clone repository");
-		System.out.println(" - [folder] The local folder");
 	}
 
 }

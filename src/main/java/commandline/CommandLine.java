@@ -4,7 +4,7 @@ import java.io.FileNotFoundException;
 import java.util.Arrays;
 
 import commandline.executors.Download;
-import commandline.executors.Extract;
+import commandline.executors.Metrics;
 import commandline.executors.Test;
 import repository.exception.GitRepositoryException;
 
@@ -28,8 +28,8 @@ public class CommandLine {
 			executor = new Download();
 			break;
 			
-		case "extract":
-			executor = new Extract();
+		case "metrics":
+			executor = new Metrics();
 		}
 		
 		if(executor != null) {
