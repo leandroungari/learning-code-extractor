@@ -58,4 +58,19 @@ public class FileUtil {
 	  return list;
 	}
 	
+	public static String currentFolder() {
+		
+		return System.getProperty("user.dir");
+	}
+	
+	public static String userFolder() {
+		
+		return System.getProperty("user.home");
+	}
+	
+	public static void deleteFolder(File file) {
+		
+		file.delete();
+	}
+	
 }

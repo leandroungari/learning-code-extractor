@@ -43,6 +43,7 @@ public class Branch {
 		return name;
 	}
 	
+	
 	/**
 	 * It list all commits in this branch
 	 * @return
@@ -66,8 +67,8 @@ public class Branch {
 		return list;
 	}
 	
-	public Commit commit(String id) {
+	public Commit commit(ObjectId id) {
 		
-		return Commit.create(ObjectId.fromString(id));
+		return Commit.create(id);
 	}
 }

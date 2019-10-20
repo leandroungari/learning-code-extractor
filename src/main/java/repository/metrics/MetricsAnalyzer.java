@@ -3,14 +3,18 @@ package repository.metrics;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.concurrent.CompletableFuture;
+import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
 
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.eclipse.jgit.api.errors.GitAPIException;
+import org.eclipse.jgit.lib.ObjectId;
 
+import com.github.mauricioaniche.ck.CKClassResult;
 import com.google.gson.Gson;
 
+import core.data.MetricsData;
 import repository.Branch;
 import repository.Commit;
 import repository.Repository;
@@ -52,7 +56,6 @@ public class MetricsAnalyzer
 	  );
 	  try {
 	    
-	    long startTime = System.currentTimeMillis();
 	    var list = repo
       .branches()
       .stream()
@@ -68,11 +71,6 @@ public class MetricsAnalyzer
 	      list.toArray(new CompletableFuture[list.size()])
 	    ).join();
       
-      long endTime = System.currentTimeMillis();
-      //That took 18.454 seconds
-      //That took 16.267 seconds
-      //That took 13.625 seconds
-      System.out.println("That took " + (endTime - startTime)/1000.0 + " seconds");
       
     } catch (GitAPIException e) {
       System.err.println(e.getMessage());
@@ -111,6 +109,14 @@ public class MetricsAnalyzer
 
 	}
 	
+	private String filterFilename(String path) {
+		var position = path
+  		.lastIndexOf(name) + name.length() + 1;
+  	
+  	return path
+      .substring(position);
+	}
+	
 	private void processing(
 	  Storage storage, 
 	  Commit commit) {
@@ -122,19 +128,8 @@ public class MetricsAnalyzer
 	    commit.id(), 
 	    result -> {
 	    	
-	    	var position = result
-	    		.getFile()
-	    		.lastIndexOf(name) + name.length() + 1;
-	    	
-	    	var text = result
-	    		.getFile()
-		      .substring(position);
-	    	
-	      data
-	      .addFiles(
-	      	text, 
-	        result
-	      );	      
+	    	var text = filterFilename(result.getFile());
+	      data.addFiles(text, result);	      
 	    }
 	  );
 	  
@@ -142,6 +137,22 @@ public class MetricsAnalyzer
 	    storage,
 	    commit.id().getName() + ".json",
 	    data
+	  );
+	}
+	
+	public void process(
+		String commitId, 
+		BiConsumer<String,CKClassResult> consumer) {
+		
+		new CKMetric()
+	  .calculate(
+	  	ObjectId.fromString(commitId),
+	  	result -> {
+	  		consumer.accept(
+	  			filterFilename(result.getFile()), 
+	  			result
+	  	);
+	  	}
 	  );
 	}
 	

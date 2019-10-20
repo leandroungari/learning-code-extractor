@@ -1,4 +1,4 @@
-package repository.metrics;
+package core.data;
 
 import java.util.HashMap;
 

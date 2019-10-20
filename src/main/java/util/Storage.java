@@ -16,7 +16,7 @@ public class Storage {
 	}
 	
 	public void file(String filename, String data) {
-	  
+
 	  FileUtil.createFolder(new File(path));
 	  FileUtil.createFile(
 	    path + "/" + filename, 
@@ -27,5 +27,14 @@ public class Storage {
 	public String get(String filename) {
 	  
 	  return FileUtil.readFile(path + "/" + filename);
+	}
+	
+	public File getFile(String filename) {
+		
+		return new File(path + "/" + filename);
+	}
+	
+	public boolean exists(String fileOrFolder) {
+		return FileUtil.folderExists(new File(path + "/" + fileOrFolder));
 	}
 }
