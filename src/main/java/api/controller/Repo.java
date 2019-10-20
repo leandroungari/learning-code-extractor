@@ -2,10 +2,12 @@ package api.controller;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -72,5 +74,20 @@ public class Repo {
 			repository, 
 			branch, 
 			commit);
+	}
+	
+	@GetMapping("/repo/download")
+	@ResponseBody
+	public Map<String, Boolean> download(
+		@RequestBody Map<String,String> body) 
+			throws GitRepositoryException {
+
+		var repository = body.get("repository");
+		var url = body.get("url");
+		
+		player.download(repository, url);
+		return Map.ofEntries(
+			Map.entry("result", true)
+		);
 	}
 }

@@ -199,4 +199,10 @@ public class Player {
 
 		return map;
 	}
+	
+	public void download(String repository, String url) 
+		throws GitRepositoryException {
+		
+		repoExec.download(repository, url);
+	}
 }
