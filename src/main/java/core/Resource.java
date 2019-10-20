@@ -104,15 +104,15 @@ public class Resource {
 		Storage storage = typeOfStorage();
 
 		return storage
-			.folder(repository)
-			.exists(options.get(code));
+			.folder(repository + branch)
+			.exists(options.get(code) + filename);
 	}
 
 	public <T> T read(Class<T> type) {
 
 		String content = typeOfStorage()
 			.folder(repository + branch)
-			.get(options.get(code));
+			.get(options.get(code) + filename);
 
 		var gson = new Gson();
 		return gson.fromJson(content, type);

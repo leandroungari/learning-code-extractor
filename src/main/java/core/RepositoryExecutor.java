@@ -15,11 +15,11 @@ import repository.exception.GitRepositoryException;
 
 public class RepositoryExecutor {
 
-	private SettingsExecutor settings;
+	private Player player;
 	
 	public RepositoryExecutor() {
 		
-		settings = new SettingsExecutor();
+		player = new Player();
 	}
 	
 	public void branches(String repositoryName) 
@@ -27,7 +27,7 @@ public class RepositoryExecutor {
 					    GitRepositoryException {
 		
 		var repo = Repository.create(new File(
-	    settings.repositoriesFolder() + "/" +
+	    player.repositoriesFolder() + "/" +
 	    repositoryName
 	  ));
 	    
@@ -55,7 +55,7 @@ public class RepositoryExecutor {
 						GitRepositoryException {
 		
 		var repo = Repository.create(new File(
-			settings.repositoriesFolder() + "/"
+			player.repositoriesFolder() + "/"
 			+ repository
 		));
 
@@ -86,13 +86,13 @@ public class RepositoryExecutor {
 						GitRepositoryException {
 	
 		var repo = Repository.create(new File(
-			settings.repositoriesFolder() + "/"
+			player.repositoriesFolder() + "/"
 			+ repository
 		));
 		
 		var resource = Resource.create(
 			repository, 
-			ResourceType.COMMIT_INFO
+			ResourceType.LIST_OF_COMMITS
 		)
 		.branch(branch);
 		
@@ -131,7 +131,7 @@ public class RepositoryExecutor {
 							GitAPIException {
 		
 		var repo = Repository.create(new File(
-			settings.repositoriesFolder() + "/" +
+			player.repositoriesFolder() + "/" +
 			repository
 		));
 		
@@ -146,9 +146,23 @@ public class RepositoryExecutor {
 			})
 			.collect(Collectors.toList());
 		
-		Resource
-		.create(repository, ResourceType.DIFF_FILES)
-		.branch(branch)
-		.write(result);
+		var resource = Resource
+			.create(repository, ResourceType.DIFF_FILES)
+			.branch(branch);
+		
+		var listOfCommits = resource.read(Commit[].class);
+		
+		for(var i = 0; i < listOfCommits.length; i++) {
+			if(listOfCommits[i]
+				.getId()
+				.getName()
+				.equals(commit)) {
+
+				listOfCommits[i].setDiffFiles(result);
+				break;
+			}
+		}
+		
+		resource.write(listOfCommits);
 	}
 }

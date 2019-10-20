@@ -1,5 +1,6 @@
 package core;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.List;
 
@@ -14,206 +15,188 @@ import repository.exception.GitRepositoryException;
 import util.FileUtil;
 
 public class Player {
-  
-  private static RepositoryExecutor repoExec = new RepositoryExecutor();
-  private static MetricsExecutor metricExec = new MetricsExecutor();
-  private static SettingsExecutor settingsExec = new SettingsExecutor();
-  
-  public Player() {
-    
-  }
-	
-	public Branch[] branches(
-	  String repositoryName
-	) throws GitAPIException, 
-	          GitRepositoryException {
-		
-		var resource = Resource.create(
-		  repositoryName, 
-		  ResourceType.LIST_OF_BRANCHES
-		);
-		
-		if(!resource.exists()) {
-		  repoExec.branches(repositoryName);
-		}
-		
-		return resource.read(Branch[].class);
+
+	private static RepositoryExecutor repoExec = new RepositoryExecutor();
+	private static MetricsExecutor metricExec = new MetricsExecutor();
+	private static SettingsExecutor settingsExec = new SettingsExecutor();
+
+	public Player() {
+
 	}
 	
-	public Commit[] commits(
-		String repository,
-		String branch) 
-		throws GitAPIException, 
-						GitRepositoryException {
-		
+	public File repositoriesFolder() {
+		return settingsExec.repositoriesFolder();
+	}
+
+	public Branch[] branches(String repositoryName)
+		throws GitAPIException,
+		GitRepositoryException {
+
+		var resource = Resource.create(repositoryName,
+			ResourceType.LIST_OF_BRANCHES);
+
+		if (!resource.exists()) {
+			repoExec.branches(repositoryName);
+		}
+
+		return resource.read(Branch[].class);
+	}
+
+	public Commit[] commits(String repository,
+		String branch) throws GitAPIException,
+		GitRepositoryException {
+
+		var resource = Resource
+			.create(repository,
+				ResourceType.LIST_OF_COMMITS)
+			.branch(branch);
+
+		if (!resource.exists()) {
+			repoExec.commits(repository, branch);
+		}
+
+		return resource.read(Commit[].class);
+	}
+
+	public CommitInfo commitInfo(String repository,
+		String branch, String commit)
+		throws GitAPIException,
+		GitRepositoryException {
+
 		var resource = Resource.create(
-			repository, 
+			repository,
 			ResourceType.LIST_OF_COMMITS
 		)
 		.branch(branch);
 		
-		if(!resource.exists()) {
-			repoExec.commits(repository, branch);
-		}
-		
-		return resource.read(Commit[].class);
-	}
-	
-	public CommitInfo commitInfo(
-		String repository,
-		String branch,
-		String commit) 
-		throws GitAPIException, 
-						GitRepositoryException {
-		
-		var resource = Resource.create(
-			repository, 
-			ResourceType.COMMIT_INFO
-		)
-		.branch(branch);
-		
-		if(!resource.exists()) {
-			repoExec.commitInfo(repository, branch, commit);
-		}
-		
 		var listOfCommits = resource
 			.read(Commit[].class);
-		
-		for(int i = 0; i < listOfCommits.length; i++) {
-			if(commit.equals(
-				listOfCommits[i]
-				.getId()
-				.getName())) {
+
+		for (int i = 0; i < listOfCommits.length; i++) {
+			if (commit.equals(
+				listOfCommits[i].getId().getName())) {
+				
+				if(listOfCommits[i].getInfo() == null) {
+					repoExec.commitInfo(repository, branch,
+						commit);
+				}
 				
 				return listOfCommits[i].getInfo();
 			}
 		}
-		
+
 		return null;
 	}
-	
-	public DiffFile[] diffFilesFromCommit(
-		String repository,
-		String branch,
-		String commit
-		) throws GitRepositoryException, 
-							GitAPIException {
-		
+
+	public List<DiffFile> diffFilesFromCommit(
+		String repository, String branch,
+		String commit) throws GitRepositoryException,
+		GitAPIException {
+
 		var resource = Resource
 			.create(repository, ResourceType.DIFF_FILES)
 			.branch(branch);
-		
-		if(!resource.exists()) {
-			repoExec.diffFiles(repository, branch, commit);
+
+		if (!resource.exists()) {
+			repoExec.commits(repository, branch);
 		}
 		
-		return resource.read(DiffFile[].class);
+		repoExec.diffFiles(repository, branch, commit);
+		var listOfCommits = resource.read(Commit[].class);
+		Commit commitItem = null;
+		for(var i = 0; i < listOfCommits.length; i++) {
+			if(commit.equals(listOfCommits[i].getId().getName())) {
+				commitItem = listOfCommits[i];
+			}
+		}
+
+		return commitItem.getDiffFiles();
 	}
-	
+
 	public List<String> availableRepositories() {
-		
+
 		return FileUtil.listOfFolders(
-      settingsExec.metricsFolder()
-    );
+			settingsExec.metricsFolder());
 	}
-	
-	public HashMap<String, Integer[]> metricsFromDiffFilesInACommit(
-		String repository,
-		String branch,
-		String commit) 
-			throws GitRepositoryException, 
-							GitAPIException {
-		
+
+	public MetricsData metricsFromDiffFilesInACommit(
+		String repository, String branch,
+		String commit) throws GitRepositoryException,
+		GitAPIException {
+
 		var resourceDiff = Resource
-			.create(repository, ResourceType.METRICS_DIFF_FILES)
+			.create(
+				repository,
+				ResourceType.METRICS_DIFF_FILES
+			)
 			.folder("commits")
 			.name(commit);
-		
+
 		if (!resourceDiff.exists()) {
 			metricExec.analyzeDiffFilesInACommit(
-				repository, 
-				branch, 
-				commit
-			);
+				repository, branch, commit);
 		}
-		
-		return resourceDiff
-			.read(MetricsData.class)
-			.getFiles();
+
+		return resourceDiff.read(MetricsData.class);
 	}
-	
-	public HashMap<String, Integer[]> metricsFromAllFilesInACommit(
-		String repository,
-		String branch,
-		String commit) 
-		throws GitRepositoryException, 
-						GitAPIException {
-		
-		var resourceDiff = Resource
-			.create(repository, ResourceType.METRICS_ALL_FILES)
+
+	public MetricsData metricsFromAllFilesInACommit(
+		String repository, String branch,
+		String commit) throws GitRepositoryException,
+		GitAPIException {
+
+		var resourceAll = Resource
+			.create(repository,
+				ResourceType.METRICS_ALL_FILES)
 			.folder("commits")
 			.name(commit);
-		
-		if (!resourceDiff.exists()) {
-			metricExec.analyzeDiffFilesInACommit(
-				repository, 
-				branch, 
-				commit
-			);
+
+		if (!resourceAll.exists()) {
+			metricExec.analyzeAllFilesInACommit(
+				repository, branch, commit);
 		}
-		
-		return resourceDiff
-			.read(MetricsData.class)
-			.getFiles();
+
+		return resourceAll.read(MetricsData.class);
 	}
-	
-	public HashMap<String, HashMap<String, Integer[]>> 
-		metricsFromDiffFilesInARangeOfCommits(
-			String repository,
-			String branch,
-			Commit[] commits) 
-				throws GitRepositoryException, 
-				GitAPIException {
-		
-		var map = new HashMap<String, HashMap<String, Integer[]>>();
-		for(var commit: commits) {
+
+	public HashMap<String, MetricsData> metricsFromDiffFilesInARangeOfCommits(
+		String repository, String branch,
+		Commit[] commits)
+		throws GitRepositoryException,
+		GitAPIException {
+
+		var map = new HashMap<String, MetricsData>();
+		for (var commit : commits) {
+			
 			var result = metricsFromDiffFilesInACommit(
 				repository, 
-				branch, 
-				commit.getId().getName()
+				branch,
+				commit
+				.getId()
+				.getName()
 			);
-			
-			map.put(
-				commit.getId().getName(),
-				result
-			);
+
+			map.put(commit.getId().getName(), result);
 		}
-		
+
 		return map;
 	}
-	
-	public HashMap<String, HashMap<String, Integer[]>> 
-	metricsFromAllFilesInARangeOfCommits(
-		String repository,
-		String branch,
-		Commit[] commits) 
-			throws GitRepositoryException, 
-			GitAPIException {
-	
-	var map = new HashMap<String, HashMap<String, Integer[]>>();
-	for(var commit: commits) {
-		var result = metricsFromAllFilesInACommit(
-			repository, 
-			branch, 
-			commit.getId().getName()
-		);
-		
-		map.put(
-			commit.getId().getName(),
-			result
-		);
+
+	public HashMap<String, MetricsData> metricsFromAllFilesInARangeOfCommits(
+		String repository, String branch,
+		Commit[] commits)
+		throws GitRepositoryException,
+		GitAPIException {
+
+		var map = new HashMap<String, MetricsData>();
+		for (var commit : commits) {
+			var result = metricsFromAllFilesInACommit(
+				repository, branch,
+				commit.getId().getName());
+
+			map.put(commit.getId().getName(), result);
+		}
+
+		return map;
 	}
-	
-	return map;
-}
 }

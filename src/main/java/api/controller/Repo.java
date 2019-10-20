@@ -1,6 +1,7 @@
 package api.controller;
 
 import java.io.IOException;
+import java.util.List;
 
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -60,7 +61,7 @@ public class Repo {
 	
 	@GetMapping("/repo/{repository}/{branch}/{commit}/diffFiles")
 	@ResponseBody
-	public DiffFile[] diffFiles(
+	public List<DiffFile> diffFiles(
 		@PathVariable String repository,
 		@PathVariable String branch,
 		@PathVariable String commit)
