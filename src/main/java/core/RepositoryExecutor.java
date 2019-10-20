@@ -165,4 +165,18 @@ public class RepositoryExecutor {
 		
 		resource.write(listOfCommits);
 	}
+	
+	public void download(
+		String repository, String url) 
+			throws GitRepositoryException {
+		
+		Repository.create(
+			url, 
+			new File(
+				player.repositoriesFolder() + "/" +
+				repository
+			)
+		);
+		
+	}
 }
