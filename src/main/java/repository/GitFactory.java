@@ -16,6 +16,7 @@ import org.eclipse.jgit.lib.ObjectId;
 import org.eclipse.jgit.lib.Ref;
 import org.eclipse.jgit.revwalk.RevCommit;
 import org.eclipse.jgit.revwalk.RevWalk;
+import org.eclipse.jgit.treewalk.AbstractTreeIterator;
 import org.eclipse.jgit.treewalk.CanonicalTreeParser;
 import org.eclipse.jgit.treewalk.TreeWalk;
 import org.eclipse.jgit.treewalk.filter.PathFilter;
@@ -99,9 +100,16 @@ public String absoluteFolder() {
 		var revWalk = walk();
 		
 		revWalk.markStart(commit(id));
-		var commit = revWalk
+		RevCommit commit = null;
+		
+		try {
+			revWalk
 			.next()
 			.getParent(0);
+		}
+		catch(ArrayIndexOutOfBoundsException e) {
+			//
+		}
 		
 		revWalk.close();
 		
@@ -159,8 +167,8 @@ public String absoluteFolder() {
 	}
 	
 	public void diff(
-		CanonicalTreeParser older,
-		CanonicalTreeParser newer,
+		AbstractTreeIterator older,
+		AbstractTreeIterator newer,
 		Consumer<? super DiffEntry> action
 	) throws GitAPIException {
 		
