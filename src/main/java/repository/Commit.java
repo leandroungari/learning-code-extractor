@@ -8,7 +8,9 @@ import java.util.stream.Collectors;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.lib.ObjectId;
 import org.eclipse.jgit.revwalk.RevCommit;
+import org.eclipse.jgit.treewalk.AbstractTreeIterator;
 import org.eclipse.jgit.treewalk.CanonicalTreeParser;
+import org.eclipse.jgit.treewalk.EmptyTreeIterator;
 
 import repository.commit.CommitInfo;
 import repository.commit.Diff;
@@ -59,7 +61,7 @@ public class Commit {
 			.collect(Collectors.toList());
 	}
 	
-	public CanonicalTreeParser createTreeParser() {
+	public AbstractTreeIterator createTreeParser() {
 	
 		var factory = new GitFactory();
 		return factory.createTreeParser(id);
@@ -81,7 +83,14 @@ public class Commit {
 		var list = new ArrayList<Diff>();
 		var otherCommit = before();
 		
-		var oldTree = otherCommit.createTreeParser();
+		AbstractTreeIterator oldTree;
+		if(otherCommit.id() == null) {
+			oldTree = new EmptyTreeIterator();
+		}
+		else {
+			oldTree = otherCommit.createTreeParser();
+		}
+		
 		var newTree = this.createTreeParser();
 		
 		var factory = new GitFactory();
