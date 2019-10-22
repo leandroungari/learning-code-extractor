@@ -103,12 +103,12 @@ public String absoluteFolder() {
 		RevCommit commit = null;
 		
 		try {
-			revWalk
+			commit = revWalk
 			.next()
 			.getParent(0);
 		}
 		catch(ArrayIndexOutOfBoundsException e) {
-			//
+			//alguns casos
 		}
 		
 		revWalk.close();
