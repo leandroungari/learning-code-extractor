@@ -1,5 +1,5 @@
-# Eclipse
-.classpath
+
+.vscode/
 .project
 .settings/
 bin/
