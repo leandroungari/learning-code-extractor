@@ -7,7 +7,7 @@ import com.github.mauricioaniche.ck.CKClassResult;
 public class MetricsData {
 
   private String[] metrics;
-  private HashMap<String, Integer[]> files;
+  private HashMap<String, Double[]> files;
   
   public MetricsData() {
     
@@ -23,7 +23,7 @@ public class MetricsData {
       "LCOM"
     };
     
-    files = new HashMap<String, Integer[]>();
+    files = new HashMap<String, Double[]>();
   }
   
   public void addFiles(
@@ -33,16 +33,16 @@ public class MetricsData {
     
     files.put(
       name,
-      new Integer[] {
-        result.getCbo(),
-        result.getDit(),
-        result.getNumberOfFields(),
-        result.getNumberOfMethods(),
-        result.getNosi(),
-        result.getRfc(),
-        result.getWmc(),
-        result.getLoc(),
-        result.getLcom()
+      new Double[] {
+        Double.valueOf(result.getCbo()),
+        Double.valueOf(result.getDit()),
+        Double.valueOf(result.getNumberOfFields()),
+        Double.valueOf(result.getNumberOfMethods()),
+        Double.valueOf(result.getNosi()),
+        Double.valueOf(result.getRfc()),
+        Double.valueOf(result.getWmc()),
+        Double.valueOf(result.getLoc()),
+        Double.valueOf(result.getLcom())
       }
     );
   }
@@ -51,7 +51,7 @@ public class MetricsData {
     return metrics;
   }
   
-  public HashMap<String, Integer[]> getFiles() {
+  public HashMap<String, Double[]> getFiles() {
     return files;
   }
 }
