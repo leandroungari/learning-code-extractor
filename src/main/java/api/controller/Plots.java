@@ -2,6 +2,7 @@ package api.controller;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
@@ -54,65 +55,137 @@ public class Plots {
     };
   };
 
-
-  @GetMapping("/plots/averageMetricsFiles/{repository}/{branch}/{from}/{to}")
+  @GetMapping("/plots/averageMetricsFiles/{repository}/{branch}/{from}/{to}/{step}")
   @ResponseBody
   public Map<String,Map<String,Double>> averageMetricsFiles(
     @PathVariable String repository, 
     @PathVariable String branch, 
     @PathVariable Integer from, 
-    @PathVariable Integer to)
+    @PathVariable Integer to,
+    @PathVariable Integer step)
       throws GitRepositoryException, 
              GitAPIException {
 
-    var data = player
-      .metricsFromDiffFilesInARangeOfCommits(
-        repository, 
-        branch, 
-        extractRangeOfCommits(repository, branch, from, to)
-      );
-
     return extractValuesFromCommits(
-      data, 
+      data(repository,branch,from,to,step),
       averageOfMetricsOfFiles
     );
   }
 
-  @GetMapping("/plots/sumMetricsFiles/{repository}/{branch}/{from}/{to}")
+  @GetMapping("/plots/sumMetricsFiles/{repository}/{branch}/{from}/{to}/{step}")
   @ResponseBody
   public Map<String,Map<String,Double>> sumMetricsFiles(
     @PathVariable String repository, 
     @PathVariable String branch, 
     @PathVariable Integer from, 
-    @PathVariable Integer to)
+    @PathVariable Integer to,
+    @PathVariable Integer step)
       throws GitRepositoryException, 
              GitAPIException {
 
-    var data = player
-      .metricsFromDiffFilesInARangeOfCommits(
-        repository, 
-        branch, 
-        extractRangeOfCommits(repository, branch, from, to)
-      );
-
     return extractValuesFromCommits(
-      data, 
-      sumOfMetricsOfFiles
+      data(repository,branch,from,to,step),
+      averageOfMetricsOfFiles
     );
   }
 
-  
+  @GetMapping("/plots/sumMetricsFiles/{repository}/{branch}/{from}/{to}/{step}/normalized")
+  @ResponseBody
+  public Map<String,Map<String,Double>> normalizedSumMetricsFiles(
+    @PathVariable String repository, 
+    @PathVariable String branch, 
+    @PathVariable Integer from, 
+    @PathVariable Integer to,
+    @PathVariable Integer step)
+      throws GitRepositoryException, 
+             GitAPIException {
+
+
+              //arrumar tudo isso
+    var result = sumMetricsFiles(repository, branch, from, to, step);
+    Double[][] normalizedData = normalizeMetrics(new Double[][]{
+      (Double[]) result.values().stream().map(a -> a.get("cbo")).toArray(),
+      (Double[]) result.values().stream().map(a -> a.get("dit")).toArray(),
+      (Double[]) result.values().stream().map(a -> a.get("nosi")).toArray(),
+      (Double[]) result.values().stream().map(a -> a.get("rfc")).toArray(),
+      (Double[]) result.values().stream().map(a -> a.get("wmc")).toArray()
+    });
+
+
+    Map<String,Map<String,Double>> data = Map.of();
+    var commits = result.
+    for(var i = 0; i < commits.size(); i++) {
+      commits.
+    }
+  }
+
+  private HashMap<String,MetricsData> data(
+    String repository, 
+    String branch, 
+    Integer from, 
+    Integer to,
+    Integer step) throws GitRepositoryException, 
+                       GitAPIException {
+      
+    var listOfCommits = extractRangeOfCommits(
+      repository,branch,from,to,step
+    );
+
+    return (
+      step == 1 ? 
+      diffFiles(repository, branch, listOfCommits) :
+      allFilesData(repository, branch, listOfCommits)
+    );
+  }
+
+  private HashMap<String,MetricsData> allFilesData(
+    String repository,
+    String branch,
+    Commit[] listOfCommits
+  ) throws GitRepositoryException, GitAPIException {
+
+    return player
+      .metricsFromAllFilesInARangeOfCommits(
+        repository,branch,listOfCommits
+      );
+  }
+
+  private HashMap<String,MetricsData> diffFiles(
+    String repository,
+    String branch,
+    Commit[] listOfCommits
+  ) throws GitRepositoryException, GitAPIException {
+    
+    var total = player
+      .metricsFromDiffFilesInARangeOfCommits(
+        repository,branch,listOfCommits
+      );
+
+    var firstCommit = listOfCommits[listOfCommits.length - 1]
+      .getId().getName();
+
+    total.put(
+      firstCommit,
+      player.metricsFromAllFilesInACommit(
+        repository,branch,firstCommit
+      )
+    );
+
+    return total;
+  }
 
   private Commit[] extractRangeOfCommits(
     String repository, 
     String branch, 
     Integer from, 
-    Integer to) throws GitAPIException, 
-                       GitRepositoryException {
+    Integer to,
+    Integer step) 
+      throws GitAPIException, 
+             GitRepositoryException {
     
     var allCommits = player.commits(repository, branch);
     var listOfCommits = new ArrayList<Commit>();
-    for(var i = from; i <= to; i++) {
+    for(var i = from; i <= to; i+= step) {
       listOfCommits.add(allCommits[i]);
     }
     return listOfCommits
@@ -140,6 +213,28 @@ public class Plots {
       Map.entry("rfc", data[3]),
       Map.entry("wmc", data[4])
     );
+  }
+
+  private Double[] normalize(Double[] list) {
+
+    var data = Arrays.stream(list);
+    var min = data.min(Double::compare).get();
+    var max = data.max(Double::compare).get();
+
+    return (Double[]) data
+      .map(num -> (num - min) / (max - min))
+      .toArray();
+  }
+
+  private Double[][] normalizeMetrics(Double[][] lists) {
+    
+    return new Double[][]{
+      normalize(lists[0]),
+      normalize(lists[1]),
+      normalize(lists[2]),
+      normalize(lists[3]),
+      normalize(lists[4])
+    };
   }
 
   
