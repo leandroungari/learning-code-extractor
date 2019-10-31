@@ -22,10 +22,28 @@ public class Plots {
 
   private static Player player = new Player();
 
+  private Function<HashMap<String,Double[]>,Double[]>
+    sumOfMetricsOfFiles = files -> {
+
+    var sumOfMetrics = new Double[]{
+      0.0,0.0,0.0,0.0,0.0
+    };
+
+    files.forEach((file,metrics) -> {
+      sumOfMetrics[0] += metrics[0];
+      sumOfMetrics[1] += metrics[1];
+      sumOfMetrics[2] += metrics[2];
+      sumOfMetrics[3] += metrics[3];
+      sumOfMetrics[4] += metrics[4];
+    });
+
+    return sumOfMetrics;
+  };
+
   private Function<HashMap<String,Double[]>,Double[]> 
     averageOfMetricsOfFiles = files -> {
     
-    var sum = sumOfMetricsOfFiles(files);
+    var sum = sumOfMetricsOfFiles.apply(files);
     var size = files.size();
     return new Double[]{
       sum[0]/size,
@@ -35,6 +53,7 @@ public class Plots {
       sum[4]/size,
     };
   };
+
 
   @GetMapping("/plots/averageMetricsFiles/{repository}/{branch}/{from}/{to}")
   @ResponseBody
@@ -58,6 +77,31 @@ public class Plots {
       averageOfMetricsOfFiles
     );
   }
+
+  @GetMapping("/plots/sumMetricsFiles/{repository}/{branch}/{from}/{to}")
+  @ResponseBody
+  public Map<String,Map<String,Double>> sumMetricsFiles(
+    @PathVariable String repository, 
+    @PathVariable String branch, 
+    @PathVariable Integer from, 
+    @PathVariable Integer to)
+      throws GitRepositoryException, 
+             GitAPIException {
+
+    var data = player
+      .metricsFromDiffFilesInARangeOfCommits(
+        repository, 
+        branch, 
+        extractRangeOfCommits(repository, branch, from, to)
+      );
+
+    return extractValuesFromCommits(
+      data, 
+      sumOfMetricsOfFiles
+    );
+  }
+
+  
 
   private Commit[] extractRangeOfCommits(
     String repository, 
@@ -98,20 +142,6 @@ public class Plots {
     );
   }
 
-  private Double[] sumOfMetricsOfFiles(HashMap<String,Double[]> files) {
-    var sumOfMetrics = new Double[]{
-      0.0,0.0,0.0,0.0,0.0
-    };
-
-    files.forEach((file,metrics) -> {
-      sumOfMetrics[0] += metrics[0];
-      sumOfMetrics[1] += metrics[1];
-      sumOfMetrics[2] += metrics[2];
-      sumOfMetrics[3] += metrics[3];
-      sumOfMetrics[4] += metrics[4];
-    });
-
-    return sumOfMetrics;
-  }
+  
 
 }
