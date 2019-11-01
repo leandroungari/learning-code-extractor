@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -62,6 +63,34 @@ public class Plots {
       sum[4]/size,
     };
   };
+
+  private BiFunction<HashMap<String,Double[]>,String,HashMap<String,Double>>
+    evolution = (files, metric) -> {
+    
+    final Integer position = chooseMetric(metric);
+    var result = new HashMap<String,Double>();
+    files.forEach((file, metrics) -> {
+      result.put(file,metrics[position]);
+    });
+    
+    return result;
+  };
+
+  private Integer chooseMetric(String name) {
+    switch(name) {
+      case "cbo":
+        return CBO;
+      case "dit":
+        return DIT;
+      case "nosi":
+        return NOSI;
+      case "rfc":
+        return RFC;
+      case "wmc":
+        return WMC;
+    }
+    return 0;
+  }
 
   @GetMapping("/plots/averageMetricsFiles/{repository}/{branch}/{from}/{to}/{step}")
   @ResponseBody
@@ -127,6 +156,31 @@ public class Plots {
     return normalizeMetrics(data);
   }
 
+  @GetMapping("/plots/evolution/{repository}/{branch}/{from}/{to}/{step}/{metric}")
+  @ResponseBody
+  public Map<String,Map<String,Double>> evolutionOfFilesByMetrics(
+    @PathVariable String repository, 
+    @PathVariable String branch, 
+    @PathVariable Integer from, 
+    @PathVariable Integer to,
+    @PathVariable Integer step,
+    @PathVariable String metric)
+      throws GitRepositoryException, 
+             GitAPIException {
+
+    var data = data(repository,branch,from,to,step);
+    
+    var result = new HashMap<String,Map<String,Double>>();
+    data.forEach((commit, files) -> {
+      result.put(
+        commit,
+        evolution.apply(files.getFiles(), metric)
+      );
+    });
+
+    return result;
+  }
+
   private Map<String,Map<String,Double>> normalizeMetrics(Map<String,Map<String,Double>> data) {
     
     Map<String,Double[]> stats = extractStats(data);
@@ -136,15 +190,9 @@ public class Plots {
     var rfc = stats.get("rfc");
     var wmc = stats.get("wmc");
 
-    System.out.println(cbo[0] + " -- " + cbo[1]);
-    System.out.println(dit[0] + " -- " + dit[1]);
-    System.out.println(nosi[0] + " -- " + nosi[1]);
-    System.out.println(rfc[0] + " -- " + rfc[1]);
-    System.out.println(wmc[0] + " -- " + wmc[1]);
-
     var result = new HashMap<String,Map<String,Double>>();
     data.forEach((commit, metrics) -> {
-      System.out.println(metrics.get("cbo") + " - " + metrics.get("dit") + " - " + metrics.get("nosi") + " - " + metrics.get("rfc") + " - " + metrics.get("wmc"));
+
       result.put(commit, Map.ofEntries(
         Map.entry("cbo", (metrics.get("cbo")-cbo[0])/(cbo[1]-cbo[0] != 0 ? cbo[1]-cbo[0] : 1)),
         Map.entry("dit", (metrics.get("dit")-dit[0])/(dit[1]-dit[0] != 0 ? dit[1]-dit[0] : 1)),
