@@ -112,6 +112,21 @@ public class Plots {
     return normalizeMetrics(data);
   }
 
+  @GetMapping("/plots/averageMetricsFiles/{repository}/{branch}/{from}/{to}/{step}/normalized")
+  @ResponseBody
+  public Map<String,Map<String,Double>> normalizedAverageMetricsFiles(
+    @PathVariable String repository, 
+    @PathVariable String branch, 
+    @PathVariable Integer from, 
+    @PathVariable Integer to,
+    @PathVariable Integer step)
+      throws GitRepositoryException, 
+             GitAPIException {
+
+    var data = averageMetricsFiles(repository, branch, from, to, step);
+    return normalizeMetrics(data);
+  }
+
   private Map<String,Map<String,Double>> normalizeMetrics(Map<String,Map<String,Double>> data) {
     
     Map<String,Double[]> stats = extractStats(data);
@@ -121,9 +136,15 @@ public class Plots {
     var rfc = stats.get("rfc");
     var wmc = stats.get("wmc");
 
+    System.out.println(cbo[0] + " -- " + cbo[1]);
+    System.out.println(dit[0] + " -- " + dit[1]);
+    System.out.println(nosi[0] + " -- " + nosi[1]);
+    System.out.println(rfc[0] + " -- " + rfc[1]);
+    System.out.println(wmc[0] + " -- " + wmc[1]);
+
     var result = new HashMap<String,Map<String,Double>>();
     data.forEach((commit, metrics) -> {
-
+      System.out.println(metrics.get("cbo") + " - " + metrics.get("dit") + " - " + metrics.get("nosi") + " - " + metrics.get("rfc") + " - " + metrics.get("wmc"));
       result.put(commit, Map.ofEntries(
         Map.entry("cbo", (metrics.get("cbo")-cbo[0])/(cbo[1]-cbo[0] != 0 ? cbo[1]-cbo[0] : 1)),
         Map.entry("dit", (metrics.get("dit")-dit[0])/(dit[1]-dit[0] != 0 ? dit[1]-dit[0] : 1)),
