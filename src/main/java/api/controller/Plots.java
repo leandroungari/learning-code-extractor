@@ -2,10 +2,11 @@ package api.controller;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -21,6 +22,13 @@ import repository.exception.GitRepositoryException;
 @RestController
 public class Plots {
 
+  private static final Integer CBO = 0;
+  private static final Integer DIT = 1;
+  private static final Integer NOSI = 4;
+  private static final Integer RFC = 5;
+  private static final Integer WMC = 6;
+
+
   private static Player player = new Player();
 
   private Function<HashMap<String,Double[]>,Double[]>
@@ -31,11 +39,11 @@ public class Plots {
     };
 
     files.forEach((file,metrics) -> {
-      sumOfMetrics[0] += metrics[0];
-      sumOfMetrics[1] += metrics[1];
-      sumOfMetrics[2] += metrics[2];
-      sumOfMetrics[3] += metrics[3];
-      sumOfMetrics[4] += metrics[4];
+      sumOfMetrics[0] += metrics[CBO];
+      sumOfMetrics[1] += metrics[DIT];
+      sumOfMetrics[2] += metrics[NOSI];
+      sumOfMetrics[3] += metrics[RFC];
+      sumOfMetrics[4] += metrics[WMC];
     });
 
     return sumOfMetrics;
@@ -85,7 +93,7 @@ public class Plots {
 
     return extractValuesFromCommits(
       data(repository,branch,from,to,step),
-      averageOfMetricsOfFiles
+      sumOfMetricsOfFiles
     );
   }
 
@@ -100,23 +108,76 @@ public class Plots {
       throws GitRepositoryException, 
              GitAPIException {
 
+    var data = sumMetricsFiles(repository, branch, from, to, step);
+    return normalizeMetrics(data);
+  }
 
-              //arrumar tudo isso
-    var result = sumMetricsFiles(repository, branch, from, to, step);
-    Double[][] normalizedData = normalizeMetrics(new Double[][]{
-      (Double[]) result.values().stream().map(a -> a.get("cbo")).toArray(),
-      (Double[]) result.values().stream().map(a -> a.get("dit")).toArray(),
-      (Double[]) result.values().stream().map(a -> a.get("nosi")).toArray(),
-      (Double[]) result.values().stream().map(a -> a.get("rfc")).toArray(),
-      (Double[]) result.values().stream().map(a -> a.get("wmc")).toArray()
+  private Map<String,Map<String,Double>> normalizeMetrics(Map<String,Map<String,Double>> data) {
+    
+    Map<String,Double[]> stats = extractStats(data);
+    var cbo = stats.get("cbo");
+    var dit = stats.get("dit");
+    var nosi = stats.get("nosi");
+    var rfc = stats.get("rfc");
+    var wmc = stats.get("wmc");
+
+    var result = new HashMap<String,Map<String,Double>>();
+    data.forEach((commit, metrics) -> {
+
+      result.put(commit, Map.ofEntries(
+        Map.entry("cbo", (metrics.get("cbo")-cbo[0])/(cbo[1]-cbo[0] != 0 ? cbo[1]-cbo[0] : 1)),
+        Map.entry("dit", (metrics.get("dit")-dit[0])/(dit[1]-dit[0] != 0 ? dit[1]-dit[0] : 1)),
+        Map.entry("nosi", (metrics.get("nosi")-nosi[0])/(nosi[1]-nosi[0] != 0 ? nosi[1]-nosi[0] : 1)),
+        Map.entry("rfc", (metrics.get("rfc")-rfc[0])/(rfc[1]-rfc[0] != 0 ? rfc[1]-rfc[0] : 1)),
+        Map.entry("wmc", (metrics.get("wmc")-wmc[0])/(wmc[1]-wmc[0] != 0 ? wmc[1]-wmc[0] : 1))
+      ));
     });
 
+    return result;
+  }
 
-    Map<String,Map<String,Double>> data = Map.of();
-    var commits = result.
-    for(var i = 0; i < commits.size(); i++) {
-      commits.
-    }
+  private Map<String,Double[]> extractStats(Map<String,Map<String,Double>> result) {
+    return Map.ofEntries(
+      Map.entry(
+        "cbo", 
+        normalize(
+          result.values().stream()
+            .map(a -> a.get("cbo"))
+            .collect(Collectors.toList())
+        )
+      ),
+      Map.entry(
+        "dit",
+        normalize(
+          result.values().stream()
+            .map(a -> a.get("dit"))
+            .collect(Collectors.toList())
+        )
+      ),
+      Map.entry(
+        "nosi",
+        normalize(
+          result.values().stream()
+            .map(a -> a.get("nosi"))
+            .collect(Collectors.toList()))
+      ),
+      Map.entry(
+        "rfc",
+        normalize(
+          result.values().stream()
+            .map(a -> a.get("rfc"))
+            .collect(Collectors.toList())
+          )
+      ),
+      Map.entry(
+        "wmc",
+        normalize(
+          result.values().stream()
+            .map(a -> a.get("wmc"))
+            .collect(Collectors.toList())
+          )
+      )
+    );
   }
 
   private HashMap<String,MetricsData> data(
@@ -209,32 +270,18 @@ public class Plots {
     return Map.ofEntries(
       Map.entry("cbo", data[0]),
       Map.entry("dit", data[1]),
-      Map.entry("nosi", data[2]),
-      Map.entry("rfc", data[3]),
-      Map.entry("wmc", data[4])
+      Map.entry("nosi", data[2]),//4
+      Map.entry("rfc", data[3]),//5
+      Map.entry("wmc", data[4])//6
     );
   }
 
-  private Double[] normalize(Double[] list) {
+  private Double[] normalize(List<Double> list) {
 
-    var data = Arrays.stream(list);
-    var min = data.min(Double::compare).get();
-    var max = data.max(Double::compare).get();
+    var min = list.stream().min(Double::compare).get();
+    var max = list.stream().max(Double::compare).get();
 
-    return (Double[]) data
-      .map(num -> (num - min) / (max - min))
-      .toArray();
-  }
-
-  private Double[][] normalizeMetrics(Double[][] lists) {
-    
-    return new Double[][]{
-      normalize(lists[0]),
-      normalize(lists[1]),
-      normalize(lists[2]),
-      normalize(lists[3]),
-      normalize(lists[4])
-    };
+    return new Double[]{min,max};
   }
 
   
