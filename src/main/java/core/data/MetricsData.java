@@ -46,6 +46,10 @@ public class MetricsData {
       }
     );
   }
+
+  public void addFile(String file, Double[] metrics) {
+    files.put(file, metrics);
+  }
   
   public String[] getMetrics() {
     return metrics;

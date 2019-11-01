@@ -222,17 +222,70 @@ public class Plots {
         repository,branch,listOfCommits
       );
 
+    total = replaceFirstCommit(
+      total, repository, branch, listOfCommits
+    );
+
+    total = fillNonModifiedFiles(
+      total, 
+      Arrays.stream(listOfCommits)
+        .map(a -> a.getId().getName())
+        .collect(Collectors.toList())
+    );
+
+    return total;
+  }
+
+  private HashMap<String,MetricsData> fillNonModifiedFiles(
+    HashMap<String,MetricsData> data,
+    List<String> commitsIds) {
+    
+    for(var i = commitsIds.size()-1; i > 0; i--) {
+      data.put(
+        commitsIds.get(i-1),
+        createData(
+          data.get(commitsIds.get(i)), 
+          data.get(commitsIds.get(i-1))
+        )
+      );
+    }
+
+    return data;
+  }
+
+  private MetricsData createData(MetricsData current, MetricsData next) {
+    var newData = new MetricsData();
+    
+    current.getFiles().forEach((file,metrics) -> {
+      newData.addFile(file, metrics);
+    });
+
+    next.getFiles().forEach((file,metrics) -> {
+      newData.addFile(file, metrics);
+    });
+
+    return newData;
+  }
+
+  private HashMap<String,MetricsData> replaceFirstCommit(
+    HashMap<String,MetricsData> data,
+    String repository,
+    String branch,
+    Commit[] listOfCommits) 
+      throws GitRepositoryException, 
+      GitAPIException {
+    
     var firstCommit = listOfCommits[listOfCommits.length - 1]
       .getId().getName();
 
-    total.put(
+    data.put(
       firstCommit,
       player.metricsFromAllFilesInACommit(
         repository,branch,firstCommit
       )
     );
 
-    return total;
+    return data;
   }
 
   private Commit[] extractRangeOfCommits(
