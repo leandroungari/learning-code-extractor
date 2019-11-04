@@ -18,79 +18,13 @@ import org.springframework.web.bind.annotation.RestController;
 import core.Player;
 import core.data.Commit;
 import core.data.MetricsData;
+import core.metricsexecutor.Stats;
 import repository.exception.GitRepositoryException;
 
 @RestController
 public class Plots {
 
-  private static final Integer CBO = 0;
-  private static final Integer DIT = 1;
-  private static final Integer NOSI = 4;
-  private static final Integer RFC = 5;
-  private static final Integer WMC = 6;
-
-
   private static Player player = new Player();
-
-  private Function<HashMap<String,Double[]>,Double[]>
-    sumOfMetricsOfFiles = files -> {
-
-    var sumOfMetrics = new Double[]{
-      0.0,0.0,0.0,0.0,0.0
-    };
-
-    files.forEach((file,metrics) -> {
-      sumOfMetrics[0] += metrics[CBO];
-      sumOfMetrics[1] += metrics[DIT];
-      sumOfMetrics[2] += metrics[NOSI];
-      sumOfMetrics[3] += metrics[RFC];
-      sumOfMetrics[4] += metrics[WMC];
-    });
-
-    return sumOfMetrics;
-  };
-
-  private Function<HashMap<String,Double[]>,Double[]> 
-    averageOfMetricsOfFiles = files -> {
-    
-    var sum = sumOfMetricsOfFiles.apply(files);
-    var size = files.size();
-    return new Double[]{
-      sum[0]/(size != 0 ? size : 1),
-      sum[1]/(size != 0 ? size : 1),
-      sum[2]/(size != 0 ? size : 1),
-      sum[3]/(size != 0 ? size : 1),
-      sum[4]/(size != 0 ? size : 1),
-    };
-  };
-
-  private BiFunction<HashMap<String,Double[]>,String,HashMap<String,Double>>
-    evolution = (files, metric) -> {
-    
-    final Integer position = chooseMetric(metric);
-    var result = new HashMap<String,Double>();
-    files.forEach((file, metrics) -> {
-      result.put(file,metrics[position]);
-    });
-    
-    return result;
-  };
-
-  private Integer chooseMetric(String name) {
-    switch(name) {
-      case "cbo":
-        return CBO;
-      case "dit":
-        return DIT;
-      case "nosi":
-        return NOSI;
-      case "rfc":
-        return RFC;
-      case "wmc":
-        return WMC;
-    }
-    return 0;
-  }
 
   @GetMapping("/plots/averageMetricsFiles/{repository}/{branch}/{from}/{to}/{step}")
   @ResponseBody
@@ -105,7 +39,7 @@ public class Plots {
 
     return extractValuesFromCommits(
       data(repository,branch,from,to,step),
-      averageOfMetricsOfFiles
+      Stats.getAverageOfMetricsOfFiles()
     );
   }
 
@@ -122,7 +56,7 @@ public class Plots {
 
     return extractValuesFromCommits(
       data(repository,branch,from,to,step),
-      sumOfMetricsOfFiles
+      Stats.getSumOfMetricsOfFiles()
     );
   }
 
@@ -174,7 +108,7 @@ public class Plots {
     data.forEach((commit, files) -> {
       result.put(
         commit,
-        evolution.apply(files.getFiles(), metric)
+        Stats.getEvolution().apply(files.getFiles(), metric)
       );
     });
 

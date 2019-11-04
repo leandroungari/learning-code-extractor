@@ -10,6 +10,7 @@ import java.util.stream.Collectors;
 import org.eclipse.jgit.api.errors.GitAPIException;
 
 import core.data.MetricsData;
+import core.metricsexecutor.Stats;
 import core.data.Commit;
 import repository.Repository;
 import repository.exception.GitRepositoryException;
@@ -175,12 +176,11 @@ public class MetricsExecutor {
   public void statsOfRepository(String repository) 
     throws GitAPIException, GitRepositoryException {
 
-    var branches = player.branches(repository);
-
-    for(var branch: branches) {
-      statsOfBranch
-    }
+    var stats = new Stats(player, repository);
+    
   }
+
+
 
 
 	
