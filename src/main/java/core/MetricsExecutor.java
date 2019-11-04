@@ -170,6 +170,18 @@ public class MetricsExecutor {
 	    .join();
 	  }
 		
-	}
+  }
+  
+  public void statsOfRepository(String repository) 
+    throws GitAPIException, GitRepositoryException {
+
+    var branches = player.branches(repository);
+
+    for(var branch: branches) {
+      statsOfBranch
+    }
+  }
+
+
 	
 }
