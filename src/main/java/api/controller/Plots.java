@@ -56,11 +56,11 @@ public class Plots {
     var sum = sumOfMetricsOfFiles.apply(files);
     var size = files.size();
     return new Double[]{
-      sum[0]/size,
-      sum[1]/size,
-      sum[2]/size,
-      sum[3]/size,
-      sum[4]/size,
+      sum[0]/(size != 0 ? size : 1),
+      sum[1]/(size != 0 ? size : 1),
+      sum[2]/(size != 0 ? size : 1),
+      sum[3]/(size != 0 ? size : 1),
+      sum[4]/(size != 0 ? size : 1),
     };
   };
 
@@ -384,7 +384,7 @@ public class Plots {
       var metrics = action.apply(files.getFiles());
       result.put(commit, extractValuesFromCommit(metrics));
     });
-
+    
     return result;
   }
 
