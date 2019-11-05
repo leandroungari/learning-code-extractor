@@ -15,6 +15,8 @@ import core.Player;
 import core.data.Commit;
 import core.data.DiffFile;
 import core.data.MetricsData;
+import core.stats.BranchStats;
+import core.stats.CommitStats;
 import repository.exception.GitRepositoryException;
 
 public class Stats {
@@ -25,8 +27,8 @@ public class Stats {
   public static final Integer RFC = 5;
   public static final Integer WMC = 6;
 
-  private String repository;
-  private Player player;
+  protected String repository;
+  protected Player player;
 
   private Function<HashMap<String,Double[]>,Double[]>
     sumOfMetricsOfFiles = files -> {

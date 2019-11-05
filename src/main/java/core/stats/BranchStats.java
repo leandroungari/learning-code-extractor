@@ -6,17 +6,14 @@ import java.util.Map;
 import org.eclipse.jgit.api.errors.GitAPIException;
 
 import core.Player;
+import core.Stats;
 import core.data.Commit;
 import repository.exception.GitRepositoryException;
 
-public class BranchStats {
-  
-  private Player player;
-  private String repository;
+public class BranchStats extends Stats {
 
-  BranchStats(Player player, String repository) {
-    this.player = player;
-    this.repository = repository;
+  public BranchStats(Player player, String repository) {
+    super(player, repository);
   }
 
   public Map<String, Map<String,Double>> derivateMetrics() 
@@ -53,19 +50,19 @@ public class BranchStats {
   private Map<String,Double> derivate(String branch, String commitBegin, String commitEnd, Integer size)
       throws GitRepositoryException, GitAPIException {
 
-    var metricsStart = Stats.getSumOfMetricsOfFiles()
-    .apply(
-      player
-      .metricsFromAllFilesInACommit(repository, branch, commitBegin)
-      .getFiles()
-    );
+    var metricsStart = getSumOfMetricsOfFiles()
+      .apply(
+        player
+        .metricsFromAllFilesInACommit(repository, branch, commitBegin)
+        .getFiles()
+      );
     
-    var metricsEnd = Stats.getSumOfMetricsOfFiles()
-    .apply(
-      player
-      .metricsFromAllFilesInACommit(repository, branch, commitEnd)
-      .getFiles()
-    );
+    var metricsEnd = getSumOfMetricsOfFiles()
+      .apply(
+        player
+        .metricsFromAllFilesInACommit(repository, branch, commitEnd)
+        .getFiles()
+      );
     
     return Map.of(
       "cbo", (metricsEnd[0] - metricsStart[0])/size,

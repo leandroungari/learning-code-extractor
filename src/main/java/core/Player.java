@@ -165,7 +165,7 @@ public class Player {
     repoExec.download(repository, url);
   }
 
-  protected Stats stats(String repository) {
+  Stats stats(String repository) {
 
     return new Stats(this, repository);
   }
