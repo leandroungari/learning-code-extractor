@@ -104,7 +104,7 @@ public class Stats {
   }
 
   public CommitStats commits() {
-    
+    return null;
   }
   
 }

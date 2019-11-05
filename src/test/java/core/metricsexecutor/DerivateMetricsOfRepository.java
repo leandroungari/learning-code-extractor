@@ -29,7 +29,7 @@ public class DerivateMetricsOfRepository {
     
     var player = new Player();
     var stats = new Stats(player, repository);
-    var result = stats.extract();
+    var result = stats.branch().derivateMetrics();
 
     System.out.println(result);
   }

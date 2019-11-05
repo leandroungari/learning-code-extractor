@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import core.Player;
 import core.data.Commit;
+import core.data.DiffFile;
 import core.data.MetricsData;
 import core.metricsexecutor.Stats;
 import repository.exception.GitRepositoryException;
@@ -231,9 +232,7 @@ public class Plots {
 
     total = fillNonModifiedFiles(
       total, 
-      Arrays.stream(listOfCommits)
-        .map(a -> a.getId().getName())
-        .collect(Collectors.toList())
+      listOfCommits
     );
 
     return total;
@@ -241,14 +240,15 @@ public class Plots {
 
   private HashMap<String,MetricsData> fillNonModifiedFiles(
     HashMap<String,MetricsData> data,
-    List<String> commitsIds) {
+    Commit[] commits) {
     
-    for(var i = commitsIds.size()-1; i > 0; i--) {
+    for(var i = commits.length-1; i > 0; i--) {
       data.put(
-        commitsIds.get(i-1),
+        commits[i-1].getId().getName(),
         createData(
-          data.get(commitsIds.get(i)), 
-          data.get(commitsIds.get(i-1))
+          commits[i], 
+          commits[i-1],
+          data
         )
       );
     }
@@ -256,18 +256,47 @@ public class Plots {
     return data;
   }
 
-  private MetricsData createData(MetricsData current, MetricsData next) {
+  private MetricsData createData(
+    Commit current, 
+    Commit next, 
+    HashMap<String,MetricsData> data) {
+    
+    var dataCurrent = data.get(
+      current.getId().getName()
+    );
+    var dataNext = data.get(
+      next.getId().getName()
+    );
+
     var newData = new MetricsData();
     
-    current.getFiles().forEach((file,metrics) -> {
-      newData.addFile(file, metrics);
+    dataCurrent.getFiles().forEach((file,metrics) -> {
+
+      if(!isDeletedFile(next.getDiffFiles(), file)) {
+        newData.addFile(file, metrics);
+      }
     });
 
-    next.getFiles().forEach((file,metrics) -> {
+    dataNext.getFiles().forEach((file,metrics) -> {
       newData.addFile(file, metrics);
     });
 
     return newData;
+  }
+
+  private Boolean isDeletedFile(List<DiffFile> listOfFiles, String file) {
+
+    var result = false;
+    if(listOfFiles == null) return result;
+
+    for(var diff: listOfFiles) {
+      if(diff.getOldPath().equals(file) &&
+         diff.getType().equals("DELETE")) {
+
+        result = true;
+      }
+    }
+    return result;
   }
 
   private HashMap<String,MetricsData> replaceFirstCommit(

@@ -44,5 +44,5 @@ public class CommitStats {
   }
   //preencher os arquivos não deletados no commit anterior e verificar a implementação na api
 
-  private MetricsData
+  //private MetricsData
 }
