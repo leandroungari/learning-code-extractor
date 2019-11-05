@@ -1,7 +1,6 @@
 package core;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -11,7 +10,6 @@ import java.util.stream.Collectors;
 
 import org.eclipse.jgit.api.errors.GitAPIException;
 
-import core.Player;
 import core.data.Commit;
 import core.data.DiffFile;
 import core.data.MetricsData;
