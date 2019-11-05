@@ -10,7 +10,7 @@ import java.util.stream.Collectors;
 import org.eclipse.jgit.api.errors.GitAPIException;
 
 import core.data.MetricsData;
-import core.metricsexecutor.Stats;
+import core.Stats;
 import core.data.Commit;
 import repository.Repository;
 import repository.exception.GitRepositoryException;

@@ -1,4 +1,4 @@
-package core.metricsexecutor;
+package core.stats;
 
 import java.util.HashMap;
 import java.util.Map;

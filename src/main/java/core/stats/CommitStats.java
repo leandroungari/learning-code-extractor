@@ -1,11 +1,10 @@
-package core.metricsexecutor;
+package core.stats;
 
 import java.util.Map;
 
 import org.eclipse.jgit.api.errors.GitAPIException;
 
 import core.Player;
-import core.data.MetricsData;
 import repository.exception.GitRepositoryException;
 
 public class CommitStats {
