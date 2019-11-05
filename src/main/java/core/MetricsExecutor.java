@@ -177,7 +177,10 @@ public class MetricsExecutor {
     throws GitAPIException, GitRepositoryException {
 
     var stats = new Stats(player, repository);
+
+    var derivateOfBranches = stats.branch().derivate();
     
+    System.out.println(derivateOfBranches);
   }
 
 

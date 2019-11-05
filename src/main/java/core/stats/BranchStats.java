@@ -16,7 +16,7 @@ public class BranchStats extends Stats {
     super(player, repository);
   }
 
-  public Map<String, Map<String,Double>> derivateMetrics() 
+  public Map<String, Map<String,Double>> derivate() 
     throws GitAPIException, GitRepositoryException {
       
     var branches = player.branches(repository);
@@ -35,7 +35,7 @@ public class BranchStats extends Stats {
     Commit[] commits = null;
     try {
       commits = player.commits(repository, branch);
-      return derivate(
+      return compareInitialAndLastCommit(
         branch,
         commits[commits.length-1].getId().getName(),
         commits[0].getId().getName(),
@@ -47,7 +47,8 @@ public class BranchStats extends Stats {
     return null;
   }
 
-  private Map<String,Double> derivate(String branch, String commitBegin, String commitEnd, Integer size)
+  private Map<String,Double> compareInitialAndLastCommit(
+    String branch, String commitBegin, String commitEnd, Integer size)
       throws GitRepositoryException, GitAPIException {
 
     var metricsStart = getSumOfMetricsOfFiles()
@@ -64,12 +65,6 @@ public class BranchStats extends Stats {
         .getFiles()
       );
     
-    return Map.of(
-      "cbo", (metricsEnd[0] - metricsStart[0])/size,
-      "dit", (metricsEnd[1] - metricsStart[1])/size,
-      "nosi", (metricsEnd[2] - metricsStart[2])/size,
-      "rfc", (metricsEnd[3] - metricsStart[3])/size,
-      "wmc", (metricsEnd[4] - metricsStart[4])/size
-    );
+    return derivateMetrics(metricsStart, metricsEnd, size);
   }
 }

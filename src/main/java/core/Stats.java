@@ -359,8 +359,18 @@ public class Stats {
     return new BranchStats(player, repository);
   }
 
-  public CommitStats commits() {
-    return null;
+  public CommitStats commits(String branchId) {
+    return new CommitStats(player, repository, branchId);
+  }
+
+  protected Map<String, Double> derivateMetrics(Double[] start, Double[] end, Integer size) {
+    return Map.of(
+      "cbo", (end[0] - start[0])/size,
+      "dit", (end[1] - start[1])/size,
+      "nosi", (end[2] - start[2])/size,
+      "rfc", (end[3] - start[3])/size,
+      "wmc", (end[4] - start[4])/size
+    );
   }
   
 }
