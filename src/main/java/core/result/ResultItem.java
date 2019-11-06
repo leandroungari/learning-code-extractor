@@ -1,4 +1,4 @@
-package core;
+package core.result;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -15,7 +15,7 @@ public class ResultItem<T extends Comparable<T>> {
     return new ResultItem<T>();
   }
 
-  public ResultItem<T> add(String key, T value) {
+  public ResultItem<T> set(String key, T value) {
     data.put(key, value);
     return this;
   }

@@ -7,6 +7,7 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import core.result.ResultItem;
 import core.stats.RepositoryStats;
 
 public class Stats {
@@ -192,11 +193,11 @@ public class Stats {
     ResultItem<Double> result = ResultItem.create();
 
     return result
-      .add("cbo", Double.valueOf((end[0] - start[0])/size))
-      .add("dit", Double.valueOf((end[1] - start[1])/size))
-      .add("nosi", Double.valueOf((end[2] - start[2])/size))
-      .add("rfc", Double.valueOf((end[3] - start[3])/size))
-      .add("wmc", Double.valueOf((end[4] - start[4])/size));
+      .set("cbo", Double.valueOf((end[0] - start[0])/size))
+      .set("dit", Double.valueOf((end[1] - start[1])/size))
+      .set("nosi", Double.valueOf((end[2] - start[2])/size))
+      .set("rfc", Double.valueOf((end[3] - start[3])/size))
+      .set("wmc", Double.valueOf((end[4] - start[4])/size));
   }
   
 }

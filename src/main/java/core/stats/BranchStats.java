@@ -6,7 +6,7 @@ import java.util.Map;
 import org.eclipse.jgit.api.errors.GitAPIException;
 
 import core.Player;
-import core.ResultItem;
+import core.result.ResultItem;
 import repository.exception.GitRepositoryException;
 
 public class BranchStats extends RepositoryStats {

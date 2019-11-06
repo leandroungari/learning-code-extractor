@@ -9,8 +9,9 @@ import java.util.function.Function;
 import org.eclipse.jgit.api.errors.GitAPIException;
 
 import core.Player;
-import core.ResultItem;
+import core.result.ResultItem;
 import core.Stats;
+import core.data.Branch;
 import core.data.Commit;
 import core.data.DiffFile;
 import core.data.MetricsData;
@@ -25,17 +26,20 @@ public class RepositoryStats extends Stats {
     this.repository = repository;
   }
 
-  public Map<String, ResultItem<Double>> derivate() 
-    throws GitAPIException, GitRepositoryException {
+  public Map<String, ResultItem<Double>> derivate() {
       
-    var branches = player.branches(repository);
     Map<String, ResultItem<Double>> result = new HashMap<>();
-    
-    for(var branch: branches) {
-      var name = branch.getId().getName();
-      
-      result.put(name,this.execute(name));
+    Branch[] branches;
+    try {
+      branches = player.branches(repository);
+      for(var branch: branches) {
+        var name = branch.getId().getName();
+        result.put(name,this.execute(name));
+      }
+    } catch (GitAPIException | GitRepositoryException e) {
+      e.printStackTrace();
     }
+    
     return result;
   }
 
