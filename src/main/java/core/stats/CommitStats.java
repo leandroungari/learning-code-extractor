@@ -19,9 +19,9 @@ public class CommitStats extends Stats {
     this.branch = branch;
   }
 
-  public Map<String,ResultItem> derivate() {
+  public Map<String,ResultItem<Double>> derivate() {
 
-    Map<String,ResultItem> result = new HashMap<>();
+    Map<String,ResultItem<Double>> result = new HashMap<>();
 
     try {
       

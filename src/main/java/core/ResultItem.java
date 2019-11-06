@@ -1,39 +1,38 @@
 package core;
 
+import java.util.HashMap;
 import java.util.Map;
 
-public class ResultItem {
+public class ResultItem<T extends Comparable<T>> {
 
-  private Map<String, Double> data;
+  private Map<String, T> data;
   
   private ResultItem() {
-    data = null;
+    data = new HashMap<String,T>();
   }
 
-
-  private void data(Map<String, Double> data) {
-    this.data = data;
+  public static <T extends Comparable<T>> ResultItem<T> create() {
+    return new ResultItem<T>();
   }
 
-  public static ResultItem create(Map<String, Double> item) {
-    var result = new ResultItem();
-    result.data(item);
-    return result;
+  public ResultItem<T> add(String key, T value) {
+    data.put(key, value);
+    return this;
   }
 
-  public Map<String, Double> get() {
-    return data;
+  public T get(String key) {
+    return data.get(key);
   }
 
-  public Boolean aboveOf(String metric, Double value) {
-    return data.get(metric) > value;
+  public Boolean aboveOf(String metric, T value) {
+    return get(metric).compareTo(value) == 1;
   }
 
-  public Boolean belowOf(String metric, Double value) {
-    return data.get(metric) < value;
+  public Boolean belowOf(String metric, T value) {
+    return get(metric).compareTo(value) == -1;
   }
 
-  public Boolean equalTo(String metric, Double value) {
-    return data.get(metric) == value;
+  public Boolean equalTo(String metric, T value) {
+    return data.get(metric).compareTo(value) == 0;
   } 
 }

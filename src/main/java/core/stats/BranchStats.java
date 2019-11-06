@@ -17,11 +17,11 @@ public class BranchStats extends Stats {
     super(player, repository);
   }
 
-  public Map<String, ResultItem> derivate() 
+  public Map<String, ResultItem<Double>> derivate() 
     throws GitAPIException, GitRepositoryException {
       
     var branches = player.branches(repository);
-    Map<String, ResultItem> result = new HashMap<>();
+    Map<String, ResultItem<Double>> result = new HashMap<>();
     
     for(var branch: branches) {
       var name = branch.getId().getName();
@@ -31,7 +31,7 @@ public class BranchStats extends Stats {
     return result;
   }
 
-  private ResultItem execute(String branch) {
+  private ResultItem<Double> execute(String branch) {
     
     Commit[] commits = null;
     try {
@@ -48,7 +48,7 @@ public class BranchStats extends Stats {
     return null;
   }
 
-  private ResultItem compareInitialAndLastCommit(
+  private ResultItem<Double> compareInitialAndLastCommit(
     String branch, String commitBegin, String commitEnd, Integer size)
       throws GitRepositoryException, GitAPIException {
 

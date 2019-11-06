@@ -361,15 +361,16 @@ public class Stats {
     return new CommitStats(player, repository, branchId);
   }
 
-  protected ResultItem derivateMetrics(Double[] start, Double[] end, Integer size) {
-    return ResultItem
-      .create(Map.of(
-        "cbo", (end[0] - start[0])/size,
-        "dit", (end[1] - start[1])/size,
-        "nosi", (end[2] - start[2])/size,
-        "rfc", (end[3] - start[3])/size,
-        "wmc", (end[4] - start[4])/size
-      ));
+  protected ResultItem<Double> derivateMetrics(Double[] start, Double[] end, Integer size) {
+    
+    ResultItem<Double> result = ResultItem.create();
+
+    return result
+      .add("cbo", Double.valueOf((end[0] - start[0])/size))
+      .add("dit", Double.valueOf((end[1] - start[1])/size))
+      .add("nosi", Double.valueOf((end[2] - start[2])/size))
+      .add("rfc", Double.valueOf((end[3] - start[3])/size))
+      .add("wmc", Double.valueOf((end[4] - start[4])/size));
   }
   
 }
