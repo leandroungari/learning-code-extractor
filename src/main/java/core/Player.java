@@ -1,8 +1,6 @@
 package core;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.eclipse.jgit.api.errors.GitAPIException;
 
@@ -16,6 +14,7 @@ import core.executor.RepositoryExecutor;
 import core.executor.SettingsExecutor;
 import core.resource.Resource;
 import core.resource.ResourceType;
+import core.result.Map;
 import repository.exception.GitRepositoryException;
 import util.FileUtil;
 
@@ -222,15 +221,15 @@ public class Player {
    * @throws GitRepositoryException
    * @throws GitAPIException
    */
-  public HashMap<String, MetricsData> metricsFromDiffFilesInARangeOfCommits(String repository, String branch,
+  public Map<String, MetricsData> metricsFromDiffFilesInARangeOfCommits(String repository, String branch,
       Commit[] commits) throws GitRepositoryException, GitAPIException {
 
-    var map = new HashMap<String, MetricsData>();
+    var map = new Map<String, MetricsData>();
     for (var commit : commits) {
 
       var result = metricsFromDiffFilesInACommit(repository, branch, commit.getId().getName());
 
-      map.put(commit.getId().getName(), result);
+      map.add(commit.getId().getName(), result);
     }
 
     return map;
@@ -245,14 +244,14 @@ public class Player {
    * @throws GitRepositoryException
    * @throws GitAPIException
    */
-  public HashMap<String, MetricsData> metricsFromAllFilesInARangeOfCommits(String repository, String branch,
+  public Map<String, MetricsData> metricsFromAllFilesInARangeOfCommits(String repository, String branch,
       Commit[] commits) throws GitRepositoryException, GitAPIException {
 
-    var map = new HashMap<String, MetricsData>();
+    var map = new Map<String, MetricsData>();
     for (var commit : commits) {
       var result = metricsFromAllFilesInACommit(repository, branch, commit.getId().getName());
 
-      map.put(commit.getId().getName(), result);
+      map.add(commit.getId().getName(), result);
     }
 
     return map;
@@ -342,9 +341,9 @@ public class Player {
     var repo = stats().repository(repository);
     var data = repo.data(branch,from,to,step);
     
-    var result = new HashMap<String,Map<String,Double>>();
-    data.forEach((commit, files) -> {
-      result.put(
+    var result = new Map<String,Map<String,Double>>();
+    data.entries().forEach((commit, files) -> {
+      result.add(
         commit,
         repo.getEvolution().apply(files.getFiles(), metric)
       );

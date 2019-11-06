@@ -6,7 +6,7 @@ import java.util.Map;
 import org.eclipse.jgit.api.errors.GitAPIException;
 
 import core.Player;
-import core.result.ResultItem;
+import core.result.Element;
 import repository.exception.GitRepositoryException;
 
 public class BranchStats extends RepositoryStats {
@@ -18,9 +18,9 @@ public class BranchStats extends RepositoryStats {
     this.branch = branch;
   }
 
-  public Map<String,ResultItem<Double>> derivate() {
+  public Map<String,Element<Double>> derivate() {
 
-    Map<String,ResultItem<Double>> result = new HashMap<>();
+    Map<String,Element<Double>> result = new HashMap<>();
 
     try {
       

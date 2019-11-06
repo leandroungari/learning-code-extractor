@@ -1,15 +1,14 @@
 package core.stats;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.function.Function;
 
 import org.eclipse.jgit.api.errors.GitAPIException;
 
 import core.Player;
-import core.result.ResultItem;
+import core.result.Element;
+import core.result.Map;
 import core.Stats;
 import core.data.Branch;
 import core.data.Commit;
@@ -26,15 +25,15 @@ public class RepositoryStats extends Stats {
     this.repository = repository;
   }
 
-  public Map<String, ResultItem<Double>> derivate() {
+  public Map<String, Element<Double>> derivate() {
       
-    Map<String, ResultItem<Double>> result = new HashMap<>();
+    Map<String, Element<Double>> result = new Map<>();
     Branch[] branches;
     try {
       branches = player.branches(repository);
       for(var branch: branches) {
         var name = branch.getId().getName();
-        result.put(name,this.execute(name));
+        result.add(name,this.execute(name));
       }
     } catch (GitAPIException | GitRepositoryException e) {
       e.printStackTrace();
@@ -47,7 +46,7 @@ public class RepositoryStats extends Stats {
     return new BranchStats(player, repository, branchId);
   }
 
-  private HashMap<String,MetricsData> allFilesData(
+  private Map<String,MetricsData> allFilesData(
     String branch,
     Commit[] listOfCommits
   ) throws GitRepositoryException, GitAPIException {
@@ -58,7 +57,7 @@ public class RepositoryStats extends Stats {
       );
   }
 
-  private HashMap<String,MetricsData> diffFiles(
+  private Map<String,MetricsData> diffFiles(
     String branch,
     Commit[] listOfCommits
   ) throws GitRepositoryException, GitAPIException {
@@ -80,12 +79,12 @@ public class RepositoryStats extends Stats {
     return total;
   }
 
-  private HashMap<String,MetricsData> fillNonModifiedFiles(
-    HashMap<String,MetricsData> data,
+  private Map<String,MetricsData> fillNonModifiedFiles(
+    Map<String,MetricsData> data,
     Commit[] commits) {
     
     for(var i = commits.length-1; i > 0; i--) {
-      data.put(
+      data.add(
         commits[i-1].getId().getName(),
         createData(
           commits[i], 
@@ -101,7 +100,7 @@ public class RepositoryStats extends Stats {
   private MetricsData createData(
     Commit current, 
     Commit next, 
-    HashMap<String,MetricsData> data) {
+    Map<String,MetricsData> data) {
     
     var dataCurrent = data.get(
       current.getId().getName()
@@ -141,8 +140,8 @@ public class RepositoryStats extends Stats {
     return result;
   }
 
-  private HashMap<String,MetricsData> replaceFirstCommit(
-    HashMap<String,MetricsData> data,
+  private Map<String,MetricsData> replaceFirstCommit(
+    Map<String,MetricsData> data,
     String branch,
     Commit[] listOfCommits) 
       throws GitRepositoryException, 
@@ -151,7 +150,7 @@ public class RepositoryStats extends Stats {
     var firstCommit = listOfCommits[listOfCommits.length - 1]
       .getId().getName();
 
-    data.put(
+    data.add(
       firstCommit,
       player.metricsFromAllFilesInACommit(
         repository,branch,firstCommit
@@ -161,7 +160,7 @@ public class RepositoryStats extends Stats {
     return data;
   }
 
-  public HashMap<String,MetricsData> data(
+  public Map<String,MetricsData> data(
     String branch, 
     Integer from, 
     Integer to,
@@ -198,28 +197,27 @@ public class RepositoryStats extends Stats {
 
   public Map<String,Map<String,Double>> extractValuesFromCommits(
     Map<String,MetricsData> data,
-    Function<HashMap<String,Double[]>,Double[]> action) {
+    Function<Map<String,Double[]>,Double[]> action) {
 
-    var result = new HashMap<String,Map<String,Double>>();
-    data.forEach((commit, files) -> {
-      var metrics = action.apply(files.getFiles());
-      result.put(commit, extractValuesFromCommit(metrics));
+    var result = new Map<String,Map<String,Double>>();
+    data.entries().forEach(item -> {
+      var metrics = action.apply(item.two().getFiles());
+      result.add(item.one(), extractValuesFromCommit(metrics));
     });
     
     return result;
   }
 
   private Map<String,Double> extractValuesFromCommit(Double[] data) {
-    return Map.ofEntries(
-      Map.entry("cbo", data[0]),
-      Map.entry("dit", data[1]),
-      Map.entry("nosi", data[2]),//4
-      Map.entry("rfc", data[3]),//5
-      Map.entry("wmc", data[4])//6
-    );
+    return new Map<String,Double>()
+      .add("cbo", data[0])
+      .add("dit", data[1])
+      .add("nosi", data[2])
+      .add("rfc", data[3])
+      .add("wmc", data[4]);
   }
 
-  private ResultItem<Double> execute(String branch) {
+  private Element execute(String branch) {
     
     Commit[] commits = null;
     try {
@@ -236,7 +234,7 @@ public class RepositoryStats extends Stats {
     return null;
   }
 
-  private ResultItem<Double> compareInitialAndLastCommit(
+  private Map<String,Element<Double>> compareInitialAndLastCommit(
     String branch, String commitBegin, String commitEnd, Integer size)
       throws GitRepositoryException, GitAPIException {
 

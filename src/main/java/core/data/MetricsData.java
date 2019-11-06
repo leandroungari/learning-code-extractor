@@ -1,13 +1,13 @@
 package core.data;
 
-import java.util.HashMap;
-
 import com.github.mauricioaniche.ck.CKClassResult;
+
+import core.result.Map;
 
 public class MetricsData {
 
   private String[] metrics;
-  private HashMap<String, Double[]> files;
+  private Map<String, Double[]> files;
   
   public MetricsData() {
     
@@ -23,7 +23,7 @@ public class MetricsData {
       "LCOM"
     };
     
-    files = new HashMap<String, Double[]>();
+    files = new Map<String, Double[]>();
   }
   
   public void addFiles(
@@ -31,7 +31,7 @@ public class MetricsData {
     CKClassResult result
   ) {
     
-    files.put(
+    files.add(
       name,
       new Double[] {
         Double.valueOf(result.getCbo()),
@@ -48,14 +48,14 @@ public class MetricsData {
   }
 
   public void addFile(String file, Double[] metrics) {
-    files.put(file, metrics);
+    files.add(file, metrics);
   }
   
   public String[] getMetrics() {
     return metrics;
   }
   
-  public HashMap<String, Double[]> getFiles() {
+  public Map<String, Double[]> getFiles() {
     return files;
   }
 }
