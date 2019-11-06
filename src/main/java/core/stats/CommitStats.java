@@ -6,6 +6,7 @@ import java.util.Map;
 import org.eclipse.jgit.api.errors.GitAPIException;
 
 import core.Player;
+import core.ResultItem;
 import core.Stats;
 import repository.exception.GitRepositoryException;
 
@@ -18,9 +19,9 @@ public class CommitStats extends Stats {
     this.branch = branch;
   }
 
-  public Map<String, Map<String, Double>> derivate() {
+  public Map<String,ResultItem> derivate() {
 
-    Map<String,Map<String,Double>> result = new HashMap<>();
+    Map<String,ResultItem> result = new HashMap<>();
 
     try {
       

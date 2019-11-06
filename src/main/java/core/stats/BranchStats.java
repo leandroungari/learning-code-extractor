@@ -6,6 +6,7 @@ import java.util.Map;
 import org.eclipse.jgit.api.errors.GitAPIException;
 
 import core.Player;
+import core.ResultItem;
 import core.Stats;
 import core.data.Commit;
 import repository.exception.GitRepositoryException;
@@ -16,11 +17,11 @@ public class BranchStats extends Stats {
     super(player, repository);
   }
 
-  public Map<String, Map<String,Double>> derivate() 
+  public Map<String, ResultItem> derivate() 
     throws GitAPIException, GitRepositoryException {
       
     var branches = player.branches(repository);
-    Map<String, Map<String,Double>> result = new HashMap<>();
+    Map<String, ResultItem> result = new HashMap<>();
     
     for(var branch: branches) {
       var name = branch.getId().getName();
@@ -30,7 +31,7 @@ public class BranchStats extends Stats {
     return result;
   }
 
-  private Map<String, Double> execute(String branch) {
+  private ResultItem execute(String branch) {
     
     Commit[] commits = null;
     try {
@@ -47,7 +48,7 @@ public class BranchStats extends Stats {
     return null;
   }
 
-  private Map<String,Double> compareInitialAndLastCommit(
+  private ResultItem compareInitialAndLastCommit(
     String branch, String commitBegin, String commitEnd, Integer size)
       throws GitRepositoryException, GitAPIException {
 

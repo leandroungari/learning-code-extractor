@@ -2,11 +2,8 @@ package core;
 
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
-import core.Player;
-import core.SettingsExecutor;
 import repository.exception.GitRepositoryException;
 
 public class DerivateMetricsOfRepository {
@@ -14,22 +11,14 @@ public class DerivateMetricsOfRepository {
   private String repository;
   private Player player;
 
-  @BeforeClass
-  public static void create() {
-    var settingExec = new SettingsExecutor();
-    settingExec.start(SettingsExecutor.USER_FOLDER);
-    
-  }
-
   @Before
   public void before() {
-    repository = "refactoring-toy-example";
     player = new Player();
+    repository = "refactoring-toy-example";
   }
 
   @Test
   public void branch() throws GitAPIException, GitRepositoryException {
-    
     
     var stats = new Stats(player, repository);
     var result = stats.branch().derivate();

@@ -1,4 +1,4 @@
-package core;
+package core.executor;
 
 import java.io.File;
 import java.util.Arrays;
@@ -10,6 +10,9 @@ import java.util.stream.Collectors;
 import org.eclipse.jgit.api.errors.GitAPIException;
 
 import core.data.MetricsData;
+import core.resource.Resource;
+import core.resource.ResourceType;
+import core.Player;
 import core.Stats;
 import core.data.Commit;
 import repository.Repository;
@@ -21,10 +24,10 @@ public class MetricsExecutor {
 	private Player player;
 	private MetricsAnalyzer analyzer;
 	
-	public MetricsExecutor() {
+	public MetricsExecutor(Player p) {
 		
 		analyzer = new MetricsAnalyzer();
-		player = new Player();
+		player = p;
 	}
 	
 	public void analyzeAllFilesInACommit(
@@ -33,7 +36,7 @@ public class MetricsExecutor {
 		String commit) throws GitRepositoryException {
 		
 		Repository.create(new File(
-			player.repositoriesFolder() + "/"
+			player.settings().folderOfRepositories() + "/"
 			+ repository
 		));
 		
@@ -64,7 +67,7 @@ public class MetricsExecutor {
 						GitAPIException {
 		
 		Repository.create(new File(
-			player.repositoriesFolder() + "/"
+			player.settings().folderOfRepositories() + "/"
 			+ repository
 		));
 		

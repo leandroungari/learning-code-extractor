@@ -1,9 +1,10 @@
-package core;
+package core.resource;
 
 import java.util.Map;
 
 import com.google.gson.Gson;
 
+import core.Player;
 import util.FileUtil;
 import util.Storage;
 
@@ -35,8 +36,6 @@ public class Resource {
 				ResourceType.METRICS_ALL_FILES, ""
 			)
 		);
-
-	private SettingsExecutor settings = new SettingsExecutor();
 	
 	private Resource(String name, ResourceType code) {
 		this.code = code;
@@ -68,7 +67,8 @@ public class Resource {
 	}
 
 	private Storage typeOfStorage() {
-		
+    var player = new Player();
+    
 		switch(code) {
 		
 		case LIST_OF_BRANCHES:
@@ -77,8 +77,9 @@ public class Resource {
 		case DIFF_FILES:
 			
 			return new Storage(
-				settings
-				.metadataFolder()
+        player
+        .settings()
+				.folderOfMetadata()
 				.getAbsolutePath());
 			
 			/*
@@ -90,7 +91,10 @@ public class Resource {
 			
 		case METRICS_DIFF_FILES:
 		case METRICS_ALL_FILES:
-			 return new Storage(settings.metricsFolder()
+			return new Storage(
+        player
+        .settings()
+        .folderOfMetrics()
 				.getAbsolutePath());
 			 
 			default:

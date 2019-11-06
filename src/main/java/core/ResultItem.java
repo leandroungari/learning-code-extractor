@@ -20,4 +20,20 @@ public class ResultItem {
     result.data(item);
     return result;
   }
+
+  public Map<String, Double> get() {
+    return data;
+  }
+
+  public Boolean aboveOf(String metric, Double value) {
+    return data.get(metric) > value;
+  }
+
+  public Boolean belowOf(String metric, Double value) {
+    return data.get(metric) < value;
+  }
+
+  public Boolean equalTo(String metric, Double value) {
+    return data.get(metric) == value;
+  } 
 }

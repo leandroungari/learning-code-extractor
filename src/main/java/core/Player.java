@@ -1,6 +1,5 @@
 package core;
 
-import java.io.File;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -12,22 +11,48 @@ import core.data.Commit;
 import core.data.CommitInfo;
 import core.data.DiffFile;
 import core.data.MetricsData;
-import core.Stats;
+import core.executor.MetricsExecutor;
+import core.executor.RepositoryExecutor;
+import core.executor.SettingsExecutor;
+import core.resource.Resource;
+import core.resource.ResourceType;
 import repository.exception.GitRepositoryException;
 import util.FileUtil;
 
 public class Player {
 
-  private static RepositoryExecutor repoExec = new RepositoryExecutor();
-  private static MetricsExecutor metricExec = new MetricsExecutor();
-  private static SettingsExecutor settingsExec = new SettingsExecutor();
+  private static RepositoryExecutor repoExec;
+  private static MetricsExecutor metricExec;
+  private static SettingsExecutor settingsExec;
 
   public Player() {
 
+    if(!settings().isSet()) {
+      settings()
+      .start(SettingsExecutor.USER_FOLDER);
+    }
+    
   }
 
-  public File repositoriesFolder() {
-    return settingsExec.repositoriesFolder();
+  public RepositoryExecutor repository() {
+    if(repoExec == null) {
+      repoExec = new RepositoryExecutor(this);
+    }
+    return repoExec;
+  }
+
+  public MetricsExecutor metrics() {
+    if(metricExec == null) {
+      metricExec = new MetricsExecutor(this);
+    }
+    return metricExec;
+  }
+
+  public SettingsExecutor settings() {
+    if(settingsExec == null) {
+      settingsExec = new SettingsExecutor();
+    }
+    return settingsExec;
   }
 
   public Branch[] branches(String repositoryName) throws GitAPIException, GitRepositoryException {
@@ -100,7 +125,7 @@ public class Player {
 
   public List<String> availableRepositories() {
 
-    return FileUtil.listOfFolders(settingsExec.metricsFolder());
+    return FileUtil.listOfFolders(settingsExec.folderOfMetrics());
   }
 
   public MetricsData metricsFromDiffFilesInACommit(String repository, String branch, String commit)
