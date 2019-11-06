@@ -55,6 +55,13 @@ public class Player {
     return settingsExec;
   }
 
+  /**
+   * It lists all branches in the specified repository
+   * @param repositoryName The name of repository
+   * @return List of branches
+   * @throws GitAPIException
+   * @throws GitRepositoryException
+   */
   public Branch[] branches(String repositoryName) throws GitAPIException, GitRepositoryException {
 
     var resource = Resource.create(repositoryName, ResourceType.LIST_OF_BRANCHES);
@@ -66,6 +73,14 @@ public class Player {
     return resource.read(Branch[].class);
   }
 
+  /**
+   * This method lists the commits in a specified branch
+   * @param repository Name of repository
+   * @param branch  The ID (hash) of branch
+   * @return List of commits
+   * @throws GitAPIException
+   * @throws GitRepositoryException
+   */
   public Commit[] commits(String repository, String branch) throws GitAPIException, GitRepositoryException {
 
     var resource = Resource.create(repository, ResourceType.LIST_OF_COMMITS).branch(branch);
@@ -77,6 +92,15 @@ public class Player {
     return resource.read(Commit[].class);
   }
 
+  /**
+   * It gets some description information of a particular commit
+   * @param repository Name of repository
+   * @param branch Branch ID
+   * @param commit Commit ID
+   * @return
+   * @throws GitAPIException
+   * @throws GitRepositoryException
+   */
   public CommitInfo commitInfo(String repository, String branch, String commit)
       throws GitAPIException, GitRepositoryException {
 
@@ -100,6 +124,15 @@ public class Player {
     return null;
   }
 
+  /**
+   * It lists the modified files in a particular commit
+   * @param repository Name of repository
+   * @param branch Branch ID
+   * @param commit Commit ID
+   * @return List of modified files
+   * @throws GitRepositoryException
+   * @throws GitAPIException
+   */
   public List<DiffFile> diffFilesFromCommit(String repository, String branch, String commit)
       throws GitRepositoryException, GitAPIException {
 
@@ -123,11 +156,24 @@ public class Player {
     return commitItem.getDiffFiles();
   }
 
+  /**
+   * It lists the available repositories to metric's analysis
+   * @return List of names of repositories
+   */
   public List<String> availableRepositories() {
 
     return FileUtil.listOfFolders(settingsExec.folderOfMetrics());
   }
 
+  /**
+   * It extracts the metrics from the modified files in a commit
+   * @param repository Name of repository
+   * @param branch Branch ID
+   * @param commit Commit ID
+   * @return The data of metrics in a commit
+   * @throws GitRepositoryException
+   * @throws GitAPIException
+   */
   public MetricsData metricsFromDiffFilesInACommit(String repository, String branch, String commit)
       throws GitRepositoryException, GitAPIException {
 
@@ -143,6 +189,15 @@ public class Player {
     return resourceDiff.read(MetricsData.class);
   }
 
+  /**
+   * It extracts the metrics of all files in a commit
+   * @param repository Name of repository
+   * @param branch Branch ID
+   * @param commit Commit ID
+   * @return The data of metrics in a commit
+   * @throws GitRepositoryException
+   * @throws GitAPIException
+   */
   public MetricsData metricsFromAllFilesInACommit(String repository, String branch, String commit)
       throws GitRepositoryException, GitAPIException {
 
@@ -158,6 +213,15 @@ public class Player {
     return resourceAll.read(MetricsData.class);
   }
 
+  /**
+   * It extracts the metrics from diff files in a range of commits
+   * @param repository Name of repository
+   * @param branch Branch ID
+   * @param commits List of commit's IDs
+   * @return The data of metrics in each commit
+   * @throws GitRepositoryException
+   * @throws GitAPIException
+   */
   public HashMap<String, MetricsData> metricsFromDiffFilesInARangeOfCommits(String repository, String branch,
       Commit[] commits) throws GitRepositoryException, GitAPIException {
 
@@ -172,6 +236,15 @@ public class Player {
     return map;
   }
 
+  /**
+   * It extracts the metrics from all files in a range of commits
+   * @param repository Name of repository
+   * @param branch Branch ID
+   * @param commits List of commit's IDs
+   * @return The data of metrics in each commit
+   * @throws GitRepositoryException
+   * @throws GitAPIException
+   */
   public HashMap<String, MetricsData> metricsFromAllFilesInARangeOfCommits(String repository, String branch,
       Commit[] commits) throws GitRepositoryException, GitAPIException {
 
@@ -185,6 +258,12 @@ public class Player {
     return map;
   }
 
+  /**
+   * It performs the download of the Git repository from the specified URL
+   * @param repository Name of repository
+   * @param url The URL address to clone the repository
+   * @throws GitRepositoryException
+   */
   public void download(String repository, String url) throws GitRepositoryException {
 
     repoExec.download(repository, url);
