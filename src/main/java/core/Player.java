@@ -269,9 +269,9 @@ public class Player {
     repoExec.download(repository, url);
   }
 
-  Stats stats(String repository) {
+  Stats stats() {
 
-    return new Stats(this, repository);
+    return new Stats(this);
   }
 
   public Map<String, Map<String, Double>> averageOfMetricsOfFiles(
@@ -282,10 +282,10 @@ public class Player {
     Integer step
   ) throws GitRepositoryException, GitAPIException {
     
-    var stats = stats(repository);
-    return stats.extractValuesFromCommits(
-      stats.data(branch,from,to,step),
-      stats.getAverageOfMetricsOfFiles()
+    var repo = stats().repository(repository);
+    return repo.extractValuesFromCommits(
+      repo.data(branch,from,to,step),
+      repo.getAverageOfMetricsOfFiles()
     );
   }
 
@@ -297,10 +297,10 @@ public class Player {
     Integer step
   ) throws GitRepositoryException, GitAPIException {
     
-    var stats = stats(repository);
-    return stats.extractValuesFromCommits(
-      stats.data(branch,from,to,step),
-      stats.getSumOfMetricsOfFiles()
+    var repo = stats().repository(repository);
+    return repo.extractValuesFromCommits(
+      repo.data(branch,from,to,step),
+      repo.getSumOfMetricsOfFiles()
     );
   }
 
@@ -313,7 +313,7 @@ public class Player {
   ) throws GitRepositoryException, GitAPIException {
 
     var data = sumOfMetricsOfFiles(repository, branch, from, to, step);
-    return stats(repository).normalizeMetrics(data);
+    return stats().repository(repository).normalizeMetrics(data);
   }
 
   public Map<String, Map<String, Double>> normalizedAverageOfMetricsOfFiles (
@@ -325,7 +325,9 @@ public class Player {
   ) throws GitRepositoryException, GitAPIException {
 
     var data = averageOfMetricsOfFiles(repository, branch, from, to, step);
-    return stats(repository).normalizeMetrics(data);
+    return stats()
+      .repository(repository)
+      .normalizeMetrics(data);
   }
 
   public Map<String, Map<String, Double>> evolutionOfFilesByMetrics (
@@ -337,14 +339,14 @@ public class Player {
     String metric
   ) throws GitRepositoryException, GitAPIException {
 
-    var stats = stats(repository);
-    var data = stats.data(branch,from,to,step);
+    var repo = stats().repository(repository);
+    var data = repo.data(branch,from,to,step);
     
     var result = new HashMap<String,Map<String,Double>>();
     data.forEach((commit, files) -> {
       result.put(
         commit,
-        stats.getEvolution().apply(files.getFiles(), metric)
+        repo.getEvolution().apply(files.getFiles(), metric)
       );
     });
     return result;

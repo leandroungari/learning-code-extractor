@@ -1,6 +1,5 @@
 package core;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -8,14 +7,7 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import org.eclipse.jgit.api.errors.GitAPIException;
-
-import core.data.Commit;
-import core.data.DiffFile;
-import core.data.MetricsData;
-import core.stats.BranchStats;
-import core.stats.CommitStats;
-import repository.exception.GitRepositoryException;
+import core.stats.RepositoryStats;
 
 public class Stats {
 
@@ -25,7 +17,6 @@ public class Stats {
   public static final Integer RFC = 5;
   public static final Integer WMC = 6;
 
-  protected String repository;
   protected Player player;
 
   private Function<HashMap<String,Double[]>,Double[]>
@@ -72,12 +63,11 @@ public class Stats {
     return result;
   };
 
-  public Stats(Player player, String repo) {
-    this.repository = repo;
+  public Stats(Player player) {
     this.player = player;
   }
 
-  private static Integer chooseMetric(String name) {
+  protected static Integer chooseMetric(String name) {
     switch(name) {
       case "cbo":
         return CBO;
@@ -105,7 +95,7 @@ public class Stats {
     return evolution;
   }
 
-  Map<String,Map<String,Double>> normalizeMetrics(Map<String,Map<String,Double>> data) {
+  protected Map<String,Map<String,Double>> normalizeMetrics(Map<String,Map<String,Double>> data) {
     
     Map<String,Double[]> stats = extractStats(data);
     var cbo = stats.get("cbo");
@@ -173,179 +163,9 @@ public class Stats {
     );
   }
 
-  HashMap<String,MetricsData> data(
-    String branch, 
-    Integer from, 
-    Integer to,
-    Integer step) throws GitRepositoryException, 
-                       GitAPIException {
-      
-    var listOfCommits = extractRangeOfCommits(
-      branch,from,to,step
-    );
+  
 
-    return (
-      step == 1 ? 
-      diffFiles(branch, listOfCommits) :
-      allFilesData(branch, listOfCommits)
-    );
-  }
-
-  private HashMap<String,MetricsData> allFilesData(
-    String branch,
-    Commit[] listOfCommits
-  ) throws GitRepositoryException, GitAPIException {
-
-    return player
-      .metricsFromAllFilesInARangeOfCommits(
-        repository,branch,listOfCommits
-      );
-  }
-
-  private HashMap<String,MetricsData> diffFiles(
-    String branch,
-    Commit[] listOfCommits
-  ) throws GitRepositoryException, GitAPIException {
-    
-    var total = player
-      .metricsFromDiffFilesInARangeOfCommits(
-        repository,branch,listOfCommits
-      );
-
-    total = replaceFirstCommit(
-      total, branch, listOfCommits
-    );
-
-    total = fillNonModifiedFiles(
-      total, 
-      listOfCommits
-    );
-
-    return total;
-  }
-
-  private HashMap<String,MetricsData> fillNonModifiedFiles(
-    HashMap<String,MetricsData> data,
-    Commit[] commits) {
-    
-    for(var i = commits.length-1; i > 0; i--) {
-      data.put(
-        commits[i-1].getId().getName(),
-        createData(
-          commits[i], 
-          commits[i-1],
-          data
-        )
-      );
-    }
-
-    return data;
-  }
-
-  private MetricsData createData(
-    Commit current, 
-    Commit next, 
-    HashMap<String,MetricsData> data) {
-    
-    var dataCurrent = data.get(
-      current.getId().getName()
-    );
-    var dataNext = data.get(
-      next.getId().getName()
-    );
-
-    var newData = new MetricsData();
-    
-    dataCurrent.getFiles().forEach((file,metrics) -> {
-
-      if(!isDeletedFile(next.getDiffFiles(), file)) {
-        newData.addFile(file, metrics);
-      }
-    });
-
-    dataNext.getFiles().forEach((file,metrics) -> {
-      newData.addFile(file, metrics);
-    });
-
-    return newData;
-  }
-
-  private Boolean isDeletedFile(List<DiffFile> listOfFiles, String file) {
-
-    var result = false;
-    if(listOfFiles == null) return result;
-
-    for(var diff: listOfFiles) {
-      if(diff.getOldPath().equals(file) &&
-         diff.getType().equals("DELETE")) {
-
-        result = true;
-      }
-    }
-    return result;
-  }
-
-  private HashMap<String,MetricsData> replaceFirstCommit(
-    HashMap<String,MetricsData> data,
-    String branch,
-    Commit[] listOfCommits) 
-      throws GitRepositoryException, 
-      GitAPIException {
-    
-    var firstCommit = listOfCommits[listOfCommits.length - 1]
-      .getId().getName();
-
-    data.put(
-      firstCommit,
-      player.metricsFromAllFilesInACommit(
-        repository,branch,firstCommit
-      )
-    );
-
-    return data;
-  }
-
-  private Commit[] extractRangeOfCommits(
-    String branch, 
-    Integer from, 
-    Integer to,
-    Integer step) 
-      throws GitAPIException, 
-             GitRepositoryException {
-    
-    var allCommits = player.commits(repository, branch);
-    var listOfCommits = new ArrayList<Commit>();
-    for(var i = from; i <= to; i+= step) {
-      listOfCommits.add(allCommits[i]);
-    }
-    return listOfCommits
-      .toArray(new Commit[listOfCommits.size()]);
-  }
-
-  Map<String,Map<String,Double>> extractValuesFromCommits(
-    Map<String,MetricsData> data,
-    Function<HashMap<String,Double[]>,Double[]> action) {
-
-    var result = new HashMap<String,Map<String,Double>>();
-    data.forEach((commit, files) -> {
-      var metrics = action.apply(files.getFiles());
-      result.put(commit, extractValuesFromCommit(metrics));
-    });
-    
-    return result;
-  }
-
-  private Map<String,Double> extractValuesFromCommit(Double[] data) {
-    return Map.ofEntries(
-      Map.entry("cbo", data[0]),
-      Map.entry("dit", data[1]),
-      Map.entry("nosi", data[2]),//4
-      Map.entry("rfc", data[3]),//5
-      Map.entry("wmc", data[4])//6
-    );
-  }
-
-  private Double[] normalize(List<Double> list) {
+  protected Double[] normalize(List<Double> list) {
 
     var min = list.stream().min(Double::compare).get();
     var max = list.stream().max(Double::compare).get();
@@ -353,15 +173,21 @@ public class Stats {
     return new Double[]{min,max};
   }
 
-  public BranchStats branch() {
-    return new BranchStats(player, repository);
+  /**
+   * It provide access to analysis methods related to a repository
+   * @param repository Name of repository
+   * @return Instance of repository analysis class
+   */
+  public RepositoryStats repository(
+    String repository) {
+
+    return new RepositoryStats(player,repository);
   }
 
-  public CommitStats commits(String branchId) {
-    return new CommitStats(player, repository, branchId);
-  }
-
-  protected ResultItem<Double> derivateMetrics(Double[] start, Double[] end, Integer size) {
+  protected ResultItem<Double> derivateMetrics(
+    Double[] start, 
+    Double[] end, 
+    Integer size) {
     
     ResultItem<Double> result = ResultItem.create();
 

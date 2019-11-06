@@ -7,65 +7,48 @@ import org.eclipse.jgit.api.errors.GitAPIException;
 
 import core.Player;
 import core.ResultItem;
-import core.Stats;
-import core.data.Commit;
 import repository.exception.GitRepositoryException;
 
-public class BranchStats extends Stats {
+public class BranchStats extends RepositoryStats {
 
-  public BranchStats(Player player, String repository) {
+  private String branch;
+
+  public BranchStats(Player player, String repository, String branch) {
     super(player, repository);
+    this.branch = branch;
   }
 
-  public Map<String, ResultItem<Double>> derivate() 
-    throws GitAPIException, GitRepositoryException {
-      
-    var branches = player.branches(repository);
-    Map<String, ResultItem<Double>> result = new HashMap<>();
-    
-    for(var branch: branches) {
-      var name = branch.getId().getName();
-      
-      result.put(name,this.execute(name));
-    }
-    return result;
-  }
+  public Map<String,ResultItem<Double>> derivate() {
 
-  private ResultItem<Double> execute(String branch) {
-    
-    Commit[] commits = null;
+    Map<String,ResultItem<Double>> result = new HashMap<>();
+
     try {
-      commits = player.commits(repository, branch);
-      return compareInitialAndLastCommit(
-        branch,
-        commits[commits.length-1].getId().getName(),
-        commits[0].getId().getName(),
-        commits.length-1
-      );
+      
+      var commits = player.commits(repository, branch);
+      var data = player.sumOfMetricsOfFiles(repository, branch, 0, commits.length-1, 1);
+
+      for(var i = commits.length-1; i > 0; i--) {
+        
+        var nextId = commits[i-1].getId().getName();
+        var prevId = commits[i].getId().getName();
+
+        var nextData = data.get(nextId).values();
+        var prevData = data.get(prevId).values();
+        
+        result.put(
+          nextId,
+          derivateMetrics(
+            prevData.toArray(new Double[prevData.size()]),
+            nextData.toArray(new Double[nextData.size()]),
+            commits.length-1
+          )
+        );
+      }
+
     } catch (GitAPIException | GitRepositoryException e) {
       e.printStackTrace();
     }
-    return null;
-  }
 
-  private ResultItem<Double> compareInitialAndLastCommit(
-    String branch, String commitBegin, String commitEnd, Integer size)
-      throws GitRepositoryException, GitAPIException {
-
-    var metricsStart = getSumOfMetricsOfFiles()
-      .apply(
-        player
-        .metricsFromAllFilesInACommit(repository, branch, commitBegin)
-        .getFiles()
-      );
-    
-    var metricsEnd = getSumOfMetricsOfFiles()
-      .apply(
-        player
-        .metricsFromAllFilesInACommit(repository, branch, commitEnd)
-        .getFiles()
-      );
-    
-    return derivateMetrics(metricsStart, metricsEnd, size);
+    return result;
   }
 }

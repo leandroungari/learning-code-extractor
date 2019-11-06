@@ -18,19 +18,20 @@ public class DerivateMetricsOfRepository {
   }
 
   @Test
-  public void branch() throws GitAPIException, GitRepositoryException {
+  public void repository() throws GitAPIException, GitRepositoryException {
     
-    var stats = new Stats(player, repository);
-    var result = stats.branch().derivate();
+    var stats = new Stats(player);
+    var result = stats.repository(repository).derivate();
 
     System.out.println(result);
   }
 
   @Test
-  public void commits() {
-    var stats = new Stats(player, repository);
+  public void branch() {
+    var stats = new Stats(player);
     var result = stats
-      .commits("f3b628f8f9c71a2cdfa052025c4a1ed78ee4c45d")
+      .repository(repository)
+      .branch("f3b628f8f9c71a2cdfa052025c4a1ed78ee4c45d")
       .derivate();
 
     System.out.println(result);
