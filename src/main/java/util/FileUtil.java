@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.ArrayList;
 
 public class FileUtil {
 
@@ -45,7 +44,7 @@ public class FileUtil {
 	
 	public static ArrayList<String> listOfFolders(File parentFolder) {
 	  
-	  var list = new ArrayList<String>();
+	  var list = new List<String>();
 	  if(parentFolder.exists() && 
 	     parentFolder.isDirectory()) {
 	    

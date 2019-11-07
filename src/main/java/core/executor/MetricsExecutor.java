@@ -2,8 +2,6 @@ package core.executor;
 
 import java.io.File;
 import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
@@ -13,8 +11,10 @@ import org.eclipse.jgit.api.errors.GitAPIException;
 import core.data.MetricsData;
 import core.resource.Resource;
 import core.resource.ResourceType;
+import core.result.Element;
+import core.result.List;
+import core.result.Map;
 import core.Player;
-import core.result.ResultItem;
 import core.Stats;
 import core.data.Commit;
 import repository.Repository;
@@ -102,12 +102,12 @@ public class MetricsExecutor {
       var resultSet = list.subList(i, (i + numExecutions < list.size() ? i + numExecutions : list.size())).stream()
           .map(commit -> CompletableFuture.runAsync(() -> consumer.accept(commit))).collect(Collectors.toList());
 
-      CompletableFuture.allOf(resultSet.toArray(new CompletableFuture[resultSet.size()])).join();
+      CompletableFuture.allOf(resultSet.toArray()).join();
     }
 
   }
 
-  public Map<String, ResultItem<Double>> derivateRepository(
+  public Map<String, Element<Double>> derivateRepository(
     String repository)
       throws GitAPIException, 
       GitRepositoryException {
@@ -118,7 +118,7 @@ public class MetricsExecutor {
       .derivate();
   }
 
-  public Map<String, ResultItem<Double>> derivateBranch(String repository, String branchId) {
+  public Map<String, Element<Double>> derivateBranch(String repository, String branchId) {
 
     var stats = new Stats(player);
     return stats

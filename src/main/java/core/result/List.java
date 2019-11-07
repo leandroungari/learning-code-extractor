@@ -1,6 +1,10 @@
 package core.result;
 
+import static java.lang.reflect.Array.newInstance;
+
+import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
@@ -29,6 +33,11 @@ public class List<T> {
   public void add(T item) {
     
     data.add(item);
+  }
+
+  public T get(Integer i) {
+    
+    return data.get(i);
   }
 
   public Boolean contains(T item) {
@@ -78,6 +87,14 @@ public class List<T> {
     return result;
   }
 
+  public <A> List<A> map(Function<T,A> action) {
+    var result = new List<A>();
+    for(var i = 0; i < data.size(); i++) {
+      result.add(action.apply(data.get(i)));
+    }
+    return result;
+  }
+
   public <A> List<A> map(BiFunction<T,Integer,A> action) {
     var result = new List<A>();
     for(var i = 0; i < data.size(); i++) {
@@ -86,11 +103,41 @@ public class List<T> {
     return result;
   }
 
-  public <A extends Comparable<A>> A reduce(BiFunction<A, T, A> action, A initial) {
+  public <A> A reduce(BiFunction<A, T, A> action, A initial) {
     for(var i = 0; i < data.size(); i++) {
       initial = action.apply(initial, data.get(i));
     }
     return initial;
+  }
+
+  public T min(Comparator<T> comparator) throws Exception {
+    
+    if(size() == 0) throw new Exception("The list is empty");
+    return reduce((total,a) -> {
+      return (comparator.compare(a, total) == -1 ? a : total);
+    }, get(0));
+  }
+
+  public T max(Comparator<T> comparator) throws Exception {
+    if(size() == 0) throw new Exception("The list is empty");
+    return reduce((total,a) -> {
+      return (comparator.compare(a, total) == 1 ? a : total);
+    }, get(0));
+  }
+
+  /**
+   * It converts the list to a array
+   * @return A array with all elements
+   * @throws Exception It throws the exception whether the list is empty
+   */
+  @SuppressWarnings("unchecked")
+  public T[] toArray() throws Exception {
+    if(size() == 0) throw new Exception("The list is empty");
+    var vector = (T[]) Array.newInstance(get(0).getClass(),size());
+    for(int i = 0; i < size(); i++) {
+      vector[i] = get(i);
+    }
+    return vector;
   }
 
   public Integer size() {

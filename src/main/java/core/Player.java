@@ -1,7 +1,5 @@
 package core;
 
-import java.util.List;
-
 import org.eclipse.jgit.api.errors.GitAPIException;
 
 import core.data.Branch;
@@ -14,6 +12,7 @@ import core.executor.RepositoryExecutor;
 import core.executor.SettingsExecutor;
 import core.resource.Resource;
 import core.resource.ResourceType;
+import core.result.List;
 import core.result.Map;
 import repository.exception.GitRepositoryException;
 import util.FileUtil;
@@ -342,10 +341,10 @@ public class Player {
     var data = repo.data(branch,from,to,step);
     
     var result = new Map<String,Map<String,Double>>();
-    data.entries().forEach((commit, files) -> {
+    data.entries().forEach(item -> {
       result.add(
-        commit,
-        repo.getEvolution().apply(files.getFiles(), metric)
+        item.one(),
+        repo.getEvolution().apply(item.two().getFiles(), metric)
       );
     });
     return result;

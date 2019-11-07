@@ -1,8 +1,8 @@
 package core.data;
 
-import java.util.List;
-
 import org.eclipse.jgit.lib.ObjectId;
+
+import core.result.List;
 
 public class Commit {
 

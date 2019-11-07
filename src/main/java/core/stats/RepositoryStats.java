@@ -25,9 +25,9 @@ public class RepositoryStats extends Stats {
     this.repository = repository;
   }
 
-  public Map<String, Element<Double>> derivate() {
+  public Map<String,Map<String,Element<Double>>> derivate() {
       
-    Map<String, Element<Double>> result = new Map<>();
+    Map<String,Map<String,Element<Double>>> result = new Map<>();
     Branch[] branches;
     try {
       branches = player.branches(repository);
@@ -111,15 +111,18 @@ public class RepositoryStats extends Stats {
 
     var newData = new MetricsData();
     
-    dataCurrent.getFiles().forEach((file,metrics) -> {
+    dataCurrent.getFiles().entries().forEach(item -> {
 
-      if(!isDeletedFile(next.getDiffFiles(), file)) {
-        newData.addFile(file, metrics);
+      if(!isDeletedFile(next.getDiffFiles(), item.one())) {
+        newData.addFile(item.one(), item.two());
       }
     });
 
-    dataNext.getFiles().forEach((file,metrics) -> {
-      newData.addFile(file, metrics);
+    dataNext
+    .getFiles()
+    .entries()
+    .forEach(item -> {
+      newData.addFile(item.one(), item.two());
     });
 
     return newData;
@@ -217,7 +220,7 @@ public class RepositoryStats extends Stats {
       .add("wmc", data[4]);
   }
 
-  private Element execute(String branch) {
+  private Map<String,Element<Double>> execute(String branch) {
     
     Commit[] commits = null;
     try {

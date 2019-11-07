@@ -1,13 +1,8 @@
 package core.stats;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import org.eclipse.jgit.api.errors.GitAPIException;
-
 import core.Player;
 import core.result.Element;
-import repository.exception.GitRepositoryException;
+import core.result.Map;
 
 public class BranchStats extends RepositoryStats {
 
@@ -18,9 +13,9 @@ public class BranchStats extends RepositoryStats {
     this.branch = branch;
   }
 
-  public Map<String,Element<Double>> derivate() {
+  public Map<String,Map<String,Element<Double>>> derivate() {
 
-    Map<String,Element<Double>> result = new HashMap<>();
+    Map<String,Map<String,Element<Double>>> result = new Map<>();
 
     try {
       
@@ -35,17 +30,17 @@ public class BranchStats extends RepositoryStats {
         var nextData = data.get(nextId).values();
         var prevData = data.get(prevId).values();
         
-        result.put(
+        result.add(
           nextId,
           derivateMetrics(
-            prevData.toArray(new Double[prevData.size()]),
-            nextData.toArray(new Double[nextData.size()]),
+            prevData.toArray(),
+            nextData.toArray(),
             commits.length-1
           )
         );
       }
 
-    } catch (GitAPIException | GitRepositoryException e) {
+    } catch (Exception e) {
       e.printStackTrace();
     }
 

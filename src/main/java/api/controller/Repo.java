@@ -1,8 +1,6 @@
 package api.controller;
 
 import java.io.IOException;
-import java.util.List;
-import java.util.Map;
 
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,6 +14,8 @@ import core.data.Branch;
 import core.data.Commit;
 import core.data.CommitInfo;
 import core.data.DiffFile;
+import core.result.List;
+import core.result.Map;
 import repository.exception.GitRepositoryException;
 
 @RestController
@@ -73,7 +73,8 @@ public class Repo {
 		return player.diffFilesFromCommit(
 			repository, 
 			branch, 
-			commit);
+      commit
+    );
 	}
 	
 	@GetMapping("/repo/download")
@@ -86,8 +87,7 @@ public class Repo {
 		var url = body.get("url");
 		
 		player.download(repository, url);
-		return Map.ofEntries(
-			Map.entry("result", true)
-		);
+    return new Map<String,Boolean>()
+      .add("result", true);
 	}
 }
