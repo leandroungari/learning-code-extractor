@@ -1,22 +1,20 @@
 package core.executor;
 
 import java.io.File;
-import java.util.Arrays;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
-import java.util.stream.Collectors;
 
 import org.eclipse.jgit.api.errors.GitAPIException;
 
+import core.Player;
+import core.Stats;
+import core.data.Commit;
 import core.data.MetricsData;
 import core.resource.Resource;
 import core.resource.ResourceType;
 import core.result.Element;
 import core.result.List;
 import core.result.Map;
-import core.Player;
-import core.Stats;
-import core.data.Commit;
 import repository.Repository;
 import repository.exception.GitRepositoryException;
 import repository.metrics.MetricsAnalyzer;
@@ -53,23 +51,31 @@ public class MetricsExecutor {
     Repository.create(new File(player.settings().folderOfRepositories() + "/" + repository));
 
     var data = new MetricsData();
-    var diffFiles = player.diffFilesFromCommit(repository, branch, commit).stream().map(diff -> diff.getNewPath())
-        .collect(Collectors.toList());
+    var diffFiles = player
+      .diffFilesFromCommit(repository, branch, commit)
+      .map(diff -> diff.getNewPath());
 
-    analyzer.repositoryName(repository).enableLogs(false).process(commit, (file, result) -> {
+    analyzer
+      .repositoryName(repository)
+      .enableLogs(false)
+      .process(commit, (file, result) -> {
 
       if (diffFiles.contains(file)) {
         data.addFiles(file, result);
       }
     });
 
-    Resource.create(repository, ResourceType.METRICS_DIFF_FILES).folder("commits").name(commit).write(data);
+    Resource
+      .create(repository, ResourceType.METRICS_DIFF_FILES)
+      .folder("commits")
+      .name(commit)
+      .write(data);
   }
 
   public void analyzeAllFilesInARangeOfCommits(String repository, String branch, Commit[] rangeOfCommits)
       throws GitAPIException, GitRepositoryException {
 
-    var listOfCommits = Arrays.asList(player.commits(repository, branch));
+    var listOfCommits = List.of(player.commits(repository, branch));
 
     parallelTasks(listOfCommits, commit -> {
       try {
@@ -84,7 +90,7 @@ public class MetricsExecutor {
   public void analyzeDiffFilesInARangeOfCommits(String repository, String branch, Commit[] rangeOfCommits)
       throws GitAPIException, GitRepositoryException {
 
-    var listOfCommits = Arrays.asList(player.commits(repository, branch));
+    var listOfCommits = List.of(player.commits(repository, branch));
 
     parallelTasks(listOfCommits, commit -> {
       try {
@@ -99,15 +105,15 @@ public class MetricsExecutor {
 
     for (Integer i = 0; i < list.size(); i += numExecutions) {
 
-      var resultSet = list.subList(i, (i + numExecutions < list.size() ? i + numExecutions : list.size())).stream()
-          .map(commit -> CompletableFuture.runAsync(() -> consumer.accept(commit))).collect(Collectors.toList());
+      var resultSet = list.subList(i, (i + numExecutions < list.size() ? i + numExecutions : list.size()))
+          .map(commit -> CompletableFuture.runAsync(() -> consumer.accept(commit)));
 
       CompletableFuture.allOf(resultSet.toArray()).join();
     }
 
   }
 
-  public Map<String, Element<Double>> derivateRepository(
+  public Map<String, Map<String,Element<Double>>> derivateRepository(
     String repository)
       throws GitAPIException, 
       GitRepositoryException {
@@ -118,7 +124,7 @@ public class MetricsExecutor {
       .derivate();
   }
 
-  public Map<String, Element<Double>> derivateBranch(String repository, String branchId) {
+  public Map<String, Map<String,Element<Double>>> derivateBranch(String repository, String branchId) {
 
     var stats = new Stats(player);
     return stats

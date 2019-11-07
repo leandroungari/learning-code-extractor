@@ -2,8 +2,6 @@ package core;
 
 import java.util.function.BiFunction;
 import java.util.function.Function;
-import java.util.stream.Collectors;
-
 import core.result.Element;
 import core.result.List;
 import core.result.Map;

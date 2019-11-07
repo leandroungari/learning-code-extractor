@@ -144,10 +144,9 @@ public class RepositoryExecutor {
 			.diff();
 		
 		var result = diffList
-			.stream().map(diff -> {
+			.map(diff -> {
 				return new DiffFile(diff.type(), diff.oldPath(), diff.newPath());
-			})
-			.collect(Collectors.toList());
+			});
 		
 		var resource = Resource
 			.create(repository, ResourceType.DIFF_FILES)

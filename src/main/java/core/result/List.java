@@ -1,7 +1,5 @@
 package core.result;
 
-import static java.lang.reflect.Array.newInstance;
-
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -18,12 +16,13 @@ public class List<T> {
     data = new ArrayList<>();
   }
 
-  public static <A> List<A> of(A... list) {
+  public static <A> List<A> of(A[] list) {
     var result = new List<A>();
     result.add(list);
     return result;
   }
 
+  @SuppressWarnings("unchecked")
   public void add(T... items) {
     for(var i = 0; i < items.length; i++) {
       data.add(items[i]);
@@ -125,14 +124,22 @@ public class List<T> {
     }, get(0));
   }
 
+  public List<T> subList(Integer start, Integer end) {
+    return filter((item,position) -> {
+      return start <= position && position <= end;
+    });
+  }
+
   /**
    * It converts the list to a array
+   * If the list is empty the method returns null
    * @return A array with all elements
    * @throws Exception It throws the exception whether the list is empty
    */
   @SuppressWarnings("unchecked")
-  public T[] toArray() throws Exception {
-    if(size() == 0) throw new Exception("The list is empty");
+  public T[] toArray() {
+    if(size() == 0) return null;
+    
     var vector = (T[]) Array.newInstance(get(0).getClass(),size());
     for(int i = 0; i < size(); i++) {
       vector[i] = get(i);

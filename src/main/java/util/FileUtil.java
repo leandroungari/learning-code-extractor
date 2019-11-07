@@ -5,6 +5,8 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
+import core.result.List;
+
 public class FileUtil {
 
 	public static void createFolder(File file) {
@@ -42,7 +44,7 @@ public class FileUtil {
 	  return null;
 	}
 	
-	public static ArrayList<String> listOfFolders(File parentFolder) {
+	public static List<String> listOfFolders(File parentFolder) {
 	  
 	  var list = new List<String>();
 	  if(parentFolder.exists() && 
