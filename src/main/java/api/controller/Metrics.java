@@ -27,8 +27,11 @@ public class Metrics {
 
   @GetMapping("/metrics/all/{repository}/{branch}/{commit}")
   @ResponseBody
-  public MetricsData metricsAllInACommit(@PathVariable String repository, @PathVariable String branch,
-      @PathVariable String commit) throws GitRepositoryException, GitAPIException {
+  public MetricsData metricsAllInACommit(
+    @PathVariable String repository, 
+    @PathVariable String branch,
+    @PathVariable String commit) 
+      throws GitRepositoryException, GitAPIException {
 
     return player.metricsFromAllFilesInACommit(repository, branch, commit);
   }
@@ -68,8 +71,11 @@ public class Metrics {
 
   @GetMapping("/metrics/diff/{repository}/{branch}/{from}/{to}")
   @ResponseBody
-  public Map<String, MetricsData> metricsDiffInARangeOfCommits(@PathVariable String repository,
-      @PathVariable String branch, @PathVariable Integer from, @PathVariable Integer to)
+  public Map<String, MetricsData> metricsDiffInARangeOfCommits(
+    @PathVariable String repository,
+    @PathVariable String branch, 
+    @PathVariable Integer from, 
+    @PathVariable Integer to)
       throws GitRepositoryException, GitAPIException {
 
     var resultSet = new List<Commit>();
@@ -96,6 +102,17 @@ public class Metrics {
 	public List<String> list() {
 
 		return player.availableRepositories();
-	}
+  }
+  
+  @GetMapping("/metrics/relevant/{repository}/${branch}/${metric}")
+  @ResponseBody
+  public Map<String, List<String>> relevant(
+    @PathVariable String repository,
+    @PathVariable String branch,
+    @PathVariable String metric) 
+      throws GitAPIException, GitRepositoryException {
+
+    return player.relevant(repository, branch, metric);
+  }
 
 }

@@ -256,6 +256,15 @@ public class Player {
     return map;
   }
 
+  public Map<String, List<String>> relevant(
+    String repository,
+    String branch,
+    String metric) 
+      throws GitAPIException, GitRepositoryException {
+    
+    return metricExec.relevantCommits(repository, branch, metric);
+  }
+
   /**
    * It performs the download of the Git repository from the specified URL
    * @param repository Name of repository
