@@ -29,28 +29,19 @@ public class Element<T> {
   }
 
   @SuppressWarnings("unchecked")
-  public <A extends Comparable<T>> Boolean aboveOf(A value) throws Exception {
-    if(data instanceof Comparable) {
-      return ((Comparable<A>) data).compareTo(value) == 1;
-    }
-    throw new Exception("Not comparable element");
+  public <A extends Comparable<T>> Boolean aboveOf(A value) {
+    
+    return ((Comparable<A>) data).compareTo(value) == 1;
   }
 
   @SuppressWarnings("unchecked")
-  public <A extends Comparable<T>> Boolean belowOf(A value) throws Exception {
-    if(data instanceof Comparable) {
-      return ((Comparable<A>) data).compareTo(value) == -1;
-    }
-    throw new Exception("Not comparable element");
+  public <A extends Comparable<T>> Boolean belowOf(A value) {
+    
+    return ((Comparable<A>) data).compareTo(value) == -1;
   }
 
   @SuppressWarnings("unchecked")
   public <A extends Comparable<T>> Boolean equalTo(A value) {
-    if(data instanceof Comparable) {
-      return ((Comparable<A>) data).compareTo(value) == -1;
-    }
-    else {
-      return data.equals(value);
-    }
+    return ((Comparable<A>) data).compareTo(value) == -1;
   }
 }

@@ -51,25 +51,16 @@ public class MetricsExecutor {
     Repository.create(new File(player.settings().folderOfRepositories() + "/" + repository));
 
     var data = new MetricsData();
-    var diffFiles = player
-      .diffFilesFromCommit(repository, branch, commit)
-      .map(diff -> diff.getNewPath());
+    var diffFiles = player.diffFilesFromCommit(repository, branch, commit).map(diff -> diff.getNewPath());
 
-    analyzer
-      .repositoryName(repository)
-      .enableLogs(false)
-      .process(commit, (file, result) -> {
+    analyzer.repositoryName(repository).enableLogs(false).process(commit, (file, result) -> {
 
       if (diffFiles.contains(file)) {
         data.addFiles(file, result);
       }
     });
 
-    Resource
-      .create(repository, ResourceType.METRICS_DIFF_FILES)
-      .folder("commits")
-      .name(commit)
-      .write(data);
+    Resource.create(repository, ResourceType.METRICS_DIFF_FILES).folder("commits").name(commit).write(data);
   }
 
   public void analyzeAllFilesInARangeOfCommits(String repository, String branch, Commit[] rangeOfCommits)
@@ -113,25 +104,51 @@ public class MetricsExecutor {
 
   }
 
-  public Map<String, Map<String,Element<Double>>> derivateRepository(
-    String repository)
-      throws GitAPIException, 
-      GitRepositoryException {
+  private Map<String, Map<String, Element<Double>>> derivateRepository(String repository)
+      throws GitAPIException, GitRepositoryException {
 
     var stats = new Stats(player);
-    return stats
-      .repository(repository)
-      .derivate();
+    return stats.repository(repository).derivate();
   }
 
-  public Map<String, Map<String,Element<Double>>> derivateBranch(String repository, String branchId) {
+  private Map<String, Map<String, Element<Double>>> derivateBranch(String repository, String branchId) {
 
     var stats = new Stats(player);
-    return stats
-      .repository(repository)
-      .branch(branchId)
-      .derivate();
+    return stats.repository(repository).branch(branchId).derivate();
   }
+
+  public Map<String, List<String>> relevantCommits(String repository, String branchId, String metric)
+      throws GitAPIException, GitRepositoryException {
+
+    var data = new Map<String, List<String>>();
+
+    var average = derivateRepository(repository).get(branchId);
+    var branchData = derivateBranch(repository, branchId);
+
+    data
+    .add(
+      "good", 
+      branchData
+        .entries()
+        .filter(item -> {
+          return item.two().get(metric).aboveOf(average.get(metric).get());
+        })
+        .map(item -> item.one())
+    )
+    .add(
+      "bad",
+      branchData
+        .entries()
+        .filter(item -> {
+          return item.two().get(metric).belowOf(average.get(metric).get());
+        })
+        .map(item -> item.one())
+    );
+
+    return data;
+  }
+
+
 
 
 	
