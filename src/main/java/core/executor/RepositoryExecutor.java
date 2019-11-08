@@ -143,11 +143,13 @@ public class RepositoryExecutor {
 			.commit(ObjectId.fromString(commit))
 			.diff();
 		
-		var result = diffList
+    var result = diffList
+      .stream()
 			.map(diff -> {
 				return new DiffFile(diff.type(), diff.oldPath(), diff.newPath());
-			});
-		
+      })
+      .collect(Collectors.toList());
+      		
 		var resource = Resource
 			.create(repository, ResourceType.DIFF_FILES)
 			.branch(branch);

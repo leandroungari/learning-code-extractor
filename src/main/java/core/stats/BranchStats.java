@@ -1,8 +1,9 @@
 package core.stats;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import core.Player;
-import core.result.Element;
-import core.result.Map;
 
 public class BranchStats extends RepositoryStats {
 
@@ -13,9 +14,9 @@ public class BranchStats extends RepositoryStats {
     this.branch = branch;
   }
 
-  public Map<String,Map<String,Element<Double>>> derivate() {
+  public Map<String,Map<String,Double>> derivate() {
 
-    Map<String,Map<String,Element<Double>>> result = new Map<>();
+    Map<String,Map<String,Double>> result = new HashMap<>();
 
     try {
       
@@ -30,12 +31,12 @@ public class BranchStats extends RepositoryStats {
         var nextData = data.get(nextId).values();
         var prevData = data.get(prevId).values();
         
-        result.add(
+        result.put(
           nextId,
           derivateMetrics(
-            prevData.toArray(),
-            nextData.toArray(),
-            commits.length-1
+            prevData.toArray(new Double[prevData.size()]),
+            nextData.toArray(new Double[prevData.size()]),
+            Integer.valueOf(commits.length-1)
           )
         );
       }

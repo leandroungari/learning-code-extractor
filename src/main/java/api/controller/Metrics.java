@@ -1,5 +1,9 @@
 package api.controller;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -9,8 +13,6 @@ import org.springframework.web.bind.annotation.RestController;
 import core.Player;
 import core.data.Commit;
 import core.data.MetricsData;
-import core.result.List;
-import core.result.Map;
 import repository.exception.GitRepositoryException;
 
 @RestController()
@@ -50,7 +52,7 @@ public class Metrics {
       @PathVariable String branch, @PathVariable Integer from, @PathVariable Integer to)
       throws GitRepositoryException, GitAPIException {
 
-    var resultSet = new List<Commit>();
+    var resultSet = new ArrayList<Commit>();
     var listOfCommits = player.commits(repository, branch);
 
     for (var i = 0; i < listOfCommits.length; i++) {
@@ -60,13 +62,12 @@ public class Metrics {
         break;
     }
 
-    try {
-      return player.metricsFromAllFilesInARangeOfCommits(repository, branch, resultSet.toArray());
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
-
-    return null;
+    return player
+      .metricsFromAllFilesInARangeOfCommits(
+        repository, 
+        branch, 
+        resultSet.toArray(new Commit[resultSet.size()])
+      );
   }
 
   @GetMapping("/metrics/diff/{repository}/{branch}/{from}/{to}")
@@ -78,7 +79,7 @@ public class Metrics {
     @PathVariable Integer to)
       throws GitRepositoryException, GitAPIException {
 
-    var resultSet = new List<Commit>();
+    var resultSet = new ArrayList<Commit>();
     var listOfCommits = player.commits(repository, branch);
 
     for (var i = 0; i < listOfCommits.length; i++) {
@@ -88,31 +89,33 @@ public class Metrics {
         break;
     }
 
-    try {
-      return player.metricsFromDiffFilesInARangeOfCommits(repository, branch, resultSet.toArray());
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
+    return player
+      .metricsFromDiffFilesInARangeOfCommits(
+        repository, 
+        branch, 
+        resultSet.toArray(new Commit[resultSet.size()])
+      );
 
-    return null;
 	}
 
 	@GetMapping("/metrics/availableRepositories")
 	@ResponseBody
 	public List<String> list() {
 
-		return player.availableRepositories();
+    return player
+      .availableRepositories();
   }
   
-  @GetMapping("/metrics/relevant/{repository}/${branch}/${metric}")
+  @GetMapping("/metrics/relevant/{repository}/{branch}/{metric}")
   @ResponseBody
-  public Map<String, List<String>> relevant(
+  public Map<String, List<String> relevant(
     @PathVariable String repository,
     @PathVariable String branch,
     @PathVariable String metric) 
       throws GitAPIException, GitRepositoryException {
 
-    return player.relevant(repository, branch, metric);
+    return player
+      .relevant(repository, branch, metric);
   }
 
 }

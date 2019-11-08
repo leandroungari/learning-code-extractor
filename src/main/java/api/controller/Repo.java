@@ -1,6 +1,9 @@
 package api.controller;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -14,8 +17,6 @@ import core.data.Branch;
 import core.data.Commit;
 import core.data.CommitInfo;
 import core.data.DiffFile;
-import core.result.List;
-import core.result.Map;
 import repository.exception.GitRepositoryException;
 
 @RestController
@@ -87,7 +88,10 @@ public class Repo {
 		var url = body.get("url");
 		
 		player.download(repository, url);
-    return new Map<String,Boolean>()
-      .add("result", true);
+    
+    var map = new HashMap<String,Boolean>();
+    map.put("result", true);
+    
+    return map;
 	}
 }

@@ -1,5 +1,9 @@
 package core;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.eclipse.jgit.api.errors.GitAPIException;
 
 import core.data.Branch;
@@ -12,8 +16,6 @@ import core.executor.RepositoryExecutor;
 import core.executor.SettingsExecutor;
 import core.resource.Resource;
 import core.resource.ResourceType;
-import core.result.List;
-import core.result.Map;
 import repository.exception.GitRepositoryException;
 import util.FileUtil;
 
@@ -223,12 +225,19 @@ public class Player {
   public Map<String, MetricsData> metricsFromDiffFilesInARangeOfCommits(String repository, String branch,
       Commit[] commits) throws GitRepositoryException, GitAPIException {
 
-    var map = new Map<String, MetricsData>();
+    var map = new HashMap<String, MetricsData>();
     for (var commit : commits) {
 
-      var result = metricsFromDiffFilesInACommit(repository, branch, commit.getId().getName());
+      var result = metricsFromDiffFilesInACommit(
+        repository, 
+        branch, 
+        commit.getId().getName()
+      );
 
-      map.add(commit.getId().getName(), result);
+      map.put(
+        commit.getId().getName(), 
+        result
+      );
     }
 
     return map;
@@ -246,23 +255,24 @@ public class Player {
   public Map<String, MetricsData> metricsFromAllFilesInARangeOfCommits(String repository, String branch,
       Commit[] commits) throws GitRepositoryException, GitAPIException {
 
-    var map = new Map<String, MetricsData>();
+    var map = new HashMap<String, MetricsData>();
     for (var commit : commits) {
       var result = metricsFromAllFilesInACommit(repository, branch, commit.getId().getName());
 
-      map.add(commit.getId().getName(), result);
+      map.put(commit.getId().getName(), result);
     }
 
     return map;
   }
 
-  public Map<String, List<String>> relevant(
+  public Map<String, List<Map<String,Double>>> relevant(
     String repository,
     String branch,
     String metric) 
       throws GitAPIException, GitRepositoryException {
     
-    return metricExec.relevantCommits(repository, branch, metric);
+    return metrics()
+      .relevantCommits(repository, branch, metric);
   }
 
   /**
@@ -273,7 +283,7 @@ public class Player {
    */
   public void download(String repository, String url) throws GitRepositoryException {
 
-    repoExec.download(repository, url);
+    repository().download(repository, url);
   }
 
   Stats stats() {
@@ -320,7 +330,9 @@ public class Player {
   ) throws GitRepositoryException, GitAPIException {
 
     var data = sumOfMetricsOfFiles(repository, branch, from, to, step);
-    return stats().repository(repository).normalizeMetrics(data);
+    return stats()
+      .repository(repository)
+      .normalizeMetrics(data);
   }
 
   public Map<String, Map<String, Double>> normalizedAverageOfMetricsOfFiles (
@@ -349,11 +361,11 @@ public class Player {
     var repo = stats().repository(repository);
     var data = repo.data(branch,from,to,step);
     
-    var result = new Map<String,Map<String,Double>>();
-    data.entries().forEach(item -> {
-      result.add(
-        item.one(),
-        repo.getEvolution().apply(item.two().getFiles(), metric)
+    var result = new HashMap<String,Map<String,Double>>();
+    data.forEach((commit,files) -> {
+      result.put(
+        commit,
+        repo.getEvolution().apply(files.getFiles(), metric)
       );
     });
     return result;

@@ -1,5 +1,7 @@
 package api.controller;
 
+import java.util.Map;
+
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -7,7 +9,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import core.Player;
-import core.result.Map;
 import repository.exception.GitRepositoryException;
 
 @RestController

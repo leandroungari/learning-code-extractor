@@ -1,10 +1,12 @@
 package core;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.function.BiFunction;
 import java.util.function.Function;
-import core.result.Element;
-import core.result.List;
-import core.result.Map;
+import java.util.stream.Collectors;
+
 import core.stats.RepositoryStats;
 
 public class Stats {
@@ -20,13 +22,13 @@ public class Stats {
   private Function<Map<String, Double[]>, Double[]> sumOfMetricsOfFiles = files -> {
 
     var sumOfMetrics = new Double[] { 0.0, 0.0, 0.0, 0.0, 0.0 };
-
-    files.entries().forEach(item -> {
-      sumOfMetrics[0] += item.two()[CBO];
-      sumOfMetrics[1] += item.two()[DIT];
-      sumOfMetrics[2] += item.two()[NOSI];
-      sumOfMetrics[3] += item.two()[RFC];
-      sumOfMetrics[4] += item.two()[WMC];
+    
+    files.forEach((name,metrics) -> {
+      sumOfMetrics[0] += metrics[CBO];
+      sumOfMetrics[1] += metrics[DIT];
+      sumOfMetrics[2] += metrics[NOSI];
+      sumOfMetrics[3] += metrics[RFC];
+      sumOfMetrics[4] += metrics[WMC];
     });
 
     return sumOfMetrics;
@@ -43,11 +45,11 @@ public class Stats {
   private BiFunction<Map<String, Double[]>, String, Map<String, Double>> evolution = (files, metric) -> {
 
     final Integer position = chooseMetric(metric);
-    var result = new Map<String, Double>();
-    files.entries().forEach(item -> {
-      result.add(item.one(), item.two()[position]);
+    var result = new HashMap<String, Double>();
+    files.forEach((file,metrics) -> {
+      result.put(file, metrics[position]);
     });
-
+    
     return result;
   };
 
@@ -92,17 +94,16 @@ public class Stats {
     var rfc = stats.get("rfc");
     var wmc = stats.get("wmc");
 
-    var result = new Map<String, Map<String, Double>>();
-    data.entries().forEach(item -> {
-      Map<String, Double> values = Map.of();
-      result.add(
-        item.one(),
-        values
-        .add("cbo", (item.two().get("cbo") - cbo[0]) / (cbo[1] - cbo[0] != 0 ? cbo[1] - cbo[0] : 1))
-        .add("dit", (item.two().get("dit") - dit[0]) / (dit[1] - dit[0] != 0 ? dit[1] - dit[0] : 1))
-        .add("nosi", (item.two().get("nosi") - nosi[0]) / (nosi[1] - nosi[0] != 0 ? nosi[1] - nosi[0] : 1))
-        .add("rfc", (item.two().get("rfc") - rfc[0]) / (rfc[1] - rfc[0] != 0 ? rfc[1] - rfc[0] : 1))
-        .add("wmc", (item.two().get("wmc") - wmc[0]) / (wmc[1] - wmc[0] != 0 ? wmc[1] - wmc[0] : 1)));
+    var result = new HashMap<String, Map<String, Double>>();
+    data.forEach((file,metrics) -> {
+      Map<String, Double> values = new HashMap<>();
+      values.put("cbo", (metrics.get("cbo") - cbo[0]) / (cbo[1] - cbo[0] != 0 ? cbo[1] - cbo[0] : 1));
+      values.put("dit", (metrics.get("dit") - dit[0]) / (dit[1] - dit[0] != 0 ? dit[1] - dit[0] : 1));
+      values.put("nosi", (metrics.get("nosi") - nosi[0]) / (nosi[1] - nosi[0] != 0 ? nosi[1] - nosi[0] : 1));
+      values.put("wmc", (metrics.get("wmc") - wmc[0]) / (wmc[1] - wmc[0] != 0 ? wmc[1] - wmc[0] : 1));
+      values.put("rfc", (metrics.get("rfc") - rfc[0]) / (rfc[1] - rfc[0] != 0 ? rfc[1] - rfc[0] : 1));
+      
+      result.put(file,values);
     });
 
     return result;
@@ -110,12 +111,29 @@ public class Stats {
 
   Map<String,Double[]> extractStats(Map<String,Map<String,Double>> result) {
     
-    return new Map<String,Double[]>()
-      .add("cbo", normalize(result.values().map(a -> a.get("cbo"))))
-      .add("dit", normalize(result.values().map(a -> a.get("dit"))))
-      .add("nosi", normalize(result.values().map(a -> a.get("nosi"))))
-      .add("rfc", normalize(result.values().map(a -> a.get("rfc"))))
-      .add("wmc", normalize(result.values().map(a -> a.get("wmc"))));  
+    var b = new HashMap<String,Double[]>();
+    
+    b.put(
+      "cbo", 
+      normalize(result.values().stream().map(a -> a.get("cbo")).collect(Collectors.toList()))
+    );
+    b.put(
+      "dit", 
+      normalize(result.values().stream().map(a -> a.get("dit")).collect(Collectors.toList()))
+    );
+    b.put(
+      "nosi", 
+      normalize(result.values().stream().map(a -> a.get("nosi")).collect(Collectors.toList()))
+    );
+    b.put(
+      "rfc", 
+      normalize(result.values().stream().map(a -> a.get("rfc")).collect(Collectors.toList()))
+    );
+    b.put(
+      "wmc", normalize(result.values().stream().map(a -> a.get("wmc")).collect(Collectors.toList()))
+    );  
+
+    return b;
   }
 
   protected Double[] normalize(List<Double> list) {
@@ -123,8 +141,8 @@ public class Stats {
     var min = 0.0;
     var max = 0.0;
     try {
-      min = list.min(Double::compare);
-      max = list.max(Double::compare);
+      min = list.stream().min(Double::compare).get();
+      max = list.stream().max(Double::compare).get();
     } catch (Exception e) {
       e.printStackTrace();
     }
@@ -143,19 +161,20 @@ public class Stats {
     return new RepositoryStats(player,repository);
   }
 
-  protected Map<String,Element<Double>> derivateMetrics(
+  protected Map<String,Double> derivateMetrics(
     Double[] start, 
     Double[] end, 
     Integer size) {
     
-    var result = new Map<String,Element<Double>>();
-
-    return result
-      .add("cbo", new Element<Double>((end[0] - start[0])/size))
-      .add("dit", new Element<Double>((end[1] - start[1])/size))
-      .add("nosi", new Element<Double>((end[2] - start[2])/size))
-      .add("rfc", new Element<Double>((end[3] - start[3])/size))
-      .add("wmc", new Element<Double>((end[4] - start[4])/size));
+    var result = new HashMap<String,Double>();
+    
+    result.put("cbo", ((end[0] - start[0])/size));
+    result.put("dit", ((end[1] - start[1])/size));
+    result.put("nosi", ((end[2] - start[2])/size));
+    result.put("rfc", ((end[3] - start[3])/size));
+    result.put("wmc", ((end[4] - start[4])/size));
+    
+    return result;
   }
   
 }

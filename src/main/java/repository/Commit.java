@@ -1,6 +1,8 @@
 package repository;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.stream.Collectors;
 
 import org.eclipse.jgit.api.errors.GitAPIException;
@@ -9,7 +11,6 @@ import org.eclipse.jgit.revwalk.RevCommit;
 import org.eclipse.jgit.treewalk.AbstractTreeIterator;
 import org.eclipse.jgit.treewalk.EmptyTreeIterator;
 
-import core.result.List;
 import repository.commit.CommitInfo;
 import repository.commit.Diff;
 import repository.commit.File;
@@ -34,7 +35,7 @@ public class Commit {
 	
 	public List<File> allFiles() {
 		
-		var list = new List<File>();
+		var list = new ArrayList<File>();
 		var factory = new GitFactory();
 	
 		try {
@@ -53,8 +54,9 @@ public class Commit {
 	
 	public List<File> allFilesByExtension(String ext) {
 		
-		return allFiles()
-			.filter(file -> file.name().endsWith(ext));
+		return allFiles().stream()
+      .filter(file -> file.name().endsWith(ext))
+      .collect(Collectors.toList());
 	}
 	
 	public AbstractTreeIterator createTreeParser() {
@@ -76,7 +78,7 @@ public class Commit {
 	
 	public List<Diff> diff() {
 		
-		var list = new List<Diff>();
+		var list = new ArrayList<Diff>();
 		var otherCommit = before();
 		
 		AbstractTreeIterator oldTree;

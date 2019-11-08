@@ -1,13 +1,14 @@
 package core.stats;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.function.Function;
 
 import org.eclipse.jgit.api.errors.GitAPIException;
 
 import core.Player;
-import core.result.Element;
-import core.result.List;
-import core.result.Map;
 import core.Stats;
 import core.data.Branch;
 import core.data.Commit;
@@ -24,15 +25,15 @@ public class RepositoryStats extends Stats {
     this.repository = repository;
   }
 
-  public Map<String, Map<String, Element<Double>>> derivate() {
+  public Map<String, Map<String,Double>> derivate() {
 
-    Map<String, Map<String, Element<Double>>> result = new Map<>();
+    Map<String, Map<String, Double>> result = new HashMap<>();
     Branch[] branches;
     try {
       branches = player.branches(repository);
       for (var branch : branches) {
         var name = branch.getId().getName();
-        result.add(name, this.execute(name));
+        result.put(name, this.execute(name));
       }
     } catch (GitAPIException | GitRepositoryException e) {
       e.printStackTrace();
@@ -66,7 +67,7 @@ public class RepositoryStats extends Stats {
   private Map<String, MetricsData> fillNonModifiedFiles(Map<String, MetricsData> data, Commit[] commits) {
 
     for (var i = commits.length - 1; i > 0; i--) {
-      data.add(commits[i - 1].getId().getName(), createData(commits[i], commits[i - 1], data));
+      data.put(commits[i - 1].getId().getName(), createData(commits[i], commits[i - 1], data));
     }
 
     return data;
@@ -79,15 +80,15 @@ public class RepositoryStats extends Stats {
 
     var newData = new MetricsData();
 
-    dataCurrent.getFiles().entries().forEach(item -> {
+    dataCurrent.getFiles().forEach((file,metrics) -> {
 
-      if (!isDeletedFile(next.getDiffFiles(), item.one())) {
-        newData.addFile(item.one(), item.two());
+      if (!isDeletedFile(next.getDiffFiles(), file)) {
+        newData.addFile(file, metrics);
       }
     });
 
-    dataNext.getFiles().entries().forEach(item -> {
-      newData.addFile(item.one(), item.two());
+    dataNext.getFiles().forEach((file,metrics) -> {
+      newData.addFile(file,metrics);
     });
 
     return newData;
@@ -95,16 +96,16 @@ public class RepositoryStats extends Stats {
 
   private Boolean isDeletedFile(List<DiffFile> listOfFiles, String file) {
 
+    var result = false;
     if (listOfFiles == null)
-      return false;
+      return result;
 
-    return listOfFiles.reduce((result, diff) -> {
+    for(var diff: listOfFiles) {
       if (diff.getOldPath().equals(file) && diff.getType().equals("DELETE")) {
-
         result = true;
       }
-      return result;
-    }, false);
+    }
+    return result;
   }
 
   private Map<String, MetricsData> replaceFirstCommit(Map<String, MetricsData> data, String branch,
@@ -112,7 +113,11 @@ public class RepositoryStats extends Stats {
 
     var firstCommit = listOfCommits[listOfCommits.length - 1].getId().getName();
 
-    data.add(firstCommit, player.metricsFromAllFilesInACommit(repository, branch, firstCommit));
+    data.put(
+      firstCommit, 
+      player
+        .metricsFromAllFilesInACommit(repository, branch, firstCommit)
+    );
 
     return data;
   }
@@ -129,37 +134,40 @@ public class RepositoryStats extends Stats {
       throws GitAPIException, GitRepositoryException {
 
     var allCommits = player.commits(repository, branch);
-    var listOfCommits = new List<Commit>();
+    var listOfCommits = new ArrayList<Commit>();
     for (var i = from; i <= to; i += step) {
       listOfCommits.add(allCommits[i]);
     }
     
-    return listOfCommits.toArray();
+    return listOfCommits.toArray(new Commit[listOfCommits.size()]);
   }
 
   public Map<String,Map<String,Double>> extractValuesFromCommits(
     Map<String,MetricsData> data,
     Function<Map<String,Double[]>,Double[]> action) {
 
-    var result = new Map<String,Map<String,Double>>();
-    data.entries().forEach(item -> {
-      var metrics = action.apply(item.two().getFiles());
-      result.add(item.one(), extractValuesFromCommit(metrics));
+    var result = new HashMap<String,Map<String,Double>>();
+    data.forEach((commit,files) -> {
+      var metrics = action.apply(files.getFiles());
+      result.put(commit, extractValuesFromCommit(metrics));
     });
     
     return result;
   }
 
   private Map<String,Double> extractValuesFromCommit(Double[] data) {
-    return new Map<String,Double>()
-      .add("cbo", data[0])
-      .add("dit", data[1])
-      .add("nosi", data[2])
-      .add("rfc", data[3])
-      .add("wmc", data[4]);
+    var result = new HashMap<String,Double>();
+    
+    result.put("cbo", data[0]);
+    result.put("dit", data[1]);
+    result.put("nosi", data[2]);
+    result.put("rfc", data[3]);
+    result.put("wmc", data[4]);
+
+    return result;
   }
 
-  private Map<String,Element<Double>> execute(String branch) {
+  private Map<String,Double> execute(String branch) {
     
     Commit[] commits = null;
     try {
@@ -176,7 +184,7 @@ public class RepositoryStats extends Stats {
     return null;
   }
 
-  private Map<String,Element<Double>> compareInitialAndLastCommit(
+  private Map<String,Double> compareInitialAndLastCommit(
     String branch, String commitBegin, String commitEnd, Integer size)
       throws GitRepositoryException, GitAPIException {
 
