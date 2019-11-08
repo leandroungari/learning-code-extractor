@@ -47,7 +47,11 @@ public class MetricsExecutor {
       data.addFiles(file, result);
     });
 
-    Resource.create(repository, ResourceType.METRICS_ALL_FILES).folder("commits").name(commit).write(data);
+    Resource
+      .create(repository, ResourceType.METRICS_ALL_FILES)
+      .folder("commits")
+      .name(commit)
+      .write(data);
 
   }
 
@@ -157,7 +161,10 @@ public class MetricsExecutor {
     String branchId) {
 
     var stats = new Stats(player);
-    return stats.repository(repository).branch(branchId).derivate();
+    return stats
+      .repository(repository)
+      .branch(branchId)
+      .derivate();
   }
 
   public Map<String, List<Map<String,Double>>> relevantCommits(
@@ -170,8 +177,7 @@ public class MetricsExecutor {
 
     var average = derivateRepository(repository).get(branchId);
     var branchData = derivateBranch(repository, branchId);
-    
-
+  
     var good = new ArrayList<Map<String,Double>>();
     branchData.forEach((commit,metrics) -> {
       if(metrics.get(metric) < average.get(metric)) {
@@ -181,8 +187,8 @@ public class MetricsExecutor {
 
     var bad = new ArrayList<Map<String,Double>>();
     branchData.forEach((commit,metrics) -> {
-      if(metrics.get(metric) < average.get(metric)) {
-        good.add(Map.<String,Double>of(commit,metrics.get(metric)));
+      if(metrics.get(metric) > average.get(metric)) {
+        bad.add(Map.<String,Double>of(commit,metrics.get(metric)));
       }
     });
 

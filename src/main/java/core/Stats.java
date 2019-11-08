@@ -173,7 +173,7 @@ public class Stats {
     result.put("nosi", ((end[2] - start[2])/size));
     result.put("rfc", ((end[3] - start[3])/size));
     result.put("wmc", ((end[4] - start[4])/size));
-    
+      
     return result;
   }
   

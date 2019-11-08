@@ -31,7 +31,6 @@ public class Mapping {
 		try {
 			operation = defineType(o.getAction().toString());
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		

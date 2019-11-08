@@ -176,7 +176,7 @@ public class RepositoryStats extends Stats {
         branch,
         commits[commits.length-1].getId().getName(),
         commits[0].getId().getName(),
-        commits.length-1
+        commits.length
       );
     } catch (GitAPIException | GitRepositoryException e) {
       e.printStackTrace();

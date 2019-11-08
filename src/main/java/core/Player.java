@@ -114,7 +114,7 @@ public class Player {
       if (commit.equals(listOfCommits[i].getId().getName())) {
 
         if (listOfCommits[i].getInfo() == null) {
-          repoExec.commitInfo(repository, branch, commit);
+          repository().commitInfo(repository, branch, commit);
         }
 
         return listOfCommits[i].getInfo();

@@ -108,7 +108,7 @@ public class Metrics {
   
   @GetMapping("/metrics/relevant/{repository}/{branch}/{metric}")
   @ResponseBody
-  public Map<String, List<String> relevant(
+  public Map<String, List<Map<String,Double>>> relevant(
     @PathVariable String repository,
     @PathVariable String branch,
     @PathVariable String metric) 
