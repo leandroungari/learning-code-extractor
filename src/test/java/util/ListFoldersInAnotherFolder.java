@@ -23,7 +23,7 @@ public class ListFoldersInAnotherFolder {
       .listOfFolders(parent)
       .size();
     
-    assertEquals(1, num);
+    assertEquals("1", "" + num);
   }
   
   @Test

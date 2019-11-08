@@ -1,4 +1,4 @@
-package core;
+package core.executor;
 
 import java.io.File;
 import java.io.IOException;
@@ -24,22 +24,26 @@ public class SettingsExecutor {
 		
 	}
 	
-	public File baseFolder() {
+	public File base() {
 		return folder;
 	}
 	
-	public File metadataFolder() {
+	public File folderOfMetadata() {
 		return metadata;
 	}
 	
-	public File repositoriesFolder() {
+	public File folderOfRepositories() {
 		return repositories;
 	}
 	
-	public File metricsFolder() {
+	public File folderOfMetrics() {
 		return metrics;
 	}
-	
+  
+  public Boolean isSet() {
+    return getBase() != null;
+  }
+
 	public void start(int option) {
 		
 		selectOption(option);
@@ -78,7 +82,7 @@ public class SettingsExecutor {
 	
 	private void createAdditionalFolder() {
 		
-		String path = baseFolder().getAbsolutePath();
+		String path = base().getAbsolutePath();
 		
 		repositories = new File(path + "/repositories");
 		metadata = new File(path + "/metadata");

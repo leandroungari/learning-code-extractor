@@ -1,4 +1,4 @@
-package core;
+package core.resource;
 
 public enum ResourceType {
 	LIST_OF_BRANCHES,

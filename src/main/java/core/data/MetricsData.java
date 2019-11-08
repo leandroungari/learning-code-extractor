@@ -1,13 +1,14 @@
 package core.data;
 
 import java.util.HashMap;
+import java.util.Map;
 
 import com.github.mauricioaniche.ck.CKClassResult;
 
 public class MetricsData {
 
   private String[] metrics;
-  private HashMap<String, Double[]> files;
+  private Map<String, Double[]> files;
   
   public MetricsData() {
     
@@ -55,7 +56,7 @@ public class MetricsData {
     return metrics;
   }
   
-  public HashMap<String, Double[]> getFiles() {
+  public Map<String, Double[]> getFiles() {
     return files;
   }
 }

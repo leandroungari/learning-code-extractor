@@ -74,7 +74,7 @@ public class Metrics implements Executor {
 		
 		} catch (GitAPIException
 			| GitRepositoryException e) {
-			// TODO Auto-generated catch block
+
 			e.printStackTrace();
 		}
 	}

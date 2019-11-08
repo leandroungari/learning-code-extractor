@@ -13,7 +13,6 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
 
 import commandline.CommandLine;
-import core.SettingsExecutor;
 import repository.exception.GitRepositoryException;
 
 /**
@@ -28,9 +27,6 @@ public class Main {
   public static void main(String[] args) 
   	throws GitRepositoryException, 
   					FileNotFoundException {
-    
-  	var settingExec = new SettingsExecutor();
-  	settingExec.start(SettingsExecutor.USER_FOLDER);
   	
   	if (args.length == 0) {
   		runAPI(args);

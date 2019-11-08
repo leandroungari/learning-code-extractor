@@ -1,6 +1,7 @@
 package api.controller;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -73,7 +74,8 @@ public class Repo {
 		return player.diffFilesFromCommit(
 			repository, 
 			branch, 
-			commit);
+      commit
+    );
 	}
 	
 	@GetMapping("/repo/download")
@@ -86,8 +88,10 @@ public class Repo {
 		var url = body.get("url");
 		
 		player.download(repository, url);
-		return Map.ofEntries(
-			Map.entry("result", true)
-		);
+    
+    var map = new HashMap<String,Boolean>();
+    map.put("result", true);
+    
+    return map;
 	}
 }
