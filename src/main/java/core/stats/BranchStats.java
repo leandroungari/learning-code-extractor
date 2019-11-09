@@ -36,7 +36,7 @@ public class BranchStats extends RepositoryStats {
           derivateMetrics(
             prevData.toArray(new Double[prevData.size()]),
             nextData.toArray(new Double[prevData.size()]),
-            2
+            1
           )
         );
       }
