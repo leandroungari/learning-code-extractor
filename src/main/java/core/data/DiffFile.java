@@ -6,9 +6,17 @@ public class DiffFile {
 	private String oldPath;
 	private String newPath;
 	
-	
-	public DiffFile(String type, String oldPath,
+	/**
+   * This describes the data of a diff file
+   * @param type The type of change file (INSERT,MODIFY,DELETE)
+   * @param oldPath The path of file in previous version
+   * @param newPath The path of file in forward version
+   */
+	public DiffFile(
+    String type, 
+    String oldPath,
 		String newPath) {
+
 		this.type = type;
 		this.oldPath = oldPath;
 		this.newPath = newPath;

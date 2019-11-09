@@ -5,6 +5,9 @@ import java.util.Map;
 
 import com.github.mauricioaniche.ck.CKClassResult;
 
+/**
+ * This class stores the metrics of a set of files in a commit
+ */
 public class MetricsData {
 
   private String[] metrics;

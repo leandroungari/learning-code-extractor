@@ -6,7 +6,14 @@ public class CommitInfo {
 	private String email;
 	private String shortMessage;
 	private String date;
-	
+  
+  /**
+   * This method creates a description of a commit
+   * @param author Author of the commit
+   * @param email E-mail of the author
+   * @param shortMessage Short description 
+   * @param date Text of date of the commit
+   */
 	public CommitInfo(
 		String author, 
 		String email,

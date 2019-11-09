@@ -12,6 +12,10 @@ public class Commit {
 	private CommitInfo info;
 	private List<DiffFile> diffFiles;
 
+  /**
+   * It creates a reference to a commit by ID
+   * @param id Commit ID (hash)
+   */
 	public Commit(ObjectId id) {
 		this.id = id;
 		this.info = null;
@@ -26,6 +30,9 @@ public class Commit {
 		this.id = id;
 	}
 
+  /**
+   * Get info of the commit
+   */
 	public CommitInfo getInfo() {
 		return info;
 	}
@@ -34,6 +41,10 @@ public class Commit {
 		this.info = info;
 	}
 
+  /**
+   * Get the list of diff files in a commit
+   * @return List of diffs
+   */
 	public List<DiffFile> getDiffFiles() {
 		return diffFiles;
 	}
@@ -42,8 +53,4 @@ public class Commit {
 		List<DiffFile> diffFiles) {
 		this.diffFiles = diffFiles;
 	}
-	
-	
-	
-	
 }
