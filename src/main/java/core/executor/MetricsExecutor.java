@@ -185,11 +185,29 @@ public class MetricsExecutor {
       }
     });
 
+    good.sort((a,b) -> {
+      var firstValue = a.values().toArray(new Double[1])[0];
+      var secondValue = b.values().toArray(new Double[1])[0];
+
+      if(firstValue < secondValue) return -1;
+      else if(firstValue > secondValue) return 1;
+      else return 0;
+    });
+
     var bad = new ArrayList<Map<String,Double>>();
     branchData.forEach((commit,metrics) -> {
       if(metrics.get(metric) > average.get(metric)) {
         bad.add(Map.<String,Double>of(commit,metrics.get(metric)));
       }
+    });
+
+    bad.sort((a,b) -> {
+      var firstValue = a.values().toArray(new Double[1])[0];
+      var secondValue = b.values().toArray(new Double[1])[0];
+
+      if(firstValue < secondValue) return 1;
+      else if(firstValue > secondValue) return -1;
+      else return 0;
     });
 
     data.put("good", good);
