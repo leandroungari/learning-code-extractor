@@ -106,16 +106,17 @@ public class Metrics {
       .availableRepositories();
   }
   
-  @GetMapping("/metrics/relevant/{repository}/{branch}/{metric}")
+  @GetMapping("/metrics/relevant/{repository}/{branch}/{metric}/{option}")
   @ResponseBody
   public Map<String, List<Map<String,Double>>> relevant(
     @PathVariable String repository,
     @PathVariable String branch,
-    @PathVariable String metric) 
+    @PathVariable String metric,
+    @PathVariable String option) 
       throws GitAPIException, GitRepositoryException {
 
     return player
-      .relevant(repository, branch, metric);
+      .relevant(repository, branch, metric, option);
   }
 
 }

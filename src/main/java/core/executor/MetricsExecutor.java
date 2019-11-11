@@ -147,36 +147,39 @@ public class MetricsExecutor {
   }
   
   private Map<String,Map<String,Double>> derivateRepository(
-    String repository)
+    String repository,
+    String type)
       throws GitAPIException, GitRepositoryException {
 
     var stats = new Stats(player);
     return stats
       .repository(repository)
-      .derivate();
+      .derivate(type);
   }
 
   private Map<String, Map<String,Double>> derivateBranch(
     String repository, 
-    String branchId) {
+    String branchId,
+    String type) {
 
     var stats = new Stats(player);
     return stats
       .repository(repository)
       .branch(branchId)
-      .derivate();
+      .derivate(type);
   }
 
   public Map<String, List<Map<String,Double>>> relevantCommits(
     String repository, 
     String branchId, 
-    String metric)
+    String metric,
+    String type)
       throws GitAPIException, GitRepositoryException {
 
     var data = new HashMap<String, List<Map<String,Double>>>();
 
-    var average = derivateRepository(repository).get(branchId);
-    var branchData = derivateBranch(repository, branchId);
+    var average = derivateRepository(repository, type).get(branchId);
+    var branchData = derivateBranch(repository, branchId, type);
   
     var good = new ArrayList<Map<String,Double>>();
     branchData.forEach((commit,metrics) -> {

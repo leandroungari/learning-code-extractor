@@ -25,7 +25,7 @@ public class RepositoryStats extends Stats {
     this.repository = repository;
   }
 
-  public Map<String, Map<String,Double>> derivate() {
+  public Map<String, Map<String,Double>> derivate(String option) {
 
     Map<String, Map<String, Double>> result = new HashMap<>();
     Branch[] branches;
@@ -33,7 +33,7 @@ public class RepositoryStats extends Stats {
       branches = player.branches(repository);
       for (var branch : branches) {
         var name = branch.getId().getName();
-        result.put(name, this.execute(name));
+        result.put(name, this.execute(name, option));
       }
     } catch (GitAPIException | GitRepositoryException e) {
       e.printStackTrace();
@@ -167,7 +167,7 @@ public class RepositoryStats extends Stats {
     return result;
   }
 
-  private Map<String,Double> execute(String branch) {
+  private Map<String,Double> execute(String branch, String type) {
     
     Commit[] commits = null;
     try {
@@ -176,7 +176,8 @@ public class RepositoryStats extends Stats {
         branch,
         commits[commits.length-1].getId().getName(),
         commits[0].getId().getName(),
-        commits.length
+        commits.length,
+        type
       );
     } catch (GitAPIException | GitRepositoryException e) {
       e.printStackTrace();
@@ -185,17 +186,27 @@ public class RepositoryStats extends Stats {
   }
 
   private Map<String,Double> compareInitialAndLastCommit(
-    String branch, String commitBegin, String commitEnd, Integer size)
+    String branch, 
+    String commitBegin, 
+    String commitEnd, 
+    Integer size,
+    String type)
       throws GitRepositoryException, GitAPIException {
 
-    var metricsStart = getSumOfMetricsOfFiles()
+    var metricsStart = (SUM_OPTION.equals(type) ?
+        getSumOfMetricsOfFiles() : 
+        getAverageOfMetricsOfFiles() 
+      )
       .apply(
         player
         .metricsFromAllFilesInACommit(repository, branch, commitBegin)
         .getFiles()
       );
     
-    var metricsEnd = getSumOfMetricsOfFiles()
+    var metricsEnd = (SUM_OPTION.equals(type) ?
+        getSumOfMetricsOfFiles() : 
+        getAverageOfMetricsOfFiles() 
+      )
       .apply(
         player
         .metricsFromAllFilesInACommit(repository, branch, commitEnd)

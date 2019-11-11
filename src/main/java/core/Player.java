@@ -268,11 +268,11 @@ public class Player {
   public Map<String, List<Map<String,Double>>> relevant(
     String repository,
     String branch,
-    String metric) 
+    String metric,
+    String option) 
       throws GitAPIException, GitRepositoryException {
     
-    return metrics()
-      .relevantCommits(repository, branch, metric);
+    return metrics().relevantCommits(repository, branch, metric, option);
   }
 
   /**

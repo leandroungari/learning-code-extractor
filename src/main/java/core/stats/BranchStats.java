@@ -14,14 +14,36 @@ public class BranchStats extends RepositoryStats {
     this.branch = branch;
   }
 
-  public Map<String,Map<String,Double>> derivate() {
+  public Map<String,Map<String,Double>> derivate(String option) {
 
     Map<String,Map<String,Double>> result = new HashMap<>();
 
     try {
       
       var commits = player.commits(repository, branch);
-      var data = player.sumOfMetricsOfFiles(repository, branch, 0, commits.length-1, 1);
+
+      Map<String,Map<String,Double>> data = null;
+      
+      if(SUM_OPTION.equals(option)) {
+        
+        data = player.sumOfMetricsOfFiles(
+          repository, 
+          branch, 
+          0, 
+          commits.length-1, 
+          1
+        );
+      }
+      else {
+        
+        data = player.averageOfMetricsOfFiles(
+          repository, 
+          branch, 
+          0, 
+          commits.length-1, 
+          1
+        );
+      }
 
       for(var i = commits.length-1; i > 0; i--) {
         

@@ -17,6 +17,10 @@ public class Stats {
   public static final Integer RFC = 5;
   public static final Integer WMC = 6;
 
+  protected static final String SUM_OPTION = "sum";
+  protected static final String AVERAGE_OPTION = "average";
+
+
   protected Player player;
 
   private Function<Map<String, Double[]>, Double[]> sumOfMetricsOfFiles = files -> {
