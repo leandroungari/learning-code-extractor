@@ -67,7 +67,7 @@ public class Player {
     var resource = Resource.create(repositoryName, ResourceType.LIST_OF_BRANCHES);
 
     if (!resource.exists()) {
-      repoExec.branches(repositoryName);
+      repository().branches(repositoryName);
     }
 
     return resource.read(Branch[].class);
@@ -86,7 +86,7 @@ public class Player {
     var resource = Resource.create(repository, ResourceType.LIST_OF_COMMITS).branch(branch);
 
     if (!resource.exists()) {
-      repoExec.commits(repository, branch);
+      repository().commits(repository, branch);
     }
 
     return resource.read(Commit[].class);
