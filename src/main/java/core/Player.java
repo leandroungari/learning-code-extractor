@@ -141,10 +141,10 @@ public class Player {
       .branch(branch);
 
     if (!resource.exists()) {
-      repoExec.commits(repository, branch);
+      repository().commits(repository, branch);
     }
 
-    repoExec.diffFiles(repository, branch, commit);
+    repository().diffFiles(repository, branch, commit);
     var listOfCommits = resource.read(Commit[].class);
     Commit commitItem = null;
     for (var i = 0; i < listOfCommits.length; i++) {
@@ -162,7 +162,7 @@ public class Player {
    */
   public List<String> availableRepositories() {
 
-    return FileUtil.listOfFolders(settingsExec.folderOfMetrics());
+    return FileUtil.listOfFolders(settings().folderOfMetrics());
   }
 
   /**
@@ -183,7 +183,7 @@ public class Player {
       .name(commit);
 
     if (!resourceDiff.exists()) {
-      metricExec.analyzeDiffFilesInACommit(repository, branch, commit);
+      metrics().analyzeDiffFilesInACommit(repository, branch, commit);
     }
 
     return resourceDiff.read(MetricsData.class);
@@ -207,7 +207,7 @@ public class Player {
       .name(commit);
 
     if (!resourceAll.exists()) {
-      metricExec.analyzeAllFilesInACommit(repository, branch, commit);
+      metrics().analyzeAllFilesInACommit(repository, branch, commit);
     }
 
     return resourceAll.read(MetricsData.class);
