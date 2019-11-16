@@ -178,7 +178,9 @@ public class MetricsExecutor {
 
     var data = new HashMap<String, List<Map<String,Double>>>();
 
-    var average = derivateRepository(repository, type).get(branchId);
+    var average = derivateRepository(repository, type)
+      .get(branchId);
+      
     var branchData = derivateBranch(repository, branchId, type);
   
     var good = new ArrayList<Map<String,Double>>();

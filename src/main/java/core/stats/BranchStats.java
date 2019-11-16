@@ -1,5 +1,6 @@
 package core.stats;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -25,7 +26,7 @@ public class BranchStats extends RepositoryStats {
       Map<String,Map<String,Double>> data = null;
       
       if(SUM_OPTION.equals(option)) {
-        
+        //parei de olhar aqui
         data = player.sumOfMetricsOfFiles(
           repository, 
           branch, 
@@ -50,16 +51,12 @@ public class BranchStats extends RepositoryStats {
         var nextId = commits[i-1].getId().getName();
         var prevId = commits[i].getId().getName();
 
-        var nextData = data.get(nextId).values();
-        var prevData = data.get(prevId).values();
-        
+        var nextData = mapToList(data.get(nextId));
+        var prevData = mapToList(data.get(prevId));
+      
         result.put(
           nextId,
-          derivateMetrics(
-            prevData.toArray(new Double[prevData.size()]),
-            nextData.toArray(new Double[prevData.size()]),
-            1
-          )
+          derivateMetrics(prevData,nextData,1)
         );
       }
 

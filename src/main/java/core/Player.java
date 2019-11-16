@@ -178,12 +178,13 @@ public class Player {
       throws GitRepositoryException, GitAPIException {
 
     var resourceDiff = Resource
-      .create(repository, ResourceType.METRICS_DIFF_FILES)
-      .folder("commits")
-      .name(commit);
+    .create(repository, ResourceType.METRICS_DIFF_FILES)
+    .folder("commits")
+    .name(commit);
 
     if (!resourceDiff.exists()) {
-      metrics().analyzeDiffFilesInACommit(repository, branch, commit);
+      metrics()
+      .analyzeDiffFilesInACommit(repository, branch, commit);
     }
 
     return resourceDiff.read(MetricsData.class);
@@ -272,7 +273,8 @@ public class Player {
     String option) 
       throws GitAPIException, GitRepositoryException {
     
-    return metrics().relevantCommits(repository, branch, metric, option);
+    return metrics()
+    .relevantCommits(repository, branch, metric, option);
   }
 
   /**

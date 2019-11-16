@@ -1,6 +1,7 @@
 package core.stats;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -33,7 +34,7 @@ public class RepositoryStats extends Stats {
       branches = player.branches(repository);
       for (var branch : branches) {
         var name = branch.getId().getName();
-        result.put(name, this.execute(name, option));
+        result.put(name, execute(name, option));
       }
     } catch (GitAPIException | GitRepositoryException e) {
       e.printStackTrace();
@@ -171,7 +172,9 @@ public class RepositoryStats extends Stats {
     
     Commit[] commits = null;
     try {
-      commits = player.commits(repository, branch);
+      commits = player
+        .commits(repository, branch);
+
       return compareInitialAndLastCommit(
         branch,
         commits[commits.length-1].getId().getName(),
@@ -193,25 +196,27 @@ public class RepositoryStats extends Stats {
     String type)
       throws GitRepositoryException, GitAPIException {
 
-    var metricsStart = (SUM_OPTION.equals(type) ?
-        getSumOfMetricsOfFiles() : 
-        getAverageOfMetricsOfFiles() 
-      )
-      .apply(
-        player
-        .metricsFromAllFilesInACommit(repository, branch, commitBegin)
-        .getFiles()
-      );
+    var metricsStart = (
+      SUM_OPTION.equals(type) ?
+      getSumOfMetricsOfFiles() : 
+      getAverageOfMetricsOfFiles() 
+    )
+    .apply(
+      player
+      .metricsFromAllFilesInACommit(repository, branch, commitBegin)
+      .getFiles()
+    );
     
-    var metricsEnd = (SUM_OPTION.equals(type) ?
-        getSumOfMetricsOfFiles() : 
-        getAverageOfMetricsOfFiles() 
-      )
-      .apply(
-        player
-        .metricsFromAllFilesInACommit(repository, branch, commitEnd)
-        .getFiles()
-      );
+    var metricsEnd = (
+      SUM_OPTION.equals(type) ?
+      getSumOfMetricsOfFiles() : 
+      getAverageOfMetricsOfFiles() 
+    )
+    .apply(
+      player
+      .metricsFromAllFilesInACommit(repository, branch, commitEnd)
+      .getFiles()
+    );
     
     return derivateMetrics(metricsStart, metricsEnd, size);
   }
