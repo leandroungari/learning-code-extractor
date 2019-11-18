@@ -15,11 +15,6 @@ public class Player {
 
   public Player() {
 
-    settings();
-    if(!settingsExecutor.isSet()) {
-      settingsExecutor
-      .start(SettingsExecutor.USER_FOLDER);
-    }
   }
 
   public RepositoryPlayer repository(String nameOfRepository) {
