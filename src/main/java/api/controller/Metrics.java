@@ -35,7 +35,9 @@ public class Metrics {
     @PathVariable String commit) 
       throws GitRepositoryException, GitAPIException {
 
-    return player.metricsFromAllFilesInACommit(repository, branch, commit);
+    return player
+      .metrics(repository)
+      .metricsFromAllFilesInACommit(branch, commit);
   }
 
   @GetMapping("/metrics/diff/{repository}/{branch}/{commit}")
@@ -43,7 +45,9 @@ public class Metrics {
   public MetricsData metricsDiffInACommit(@PathVariable String repository, @PathVariable String branch,
       @PathVariable String commit) throws GitRepositoryException, GitAPIException {
 
-    return player.metricsFromDiffFilesInACommit(repository, branch, commit);
+    return player
+      .metrics(repository)
+      .metricsFromDiffFilesInACommit(branch, commit);
   }
 
   @GetMapping("/metrics/all/{repository}/{branch}/{from}/{to}")
@@ -53,7 +57,9 @@ public class Metrics {
       throws GitRepositoryException, GitAPIException {
 
     var resultSet = new ArrayList<Commit>();
-    var listOfCommits = player.commits(repository, branch);
+    var listOfCommits = player
+      .repository(repository)
+      .commits(branch);
 
     for (var i = 0; i < listOfCommits.length; i++) {
       if (from <= i && i <= to) {
@@ -63,8 +69,8 @@ public class Metrics {
     }
 
     return player
+      .metrics(repository)
       .metricsFromAllFilesInARangeOfCommits(
-        repository, 
         branch, 
         resultSet.toArray(new Commit[resultSet.size()])
       );
@@ -80,7 +86,9 @@ public class Metrics {
       throws GitRepositoryException, GitAPIException {
 
     var resultSet = new ArrayList<Commit>();
-    var listOfCommits = player.commits(repository, branch);
+    var listOfCommits = player
+      .repository(repository)
+      .commits(branch);
 
     for (var i = 0; i < listOfCommits.length; i++) {
       if (from <= i && i <= to) {
@@ -90,19 +98,24 @@ public class Metrics {
     }
 
     return player
+      .metrics(repository)
       .metricsFromDiffFilesInARangeOfCommits(
-        repository, 
         branch, 
         resultSet.toArray(new Commit[resultSet.size()])
       );
 
 	}
 
+  /**
+   * Improve it
+   * @return
+   */
 	@GetMapping("/metrics/availableRepositories")
 	@ResponseBody
 	public List<String> list() {
 
     return player
+      .metrics("")
       .availableRepositories();
   }
   
@@ -116,7 +129,8 @@ public class Metrics {
       throws GitAPIException, GitRepositoryException {
 
     return player
-      .relevant(repository, branch, metric, option);
+      .metrics(repository)
+      .relevant(branch, metric, option);
   }
 
 }

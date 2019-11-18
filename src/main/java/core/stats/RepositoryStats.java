@@ -1,7 +1,6 @@
 package core.stats;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -31,7 +30,9 @@ public class RepositoryStats extends Stats {
     Map<String, Map<String, Double>> result = new HashMap<>();
     Branch[] branches;
     try {
-      branches = player.branches(repository);
+      branches = player
+        .repository(repository)
+        .branches();
       for (var branch : branches) {
         var name = branch.getId().getName();
         result.put(name, execute(name, option));
@@ -50,13 +51,17 @@ public class RepositoryStats extends Stats {
   private Map<String, MetricsData> allFilesData(String branch, Commit[] listOfCommits)
       throws GitRepositoryException, GitAPIException {
 
-    return player.metricsFromAllFilesInARangeOfCommits(repository, branch, listOfCommits);
+    return player
+      .metrics(repository)
+      .metricsFromAllFilesInARangeOfCommits(branch, listOfCommits);
   }
 
   private Map<String, MetricsData> diffFiles(String branch, Commit[] listOfCommits)
       throws GitRepositoryException, GitAPIException {
 
-    var total = player.metricsFromDiffFilesInARangeOfCommits(repository, branch, listOfCommits);
+    var total = player
+      .metrics(repository)
+      .metricsFromDiffFilesInARangeOfCommits(branch, listOfCommits);
 
     total = replaceFirstCommit(total, branch, listOfCommits);
 
@@ -112,12 +117,15 @@ public class RepositoryStats extends Stats {
   private Map<String, MetricsData> replaceFirstCommit(Map<String, MetricsData> data, String branch,
       Commit[] listOfCommits) throws GitRepositoryException, GitAPIException {
 
-    var firstCommit = listOfCommits[listOfCommits.length - 1].getId().getName();
+    var firstCommit = listOfCommits[listOfCommits.length - 1]
+      .getId()
+      .getName();
 
     data.put(
       firstCommit, 
       player
-        .metricsFromAllFilesInACommit(repository, branch, firstCommit)
+      .metrics(repository)
+      .metricsFromAllFilesInACommit(branch, firstCommit)
     );
 
     return data;
@@ -131,10 +139,16 @@ public class RepositoryStats extends Stats {
     return (step == 1 ? diffFiles(branch, listOfCommits) : allFilesData(branch, listOfCommits));
   }
 
-  private Commit[] extractRangeOfCommits(String branch, Integer from, Integer to, Integer step)
+  private Commit[] extractRangeOfCommits(
+    String branch, 
+    Integer from, 
+    Integer to, 
+    Integer step)
       throws GitAPIException, GitRepositoryException {
 
-    var allCommits = player.commits(repository, branch);
+    var allCommits = player
+      .repository(repository)
+      .commits(branch);
     var listOfCommits = new ArrayList<Commit>();
     for (var i = from; i <= to; i += step) {
       listOfCommits.add(allCommits[i]);
@@ -173,7 +187,8 @@ public class RepositoryStats extends Stats {
     Commit[] commits = null;
     try {
       commits = player
-        .commits(repository, branch);
+        .repository(repository)
+        .commits(branch);
 
       return compareInitialAndLastCommit(
         branch,
@@ -203,7 +218,8 @@ public class RepositoryStats extends Stats {
     )
     .apply(
       player
-      .metricsFromAllFilesInACommit(repository, branch, commitBegin)
+      .metrics(repository)
+      .metricsFromAllFilesInACommit(branch, commitBegin)
       .getFiles()
     );
     
@@ -214,7 +230,8 @@ public class RepositoryStats extends Stats {
     )
     .apply(
       player
-      .metricsFromAllFilesInACommit(repository, branch, commitEnd)
+      .metrics(repository)
+      .metricsFromAllFilesInACommit(branch, commitEnd)
       .getFiles()
     );
     

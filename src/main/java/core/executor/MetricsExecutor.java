@@ -65,7 +65,8 @@ public class MetricsExecutor {
 
     var data = new MetricsData();
     var diffFiles = player
-      .diffFilesFromCommit(repository, branch, commit)
+      .repository(repository)
+      .diffFilesFromCommit(branch, commit)
       .stream()
       .map(diff -> diff.getNewPath())
       .collect(Collectors.toList());
@@ -93,7 +94,11 @@ public class MetricsExecutor {
     Commit[] rangeOfCommits)
       throws GitAPIException, GitRepositoryException {
 
-    var listOfCommits = List.of(player.commits(repository, branch));
+    var listOfCommits = List.of(
+      player
+      .repository(repository)
+      .commits(branch)
+    );
 
     parallelTasks(listOfCommits, commit -> {
       try {
@@ -111,7 +116,11 @@ public class MetricsExecutor {
     Commit[] rangeOfCommits)
       throws GitAPIException, GitRepositoryException {
 
-    var listOfCommits = List.of(player.commits(repository, branch));
+    var listOfCommits = List.of(
+      player
+      .repository(repository)
+      .commits(branch)
+    );
 
     parallelTasks(listOfCommits, commit -> {
       try {

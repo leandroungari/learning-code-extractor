@@ -1,6 +1,5 @@
 package core;
 
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -95,7 +94,7 @@ public class Stats {
     return evolution;
   }
 
-  protected Map<String, Map<String, Double>> normalizeMetrics(Map<String, Map<String, Double>> data) {
+  public Map<String, Map<String, Double>> normalizeMetrics(Map<String, Map<String, Double>> data) {
 
     Map<String, Double[]> stats = extractStats(data);
     var cbo = stats.get("cbo");

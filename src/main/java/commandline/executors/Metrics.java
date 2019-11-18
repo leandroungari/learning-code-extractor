@@ -46,7 +46,9 @@ public class Metrics implements Executor {
 	private void processEntireRepository() 
 		throws GitAPIException, GitRepositoryException {
 		
-		var branches = player.branches(repository);
+		var branches = player
+			.repository(repository)
+			.branches();
 		for(var i = 0; i < branches.length; i++) {
 			processingABranch(
 				branches[i]
@@ -61,13 +63,13 @@ public class Metrics implements Executor {
 		
 		try {
 			
-			var listOfCommits = player.commits(
-				repository, 
-				branch
-			);
+			var listOfCommits = player
+			.repository(repository)
+			.commits(branch);
 				
-			player.metricsFromDiffFilesInARangeOfCommits(
-				repository, 
+			player
+			.metrics(repository)
+			.metricsFromDiffFilesInARangeOfCommits(
 				branch, 
 				listOfCommits
 			);

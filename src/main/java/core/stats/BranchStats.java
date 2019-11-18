@@ -1,6 +1,5 @@
 package core.stats;
 
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -21,14 +20,17 @@ public class BranchStats extends RepositoryStats {
 
     try {
       
-      var commits = player.commits(repository, branch);
+      var commits = player
+        .repository(repository)
+        .commits(branch);
 
       Map<String,Map<String,Double>> data = null;
       
       if(SUM_OPTION.equals(option)) {
         //parei de olhar aqui
-        data = player.sumOfMetricsOfFiles(
-          repository, 
+        data = player
+        .metrics(repository)
+        .sumOfMetricsOfFiles(
           branch, 
           0, 
           commits.length-1, 
@@ -37,8 +39,9 @@ public class BranchStats extends RepositoryStats {
       }
       else {
         
-        data = player.averageOfMetricsOfFiles(
-          repository, 
+        data = player
+        .metrics(repository)
+        .averageOfMetricsOfFiles(
           branch, 
           0, 
           commits.length-1, 
