@@ -9,11 +9,13 @@ import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.ListBranchCommand.ListMode;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.diff.DiffEntry;
+import org.eclipse.jgit.diff.DiffFormatter;
 import org.eclipse.jgit.errors.CorruptObjectException;
 import org.eclipse.jgit.errors.IncorrectObjectTypeException;
 import org.eclipse.jgit.errors.MissingObjectException;
 import org.eclipse.jgit.lib.ObjectId;
 import org.eclipse.jgit.lib.Ref;
+import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.revwalk.RevCommit;
 import org.eclipse.jgit.revwalk.RevWalk;
 import org.eclipse.jgit.treewalk.AbstractTreeIterator;
@@ -171,7 +173,7 @@ public String absoluteFolder() {
 		AbstractTreeIterator newer,
 		Consumer<? super DiffEntry> action
 	) throws GitAPIException {
-		
+  
 		git
 		.diff()
 		.setNewTree(newer)
@@ -210,6 +212,12 @@ public String absoluteFolder() {
 			.getRepository()
 			.open(id);
 		return new String(loader.getBytes());
-	}
+  }
+  
+  public String format(DiffEntry entry) {
+
+    var formatter = new DiffFormatter(System.out);
+    formatter.setRepository(Repository.get);
+  }
 
 }

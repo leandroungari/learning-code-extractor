@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.eclipse.jgit.api.errors.GitAPIException;
+import org.eclipse.jgit.diff.DiffEntry;
 import org.eclipse.jgit.lib.ObjectId;
 import org.eclipse.jgit.revwalk.RevCommit;
 import org.eclipse.jgit.treewalk.AbstractTreeIterator;
@@ -78,6 +79,8 @@ public class Commit {
 	
 	public List<Diff> diff() {
 		
+    var factory = new GitFactory();
+
 		var list = new ArrayList<Diff>();
 		var otherCommit = before();
 		
@@ -91,7 +94,6 @@ public class Commit {
 		
 		var newTree = this.createTreeParser();
 		
-		var factory = new GitFactory();
 	  try {
 			
 			factory.diff(
@@ -105,7 +107,43 @@ public class Commit {
 		}
 		
 	  return list;
-	}
+  }
+  
+  public List<DiffEntry> diffEntriesInFiles(List<String> nameOfFiles) {
+
+    var factory = new GitFactory();
+    var otherCommit = before();
+		
+		AbstractTreeIterator oldTree;
+		if(otherCommit.id() == null) {
+			oldTree = new EmptyTreeIterator();
+		}
+		else {
+			oldTree = otherCommit.createTreeParser();
+		}
+		
+    var newTree = this.createTreeParser();
+    
+    var result = new ArrayList<DiffEntry>();
+
+    try {
+			
+			factory.diff(
+				oldTree, 
+				newTree, 
+				a -> {
+          if(nameOfFiles.contains(a.getNewPath())) {
+            result.add(a);
+          }
+        }
+			);	
+			
+		} catch (GitAPIException e) {
+			System.err.println(e.getMessage());
+    }
+    
+    return result;
+  }
 	
 	public File filter(String filename) {
 		
