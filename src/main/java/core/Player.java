@@ -14,27 +14,33 @@ public class Player {
   protected static SettingsExecutor settingsExecutor;
 
   public Player() {
-
-  }
-
-  public RepositoryPlayer repository(String nameOfRepository) {
     if(repositoryExecutor == null) {
       repositoryExecutor = new RepositoryExecutor(this);
     }
+    if(metricsExecutor == null) {
+      metricsExecutor = new MetricsExecutor(this);
+    }
+    if(settingsExecutor == null) {
+      settingsExecutor = new SettingsExecutor();
+      if(!settingsExecutor.isSet()) {
+        settingsExecutor
+        .start(SettingsExecutor.USER_FOLDER);
+      }
+    }
+  }
+
+  public RepositoryPlayer repository(String nameOfRepository) {
+    
     return new RepositoryPlayer(nameOfRepository);
   }
 
   public MetricsPlayer metrics(String nameOfRepository) {
-    if(metricsExecutor == null) {
-      metricsExecutor = new MetricsExecutor(this);
-    }
+    
     return new MetricsPlayer(nameOfRepository);
   }
 
   public SettingsPlayer settings() {
-    if(settingsExecutor == null) {
-      settingsExecutor = new SettingsExecutor();
-    }
+    
     return new SettingsPlayer();
   }
 
