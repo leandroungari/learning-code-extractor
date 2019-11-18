@@ -96,7 +96,9 @@ public class Repo {
 		var repository = body.get("repository");
 		var url = body.get("url");
 		
-		player.download(repository, url);
+		player
+		.repository(repository)
+		.download(url);
     
     var map = new HashMap<String,Boolean>();
     map.put("result", true);

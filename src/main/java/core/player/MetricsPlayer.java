@@ -194,7 +194,6 @@ public class MetricsPlayer extends Player {
   }
 
   public Map<String, Map<String, Double>> normalizedSumOfMetricsOfFiles (
-    String repository,
     String branch,
     Integer from, 
     Integer to,
