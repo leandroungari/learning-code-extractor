@@ -4,6 +4,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Consumer;
 
 import org.eclipse.jgit.api.Git;
@@ -23,6 +24,7 @@ import org.eclipse.jgit.treewalk.CanonicalTreeParser;
 import org.eclipse.jgit.treewalk.TreeWalk;
 import org.eclipse.jgit.treewalk.filter.PathFilter;
 
+import repository.commit.Diff;
 import repository.commit.File;
 
 
@@ -232,6 +234,23 @@ public String absoluteFolder() {
 		}
     
 		return output.toString();
+  }
+
+  public Map<String,String> contentOfDiffCommit(Commit commit, Diff diff) {
+    
+    var oldFile = commit
+      .before()
+      .filter(diff.oldPath());
+
+    var newFile = commit
+      .filter(diff.newPath());
+
+    return Map.of(
+      "oldName", diff.oldPath(), 
+      "oldContent", (oldFile != null ? oldFile.get() : ""),
+      "newPath", diff.newPath(),
+      "newContent", (newFile != null ? newFile.get() : "")
+    );
   }
 
 }

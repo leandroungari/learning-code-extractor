@@ -1,6 +1,7 @@
 package core.player;
 
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.jgit.api.errors.GitAPIException;
 
@@ -167,7 +168,7 @@ public class RepositoryPlayer extends Player {
     .download(nameOfRepository, url);
   }
 
-  public List<String> diffInCommit(
+  public List<Map<String,String>> diffInCommit(
     String branch, 
     String commit) 
       throws GitRepositoryException, 

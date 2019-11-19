@@ -89,7 +89,7 @@ public class Repo {
 
 	@GetMapping("/repo/{name}/{branch}/{commit}/diffInCommit")
 	@ResponseBody
-	public List<String> diffInCommit(
+	public List<Map<String,String>> diffInCommit(
 		@PathVariable String name,
 		@PathVariable String branch,
 		@PathVariable String commit)

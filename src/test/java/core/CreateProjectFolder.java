@@ -1,14 +1,8 @@
 package core;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-
-import core.executor.SettingsExecutor;
-import util.FileUtil;
 
 public class CreateProjectFolder {
 

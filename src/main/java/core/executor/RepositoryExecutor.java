@@ -3,6 +3,7 @@ package core.executor;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.eclipse.jgit.api.errors.GitAPIException;
@@ -187,7 +188,7 @@ public class RepositoryExecutor {
 		
 	}
 
-	public List<String> diffsInCommit(
+	public List<Map<String,String>> diffsInCommit(
 		String repository,
 		String branch, 
 		String commit) 
@@ -203,19 +204,15 @@ public class RepositoryExecutor {
       .branch(ObjectId.fromString(branch))
       .commit(ObjectId.fromString(commit));
 
-    var files = ref
-      .diff()
-      .stream()
-      .map(diff -> diff.newPath())
-      .collect(Collectors.toList());
-
-    var list = ref.diffEntriesInFiles(files);
+    var list = ref.diff();
     var factory = new GitFactory();
 
-    var result = new ArrayList<String>();
+    System.out.println(list);
+
+    var result = new ArrayList<Map<String,String>>();
     for(var item: list) {
-      result.add(factory.format(item));
-		}
+      result.add(factory.contentOfDiffCommit(ref,item));
+	  }
 		return result;
 	}
 }
