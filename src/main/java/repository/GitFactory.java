@@ -246,9 +246,9 @@ public String absoluteFolder() {
       .filter(diff.newPath());
 
     return Map.of(
-      "oldName", diff.oldPath(), 
+      "oldFile", diff.oldPath(), 
       "oldContent", (oldFile != null ? oldFile.get() : ""),
-      "newPath", diff.newPath(),
+      "newFile", diff.newPath(),
       "newContent", (newFile != null ? newFile.get() : "")
     );
   }
