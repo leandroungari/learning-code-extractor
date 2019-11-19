@@ -166,4 +166,18 @@ public class RepositoryPlayer extends Player {
     repositoryExecutor
     .download(nameOfRepository, url);
   }
+
+  public List<String> diffInCommit(
+    String branch, 
+    String commit) 
+      throws GitRepositoryException, 
+             GitAPIException {
+    
+    return repositoryExecutor
+      .diffsInCommit(
+        nameOfRepository, 
+        branch, 
+        commit
+      );
+  }
 }

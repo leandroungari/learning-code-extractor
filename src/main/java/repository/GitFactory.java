@@ -1,5 +1,6 @@
 package repository;
 
+import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.List;
@@ -15,7 +16,6 @@ import org.eclipse.jgit.errors.IncorrectObjectTypeException;
 import org.eclipse.jgit.errors.MissingObjectException;
 import org.eclipse.jgit.lib.ObjectId;
 import org.eclipse.jgit.lib.Ref;
-import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.revwalk.RevCommit;
 import org.eclipse.jgit.revwalk.RevWalk;
 import org.eclipse.jgit.treewalk.AbstractTreeIterator;
@@ -216,8 +216,22 @@ public String absoluteFolder() {
   
   public String format(DiffEntry entry) {
 
-    var formatter = new DiffFormatter(System.out);
-    formatter.setRepository(Repository.get);
+		var output = new ByteArrayOutputStream();
+		
+    try(var formatter = new DiffFormatter(output)) {
+			formatter.setRepository(
+				Repository
+				.get()
+				.git()
+				.getRepository()
+			);
+
+			formatter.format(entry);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+    
+		return output.toString();
   }
 
 }

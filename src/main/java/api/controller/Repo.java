@@ -86,6 +86,24 @@ public class Repo {
     	  commit
     	);
 	}
+
+	@GetMapping("/repo/{name}/{branch}/{commit}/diffInCommit")
+	@ResponseBody
+	public List<String> diffInCommit(
+		@PathVariable String name,
+		@PathVariable String branch,
+		@PathVariable String commit)
+		throws GitRepositoryException,
+					 GitAPIException, 
+					 IOException {
+
+		return player
+			.repository(name)
+			.diffInCommit(
+				branch, 
+    	  commit
+    	);
+	}
 	
 	@GetMapping("/repo/download")
 	@ResponseBody
