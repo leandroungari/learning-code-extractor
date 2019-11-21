@@ -150,10 +150,14 @@ public class RepositoryStats extends Stats {
     var allCommits = player
       .repository(repository)
       .commits(branch);
-      
+
     var listOfCommits = new ArrayList<Commit>();
     for (var i = from; i <= to; i += step) {
       listOfCommits.add(allCommits[allCommits.length-i-1]);
+    }
+
+    for(Commit c: listOfCommits) {
+      System.out.println(c.getId().getName());
     }
     
     return listOfCommits.toArray(new Commit[listOfCommits.size()]);
