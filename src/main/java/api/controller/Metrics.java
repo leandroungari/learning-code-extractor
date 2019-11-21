@@ -68,7 +68,7 @@ public class Metrics {
     var resultSet = new ArrayList<Commit>();
     for (var i = 0; i < listOfCommits.length; i++) {
       if (from <= i && i <= to) {
-        resultSet.add(listOfCommits[listOfCommits.length - i]);
+        resultSet.add(listOfCommits[listOfCommits.length-i-1]);
       }
     }
 

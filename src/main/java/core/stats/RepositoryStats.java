@@ -144,14 +144,16 @@ public class RepositoryStats extends Stats {
     Integer from, 
     Integer to, 
     Integer step)
-      throws GitAPIException, GitRepositoryException {
+      throws GitAPIException, 
+             GitRepositoryException {
 
     var allCommits = player
       .repository(repository)
       .commits(branch);
+      
     var listOfCommits = new ArrayList<Commit>();
     for (var i = from; i <= to; i += step) {
-      listOfCommits.add(allCommits[allCommits.length-i]);
+      listOfCommits.add(allCommits[allCommits.length-i-1]);
     }
     
     return listOfCommits.toArray(new Commit[listOfCommits.size()]);
