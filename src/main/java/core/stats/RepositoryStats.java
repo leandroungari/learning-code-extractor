@@ -134,12 +134,12 @@ public class RepositoryStats extends Stats {
   public Map<String, MetricsData> data(String branch, Integer from, Integer to, Integer step)
       throws GitRepositoryException, GitAPIException {
 
-    var listOfCommits = extractRangeOfCommits(branch, from, to, step);
+    var listOfCommits = rangeOfCommits(branch, from, to, step);
 
     return (step == 1 ? diffFiles(branch, listOfCommits) : allFilesData(branch, listOfCommits));
   }
 
-  private Commit[] extractRangeOfCommits(
+  public Commit[] rangeOfCommits(
     String branch, 
     Integer from, 
     Integer to, 
@@ -151,7 +151,7 @@ public class RepositoryStats extends Stats {
       .commits(branch);
     var listOfCommits = new ArrayList<Commit>();
     for (var i = from; i <= to; i += step) {
-      listOfCommits.add(allCommits[i]);
+      listOfCommits.add(allCommits[allCommits.length-i]);
     }
     
     return listOfCommits.toArray(new Commit[listOfCommits.size()]);

@@ -42,37 +42,53 @@ public class Metrics {
 
   @GetMapping("/metrics/diff/{repository}/{branch}/{commit}")
   @ResponseBody
-  public MetricsData metricsDiffInACommit(@PathVariable String repository, @PathVariable String branch,
-      @PathVariable String commit) throws GitRepositoryException, GitAPIException {
+  public MetricsData metricsDiffInACommit(
+    @PathVariable String repository, 
+    @PathVariable String branch,
+    @PathVariable String commit) 
+      throws GitRepositoryException, 
+             GitAPIException {
 
     return player
       .metrics(repository)
       .metricsFromDiffFilesInACommit(branch, commit);
   }
 
-  @GetMapping("/metrics/all/{repository}/{branch}/{from}/{to}")
-  @ResponseBody
-  public Map<String, MetricsData> metricsAllInARangeOfCommits(@PathVariable String repository,
-      @PathVariable String branch, @PathVariable Integer from, @PathVariable Integer to)
-      throws GitRepositoryException, GitAPIException {
+  private Commit[] rangeOfCommits(
+    String repository, 
+    String branch, 
+    Integer from, 
+    Integer to) 
+      throws GitAPIException, GitRepositoryException {
 
-    var resultSet = new ArrayList<Commit>();
     var listOfCommits = player
       .repository(repository)
       .commits(branch);
 
+    var resultSet = new ArrayList<Commit>();
     for (var i = 0; i < listOfCommits.length; i++) {
       if (from <= i && i <= to) {
-        resultSet.add(listOfCommits[i]);
-      } else if (i > to)
-        break;
+        resultSet.add(listOfCommits[listOfCommits.length - i]);
+      }
     }
+
+    return resultSet.toArray(new Commit[resultSet.size()]);
+  }
+
+  @GetMapping("/metrics/all/{repository}/{branch}/{from}/{to}")
+  @ResponseBody
+  public Map<String, MetricsData> metricsAllInARangeOfCommits(
+    @PathVariable String repository,
+    @PathVariable String branch, 
+    @PathVariable Integer from, 
+    @PathVariable Integer to)
+      throws GitRepositoryException, GitAPIException {
 
     return player
       .metrics(repository)
       .metricsFromAllFilesInARangeOfCommits(
         branch, 
-        resultSet.toArray(new Commit[resultSet.size()])
+        rangeOfCommits(repository, branch, from, to)
       );
   }
 
@@ -85,25 +101,12 @@ public class Metrics {
     @PathVariable Integer to)
       throws GitRepositoryException, GitAPIException {
 
-    var resultSet = new ArrayList<Commit>();
-    var listOfCommits = player
-      .repository(repository)
-      .commits(branch);
-
-    for (var i = 0; i < listOfCommits.length; i++) {
-      if (from <= i && i <= to) {
-        resultSet.add(listOfCommits[i]);
-      } else if (i > to)
-        break;
-    }
-
     return player
       .metrics(repository)
       .metricsFromDiffFilesInARangeOfCommits(
         branch, 
-        resultSet.toArray(new Commit[resultSet.size()])
+        rangeOfCommits(repository, branch, from, to)
       );
-
 	}
 
   /**
