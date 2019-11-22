@@ -1,14 +1,17 @@
 package repository;
 
+import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Consumer;
 
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.ListBranchCommand.ListMode;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.diff.DiffEntry;
+import org.eclipse.jgit.diff.DiffFormatter;
 import org.eclipse.jgit.errors.CorruptObjectException;
 import org.eclipse.jgit.errors.IncorrectObjectTypeException;
 import org.eclipse.jgit.errors.MissingObjectException;
@@ -21,6 +24,7 @@ import org.eclipse.jgit.treewalk.CanonicalTreeParser;
 import org.eclipse.jgit.treewalk.TreeWalk;
 import org.eclipse.jgit.treewalk.filter.PathFilter;
 
+import repository.commit.Diff;
 import repository.commit.File;
 
 
@@ -171,7 +175,7 @@ public String absoluteFolder() {
 		AbstractTreeIterator newer,
 		Consumer<? super DiffEntry> action
 	) throws GitAPIException {
-		
+  
 		git
 		.diff()
 		.setNewTree(newer)
@@ -210,6 +214,43 @@ public String absoluteFolder() {
 			.getRepository()
 			.open(id);
 		return new String(loader.getBytes());
-	}
+  }
+  
+  public String format(DiffEntry entry) {
+
+		var output = new ByteArrayOutputStream();
+		
+    try(var formatter = new DiffFormatter(output)) {
+			formatter.setRepository(
+				Repository
+				.get()
+				.git()
+				.getRepository()
+			);
+
+			formatter.format(entry);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+    
+		return output.toString();
+  }
+
+  public Map<String,String> contentOfDiffCommit(Commit commit, Diff diff) {
+    
+    var oldFile = commit
+      .before()
+      .filter(diff.oldPath());
+
+    var newFile = commit
+      .filter(diff.newPath());
+
+    return Map.of(
+      "oldFile", diff.oldPath(), 
+      "oldContent", (oldFile != null ? oldFile.get() : ""),
+      "newFile", diff.newPath(),
+      "newContent", (newFile != null ? newFile.get() : "")
+    );
+  }
 
 }

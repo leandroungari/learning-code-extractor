@@ -14,30 +14,52 @@ public class BranchStats extends RepositoryStats {
     this.branch = branch;
   }
 
-  public Map<String,Map<String,Double>> derivate() {
+  public Map<String,Map<String,Double>> derivate(String option) {
 
     Map<String,Map<String,Double>> result = new HashMap<>();
 
     try {
       
-      var commits = player.commits(repository, branch);
-      var data = player.sumOfMetricsOfFiles(repository, branch, 0, commits.length-1, 1);
+      var commits = player
+        .repository(repository)
+        .commits(branch);
+
+      Map<String,Map<String,Double>> data = null;
+      
+      if(SUM_OPTION.equals(option)) {
+        //parei de olhar aqui
+        data = player
+        .metrics(repository)
+        .sumOfMetricsOfFiles(
+          branch, 
+          0, 
+          commits.length-1, 
+          1
+        );
+      }
+      else {
+        
+        data = player
+        .metrics(repository)
+        .averageOfMetricsOfFiles(
+          branch, 
+          0, 
+          commits.length-1, 
+          1
+        );
+      }
 
       for(var i = commits.length-1; i > 0; i--) {
         
         var nextId = commits[i-1].getId().getName();
         var prevId = commits[i].getId().getName();
 
-        var nextData = data.get(nextId).values();
-        var prevData = data.get(prevId).values();
-        
+        var nextData = mapToList(data.get(nextId));
+        var prevData = mapToList(data.get(prevId));
+      
         result.put(
           nextId,
-          derivateMetrics(
-            prevData.toArray(new Double[prevData.size()]),
-            nextData.toArray(new Double[prevData.size()]),
-            2
-          )
+          derivateMetrics(prevData,nextData,1)
         );
       }
 

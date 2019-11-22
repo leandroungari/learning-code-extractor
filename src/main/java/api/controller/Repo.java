@@ -24,58 +24,85 @@ public class Repo {
 
 	private static Player player = new Player();
 
-	@GetMapping("/repo/{repositoryName}/branches")
+	@GetMapping("/repo/{name}/branches")
 	@ResponseBody
 	public Branch[] allBranches(
-		@PathVariable String repositoryName)
+		@PathVariable String name)
 		throws GitRepositoryException,
 						GitAPIException {
 
-		return player.branches(repositoryName);
+		return player
+			.repository(name)
+			.branches();
 	}
 
-	@GetMapping("/repo/{repository}/{branch}/commits")
+	@GetMapping("/repo/{name}/{branch}/commits")
 	@ResponseBody
 	public Commit[] allCommits(
-		@PathVariable String repository,
+		@PathVariable String name,
 		@PathVariable String branch)
 		throws GitRepositoryException,
 						GitAPIException, 
 						IOException {
 
-		return player.commits(repository, branch);
+		return player
+			.repository(name)
+			.commits(branch);
 	}
 
-	@GetMapping("/repo/{repository}/{branch}/{commit}/info")
+	@GetMapping("/repo/{name}/{branch}/{commit}/info")
 	@ResponseBody
 	public CommitInfo commitInfo(
-		@PathVariable String repository,
+		@PathVariable String name,
 		@PathVariable String branch,
 		@PathVariable String commit)
 		throws GitRepositoryException,
-		GitAPIException, IOException {
+					 GitAPIException, 
+					 IOException {
 
-		return player.commitInfo(
-			repository, 
-			branch, 
-			commit);
+		return player
+			.repository(name)
+			.commitInfo(
+				branch, 
+				commit
+			);
 	}
 
 	
-	@GetMapping("/repo/{repository}/{branch}/{commit}/diffFiles")
+	@GetMapping("/repo/{name}/{branch}/{commit}/diffFiles")
 	@ResponseBody
 	public List<DiffFile> diffFiles(
-		@PathVariable String repository,
+		@PathVariable String name,
 		@PathVariable String branch,
 		@PathVariable String commit)
 		throws GitRepositoryException,
-		GitAPIException, IOException {
+					 GitAPIException, 
+					 IOException {
 
-		return player.diffFilesFromCommit(
-			repository, 
-			branch, 
-      commit
-    );
+		return player
+			.repository(name)
+			.diffFilesFromCommit(
+				branch, 
+    	  commit
+    	);
+	}
+
+	@GetMapping("/repo/{name}/{branch}/{commit}/diffInCommit")
+	@ResponseBody
+	public List<Map<String,String>> diffInCommit(
+		@PathVariable String name,
+		@PathVariable String branch,
+		@PathVariable String commit)
+		throws GitRepositoryException,
+					 GitAPIException, 
+					 IOException {
+
+		return player
+			.repository(name)
+			.diffInCommit(
+				branch, 
+    	  commit
+    	);
 	}
 	
 	@GetMapping("/repo/download")
@@ -87,7 +114,9 @@ public class Repo {
 		var repository = body.get("repository");
 		var url = body.get("url");
 		
-		player.download(repository, url);
+		player
+		.repository(repository)
+		.download(url);
     
     var map = new HashMap<String,Boolean>();
     map.put("result", true);

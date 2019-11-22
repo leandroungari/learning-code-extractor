@@ -20,7 +20,9 @@ public class Download implements Executor{
 		else {
 			
 			try {
-				player.download(repository, url);
+				player
+				.repository(repository)
+				.download(url);
 			} catch (GitRepositoryException e) {
 				
 				e.printStackTrace();

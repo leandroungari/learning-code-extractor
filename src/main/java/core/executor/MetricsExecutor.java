@@ -65,7 +65,8 @@ public class MetricsExecutor {
 
     var data = new MetricsData();
     var diffFiles = player
-      .diffFilesFromCommit(repository, branch, commit)
+      .repository(repository)
+      .diffFilesFromCommit(branch, commit)
       .stream()
       .map(diff -> diff.getNewPath())
       .collect(Collectors.toList());
@@ -93,7 +94,11 @@ public class MetricsExecutor {
     Commit[] rangeOfCommits)
       throws GitAPIException, GitRepositoryException {
 
-    var listOfCommits = List.of(player.commits(repository, branch));
+    var listOfCommits = List.of(
+      player
+      .repository(repository)
+      .commits(branch)
+    );
 
     parallelTasks(listOfCommits, commit -> {
       try {
@@ -111,7 +116,11 @@ public class MetricsExecutor {
     Commit[] rangeOfCommits)
       throws GitAPIException, GitRepositoryException {
 
-    var listOfCommits = List.of(player.commits(repository, branch));
+    var listOfCommits = List.of(
+      player
+      .repository(repository)
+      .commits(branch)
+    );
 
     parallelTasks(listOfCommits, commit -> {
       try {
@@ -147,36 +156,41 @@ public class MetricsExecutor {
   }
   
   private Map<String,Map<String,Double>> derivateRepository(
-    String repository)
+    String repository,
+    String type)
       throws GitAPIException, GitRepositoryException {
 
     var stats = new Stats(player);
     return stats
       .repository(repository)
-      .derivate();
+      .derivate(type);
   }
 
   private Map<String, Map<String,Double>> derivateBranch(
     String repository, 
-    String branchId) {
+    String branchId,
+    String type) {
 
     var stats = new Stats(player);
     return stats
       .repository(repository)
       .branch(branchId)
-      .derivate();
+      .derivate(type);
   }
 
   public Map<String, List<Map<String,Double>>> relevantCommits(
     String repository, 
     String branchId, 
-    String metric)
+    String metric,
+    String type)
       throws GitAPIException, GitRepositoryException {
 
     var data = new HashMap<String, List<Map<String,Double>>>();
 
-    var average = derivateRepository(repository).get(branchId);
-    var branchData = derivateBranch(repository, branchId);
+    var average = derivateRepository(repository, type)
+      .get(branchId);
+      
+    var branchData = derivateBranch(repository, branchId, type);
   
     var good = new ArrayList<Map<String,Double>>();
     branchData.forEach((commit,metrics) -> {
@@ -185,11 +199,29 @@ public class MetricsExecutor {
       }
     });
 
+    good.sort((a,b) -> {
+      var firstValue = a.values().toArray(new Double[1])[0];
+      var secondValue = b.values().toArray(new Double[1])[0];
+
+      if(firstValue < secondValue) return -1;
+      else if(firstValue > secondValue) return 1;
+      else return 0;
+    });
+
     var bad = new ArrayList<Map<String,Double>>();
     branchData.forEach((commit,metrics) -> {
       if(metrics.get(metric) > average.get(metric)) {
         bad.add(Map.<String,Double>of(commit,metrics.get(metric)));
       }
+    });
+
+    bad.sort((a,b) -> {
+      var firstValue = a.values().toArray(new Double[1])[0];
+      var secondValue = b.values().toArray(new Double[1])[0];
+
+      if(firstValue < secondValue) return 1;
+      else if(firstValue > secondValue) return -1;
+      else return 0;
     });
 
     data.put("good", good);

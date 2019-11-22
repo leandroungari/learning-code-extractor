@@ -28,7 +28,8 @@ public class Plots {
              GitAPIException {
 
     return player
-      .averageOfMetricsOfFiles(repository, branch, from, to, step);
+      .metrics(repository)
+      .averageOfMetricsOfFiles(branch, from, to, step);
   }
 
   @GetMapping("/plots/sumMetricsFiles/{repository}/{branch}/{from}/{to}/{step}")
@@ -43,7 +44,8 @@ public class Plots {
              GitAPIException {
 
     return player
-      .sumOfMetricsOfFiles(repository, branch, from, to, step);
+      .metrics(repository)
+      .sumOfMetricsOfFiles(branch, from, to, step);
   }
 
   @GetMapping("/plots/sumMetricsFiles/{repository}/{branch}/{from}/{to}/{step}/normalized")
@@ -57,9 +59,9 @@ public class Plots {
       throws GitRepositoryException, 
              GitAPIException {
 
-    
     return player
-      .normalizedSumOfMetricsOfFiles(repository, branch, from, to, step);
+      .metrics(repository)
+      .normalizedSumOfMetricsOfFiles(branch, from, to, step);
   }
 
   @GetMapping("/plots/averageMetricsFiles/{repository}/{branch}/{from}/{to}/{step}/normalized")
@@ -74,7 +76,8 @@ public class Plots {
              GitAPIException {
 
     return player
-      .normalizedAverageOfMetricsOfFiles(repository, branch, from, to, step);
+      .metrics(repository)
+      .normalizedAverageOfMetricsOfFiles(branch, from, to, step);
   }
 
   @GetMapping("/plots/evolution/{repository}/{branch}/{from}/{to}/{step}/{metric}")
@@ -90,6 +93,7 @@ public class Plots {
              GitAPIException {
 
     return player
-      .evolutionOfFilesByMetrics(repository, branch, from, to, step, metric);
+      .metrics(repository)
+      .evolutionOfFilesByMetrics(branch, from, to, step, metric);
   }
 }

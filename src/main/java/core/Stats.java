@@ -17,6 +17,10 @@ public class Stats {
   public static final Integer RFC = 5;
   public static final Integer WMC = 6;
 
+  protected static final String SUM_OPTION = "sum";
+  protected static final String AVERAGE_OPTION = "average";
+
+
   protected Player player;
 
   private Function<Map<String, Double[]>, Double[]> sumOfMetricsOfFiles = files -> {
@@ -38,8 +42,13 @@ public class Stats {
 
     var sum = sumOfMetricsOfFiles.apply(files);
     var size = files.size();
-    return new Double[] { sum[0] / (size != 0 ? size : 1), sum[1] / (size != 0 ? size : 1),
-        sum[2] / (size != 0 ? size : 1), sum[3] / (size != 0 ? size : 1), sum[4] / (size != 0 ? size : 1), };
+    return new Double[] { 
+      sum[0] / (size != 0 ? size : 1), 
+      sum[1] / (size != 0 ? size : 1),
+      sum[2] / (size != 0 ? size : 1), 
+      sum[3] / (size != 0 ? size : 1), 
+      sum[4] / (size != 0 ? size : 1)
+    };
   };
 
   private BiFunction<Map<String, Double[]>, String, Map<String, Double>> evolution = (files, metric) -> {
@@ -85,7 +94,7 @@ public class Stats {
     return evolution;
   }
 
-  protected Map<String, Map<String, Double>> normalizeMetrics(Map<String, Map<String, Double>> data) {
+  public Map<String, Map<String, Double>> normalizeMetrics(Map<String, Map<String, Double>> data) {
 
     Map<String, Double[]> stats = extractStats(data);
     var cbo = stats.get("cbo");
@@ -100,8 +109,8 @@ public class Stats {
       values.put("cbo", (metrics.get("cbo") - cbo[0]) / (cbo[1] - cbo[0] != 0 ? cbo[1] - cbo[0] : 1));
       values.put("dit", (metrics.get("dit") - dit[0]) / (dit[1] - dit[0] != 0 ? dit[1] - dit[0] : 1));
       values.put("nosi", (metrics.get("nosi") - nosi[0]) / (nosi[1] - nosi[0] != 0 ? nosi[1] - nosi[0] : 1));
-      values.put("wmc", (metrics.get("wmc") - wmc[0]) / (wmc[1] - wmc[0] != 0 ? wmc[1] - wmc[0] : 1));
       values.put("rfc", (metrics.get("rfc") - rfc[0]) / (rfc[1] - rfc[0] != 0 ? rfc[1] - rfc[0] : 1));
+      values.put("wmc", (metrics.get("wmc") - wmc[0]) / (wmc[1] - wmc[0] != 0 ? wmc[1] - wmc[0] : 1));
       
       result.put(file,values);
     });
@@ -115,22 +124,27 @@ public class Stats {
     
     b.put(
       "cbo", 
-      normalize(result.values().stream().map(a -> a.get("cbo")).collect(Collectors.toList()))
+      normalize(result.values().stream().map(a -> a.get("cbo"))
+      .collect(Collectors.toList()))
     );
     b.put(
       "dit", 
-      normalize(result.values().stream().map(a -> a.get("dit")).collect(Collectors.toList()))
+      normalize(result.values().stream().map(a -> a.get("dit"))
+      .collect(Collectors.toList()))
     );
     b.put(
       "nosi", 
-      normalize(result.values().stream().map(a -> a.get("nosi")).collect(Collectors.toList()))
+      normalize(result.values().stream().map(a -> a.get("nosi"))
+      .collect(Collectors.toList()))
     );
     b.put(
       "rfc", 
-      normalize(result.values().stream().map(a -> a.get("rfc")).collect(Collectors.toList()))
+      normalize(result.values().stream().map(a -> a.get("rfc"))
+      .collect(Collectors.toList()))
     );
     b.put(
-      "wmc", normalize(result.values().stream().map(a -> a.get("wmc")).collect(Collectors.toList()))
+      "wmc", normalize(result.values().stream().map(a -> a.get("wmc"))
+      .collect(Collectors.toList()))
     );  
 
     return b;
@@ -167,14 +181,28 @@ public class Stats {
     Integer size) {
     
     var result = new HashMap<String,Double>();
-    
+  
     result.put("cbo", ((end[0] - start[0])/size));
     result.put("dit", ((end[1] - start[1])/size));
     result.put("nosi", ((end[2] - start[2])/size));
     result.put("rfc", ((end[3] - start[3])/size));
     result.put("wmc", ((end[4] - start[4])/size));
-      
+  
     return result;
   }
   
+  /**
+   * It converts a map object of metrics to an array
+   * @param data Map of metrics
+   * @return List of positioned metrics
+   */
+  protected Double[] mapToList(Map<String,Double> data) {
+    return new Double[]{
+      data.get("cbo"),
+      data.get("dit"),
+      data.get("nosi"),
+      data.get("rfc"),
+      data.get("wmc")
+    };
+  }
 }

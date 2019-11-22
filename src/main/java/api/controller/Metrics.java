@@ -35,38 +35,60 @@ public class Metrics {
     @PathVariable String commit) 
       throws GitRepositoryException, GitAPIException {
 
-    return player.metricsFromAllFilesInACommit(repository, branch, commit);
+    return player
+      .metrics(repository)
+      .metricsFromAllFilesInACommit(branch, commit);
   }
 
   @GetMapping("/metrics/diff/{repository}/{branch}/{commit}")
   @ResponseBody
-  public MetricsData metricsDiffInACommit(@PathVariable String repository, @PathVariable String branch,
-      @PathVariable String commit) throws GitRepositoryException, GitAPIException {
+  public MetricsData metricsDiffInACommit(
+    @PathVariable String repository, 
+    @PathVariable String branch,
+    @PathVariable String commit) 
+      throws GitRepositoryException, 
+             GitAPIException {
 
-    return player.metricsFromDiffFilesInACommit(repository, branch, commit);
+    return player
+      .metrics(repository)
+      .metricsFromDiffFilesInACommit(branch, commit);
+  }
+
+  private Commit[] rangeOfCommits(
+    String repository, 
+    String branch, 
+    Integer from, 
+    Integer to) 
+      throws GitAPIException, GitRepositoryException {
+
+    var listOfCommits = player
+      .repository(repository)
+      .commits(branch);
+
+    var resultSet = new ArrayList<Commit>();
+    for (var i = 0; i < listOfCommits.length; i++) {
+      if (from <= i && i <= to) {
+        resultSet.add(listOfCommits[listOfCommits.length-i-1]);
+      }
+    }
+
+    return resultSet.toArray(new Commit[resultSet.size()]);
   }
 
   @GetMapping("/metrics/all/{repository}/{branch}/{from}/{to}")
   @ResponseBody
-  public Map<String, MetricsData> metricsAllInARangeOfCommits(@PathVariable String repository,
-      @PathVariable String branch, @PathVariable Integer from, @PathVariable Integer to)
+  public Map<String, MetricsData> metricsAllInARangeOfCommits(
+    @PathVariable String repository,
+    @PathVariable String branch, 
+    @PathVariable Integer from, 
+    @PathVariable Integer to)
       throws GitRepositoryException, GitAPIException {
 
-    var resultSet = new ArrayList<Commit>();
-    var listOfCommits = player.commits(repository, branch);
-
-    for (var i = 0; i < listOfCommits.length; i++) {
-      if (from <= i && i <= to) {
-        resultSet.add(listOfCommits[i]);
-      } else if (i > to)
-        break;
-    }
-
     return player
+      .metrics(repository)
       .metricsFromAllFilesInARangeOfCommits(
-        repository, 
         branch, 
-        resultSet.toArray(new Commit[resultSet.size()])
+        rangeOfCommits(repository, branch, from, to)
       );
   }
 
@@ -79,43 +101,39 @@ public class Metrics {
     @PathVariable Integer to)
       throws GitRepositoryException, GitAPIException {
 
-    var resultSet = new ArrayList<Commit>();
-    var listOfCommits = player.commits(repository, branch);
-
-    for (var i = 0; i < listOfCommits.length; i++) {
-      if (from <= i && i <= to) {
-        resultSet.add(listOfCommits[i]);
-      } else if (i > to)
-        break;
-    }
-
     return player
+      .metrics(repository)
       .metricsFromDiffFilesInARangeOfCommits(
-        repository, 
         branch, 
-        resultSet.toArray(new Commit[resultSet.size()])
+        rangeOfCommits(repository, branch, from, to)
       );
-
 	}
 
+  /**
+   * Improve it
+   * @return
+   */
 	@GetMapping("/metrics/availableRepositories")
 	@ResponseBody
 	public List<String> list() {
 
     return player
+      .metrics("")
       .availableRepositories();
   }
   
-  @GetMapping("/metrics/relevant/{repository}/{branch}/{metric}")
+  @GetMapping("/metrics/relevant/{repository}/{branch}/{metric}/{option}")
   @ResponseBody
   public Map<String, List<Map<String,Double>>> relevant(
     @PathVariable String repository,
     @PathVariable String branch,
-    @PathVariable String metric) 
+    @PathVariable String metric,
+    @PathVariable String option) 
       throws GitAPIException, GitRepositoryException {
 
     return player
-      .relevant(repository, branch, metric);
+      .metrics(repository)
+      .relevant(branch, metric, option);
   }
 
 }

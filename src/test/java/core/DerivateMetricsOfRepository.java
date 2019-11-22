@@ -21,7 +21,7 @@ public class DerivateMetricsOfRepository {
   public void repository() throws GitAPIException, GitRepositoryException {
     
     var stats = new Stats(player);
-    var result = stats.repository(repository).derivate();
+    var result = stats.repository(repository).derivate("sum");
 
     System.out.println(result);
   }
@@ -32,7 +32,7 @@ public class DerivateMetricsOfRepository {
     var result = stats
       .repository(repository)
       .branch("f3b628f8f9c71a2cdfa052025c4a1ed78ee4c45d")
-      .derivate();
+      .derivate("sum");
 
     System.out.println(result);
   }

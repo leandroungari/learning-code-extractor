@@ -10,19 +10,23 @@ public class Diff {
 	private String newPath;
 	
 	public static Diff build(DiffEntry entry) {
-		
+
 		return new Diff(
 			entry.getOldPath(),
 			entry.getNewPath(),
 			entry.getChangeType().name()
 		);
-	}
+  }
 	
 	private Diff(String oldPath, String newPath, String type) {
 		this.oldPath = oldPath;
 		this.newPath = newPath;
 		this.type = type;
-	}
+  }
+  
+  public static String show(DiffEntry entry) {
+    return entry.toString();
+  }
 	
 	public String type() {
 		return type;

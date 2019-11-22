@@ -26,7 +26,7 @@ public class Main {
 
   public static void main(String[] args) 
   	throws GitRepositoryException, 
-  					FileNotFoundException {
+  				 FileNotFoundException {
   	
   	if (args.length == 0) {
   		runAPI(args);

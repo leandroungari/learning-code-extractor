@@ -78,6 +78,8 @@ public class Commit {
 	
 	public List<Diff> diff() {
 		
+    var factory = new GitFactory();
+
 		var list = new ArrayList<Diff>();
 		var otherCommit = before();
 		
@@ -91,7 +93,6 @@ public class Commit {
 		
 		var newTree = this.createTreeParser();
 		
-		var factory = new GitFactory();
 	  try {
 			
 			factory.diff(
@@ -105,7 +106,7 @@ public class Commit {
 		}
 		
 	  return list;
-	}
+  }
 	
 	public File filter(String filename) {
 		

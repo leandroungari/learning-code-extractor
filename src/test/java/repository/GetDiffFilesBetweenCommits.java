@@ -10,21 +10,26 @@ import org.eclipse.jgit.lib.ObjectId;
 import org.junit.Before;
 import org.junit.Test;
 
+import core.Player;
 import repository.exception.GitRepositoryException;
 
 public class GetDiffFilesBetweenCommits {
 
-	private Repository repo;
+  private Repository repo;
+  private Player player;
 	
 	@Before
 	public void before() 
 		throws FileAlreadyExistsException, 
 						GitRepositoryException {
 		
-		repo = Repository.create(
-			"https://github.com/google/truth.git",
-  		new File("/home/leandroungari/Documents/repositories/truth")
-		);
+    player = new Player();
+    
+		repo = Repository
+		  .create(new File(
+			player.settings().folderOfRepositories() + 
+			"/refactoring-toy-example"
+		  ));
 	}
 	
 	@Test
