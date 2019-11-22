@@ -56,7 +56,9 @@ public class RepositoryStats extends Stats {
       .metricsFromAllFilesInARangeOfCommits(branch, listOfCommits);
   }
 
-  private Map<String, MetricsData> diffFiles(String branch, Commit[] listOfCommits)
+  private Map<String, MetricsData> diffFiles(
+    String branch, 
+    Commit[] listOfCommits)
       throws GitRepositoryException, GitAPIException {
 
     var total = player
@@ -64,36 +66,44 @@ public class RepositoryStats extends Stats {
       .metricsFromDiffFilesInARangeOfCommits(branch, listOfCommits);
 
     total = replaceFirstCommit(total, branch, listOfCommits);
-
-    total = fillNonModifiedFiles(total, listOfCommits);
-
-    return total;
+    return fillNonModifiedFiles(total, listOfCommits);
   }
 
-  private Map<String, MetricsData> fillNonModifiedFiles(Map<String, MetricsData> data, Commit[] commits) {
+  private Map<String, MetricsData> fillNonModifiedFiles(
+    Map<String, MetricsData> data, 
+    Commit[] commits) {
 
-    for (var i = commits.length - 1; i > 0; i--) {
-      data.put(commits[i - 1].getId().getName(), createData(commits[i], commits[i - 1], data));
+    for (var i = 1; i < commits.length; i++) {
+      data.put(
+        commits[i].getId().getName(), 
+        createData(commits[i-1], commits[i], data)
+      );
     }
 
     return data;
   }
 
-  private MetricsData createData(Commit current, Commit next, Map<String, MetricsData> data) {
+  private MetricsData createData(
+    Commit current, 
+    Commit next, 
+    Map<String, MetricsData> data) {
 
     var dataCurrent = data.get(current.getId().getName());
     var dataNext = data.get(next.getId().getName());
 
     var newData = new MetricsData();
 
-    dataCurrent.getFiles().forEach((file,metrics) -> {
-
+    dataCurrent
+    .getFiles()
+    .forEach((file,metrics) -> {
       if (!isDeletedFile(next.getDiffFiles(), file)) {
         newData.addFile(file, metrics);
       }
     });
 
-    dataNext.getFiles().forEach((file,metrics) -> {
+    dataNext
+    .getFiles()
+    .forEach((file,metrics) -> {
       newData.addFile(file,metrics);
     });
 
@@ -114,12 +124,14 @@ public class RepositoryStats extends Stats {
     return result;
   }
 
-  private Map<String, MetricsData> replaceFirstCommit(Map<String, MetricsData> data, String branch,
-      Commit[] listOfCommits) throws GitRepositoryException, GitAPIException {
+  private Map<String, MetricsData> replaceFirstCommit(
+    Map<String, MetricsData> data, 
+    String branch,
+    Commit[] listOfCommits) 
+      throws GitRepositoryException, 
+             GitAPIException {
 
-    var firstCommit = listOfCommits[listOfCommits.length - 1]
-      .getId()
-      .getName();
+    var firstCommit = listOfCommits[0].getId().getName();
 
     data.put(
       firstCommit, 
@@ -131,12 +143,20 @@ public class RepositoryStats extends Stats {
     return data;
   }
 
-  public Map<String, MetricsData> data(String branch, Integer from, Integer to, Integer step)
-      throws GitRepositoryException, GitAPIException {
+  public Map<String, MetricsData> data(
+    String branch, 
+    Integer from, 
+    Integer to, 
+    Integer step)
+      throws GitRepositoryException, 
+             GitAPIException {
 
     var listOfCommits = rangeOfCommits(branch, from, to, step);
-
-    return (step == 1 ? diffFiles(branch, listOfCommits) : allFilesData(branch, listOfCommits));
+    return (
+      step == 1 ? 
+      diffFiles(branch, listOfCommits) : 
+      allFilesData(branch, listOfCommits)
+    );
   }
 
   public Commit[] rangeOfCommits(
@@ -154,10 +174,6 @@ public class RepositoryStats extends Stats {
     var listOfCommits = new ArrayList<Commit>();
     for (var i = from; i <= to; i += step) {
       listOfCommits.add(allCommits[allCommits.length-i-1]);
-    }
-
-    for(Commit c: listOfCommits) {
-      System.out.println(c.getId().getName());
     }
     
     return listOfCommits.toArray(new Commit[listOfCommits.size()]);

@@ -98,16 +98,11 @@ public class MetricsPlayer extends Player {
 
     var map = new HashMap<String, MetricsData>();
     for (var commit : commits) {
-
       var result = metricsFromDiffFilesInACommit(
         branch, 
         commit.getId().getName()
       );
-
-      map.put(
-        commit.getId().getName(), 
-        result
-      );
+      map.put(commit.getId().getName(),result);
     }
 
     return map;
