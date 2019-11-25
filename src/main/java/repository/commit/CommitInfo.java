@@ -10,6 +10,7 @@ public class CommitInfo {
 	private String name;
 	private String email;
 	private String shortMessage;
+	private String fullMessage;
 	private String date;
 	
 	private CommitInfo() {
@@ -43,6 +44,10 @@ public class CommitInfo {
 	public String getShortMessage() {
 		return shortMessage;
 	}
+
+	public String getFullMessage() {
+		return fullMessage;
+	}
 	
 	public CommitInfo setAuthorName(String name) {
 		this.name = name;
@@ -62,6 +67,11 @@ public class CommitInfo {
 	public CommitInfo setDate(Date date) {
 		
 		this.date = date.toInstant().toString();
+		return this;
+	}
+
+	public CommitInfo setFullMessage(String message) {
+		this.fullMessage = message;
 		return this;
 	}
 }

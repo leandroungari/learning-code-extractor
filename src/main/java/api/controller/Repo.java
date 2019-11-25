@@ -15,8 +15,8 @@ import org.springframework.web.bind.annotation.RestController;
 import core.Player;
 import core.data.Branch;
 import core.data.Commit;
-import core.data.CommitInfo;
 import core.data.DiffFile;
+import repository.commit.CommitInfo;
 import repository.exception.GitRepositoryException;
 
 @RestController

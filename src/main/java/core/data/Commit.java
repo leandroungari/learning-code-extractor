@@ -4,12 +4,9 @@ import java.util.List;
 
 import org.eclipse.jgit.lib.ObjectId;
 
-
-
 public class Commit {
 
 	private ObjectId id;
-	private CommitInfo info;
 	private List<DiffFile> diffFiles;
 
   /**
@@ -18,7 +15,6 @@ public class Commit {
    */
 	public Commit(ObjectId id) {
 		this.id = id;
-		this.info = null;
 		this.diffFiles = null;
 	}
 
@@ -28,17 +24,6 @@ public class Commit {
 
 	public void setId(ObjectId id) {
 		this.id = id;
-	}
-
-  /**
-   * Get info of the commit
-   */
-	public CommitInfo getInfo() {
-		return info;
-	}
-
-	public void setInfo(CommitInfo info) {
-		this.info = info;
 	}
 
   /**

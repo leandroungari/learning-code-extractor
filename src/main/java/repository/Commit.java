@@ -146,12 +146,16 @@ public class Commit {
 		var date = commit
 			.getAuthorIdent()
 			.getWhen();
+
+		var fullMessage = commit
+			.getFullMessage();
 		
 		return CommitInfo
 			.create(id)
 			.setAuthorName(name)
 			.setEmail(email)
 			.setShortMessage(message)
+			.setFullMessage(fullMessage)
 			.setDate(date);
 	}
 	
