@@ -8,10 +8,10 @@ import org.eclipse.jgit.api.errors.GitAPIException;
 import core.Player;
 import core.data.Branch;
 import core.data.Commit;
-import core.data.CommitInfo;
 import core.data.DiffFile;
 import core.resource.Resource;
 import core.resource.ResourceType;
+import repository.commit.CommitInfo;
 import repository.exception.GitRepositoryException;
 
 public class RepositoryPlayer extends Player {
@@ -90,29 +90,9 @@ public class RepositoryPlayer extends Player {
     String commit)
       throws GitAPIException, 
              GitRepositoryException {
-
-    var resource = Resource
-    .create(
-      nameOfRepository, 
-      ResourceType.LIST_OF_COMMITS
-    )
-    .branch(branch);
-
-    var listOfCommits = resource.read(Commit[].class);
-
-    for (int i = 0; i < listOfCommits.length; i++) {
-      if (commit.equals(listOfCommits[i].getId().getName())) {
-
-        if (listOfCommits[i].getInfo() == null) {
-          repositoryExecutor
-          .commitInfo(nameOfRepository, branch, commit);
-        }
-
-        return listOfCommits[i].getInfo();
-      }
-    }
-
-    return null;
+        
+    return repositoryExecutor
+      .commitInfo(nameOfRepository, branch, commit);   
   }
 
   /**

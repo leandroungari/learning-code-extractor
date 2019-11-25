@@ -12,12 +12,12 @@ import org.eclipse.jgit.lib.ObjectId;
 import core.Player;
 import core.data.Branch;
 import core.data.Commit;
-import core.data.CommitInfo;
 import core.data.DiffFile;
 import core.resource.Resource;
 import core.resource.ResourceType;
 import repository.GitFactory;
 import repository.Repository;
+import repository.commit.CommitInfo;
 import repository.exception.GitRepositoryException;
 
 public class RepositoryExecutor {
@@ -85,7 +85,7 @@ public class RepositoryExecutor {
 		.write(list);
 	}
 	
-	public void commitInfo(
+	public CommitInfo commitInfo(
 		String repository,
 		String branch,
 		String commit) 
@@ -96,38 +96,11 @@ public class RepositoryExecutor {
 			player.settings().folderOfRepositories() + "/"
 			+ repository
 		));
-		
-		var resource = Resource.create(
-			repository, 
-			ResourceType.LIST_OF_COMMITS
-		)
-		.branch(branch);
-		
-		var listOfCommits = resource
-			.read(Commit[].class);
-		
-		for(int i = 0; i < listOfCommits.length; i++) {
-			if(listOfCommits[i].getId()
-				.getName().equals(commit) && 
-				listOfCommits[i].getInfo() == null
-				) {
 				
-				var info = repo
-					.branch(ObjectId.fromString(branch))
-					.commit(ObjectId.fromString(commit)).info();
-				
-				listOfCommits[i].setInfo(new CommitInfo(
-					info.getAuthorName(),
-					info.getEmail(),
-					info.getShortMessage(),
-					info.getDate()
-				));
-				
-				break;
-			}
-		}
-		
-		resource.write(listOfCommits);
+		return repo
+			.branch(ObjectId.fromString(branch))
+			.commit(ObjectId.fromString(commit))
+			.info();
 	}
 	
 	public void diffFiles(
@@ -135,7 +108,7 @@ public class RepositoryExecutor {
 		String branch,
 		String commit) 
 			throws GitRepositoryException, 
-							GitAPIException {
+						 GitAPIException {
 		
 		var repo = Repository.create(new File(
 			player.settings().folderOfRepositories() + "/" +
