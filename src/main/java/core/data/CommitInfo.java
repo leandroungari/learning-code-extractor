@@ -5,6 +5,7 @@ public class CommitInfo {
 	private String author;
 	private String email;
 	private String shortMessage;
+	private String fullMessage;
 	private String date;
   
   /**
@@ -17,12 +18,14 @@ public class CommitInfo {
 	public CommitInfo(
 		String author, 
 		String email,
-		String shortMessage, 
+		String shortMessage,
+		String fullMessage, 
 		String date) {
 
 		this.author = author;
 		this.email = email;
 		this.shortMessage = shortMessage;
+		this.fullMessage = fullMessage;
 		this.date = date;
 	}
 	
@@ -48,6 +51,14 @@ public class CommitInfo {
 	
 	public void setShortMessage(String shortMessage) {
 		this.shortMessage = shortMessage;
+	}
+
+	public String getFullMessage() {
+		return fullMessage;
+	}
+
+	public void setFullMessage(String fullMessage) {
+		this.fullMessage = fullMessage;
 	}
 	
 	public String getDate() {
