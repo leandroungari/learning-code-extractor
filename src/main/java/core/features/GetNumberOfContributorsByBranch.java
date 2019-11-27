@@ -9,7 +9,6 @@ import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.lib.ObjectId;
 
 import core.Feature;
-import core.Player;
 import repository.Commit;
 import repository.Repository;
 import repository.commit.CommitInfo;
@@ -17,15 +16,13 @@ import repository.exception.GitRepositoryException;
 
 public class GetNumberOfContributorsByBranch extends Feature<List<Integer>> {
 
-  private Player player;
-
   private String repository;
   private String branch;
 
   private ArrayList<String> authors;
 
   public GetNumberOfContributorsByBranch() {
-    player = new Player();
+    super();
     authors = new ArrayList<>();
   }
 

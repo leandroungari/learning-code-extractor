@@ -6,22 +6,18 @@ import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.lib.ObjectId;
 
 import core.Feature;
-import core.Player;
 import repository.Repository;
 import repository.commit.CommitInfo;
 import repository.exception.GitRepositoryException;
 
 public class GetCommitInfo extends Feature<CommitInfo> {
 
-  private Player player;
-
   private String repository;
   private String branch;
   private String commit;
 
   public GetCommitInfo() {
-    
-    player = new Player();
+    super();
   }
 
   @Override

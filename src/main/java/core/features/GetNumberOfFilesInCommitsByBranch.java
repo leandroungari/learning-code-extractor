@@ -8,21 +8,17 @@ import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.lib.ObjectId;
 
 import core.Feature;
-import core.Player;
 import repository.Commit;
 import repository.Repository;
 import repository.exception.GitRepositoryException;
 
 public class GetNumberOfFilesInCommitsByBranch extends Feature<List<Integer>>{
 
-  private Player player;
-
   private String repository;
   private String branch;
 
   public GetNumberOfFilesInCommitsByBranch() {
-
-    player = new Player();
+    super();
   }
 
   @Override
