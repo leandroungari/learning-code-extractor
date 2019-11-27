@@ -7,7 +7,9 @@ import core.executor.MetricsExecutor;
 import core.executor.RepositoryExecutor;
 import core.executor.SettingsExecutor;
 import core.features.FeatureType;
+import core.features.GetBranches;
 import core.features.GetCommitInfo;
+import core.features.GetCommitsByBranch;
 import core.features.GetNumberOfContributorsByBranch;
 import core.features.GetNumberOfFilesInCommitsByBranch;
 import core.player.MetricsPlayer;
@@ -53,6 +55,8 @@ public class Player {
       add(FeatureType.COMMIT_INFO, new GetCommitInfo());
       add(FeatureType.NUMBER_OF_CONTRIBUTORS_BY_BRANCH, new GetNumberOfContributorsByBranch());
       add(FeatureType.NUMBER_OF_FILES_IN_COMMITS_BY_BRANCH, new GetNumberOfFilesInCommitsByBranch());
+      add(FeatureType.BRANCHES_OF_REPOSITORY, new GetBranches());
+      add(FeatureType.COMMITS_OF_BRANCH, new GetCommitsByBranch());
     }
   }
 
