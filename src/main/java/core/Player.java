@@ -49,8 +49,8 @@ public class Player {
     if(features == null) {
 
       features = new HashMap<>();
-      add(FeatureType.GET_COMMIT_INFO, new GetCommitInfo());
-      add(FeatureType.GET_NUMBER_OF_CONTRIBUTORS_BY_BRANCH, new GetNumberOfContributorsByBranch());
+      add(FeatureType.COMMIT_INFO, new GetCommitInfo());
+      add(FeatureType.NUMBER_OF_CONTRIBUTORS_BY_BRANCH, new GetNumberOfContributorsByBranch());
     }
   }
 
