@@ -8,6 +8,7 @@ import core.executor.RepositoryExecutor;
 import core.executor.SettingsExecutor;
 import core.features.FeatureType;
 import core.features.GetCommitInfo;
+import core.features.GetNumberOfContributorsByBranch;
 import core.player.MetricsPlayer;
 import core.player.RepositoryPlayer;
 import core.player.SettingsPlayer;
@@ -49,6 +50,7 @@ public class Player {
 
       features = new HashMap<>();
       add(FeatureType.GET_COMMIT_INFO, new GetCommitInfo());
+      add(FeatureType.GET_NUMBER_OF_CONTRIBUTORS_BY_BRANCH, new GetNumberOfContributorsByBranch());
     }
   }
 
