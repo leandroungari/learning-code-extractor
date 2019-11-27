@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 import core.Player;
 import core.data.Commit;
 import core.data.MetricsData;
+import core.features.FeatureType;
 import repository.exception.GitRepositoryException;
 
 @RestController()
@@ -109,17 +110,13 @@ public class Metrics {
       );
 	}
 
-  /**
-   * Improve it
-   * @return
-   */
 	@GetMapping("/metrics/availableRepositories")
 	@ResponseBody
-	public List<String> list() {
+	public List<String> listOfAvailableRepositories() {
 
     return player
-      .metrics("")
-      .availableRepositories();
+      .<List<String>>get(FeatureType.LIST_AVAILABLE_REPOSITORIES)
+      .action();
   }
   
   @GetMapping("/metrics/relevant/{repository}/{branch}/{metric}/{option}")
