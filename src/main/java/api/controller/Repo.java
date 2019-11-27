@@ -27,10 +27,7 @@ public class Repo {
 
 	@GetMapping("/repo/{name}/branches")
 	@ResponseBody
-	public Branch[] allBranches(
-		@PathVariable String name)
-		throws GitRepositoryException,
-						GitAPIException {
+	public Branch[] allBranches(@PathVariable String name) {
 
 		return player
 			.<Branch[]>get(FeatureType.BRANCHES_OF_REPOSITORY)
@@ -42,14 +39,12 @@ public class Repo {
 	@ResponseBody
 	public Commit[] allCommits(
 		@PathVariable String name,
-		@PathVariable String branch)
-		throws GitRepositoryException,
-						GitAPIException, 
-						IOException {
+		@PathVariable String branch) {
 
 		return player
-			.repository(name)
-			.commits(branch);
+			.<Commit[]>get(FeatureType.COMMITS_OF_BRANCH)
+			.setParams(name, branch)
+			.action();
 	}
 
 	@GetMapping("/repo/{name}/{branch}/{commit}/info")
