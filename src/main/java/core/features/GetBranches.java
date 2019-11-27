@@ -2,7 +2,7 @@ package core.features;
 
 import org.eclipse.jgit.api.errors.GitAPIException;
 
-import core.Feature;
+import core.features.Feature;
 import core.data.Branch;
 import repository.exception.GitRepositoryException;
 

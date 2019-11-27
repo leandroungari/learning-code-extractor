@@ -7,7 +7,7 @@ import java.util.stream.Collectors;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.lib.ObjectId;
 
-import core.Feature;
+import core.features.Feature;
 import repository.Commit;
 import repository.Repository;
 import repository.exception.GitRepositoryException;

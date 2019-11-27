@@ -4,7 +4,7 @@ import java.util.List;
 
 import org.eclipse.jgit.api.errors.GitAPIException;
 
-import core.Feature;
+import core.features.Feature;
 import core.data.DiffFile;
 import repository.exception.GitRepositoryException;
 

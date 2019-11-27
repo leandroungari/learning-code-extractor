@@ -1,6 +1,6 @@
 package core.features;
 
-import core.Feature;
+import core.features.Feature;
 import repository.exception.GitRepositoryException;
 
 public class DownloadRepository extends Feature<Void> {

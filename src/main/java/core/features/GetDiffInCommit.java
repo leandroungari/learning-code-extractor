@@ -5,7 +5,7 @@ import java.util.Map;
 
 import org.eclipse.jgit.api.errors.GitAPIException;
 
-import core.Feature;
+import core.features.Feature;
 import repository.exception.GitRepositoryException;
 
 public class GetDiffInCommit extends Feature<List<Map<String, String>>> {

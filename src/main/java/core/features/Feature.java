@@ -1,4 +1,6 @@
-package core;
+package core.features;
+
+import core.Player;
 
 public abstract class Feature<T> {
 
