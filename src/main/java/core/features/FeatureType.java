@@ -1,0 +1,7 @@
+package core.features;
+
+public enum FeatureType {
+  COMMIT_INFO,
+  NUMBER_OF_CONTRIBUTORS_BY_BRANCH,
+  NUMBER_OF_FILES_IN_COMMITS_BY_BRANCH
+}

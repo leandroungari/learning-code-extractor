@@ -16,6 +16,7 @@ import core.Player;
 import core.data.Branch;
 import core.data.Commit;
 import core.data.DiffFile;
+import core.features.FeatureType;
 import repository.commit.CommitInfo;
 import repository.exception.GitRepositoryException;
 
@@ -61,11 +62,33 @@ public class Repo {
 					 IOException {
 
 		return player
-			.repository(name)
-			.commitInfo(
-				branch, 
-				commit
-			);
+			.<CommitInfo>get(FeatureType.COMMIT_INFO)
+			.setParams(name, branch, commit)
+			.action();
+	}
+
+	@GetMapping("/repo/{name}/{branch}/numberOfFiles")
+	@ResponseBody
+	public List<Integer> numberOfFiles(
+		@PathVariable String repository, 
+		@PathVariable String branch) {
+
+		return player
+			.<List<Integer>>get(FeatureType.NUMBER_OF_FILES_IN_COMMITS_BY_BRANCH)
+			.setParams(repository, branch)
+			.action();
+	}
+
+	@GetMapping("/repo/{name}/{branch}/contributors")
+	@ResponseBody
+	public List<Integer> numberOfContributors(
+		@PathVariable String repository, 
+		@PathVariable String branch) {
+
+		return player
+			.<List<Integer>>get(FeatureType.NUMBER_OF_CONTRIBUTORS_BY_BRANCH)
+			.setParams(repository, branch)
+			.action();
 	}
 
 	
