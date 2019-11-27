@@ -15,7 +15,7 @@ import repository.Repository;
 import repository.commit.CommitInfo;
 import repository.exception.GitRepositoryException;
 
-public class GetNumberOfContributorsByBranch implements Feature<List<Integer>> {
+public class GetNumberOfContributorsByBranch extends Feature<List<Integer>> {
 
   private Player player;
 

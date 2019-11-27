@@ -13,7 +13,7 @@ import repository.Commit;
 import repository.Repository;
 import repository.exception.GitRepositoryException;
 
-public class GetNumberOfFilesInCommitsByBranch implements Feature<List<Integer>>{
+public class GetNumberOfFilesInCommitsByBranch extends Feature<List<Integer>>{
 
   private Player player;
 

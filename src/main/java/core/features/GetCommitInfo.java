@@ -11,7 +11,7 @@ import repository.Repository;
 import repository.commit.CommitInfo;
 import repository.exception.GitRepositoryException;
 
-public class GetCommitInfo implements Feature<CommitInfo> {
+public class GetCommitInfo extends Feature<CommitInfo> {
 
   private Player player;
 
