@@ -1,11 +1,8 @@
 package api.controller;
 
-import java.io.IOException;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.jgit.api.errors.GitAPIException;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -18,7 +15,6 @@ import core.data.Commit;
 import core.data.DiffFile;
 import core.features.FeatureType;
 import repository.commit.CommitInfo;
-import repository.exception.GitRepositoryException;
 
 @RestController
 public class Repo {
@@ -89,10 +85,7 @@ public class Repo {
 	public List<DiffFile> diffFiles(
 		@PathVariable String name,
 		@PathVariable String branch,
-		@PathVariable String commit)
-		throws GitRepositoryException,
-					 GitAPIException, 
-					 IOException {
+		@PathVariable String commit) {
 
 		return player
 			.<List<DiffFile>>get(FeatureType.DIFF_FILES_IN_COMMIT)
@@ -105,10 +98,7 @@ public class Repo {
 	public List<Map<String,String>> diffInCommit(
 		@PathVariable String name,
 		@PathVariable String branch,
-		@PathVariable String commit)
-		throws GitRepositoryException,
-					 GitAPIException, 
-					 IOException {
+		@PathVariable String commit) {
 
 		return player
 			.<List<Map<String,String>>>get(FeatureType.DIFF_IN_COMMIT)
