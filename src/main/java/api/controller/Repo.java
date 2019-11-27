@@ -111,11 +111,9 @@ public class Repo {
 					 IOException {
 
 		return player
-			.repository(name)
-			.diffInCommit(
-				branch, 
-    	  commit
-    	);
+			.<List<Map<String,String>>>get(FeatureType.DIFF_IN_COMMIT)
+			.setParams(name, branch, commit)
+			.action();
 	}
 	
 	@GetMapping("/repo/download")
