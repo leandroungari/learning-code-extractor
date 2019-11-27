@@ -48,7 +48,7 @@ public class GetNumberOfContributorsByBranchTest {
       .map((commit) -> {
       
         var info = player
-          .<CommitInfo>get(FeatureType.GET_COMMIT_INFO)
+          .<CommitInfo>get(FeatureType.COMMIT_INFO)
           .setParams(REPOSITORY, BRANCH, commit.id().getName())
           .action();
 
