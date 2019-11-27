@@ -11,6 +11,7 @@ import core.features.FeatureType;
 import core.features.GetBranches;
 import core.features.GetCommitInfo;
 import core.features.GetCommitsByBranch;
+import core.features.GetDiffFilesInCommit;
 import core.features.GetNumberOfContributorsByBranch;
 import core.features.GetNumberOfFilesInCommitsByBranch;
 import core.player.MetricsPlayer;
@@ -59,6 +60,7 @@ public class Player {
       add(FeatureType.BRANCHES_OF_REPOSITORY, new GetBranches());
       add(FeatureType.COMMITS_OF_BRANCH, new GetCommitsByBranch());
       add(FeatureType.DOWNLOAD_REPOSITORY, new DownloadRepository());
+      add(FeatureType.DIFF_FILES_IN_COMMIT, new GetDiffFilesInCommit());
     }
   }
 
