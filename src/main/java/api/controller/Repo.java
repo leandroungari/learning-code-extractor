@@ -62,7 +62,7 @@ public class Repo {
 					 IOException {
 
 		return player
-			.<CommitInfo>get(FeatureType.GET_COMMIT_INFO)
+			.<CommitInfo>get(FeatureType.COMMIT_INFO)
 			.setParams(name, branch, commit)
 			.action();
 		
