@@ -7,6 +7,7 @@ import core.executor.MetricsExecutor;
 import core.executor.RepositoryExecutor;
 import core.executor.SettingsExecutor;
 import core.features.DownloadRepository;
+import core.features.Feature;
 import core.features.FeatureType;
 import core.features.GetBranches;
 import core.features.GetCommitInfo;
