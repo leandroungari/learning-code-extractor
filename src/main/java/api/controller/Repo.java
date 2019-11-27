@@ -56,10 +56,7 @@ public class Repo {
 	public CommitInfo commitInfo(
 		@PathVariable String name,
 		@PathVariable String branch,
-		@PathVariable String commit)
-		throws GitRepositoryException,
-					 GitAPIException, 
-					 IOException {
+		@PathVariable String commit) {
 
 		return player
 			.<CommitInfo>get(FeatureType.COMMIT_INFO)
