@@ -83,7 +83,6 @@ public class Repo {
 			.setParams(repository, branch)
 			.action();
 	}
-
 	
 	@GetMapping("/repo/{name}/{branch}/{commit}/diffFiles")
 	@ResponseBody
@@ -96,11 +95,9 @@ public class Repo {
 					 IOException {
 
 		return player
-			.repository(name)
-			.diffFilesFromCommit(
-				branch, 
-    	  commit
-    	);
+			.<List<DiffFile>>get(FeatureType.DIFF_FILES_IN_COMMIT)
+			.setParams(name, branch, commit)
+			.action();
 	}
 
 	@GetMapping("/repo/{name}/{branch}/{commit}/diffInCommit")
@@ -123,9 +120,7 @@ public class Repo {
 	
 	@GetMapping("/repo/download")
 	@ResponseBody
-	public Map<String, Boolean> download(
-		@RequestBody Map<String,String> body) 
-			throws GitRepositoryException {
+	public Map<String, Boolean> download(@RequestBody Map<String,String> body)  {
 
 		var repository = body.get("repository");
 		var url = body.get("url");
