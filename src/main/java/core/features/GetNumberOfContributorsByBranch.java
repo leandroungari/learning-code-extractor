@@ -76,7 +76,7 @@ public class GetNumberOfContributorsByBranch implements Feature<List<Integer>> {
   private String getIdentifierOfCommit(Commit commit) {
 
     return player
-      .<CommitInfo>get(FeatureType.GET_COMMIT_INFO)
+      .<CommitInfo>get(FeatureType.COMMIT_INFO)
       .setParams(repository, branch, commit.id().getName())
       .action()
       .getEmail();
