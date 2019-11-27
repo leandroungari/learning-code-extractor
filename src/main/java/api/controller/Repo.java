@@ -33,8 +33,9 @@ public class Repo {
 						GitAPIException {
 
 		return player
-			.repository(name)
-			.branches();
+			.<Branch[]>get(FeatureType.BRANCHES_OF_REPOSITORY)
+			.setParams(name)
+			.action();
 	}
 
 	@GetMapping("/repo/{name}/{branch}/commits")
