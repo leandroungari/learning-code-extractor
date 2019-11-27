@@ -14,6 +14,10 @@ public class GetDiffFilesInCommit extends Feature<List<DiffFile>>{
   private String branch;
   private String commit;
 
+  public GetDiffFilesInCommit() {
+    super();
+  }
+
   @Override
   public Feature<List<DiffFile>> setParams(String... params) {
     
@@ -21,7 +25,7 @@ public class GetDiffFilesInCommit extends Feature<List<DiffFile>>{
     branch = params[1];
     commit = params[2];
 
-    return null;
+    return this;
   }
 
   @Override
