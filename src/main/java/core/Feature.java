@@ -1,7 +1,14 @@
 package core;
 
-public interface Feature<T> {
+public abstract class Feature<T> {
 
-  Feature<T> setParams(String...params);
-  T  action();
+  protected Player player;
+
+  protected Feature() {
+
+    player = new Player();
+  }
+  
+  public abstract Feature<T> setParams(String...params);
+  public abstract T  action();
 }
