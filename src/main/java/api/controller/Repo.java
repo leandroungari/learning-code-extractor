@@ -131,12 +131,10 @@ public class Repo {
 		var url = body.get("url");
 		
 		player
-		.repository(repository)
-		.download(url);
+		.<Void>get(FeatureType.DOWNLOAD_REPOSITORY)
+		.setParams(repository, url)
+		.action();
     
-    var map = new HashMap<String,Boolean>();
-    map.put("result", true);
-    
-    return map;
+    return Map.of("result", true);
 	}
 }
