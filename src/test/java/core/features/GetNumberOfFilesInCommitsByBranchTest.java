@@ -16,39 +16,19 @@ import repository.exception.GitRepositoryException;
 
 public class GetNumberOfFilesInCommitsByBranchTest {
 
-  private Player player;
   private final String REPOSITORY = "refactoring-toy-example";
   private final String BRANCH = "d4bce13a443cf12da40a77c16c1e591f4f985b47";
 
-  @Before
-  public void before() {
-
-    player = new Player();
-  }
-
   @Test
-  public void run() 
-    throws GitAPIException, GitRepositoryException {
+  public void run() {
 
-    var repo = Repository.create(new File(
-			player.settings().folderOfRepositories() + "/"
-			+ REPOSITORY
-		));
+    var command = new GetNumberOfFilesInCommitsByBranch();
+    command.setParams(REPOSITORY,BRANCH);
+
+    var quantityOfFiles = command.action();
     
-		var result = repo
-		  .branch(ObjectId.fromString(BRANCH))
-      .commits();
-    
-    var quantityOfFiles = result
-      .stream()
-      .map((commit) -> {
-      
-        return commit
-          .allFilesByExtension(".java")
-          .size();
-      })
-      .collect(Collectors.toList());
-    
+    System.out.println(quantityOfFiles);
+
     assertEquals(65, quantityOfFiles.size());
   }
 }

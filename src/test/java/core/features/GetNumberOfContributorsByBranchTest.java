@@ -16,6 +16,8 @@ public class GetNumberOfContributorsByBranchTest {
     command.setParams(REPOSITORY,BRANCH);
 
     var quantityOfContributors = command.action();
+
+    System.out.println(quantityOfContributors);
     
     assertTrue(quantityOfContributors.get(64) == 2);
   }
