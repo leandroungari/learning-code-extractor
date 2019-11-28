@@ -56,12 +56,11 @@ public class Branch {
 			
 			factory.commitStart(id, revcommit -> {
 		
-				list.add(Commit.create(revcommit.getId()));
+				list.add(0, Commit.create(revcommit.getId()));
 			});
 
 		} catch (IOException e) {
-		
-			System.err.println(e.getMessage());
+			e.printStackTrace();
 		}
 		
 		return list;
