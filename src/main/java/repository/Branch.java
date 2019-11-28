@@ -17,9 +17,12 @@ public class Branch {
 	 * @param id
 	 * @return
 	 */
-	public static Branch create(String name, ObjectId id) {
+	public static Branch create(String name, String id) {
 		
-		return new Branch(name, id);
+		return new Branch(
+			name, 
+			ObjectId.fromString(id)
+		);
 	}
 	
 	private Branch(String name, ObjectId id) {
@@ -65,9 +68,28 @@ public class Branch {
 		
 		return list;
 	}
+
+	public List<Commit> commits(Integer from, Integer to) {
+
+		var result = commits();
+		if(from < 0 || to > result.size()-1 || from > to) {
+			throw new Error("Invalid positions of range");
+		}
+		return result.subList(from, to+1);
+	}
+
+	public Commit commit(Integer position) {
+
+		var result = commits();
+		if(0 <= position && position < result.size()) {
+			return result.get(position);
+		}
+		throw new Error("Invalid position in range of commits");
+	}
 	
-	public Commit commit(ObjectId id) {
+	public Commit commit(String id) {
 		
-		return Commit.create(id);
+		return Commit
+			.create(ObjectId.fromString(id));
 	}
 }

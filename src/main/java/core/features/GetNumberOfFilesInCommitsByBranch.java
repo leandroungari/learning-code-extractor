@@ -5,9 +5,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.eclipse.jgit.api.errors.GitAPIException;
-import org.eclipse.jgit.lib.ObjectId;
 
-import core.features.Feature;
 import repository.Commit;
 import repository.Repository;
 import repository.exception.GitRepositoryException;
@@ -40,7 +38,7 @@ public class GetNumberOfFilesInCommitsByBranch extends Feature<List<Integer>>{
 		  ));
     
 		var result = repo
-		  .branch(ObjectId.fromString(branch))
+		  .branch(branch)
       .commits();
     
     return result

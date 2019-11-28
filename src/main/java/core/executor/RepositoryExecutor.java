@@ -16,7 +16,6 @@ import core.resource.Resource;
 import core.resource.ResourceType;
 import repository.GitFactory;
 import repository.Repository;
-import repository.commit.CommitInfo;
 import repository.exception.GitRepositoryException;
 
 public class RepositoryExecutor {
@@ -41,7 +40,7 @@ public class RepositoryExecutor {
 		));
 		
 		var diffList = repo
-			.branch(ObjectId.fromString(branch))
+			.branch(branch)
 			.commit(ObjectId.fromString(commit))
 			.diff();
 		
@@ -85,7 +84,7 @@ public class RepositoryExecutor {
 		));
 
 		var ref = repo
-      .branch(ObjectId.fromString(branch))
+      .branch(branch)
       .commit(ObjectId.fromString(commit));
 
     var list = ref.diff();

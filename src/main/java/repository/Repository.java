@@ -180,24 +180,16 @@ public class Repository {
 		var factory = new GitFactory();
 		return factory.branches().stream().map(ref -> {
 			return Branch.create(ref.getName(),
-					ref.getObjectId());
+					ref.getObjectId().getName());
 		}).collect(Collectors.toList());
 	}
-
-	public Branch branch(String name) throws IOException {
-
-		var factory = new GitFactory();
-		var ref = factory.branch(name);
-
-		return Branch.create(ref.getName(), ref.getObjectId());
-	}
 	
-	public Branch branch(ObjectId id) 
+	public Branch branch(String id) 
 	  throws GitAPIException {
 	  
 	  return branches()
 	    .stream()
-	    .filter(branch -> branch.id().equals(id))
+	    .filter(branch -> branch.id().getName().equals(id))
 	    .collect(Collectors.toList())
 	    .get(0);
 	}

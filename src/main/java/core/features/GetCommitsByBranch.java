@@ -66,7 +66,7 @@ public class GetCommitsByBranch extends Feature<Commit[]> {
 		));
 
 		var list = repo
-			.branch(ObjectId.fromString(branch))
+			.branch(branch)
 			.commits().stream()
 			.map(commit -> new Commit(
 				ObjectId.fromString(

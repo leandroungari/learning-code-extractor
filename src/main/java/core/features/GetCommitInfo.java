@@ -41,7 +41,7 @@ public class GetCommitInfo extends Feature<CommitInfo> {
 		  ));
       
 		  return repo
-		  	.branch(ObjectId.fromString(branch))
+		  	.branch(branch)
 		  	.commit(ObjectId.fromString(commit))
 		  	.info();
     }

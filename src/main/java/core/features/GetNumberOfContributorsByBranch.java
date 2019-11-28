@@ -45,7 +45,7 @@ public class GetNumberOfContributorsByBranch extends Feature<List<Integer>> {
       ));
 
       var result = repo
-		    .branch(ObjectId.fromString(branch))
+		    .branch(branch)
         .commits();
       
       return result
