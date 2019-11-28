@@ -1,10 +1,13 @@
 package core.features;
 
+import java.io.File;
+
 import org.eclipse.jgit.api.errors.JGitInternalException;
 import org.junit.Before;
 import org.junit.Test;
 
 import core.Player;
+import repository.Repository;
 import repository.exception.GitRepositoryException;
 
 public class DownloadRepositoryTest {
@@ -24,9 +27,13 @@ public class DownloadRepositoryTest {
 
     try {
       
-      player
-      .repository(REPOSITORY)
-      .download(URL);
+      Repository.create(
+		  	URL, 
+		  	new File(
+		  		player.settings().folderOfRepositories() + "/" +
+		  		REPOSITORY
+		  	)
+		  );
 
     } catch (GitRepositoryException e) {
       e.printStackTrace();
