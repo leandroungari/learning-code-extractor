@@ -28,7 +28,7 @@ public class Repository {
 	 * @throws GitRepositoryException
 	 */
 	private Repository(String url, File folder)
-			throws GitRepositoryException {
+		throws GitRepositoryException {
 		
 		if (url != null) {
 
@@ -38,7 +38,8 @@ public class Repository {
 
 			if (!isRepository(folder))
 				throw new GitRepositoryException(
-						"This local folder is not a git repository!");
+					"This local folder is not a git repository!"
+				);
 
 			git = open(folder);
 		}
@@ -151,11 +152,13 @@ public class Repository {
 	private Git cloneRepository(String url, File local) {
 
 		try {
-			return Git.cloneRepository().setURI(url)
-					.setDirectory(local).call();
+			return Git
+				.cloneRepository()
+				.setURI(url)
+				.setDirectory(local)
+				.call();
 		} catch (GitAPIException e) {
-
-			System.err.println(e.getMessage());
+			e.printStackTrace();
 		}
 
 		return null;
@@ -177,10 +180,15 @@ public class Repository {
 	public List<Branch> branches() throws GitAPIException {
 
 		var factory = new GitFactory();
-		return factory.branches().stream().map(ref -> {
-			return Branch.create(ref.getName(),
+		return factory
+			.branches()
+			.stream()
+			.map(ref -> {
+				return Branch.create(
+					ref.getName(),
 					ref.getObjectId().getName());
-		}).collect(Collectors.toList());
+			})
+			.collect(Collectors.toList());
 	}
 	
 	public Branch branch(String id) 
@@ -188,7 +196,7 @@ public class Repository {
 	  
 	  return branches()
 	    .stream()
-	    .filter(branch -> branch.id().getName().equals(id))
+	    .filter(branch -> branch.id().name().equals(id))
 	    .collect(Collectors.toList())
 	    .get(0);
 	}
