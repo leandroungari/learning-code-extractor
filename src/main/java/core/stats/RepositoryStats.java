@@ -14,6 +14,7 @@ import core.data.Branch;
 import core.data.Commit;
 import core.data.DiffFile;
 import core.data.MetricsData;
+import core.features.FeatureType;
 import repository.exception.GitRepositoryException;
 
 public class RepositoryStats extends Stats {
@@ -29,16 +30,14 @@ public class RepositoryStats extends Stats {
 
     Map<String, Map<String, Double>> result = new HashMap<>();
     Branch[] branches;
-    try {
-      branches = player
-        .repository(repository)
-        .branches();
-      for (var branch : branches) {
-        var name = branch.getId().getName();
-        result.put(name, execute(name, option));
-      }
-    } catch (GitAPIException | GitRepositoryException e) {
-      e.printStackTrace();
+    branches = player
+      .<Branch[]>get(FeatureType.BRANCHES_OF_REPOSITORY)
+      .setParams(repository)
+      .action();
+
+    for (var branch : branches) {
+      var name = branch.getId().getName();
+      result.put(name, execute(name, option));
     }
 
     return result;

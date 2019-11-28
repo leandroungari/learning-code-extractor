@@ -24,31 +24,6 @@ public class RepositoryPlayer extends Player {
   }
 
   /**
-   * It lists all branches in the specified repository
-   * @param repositoryName The name of repository
-   * @return List of branches
-   * @throws GitAPIException
-   * @throws GitRepositoryException
-   */
-  public Branch[] branches() 
-    throws GitAPIException, 
-           GitRepositoryException {
-
-    var resource = Resource
-    .create(
-      nameOfRepository, 
-      ResourceType.LIST_OF_BRANCHES
-    );
-
-    if (!resource.exists()) {
-      repositoryExecutor
-      .branches(nameOfRepository);
-    }
-
-    return resource.read(Branch[].class);
-  }
-
-  /**
    * This method lists the commits in a specified branch
    * @param repository Name of repository
    * @param branch  The ID (hash) of branch
