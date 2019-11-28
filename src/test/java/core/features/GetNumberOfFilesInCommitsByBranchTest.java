@@ -2,17 +2,7 @@ package core.features;
 
 import static org.junit.Assert.assertEquals;
 
-import java.io.File;
-import java.util.stream.Collectors;
-
-import org.eclipse.jgit.api.errors.GitAPIException;
-import org.eclipse.jgit.lib.ObjectId;
-import org.junit.Before;
 import org.junit.Test;
-
-import core.Player;
-import repository.Repository;
-import repository.exception.GitRepositoryException;
 
 public class GetNumberOfFilesInCommitsByBranchTest {
 
