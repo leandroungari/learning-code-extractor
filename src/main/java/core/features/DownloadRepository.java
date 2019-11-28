@@ -1,6 +1,9 @@
 package core.features;
 
+import java.io.File;
+
 import core.features.Feature;
+import repository.Repository;
 import repository.exception.GitRepositoryException;
 
 public class DownloadRepository extends Feature<Void> {
@@ -22,9 +25,13 @@ public class DownloadRepository extends Feature<Void> {
 
     try {
     
-      player
-      .repository(repository)
-      .download(url);
+      Repository.create(
+		  	url, 
+		  	new File(
+		  		player.settings().folderOfRepositories() + "/" +
+		  		repository
+		  	)
+		  );
     
     } catch (GitRepositoryException e) {
       e.printStackTrace();
