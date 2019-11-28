@@ -28,24 +28,6 @@ public class RepositoryExecutor {
 		player = p;
 	}
 	
-	public CommitInfo commitInfo(
-		String repository,
-		String branch,
-		String commit) 
-		throws GitAPIException, 
-						GitRepositoryException {
-	
-		var repo = Repository.create(new File(
-			player.settings().folderOfRepositories() + "/"
-			+ repository
-		));
-				
-		return repo
-			.branch(ObjectId.fromString(branch))
-			.commit(ObjectId.fromString(commit))
-			.info();
-	}
-	
 	public void diffFiles(
 		String repository,
 		String branch,

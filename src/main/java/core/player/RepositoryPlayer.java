@@ -24,25 +24,6 @@ public class RepositoryPlayer extends Player {
   }
 
   /**
-   * It gets some description information of a particular commit
-   * @param repository Name of repository
-   * @param branch Branch ID
-   * @param commit Commit ID
-   * @return
-   * @throws GitAPIException
-   * @throws GitRepositoryException
-   */
-  public CommitInfo commitInfo(
-    String branch, 
-    String commit)
-      throws GitAPIException, 
-             GitRepositoryException {
-        
-    return repositoryExecutor
-      .commitInfo(nameOfRepository, branch, commit);   
-  }
-
-  /**
    * It lists the modified files in a particular commit
    * @param repository Name of repository
    * @param branch Branch ID
