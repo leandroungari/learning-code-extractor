@@ -4,6 +4,9 @@ import org.eclipse.jgit.api.errors.GitAPIException;
 
 import commandline.Executor;
 import core.Player;
+import core.data.Branch;
+import core.data.Commit;
+import core.features.FeatureType;
 import repository.exception.GitRepositoryException;
 
 
@@ -47,8 +50,10 @@ public class Metrics implements Executor {
 		throws GitAPIException, GitRepositoryException {
 		
 		var branches = player
-			.repository(repository)
-			.branches();
+			.<Branch[]>get(FeatureType.BRANCHES_OF_REPOSITORY)
+			.setParams(repository)
+			.action();
+
 		for(var i = 0; i < branches.length; i++) {
 			processingABranch(
 				branches[i]
@@ -64,8 +69,9 @@ public class Metrics implements Executor {
 		try {
 			
 			var listOfCommits = player
-			.repository(repository)
-			.commits(branch);
+				.<Commit[]>get(FeatureType.COMMITS_OF_BRANCH)
+				.setParams(repository, branch)
+				.action();
 				
 			player
 			.metrics(repository)

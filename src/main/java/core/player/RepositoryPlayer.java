@@ -24,34 +24,6 @@ public class RepositoryPlayer extends Player {
   }
 
   /**
-   * This method lists the commits in a specified branch
-   * @param repository Name of repository
-   * @param branch  The ID (hash) of branch
-   * @return List of commits
-   * @throws GitAPIException
-   * @throws GitRepositoryException
-   */
-  public Commit[] commits(String branch) 
-    throws GitAPIException, 
-           GitRepositoryException {
-
-    var resource = Resource
-    .create(
-      nameOfRepository, 
-      ResourceType.LIST_OF_COMMITS
-    )
-    .branch(branch);
-
-    if (!resource.exists()) {
-      repositoryExecutor
-      .commits(nameOfRepository, branch);
-    }
-
-    return resource
-      .read(Commit[].class);
-  }
-
-  /**
    * It gets some description information of a particular commit
    * @param repository Name of repository
    * @param branch Branch ID
@@ -91,11 +63,6 @@ public class RepositoryPlayer extends Player {
       ResourceType.DIFF_FILES
     )
     .branch(branch);
-
-    if (!resource.exists()) {
-      repositoryExecutor
-      .commits(nameOfRepository, branch);
-    }
 
     repositoryExecutor
     .diffFiles(nameOfRepository, branch, commit);

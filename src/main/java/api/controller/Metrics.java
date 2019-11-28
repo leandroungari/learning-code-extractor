@@ -63,8 +63,9 @@ public class Metrics {
       throws GitAPIException, GitRepositoryException {
 
     var listOfCommits = player
-      .repository(repository)
-      .commits(branch);
+      .<Commit[]>get(FeatureType.COMMITS_OF_BRANCH)
+      .setParams(repository, branch)
+      .action();
 
     var resultSet = new ArrayList<Commit>();
     for (var i = 0; i < listOfCommits.length; i++) {

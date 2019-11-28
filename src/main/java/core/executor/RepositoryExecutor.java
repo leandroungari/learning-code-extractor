@@ -10,7 +10,6 @@ import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.lib.ObjectId;
 
 import core.Player;
-import core.data.Branch;
 import core.data.Commit;
 import core.data.DiffFile;
 import core.resource.Resource;
@@ -27,62 +26,6 @@ public class RepositoryExecutor {
 	public RepositoryExecutor(Player p) {
 		
 		player = p;
-	}
-	
-	public void branches(String repositoryName) 
-	    throws GitAPIException, 
-					    GitRepositoryException {
-		
-		var repo = Repository.create(new File(
-	    player.settings().folderOfRepositories() + "/" +
-	    repositoryName
-	  ));
-	    
-	  var list = repo
-	  	.branches()
-	  	.stream()
-	  	.map(branch -> new Branch(
-	  		branch.name(), 
-	  		branch.id()
-	  	))
-	  	.collect(Collectors.toList());
-	  
-	  Resource
-	  .create(
-	    repositoryName, 
-	    ResourceType.LIST_OF_BRANCHES
-	  )
-	  .write(list); 
-	}
-	
-	public void commits(
-		String repository,
-		String branch) 
-		throws GitAPIException, 
-						GitRepositoryException {
-		
-		var repo = Repository.create(new File(
-			player.settings().folderOfRepositories() + "/"
-			+ repository
-		));
-
-		var list = repo
-			.branch(ObjectId.fromString(branch))
-			.commits().stream()
-			.map(commit -> new Commit(
-				ObjectId.fromString(
-					commit.id().getName()
-				)
-			))
-			.collect(Collectors.toList());
-		
-		Resource
-		.create(
-			repository, 
-			ResourceType.LIST_OF_COMMITS
-		)
-		.branch(branch)
-		.write(list);
 	}
 	
 	public CommitInfo commitInfo(

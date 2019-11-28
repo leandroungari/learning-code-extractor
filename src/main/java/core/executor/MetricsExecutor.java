@@ -15,6 +15,7 @@ import core.Player;
 import core.Stats;
 import core.data.Commit;
 import core.data.MetricsData;
+import core.features.FeatureType;
 import core.resource.Resource;
 import core.resource.ResourceType;
 import repository.Repository;
@@ -96,8 +97,9 @@ public class MetricsExecutor {
 
     var listOfCommits = List.of(
       player
-      .repository(repository)
-      .commits(branch)
+      .<Commit[]>get(FeatureType.COMMITS_OF_BRANCH)
+      .setParams(repository, branch)
+      .action()
     );
 
     parallelTasks(listOfCommits, commit -> {
@@ -118,8 +120,9 @@ public class MetricsExecutor {
 
     var listOfCommits = List.of(
       player
-      .repository(repository)
-      .commits(branch)
+      .<Commit[]>get(FeatureType.COMMITS_OF_BRANCH)
+      .setParams(repository, branch)
+      .action()
     );
 
     parallelTasks(listOfCommits, commit -> {

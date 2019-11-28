@@ -7,6 +7,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import core.Player;
+import core.data.Commit;
 import repository.exception.GitRepositoryException;
 
 public class GetCommitsByBranchTest {
@@ -26,8 +27,9 @@ public class GetCommitsByBranchTest {
     throws GitAPIException, GitRepositoryException {
     
     var result = player
-      .repository(REPOSITORY)
-      .commits(BRANCH);
+      .<Commit[]>get(FeatureType.COMMITS_OF_BRANCH)
+      .setParams(REPOSITORY, BRANCH)
+      .action();
       
     assertTrue(result != null);
   }

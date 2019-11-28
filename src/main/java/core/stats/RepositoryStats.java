@@ -167,8 +167,9 @@ public class RepositoryStats extends Stats {
              GitRepositoryException {
 
     var allCommits = player
-      .repository(repository)
-      .commits(branch);
+      .<Commit[]>get(FeatureType.COMMITS_OF_BRANCH)
+      .setParams(repository, branch)
+      .action();
 
     var listOfCommits = new ArrayList<Commit>();
     for (var i = from; i <= to; i += step) {
@@ -208,8 +209,9 @@ public class RepositoryStats extends Stats {
     Commit[] commits = null;
     try {
       commits = player
-        .repository(repository)
-        .commits(branch);
+        .<Commit[]>get(FeatureType.COMMITS_OF_BRANCH)
+        .setParams(repository, branch)
+        .action();
 
       return compareInitialAndLastCommit(
         branch,

@@ -4,6 +4,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import core.Player;
+import core.data.Commit;
+import core.features.FeatureType;
 
 public class BranchStats extends RepositoryStats {
 
@@ -21,8 +23,9 @@ public class BranchStats extends RepositoryStats {
     try {
       
       var commits = player
-        .repository(repository)
-        .commits(branch);
+        .<Commit[]>get(FeatureType.COMMITS_OF_BRANCH)
+        .setParams(repository, branch)
+        .action();
 
       Map<String,Map<String,Double>> data = null;
       
