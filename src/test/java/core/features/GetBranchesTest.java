@@ -2,6 +2,8 @@ package core.features;
 
 import static org.junit.Assert.assertTrue;
 
+import java.util.Arrays;
+
 import org.junit.Test;
 
 public class GetBranchesTest {
@@ -15,8 +17,8 @@ public class GetBranchesTest {
     command.setParams(REPOSITORY);
 
     var result = command.action();
-      
-    assertTrue(result.length == 2);
+    System.out.println(Arrays.toString(result));
+    assertTrue(result.length == 3);
   }
 
   
