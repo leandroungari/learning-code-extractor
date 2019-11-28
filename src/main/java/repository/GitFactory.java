@@ -240,10 +240,10 @@ public String absoluteFolder() {
     
     var oldFile = commit
       .before()
-      .filter(diff.oldPath());
+      .getFile(diff.oldPath());
 
     var newFile = commit
-      .filter(diff.newPath());
+      .getFile(diff.newPath());
 
     return Map.of(
       "oldFile", diff.oldPath(), 

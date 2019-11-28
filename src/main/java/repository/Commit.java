@@ -108,7 +108,7 @@ public class Commit {
 	  return list;
   }
 	
-	public File filter(String filename) {
+	public File getFile(String filename) {
 		
 		var factory = new GitFactory();
 		try {

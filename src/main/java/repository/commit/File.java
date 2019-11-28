@@ -28,11 +28,9 @@ public class File {
 		
 		var factory = new GitFactory();
 		try {
-			
 			return factory.fileContent(id);
 		} catch (IOException e) {
-			
-			System.err.println(e.getMessage());
+			e.printStackTrace();
 		}
 		
 		return null;

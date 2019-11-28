@@ -1,0 +1,45 @@
+package repository.commit;
+
+import static org.junit.Assert.assertTrue;
+
+import org.eclipse.jgit.api.errors.GitAPIException;
+import org.junit.BeforeClass;
+import org.junit.Test;
+
+import core.Player;
+import repository.Commit;
+import repository.Repository;
+import repository.exception.GitRepositoryException;
+
+public class CommitInfoTest {
+
+  private static Player player;
+
+  private static Repository repo;
+  private static Commit commit;
+
+  private static final String REPOSITORY = "refactoring-toy-example";
+  private static final String BRANCH = "d4bce13a443cf12da40a77c16c1e591f4f985b47";
+  private static final String COMMIT = "d4bce13a443cf12da40a77c16c1e591f4f985b47";
+
+  @BeforeClass
+  public static void start() 
+    throws GitRepositoryException, GitAPIException {
+
+    player = new Player();
+
+    repo = Repository.create(new java.io.File(
+	    player.settings().folderOfRepositories() + "/" +
+	    REPOSITORY
+    ));
+    
+    commit = repo.branch(BRANCH).commit(COMMIT);
+  }
+
+  @Test
+  public void run() {
+    var info = commit.info();
+    System.out.println(info.getAuthorName());
+    assertTrue(info.getAuthorName().equals("Danilo F. Silva"));
+  }
+}

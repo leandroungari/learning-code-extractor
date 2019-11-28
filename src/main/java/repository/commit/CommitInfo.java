@@ -20,8 +20,12 @@ public class CommitInfo {
 	public static CommitInfo create(ObjectId id) {
 		
 		var info = new CommitInfo();
-		info.id = id;
+		info.setId(id);
 		return info;
+	}
+
+	private void setId(ObjectId id) {
+		this.id = id;
 	}
 	
 	public String getId() {
