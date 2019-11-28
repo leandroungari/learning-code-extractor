@@ -7,7 +7,6 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.eclipse.jgit.api.errors.GitAPIException;
-import org.eclipse.jgit.lib.ObjectId;
 
 import core.Player;
 import core.data.Commit;
@@ -41,7 +40,7 @@ public class RepositoryExecutor {
 		
 		var diffList = repo
 			.branch(branch)
-			.commit(ObjectId.fromString(commit))
+			.commit(commit)
 			.diff();
 		
     var result = diffList
@@ -85,7 +84,7 @@ public class RepositoryExecutor {
 
 		var ref = repo
       .branch(branch)
-      .commit(ObjectId.fromString(commit));
+      .commit(commit);
 
     var list = ref.diff();
     var factory = new GitFactory();

@@ -3,8 +3,6 @@ package core.features;
 import java.io.File;
 
 import org.eclipse.jgit.api.errors.GitAPIException;
-import org.eclipse.jgit.lib.ObjectId;
-
 import core.features.Feature;
 import repository.Repository;
 import repository.commit.CommitInfo;
@@ -42,7 +40,7 @@ public class GetCommitInfo extends Feature<CommitInfo> {
       
 		  return repo
 		  	.branch(branch)
-		  	.commit(ObjectId.fromString(commit))
+		  	.commit(commit)
 		  	.info();
     }
     catch(GitRepositoryException | GitAPIException e) {

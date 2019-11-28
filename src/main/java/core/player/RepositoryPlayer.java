@@ -6,12 +6,10 @@ import java.util.Map;
 import org.eclipse.jgit.api.errors.GitAPIException;
 
 import core.Player;
-import core.data.Branch;
 import core.data.Commit;
 import core.data.DiffFile;
 import core.resource.Resource;
 import core.resource.ResourceType;
-import repository.commit.CommitInfo;
 import repository.exception.GitRepositoryException;
 
 public class RepositoryPlayer extends Player {
