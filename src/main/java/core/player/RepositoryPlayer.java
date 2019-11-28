@@ -136,18 +136,6 @@ public class RepositoryPlayer extends Player {
     return commitItem.getDiffFiles();
   }
 
-  /**
-   * It performs the download of the Git repository from the specified URL
-   * @param url The URL address to clone the repository
-   * @throws GitRepositoryException
-   */
-  public void download(String url) 
-    throws GitRepositoryException {
-
-    repositoryExecutor
-    .download(nameOfRepository, url);
-  }
-
   public List<Map<String,String>> diffInCommit(
     String branch, 
     String commit) 
