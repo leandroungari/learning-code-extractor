@@ -37,7 +37,22 @@ public class RepositoryTest {
   public void getBranch() throws GitAPIException {
     
     var branch = repo.branch(MASTER_ID);
-    System.out.println(branch.name());
-    assertTrue(branch.name().contains("HEAD"));
+    
+    assertTrue(branch.name().contains("master"));
   }
+
+  @Test
+  public void getBranches() throws GitAPIException {
+
+    var quantity = repo
+      .branches()
+      .size();
+
+    assertTrue(quantity == 2);
+  }
+
+  /**
+   * Create test to clone and create
+   * methods
+   */
 }
