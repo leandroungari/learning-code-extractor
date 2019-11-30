@@ -16,8 +16,6 @@ public class GetNumberOfFilesInCommitsByBranchTest {
     command.setParams(REPOSITORY,BRANCH);
 
     var quantityOfFiles = command.action();
-    
-    System.out.println(quantityOfFiles);
 
     assertEquals(65, quantityOfFiles.size());
   }

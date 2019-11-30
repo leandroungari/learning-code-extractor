@@ -50,10 +50,10 @@ public String absoluteFolder() {
 	public String folder() {
 		
 		var list = git
-		.getRepository()
-		.getDirectory()
-		.getAbsolutePath()
-		.split(java.util.regex.Pattern.quote("/"));
+			.getRepository()
+			.getDirectory()
+			.getAbsolutePath()
+			.split(java.util.regex.Pattern.quote("/"));
 		
 		return list[list.length - 2];
 	}
@@ -98,8 +98,8 @@ public String absoluteFolder() {
 	
 	public RevCommit commit(ObjectId id, Integer num) 
 		throws MissingObjectException, 
-						IncorrectObjectTypeException, 
-						IOException {
+					 IncorrectObjectTypeException, 
+					 IOException {
 		
 		var revWalk = walk();
 		

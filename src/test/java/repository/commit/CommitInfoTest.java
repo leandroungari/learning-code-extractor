@@ -37,9 +37,38 @@ public class CommitInfoTest {
   }
 
   @Test
-  public void run() {
+  public void getListOfFiles() {
+
+    var list = commit.allFiles();
+    assertTrue(list.size() > 0);
+  }
+
+  @Test
+  public void getListOfFilesByExtension() {
+
+    var list = commit.allFilesByExtension(".java");
+    assertTrue(list.size() > 0);
+  }
+
+  @Test
+  public void getDiffs() {
+
+    var list = commit.diff();
+    assertTrue(list.size() > 0);
+  }
+
+  @Test
+  public void getFileInCommit() {
+    var file = commit.getFile(".project");
+    assertTrue(file != null);
+  }
+
+  @Test
+  public void getCommitInfo() {     
     var info = commit.info();
-    System.out.println(info.getAuthorName());
+
     assertTrue(info.getAuthorName().equals("Danilo F. Silva"));
   }
+
+
 }

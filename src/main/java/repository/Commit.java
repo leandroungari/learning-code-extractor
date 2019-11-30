@@ -32,7 +32,6 @@ public class Commit {
 		return id;
 	}
 	
-	
 	public List<File> allFiles() {
 		
 		var list = new ArrayList<File>();
@@ -47,7 +46,7 @@ public class Commit {
 			});
 			
 		} catch (IOException e) {
-			System.err.println(e.getMessage());
+			e.printStackTrace();
 		}				
 		return list;
 	}
@@ -59,8 +58,8 @@ public class Commit {
       .collect(Collectors.toList());
 	}
 	
-	public AbstractTreeIterator createTreeParser() {
-	
+	private AbstractTreeIterator createTreeParser() {
+
 		var factory = new GitFactory();
 		return factory.createTreeParser(id);
 	}
@@ -71,9 +70,18 @@ public class Commit {
 		try {
 			return Commit.create(factory.commit(id, 1));
 		} catch (IOException e) {
-			System.err.println(e.getMessage());
+			e.printStackTrace();
 		}
 		return null;
+	}
+
+	private AbstractTreeIterator createTree() {
+		if(id() == null) {
+			return new EmptyTreeIterator();
+		}
+		else {
+			return this.createTreeParser();
+		}
 	}
 	
 	public List<Diff> diff() {
@@ -83,28 +91,20 @@ public class Commit {
 		var list = new ArrayList<Diff>();
 		var otherCommit = before();
 		
-		AbstractTreeIterator oldTree;
-		if(otherCommit.id() == null) {
-			oldTree = new EmptyTreeIterator();
-		}
-		else {
-			oldTree = otherCommit.createTreeParser();
-		}
-		
-		var newTree = this.createTreeParser();
+		var oldTree = otherCommit.createTree();
+		var newTree = this.createTree();
 		
 	  try {
-			
 			factory.diff(
 				oldTree, 
 				newTree, 
 				a -> list.add(Diff.build(a))
-			);	
-			
+			);
+
 		} catch (GitAPIException e) {
-			System.err.println(e.getMessage());
+			e.printStackTrace();
 		}
-		
+
 	  return list;
   }
 	
@@ -114,49 +114,49 @@ public class Commit {
 		try {
 			return factory.filterFile(id, filename);
 		} catch (IOException e) {
-		
-			System.err.println(e.getMessage());
+			e.printStackTrace();
 		}
-		
 		return null;
 	}
 	
 	public CommitInfo info() {
 		
 		var factory = new GitFactory();
-		RevCommit commit = null;
 		
 		try {
-			commit = factory.commit(id);
+			var commit = factory.commit(id);
+
+			var name = commit
+				.getAuthorIdent()
+				.getName();
+			
+			var email = commit
+				.getAuthorIdent()
+				.getEmailAddress();
+			
+			var message = commit
+				.getShortMessage();
+			
+			var date = commit
+				.getAuthorIdent()
+				.getWhen();
+
+			var fullMessage = commit
+				.getFullMessage();
+			
+			return CommitInfo
+				.create(id)
+				.setAuthorName(name)
+				.setEmail(email)
+				.setShortMessage(message)
+				.setFullMessage(fullMessage)
+				.setDate(date);
+
 		} catch (IOException e) {
-			System.err.println(e.getMessage());
+			e.printStackTrace();
 		}
 		
-		var name = commit
-			.getAuthorIdent()
-			.getName();
-		
-		var email = commit
-			.getAuthorIdent()
-			.getEmailAddress();
-		
-		var message = commit
-			.getShortMessage();
-		
-		var date = commit
-			.getAuthorIdent()
-			.getWhen();
-
-		var fullMessage = commit
-			.getFullMessage();
-		
-		return CommitInfo
-			.create(id)
-			.setAuthorName(name)
-			.setEmail(email)
-			.setShortMessage(message)
-			.setFullMessage(fullMessage)
-			.setDate(date);
+		return null;
 	}
 	
 	@Override
