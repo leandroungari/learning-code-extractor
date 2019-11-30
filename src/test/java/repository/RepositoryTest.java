@@ -1,6 +1,5 @@
 package repository;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
@@ -26,8 +25,7 @@ public class RepositoryTest {
 
     player = new Player();
 
-    repo = Repository
-    .create(new File(
+    repo = Repository.create(new File(
       player.settings().folderOfRepositories() + 
       "/" + REPOSITORY
     ));

@@ -40,7 +40,7 @@ public class DiffTest {
 
     var factory = new GitFactory();
     var result = factory
-    .contentOfDiffCommit(commit, commit.diff().get(0));
+      .contentOfDiffCommit(commit, commit.diff().get(0));
 
     System.out.println(result);
   }
