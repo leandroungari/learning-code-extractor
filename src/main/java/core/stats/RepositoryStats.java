@@ -26,7 +26,7 @@ public class RepositoryStats extends Stats {
     this.repository = repository;
   }
 
-  public Map<String, Map<String,Double>> derivate(String option) {
+  /*public Map<String, Map<String,Double>> derivate(String option) {
 
     Map<String, Map<String, Double>> result = new HashMap<>();
     Branch[] branches;
@@ -41,7 +41,7 @@ public class RepositoryStats extends Stats {
     }
 
     return result;
-  }
+  }*/
 
   public BranchStats branch(String branchId) {
     return new BranchStats(player, repository, branchId);
@@ -202,28 +202,6 @@ public class RepositoryStats extends Stats {
     result.put("wmc", data[4]);
 
     return result;
-  }
-
-  private Map<String,Double> execute(String branch, String type) {
-    
-    Commit[] commits = null;
-    try {
-      commits = player
-        .<Commit[]>get(FeatureType.COMMITS_OF_BRANCH)
-        .setParams(repository, branch)
-        .action();
-
-      return compareInitialAndLastCommit(
-        branch,
-        commits[commits.length-1].getId().getName(),
-        commits[0].getId().getName(),
-        commits.length,
-        type
-      );
-    } catch (GitAPIException | GitRepositoryException e) {
-      e.printStackTrace();
-    }
-    return null;
   }
 
   private Map<String,Double> compareInitialAndLastCommit(

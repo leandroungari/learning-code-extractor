@@ -21,29 +21,9 @@ public class Metrics {
 
   private static Player player = new Player();
 
-  @GetMapping("/metrics")
+  @GetMapping("/metrics/{repository}/{branch}/{commit}")
   @ResponseBody
-  public String index() {
-
-    return "This controller returns results related to code quality metrics.";
-  }
-
-  @GetMapping("/metrics/all/{repository}/{branch}/{commit}")
-  @ResponseBody
-  public MetricsData metricsAllInACommit(
-    @PathVariable String repository, 
-    @PathVariable String branch,
-    @PathVariable String commit) 
-      throws GitRepositoryException, GitAPIException {
-
-    return player
-      .metrics(repository)
-      .metricsFromAllFilesInACommit(branch, commit);
-  }
-
-  @GetMapping("/metrics/diff/{repository}/{branch}/{commit}")
-  @ResponseBody
-  public MetricsData metricsDiffInACommit(
+  public MetricsData metricsInACommit(
     @PathVariable String repository, 
     @PathVariable String branch,
     @PathVariable String commit) 
@@ -51,75 +31,26 @@ public class Metrics {
              GitAPIException {
 
     return player
-      .metrics(repository)
-      .metricsFromDiffFilesInACommit(branch, commit);
-  }
-
-  private Commit[] rangeOfCommits(
-    String repository, 
-    String branch, 
-    Integer from, 
-    Integer to) 
-      throws GitAPIException, GitRepositoryException {
-
-    var listOfCommits = player
-      .<Commit[]>get(FeatureType.COMMITS_OF_BRANCH)
-      .setParams(repository, branch)
+      .<MetricsData>get(FeatureType.METRICS_IN_COMMIT)
+      .setParams(repository, branch, commit)
       .action();
-
-    var resultSet = new ArrayList<Commit>();
-    for (var i = 0; i < listOfCommits.length; i++) {
-      if (from <= i && i <= to) {
-        resultSet.add(listOfCommits[listOfCommits.length-i-1]);
-      }
-    }
-
-    return resultSet.toArray(new Commit[resultSet.size()]);
   }
 
-  @GetMapping("/metrics/all/{repository}/{branch}/{from}/{to}")
+  @GetMapping("/metrics/{repository}/{branch}/{from}/{to}")
   @ResponseBody
-  public Map<String, MetricsData> metricsAllInARangeOfCommits(
+  public Map<String, MetricsData> metricsInARangeOfCommits(
     @PathVariable String repository,
     @PathVariable String branch, 
-    @PathVariable Integer from, 
-    @PathVariable Integer to)
+    @PathVariable String from, 
+    @PathVariable String to)
       throws GitRepositoryException, GitAPIException {
 
     return player
-      .metrics(repository)
-      .metricsFromAllFilesInARangeOfCommits(
-        branch, 
-        rangeOfCommits(repository, branch, from, to)
-      );
-  }
-
-  @GetMapping("/metrics/diff/{repository}/{branch}/{from}/{to}")
-  @ResponseBody
-  public Map<String, MetricsData> metricsDiffInARangeOfCommits(
-    @PathVariable String repository,
-    @PathVariable String branch, 
-    @PathVariable Integer from, 
-    @PathVariable Integer to)
-      throws GitRepositoryException, GitAPIException {
-
-    return player
-      .metrics(repository)
-      .metricsFromDiffFilesInARangeOfCommits(
-        branch, 
-        rangeOfCommits(repository, branch, from, to)
-      );
-	}
-
-	@GetMapping("/metrics/availableRepositories")
-	@ResponseBody
-	public List<String> listOfAvailableRepositories() {
-
-    return player
-      .<List<String>>get(FeatureType.LIST_AVAILABLE_REPOSITORIES)
+      .<Map<String,MetricsData>>get(FeatureType.METRICS_IN_RANGE_COMMITS)
+      .setParams(repository,branch,from,to)
       .action();
   }
-  
+
   @GetMapping("/metrics/relevant/{repository}/{branch}/{metric}/{option}")
   @ResponseBody
   public Map<String, List<Map<String,Double>>> relevant(

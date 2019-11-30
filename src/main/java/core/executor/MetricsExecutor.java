@@ -24,72 +24,7 @@ import repository.metrics.MetricsAnalyzer;
 
 public class MetricsExecutor {
 
-  private Player player;
-  private MetricsAnalyzer analyzer;
-
-  public MetricsExecutor(Player p) {
-
-    analyzer = new MetricsAnalyzer();
-    player = p;
-  }
-
-  public void analyzeAllFilesInACommit(
-    String repository, 
-    String branch, 
-    String commit) 
-      throws GitRepositoryException {
-
-    Repository.create(new File(player.settings().folderOfRepositories() + "/" + repository));
-
-    var data = new MetricsData();
-
-    analyzer.repositoryName(repository).enableLogs(false).process(commit, (file, result) -> {
-
-      data.addFiles(file, result);
-    });
-
-    Resource
-      .create(repository, ResourceType.METRICS_ALL_FILES)
-      .folder("commits")
-      .name(commit)
-      .write(data);
-
-  }
-
-  public void analyzeDiffFilesInACommit(
-    String repository, 
-    String branch, 
-    String commit)
-      throws GitRepositoryException, GitAPIException {
-
-    Repository.create(new File(player.settings().folderOfRepositories() + "/" + repository));
-
-    var data = new MetricsData();
-    var diffFiles = player
-      .repository(repository)
-      .diffFilesFromCommit(branch, commit)
-      .stream()
-      .map(diff -> diff.getNewPath())
-      .collect(Collectors.toList());
-
-    analyzer
-      .repositoryName(repository)
-      .enableLogs(false)
-      .process(commit, (file, result) -> {
-
-      if (diffFiles.contains(file)) {
-        data.addFiles(file, result);
-      }
-    });
-
-    Resource
-      .create(repository, ResourceType.METRICS_DIFF_FILES)
-      .folder("commits")
-      .name(commit)
-      .write(data);
-  }
-
-  public void analyzeAllFilesInARangeOfCommits(
+  /*public void analyzeAllFilesInARangeOfCommits(
     String repository, 
     String branch, 
     Commit[] rangeOfCommits)
@@ -132,7 +67,7 @@ public class MetricsExecutor {
         e.printStackTrace();
       }
     }, 4);
-  }
+  }*/
 
   private void parallelTasks(
 		List<Commit> list,

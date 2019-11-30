@@ -120,4 +120,13 @@ public class Repo {
     
     return Map.of("result", true);
 	}
+
+	@GetMapping("/repo/availableRepositories")
+	@ResponseBody
+	public List<String> listOfAvailableRepositories() {
+
+    return player
+      .<List<String>>get(FeatureType.LIST_AVAILABLE_REPOSITORIES)
+      .action();
+  }
 }
