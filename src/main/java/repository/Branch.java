@@ -78,6 +78,16 @@ public class Branch {
 		return result.subList(from, to+1);
 	}
 
+	public List<Commit> commits(Integer from, Integer to, Integer step) {
+
+		var result = new ArrayList<Commit>();
+		var sub = commits(from, to);
+		for(var i = 0; i < sub.size(); i+= step) {
+			result.add(sub.get(i));
+		}
+		return result;
+	}
+
 	public Commit commit(Integer position) {
 
 		var result = commits();
