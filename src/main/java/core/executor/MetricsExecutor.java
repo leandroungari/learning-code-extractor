@@ -1,27 +1,5 @@
 package core.executor;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.CompletableFuture;
-import java.util.function.Consumer;
-import java.util.stream.Collectors;
-
-import org.eclipse.jgit.api.errors.GitAPIException;
-
-import core.Player;
-import core.Stats;
-import core.data.Commit;
-import core.data.MetricsData;
-import core.features.FeatureType;
-import core.resource.Resource;
-import core.resource.ResourceType;
-import repository.Repository;
-import repository.exception.GitRepositoryException;
-import repository.metrics.MetricsAnalyzer;
-
 public class MetricsExecutor {
 
   /*public void analyzeAllFilesInARangeOfCommits(
@@ -69,7 +47,7 @@ public class MetricsExecutor {
     }, 4);
   }*/
 
-  private void parallelTasks(
+  /*private void parallelTasks(
 		List<Commit> list,
 		Consumer<Commit> consumer, 
 		int numExecutions) {
@@ -91,9 +69,9 @@ public class MetricsExecutor {
 	      ))
 	      .join();
 	  }	
-  }
+  }*/
   
-  private Map<String,Map<String,Double>> derivateRepository(
+ /* private Map<String,Map<String,Double>> derivateRepository(
     String repository,
     String type)
       throws GitAPIException, GitRepositoryException {
@@ -166,5 +144,5 @@ public class MetricsExecutor {
     data.put("bad", bad);
 
     return data;
-  }
+  }*/
 }

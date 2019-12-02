@@ -6,11 +6,10 @@ import java.util.Map;
 
 import org.eclipse.jgit.api.errors.GitAPIException;
 
-import core.data.MetricsData;
 import repository.Commit;
 
 public class GetMetricsInARangeOfCommits 
-  implements RepositoryFeature<Map<String, MetricsData>> {
+  implements RepositoryFeature<Map<String,Map<String,Map<String, Double>>>> {
 
   private String repository;
   private String branch;
@@ -18,7 +17,7 @@ public class GetMetricsInARangeOfCommits
   private Integer to;
 
   @Override
-  public Feature<Map<String, MetricsData>> setParams(String... params) {
+  public Feature<Map<String,Map<String,Map<String, Double>>>> setParams(String... params) {
 
     repository = params[0];
     branch = params[1];
@@ -29,14 +28,13 @@ public class GetMetricsInARangeOfCommits
   }
 
   @Override
-  public Map<String, MetricsData> action() {
+  public Map<String,Map<String,Map<String, Double>>> action() {
 
     try {
       
       var repo = createRepository(repository);
       var commits = repo.branch(branch).commits(from, to);
       return getMetricsOfCommits(commits);
-
       
     } catch (GitAPIException e) {
       e.printStackTrace();
@@ -45,9 +43,9 @@ public class GetMetricsInARangeOfCommits
     return null;
   }
 
-  private Map<String, MetricsData> getMetricsOfCommits(List<Commit> commits) {
+  private HashMap<String,Map<String, Map<String, Double>>> getMetricsOfCommits(List<Commit> commits) {
     
-    var map = new HashMap<String, MetricsData>();
+    var map = new HashMap<String,Map<String,Map<String,Double>>>();
 
     for (var commit : commits) {
       var result = data.metrics(repository, commit.id().name());

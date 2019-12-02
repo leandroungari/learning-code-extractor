@@ -1,5 +1,8 @@
 package core.controller;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import core.data.MetricsData;
 import core.resource.Resource;
 import core.resource.ResourceType;
@@ -15,7 +18,7 @@ public class DataController {
   private static final Integer RFC = 5;
   private static final Integer WMC = 6;
 
-  public MetricsData metrics(String repository, String commit) {
+  public Map<String, Map<String, Double>> metrics(String repository, String commit) {
 
     var resourceAll = Resource
       .create(repository, ResourceType.METRICS_ALL_FILES)
@@ -26,12 +29,34 @@ public class DataController {
       analyzeCommit(repository, commit);
     }
 
-    return resourceAll.read(MetricsData.class);
+    var metrics = resourceAll.read(MetricsData.class);
+    return convertFileMetricsToMap(metrics);
+  }
+
+  private HashMap<String, Map<String, Double>> convertFileMetricsToMap(MetricsData metrics) {
+    
+    var result = new HashMap<String,Map<String,Double>>();
+
+    metrics.getFiles().forEach((file,data) -> {
+      result.put(
+        file,
+        Map.of(
+          "cbo", data[CBO],
+          "dit", data[DIT],
+          "nosi", data[NOSI],
+          "rfc", data[RFC],
+          "wmc", data[WMC]
+        )
+      );
+    });
+
+    return result;
   }
 
   private void analyzeCommit(String repository, String commit) {
+    
     var data = new MetricsData();
-
+    
     analyzer
     .repositoryName(repository)
     .enableLogs(false)
@@ -44,33 +69,5 @@ public class DataController {
     .folder("commits")
     .name(commit)
     .write(data);
-  }
-
-  public Double[] sumOfMetrics(MetricsData data) {
-
-    var sumOfMetrics = new Double[] { 0.0, 0.0, 0.0, 0.0, 0.0 };
-
-    data.getFiles().forEach((name,metrics) -> {
-      sumOfMetrics[0] += metrics[CBO];
-      sumOfMetrics[1] += metrics[DIT];
-      sumOfMetrics[2] += metrics[NOSI];
-      sumOfMetrics[3] += metrics[RFC];
-      sumOfMetrics[4] += metrics[WMC];
-    });
-
-    return sumOfMetrics;
-  };
-
-  public Double[] averageOfMetrics(MetricsData data) {
-
-    var sum = sumOfMetrics(data);
-    var size = data.getFiles().size();
-    return new Double[] { 
-      sum[0] / (size != 0 ? size : 1), 
-      sum[1] / (size != 0 ? size : 1),
-      sum[2] / (size != 0 ? size : 1), 
-      sum[3] / (size != 0 ? size : 1), 
-      sum[4] / (size != 0 ? size : 1)
-    };
   }
 }

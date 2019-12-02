@@ -23,22 +23,6 @@ public class MetricsPlayer extends Player {
     this.nameOfRepository = nameOfRepository;
   }
 
-
-  public Map<String, List<Map<String,Double>>> relevant(
-    String branch,
-    String metric,
-    String option) 
-      throws GitAPIException, GitRepositoryException {
-    
-    return metricsExecutor
-    .relevantCommits(
-      nameOfRepository,
-      branch, 
-      metric, 
-      option
-    );
-  }
-
   public Map<String, Map<String, Double>> averageOfMetricsOfFiles(
     String branch,
     Integer from, 

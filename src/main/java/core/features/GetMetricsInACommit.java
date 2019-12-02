@@ -1,15 +1,19 @@
 package core.features;
 
-import core.data.MetricsData;
+import java.util.Map;
+
+import core.controller.DataController;
 
 public class GetMetricsInACommit 
-  implements RepositoryFeature<MetricsData> {
+  implements RepositoryFeature<Map<String, Map<String, Double>>> {
+
+  private DataController data = new DataController();
 
   private String repository;
   private String commit;
 
   @Override
-  public Feature<MetricsData> setParams(String... params) {
+  public Feature<Map<String, Map<String, Double>>> setParams(String... params) {
 
     repository = params[0];
     commit = params[1];
@@ -17,7 +21,7 @@ public class GetMetricsInACommit
   }
 
   @Override
-  public MetricsData action() {
+  public Map<String, Map<String, Double>> action() {
     
     return data.metrics(repository, commit);
   }

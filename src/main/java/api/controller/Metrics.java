@@ -1,6 +1,5 @@
 package api.controller;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -11,7 +10,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import core.Player;
-import core.data.Commit;
 import core.data.MetricsData;
 import core.features.FeatureType;
 import repository.exception.GitRepositoryException;
@@ -61,8 +59,9 @@ public class Metrics {
       throws GitAPIException, GitRepositoryException {
 
     return player
-      .metrics(repository)
-      .relevant(branch, metric, option);
+      .<Map<String, List<Map<String,Double>>>>get(FeatureType.RELEVANT_COMMITS_BY_METRIC)
+      .setParams(repository, branch, metric, option)
+      .action();
   }
 
 }
