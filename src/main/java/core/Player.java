@@ -7,6 +7,7 @@ import core.executor.MetricsExecutor;
 import core.features.DownloadRepository;
 import core.features.Feature;
 import core.features.FeatureType;
+import core.features.GetAverageOfMetricsOfFiles;
 import core.features.GetBranches;
 import core.features.GetCommitInfo;
 import core.features.GetCommitsByBranch;
@@ -51,6 +52,8 @@ public class Player {
       add(FeatureType.METRICS_IN_COMMIT, new GetMetricsInACommit());
       add(FeatureType.METRICS_IN_RANGE_COMMITS, new GetMetricsInARangeOfCommits());
       add(FeatureType.RELEVANT_COMMITS_BY_METRIC, new GetRelevantCommitsOfBranchByMetrics());
+
+      add(FeatureType.AVERAGE_OF_METRICS_OF_FILES, new GetAverageOfMetricsOfFiles());
     }
   }
 

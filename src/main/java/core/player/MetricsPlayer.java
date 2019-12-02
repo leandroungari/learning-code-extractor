@@ -23,20 +23,6 @@ public class MetricsPlayer extends Player {
     this.nameOfRepository = nameOfRepository;
   }
 
-  public Map<String, Map<String, Double>> averageOfMetricsOfFiles(
-    String branch,
-    Integer from, 
-    Integer to,
-    Integer step
-  ) throws GitRepositoryException, GitAPIException {
-    
-    var repo = stats().repository(nameOfRepository);
-    return repo.extractValuesFromCommits(
-      repo.data(branch,from,to,step),
-      repo.getAverageOfMetricsOfFiles()
-    );
-  }
-
   public Map<String, Map<String, Double>> sumOfMetricsOfFiles (
     String branch,
     Integer from, 
