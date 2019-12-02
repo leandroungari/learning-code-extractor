@@ -15,6 +15,7 @@ public class GetMetricsInARangeOfCommits
   private String branch;
   private Integer from;
   private Integer to;
+  private Integer step;
 
   @Override
   public Feature<Map<String,Map<String,Map<String, Double>>>> setParams(String... params) {
@@ -23,6 +24,7 @@ public class GetMetricsInARangeOfCommits
     branch = params[1];
     from = Integer.valueOf(params[2]);
     to = Integer.valueOf(params[3]);
+    step = (params[4] != null ? Integer.valueOf(params[4]) : -1);
 
     return this;
   }
@@ -30,13 +32,22 @@ public class GetMetricsInARangeOfCommits
   @Override
   public Map<String,Map<String,Map<String, Double>>> action() {
 
+    var commits = getCommits();
+    return getMetricsOfCommits(commits);
+  }
+
+  private List<Commit> getCommits() {
+    
     try {
-      
       var repo = createRepository(repository);
-      var commits = repo.branch(branch).commits(from, to);
-      return getMetricsOfCommits(commits);
-      
-    } catch (GitAPIException e) {
+      if(step == -1) {
+        return repo.branch(branch).commits(from, to);
+      }
+      else {
+        return repo.branch(branch).commits(from, to, step);
+      }
+    } 
+    catch (GitAPIException e) {
       e.printStackTrace();
     }
 
