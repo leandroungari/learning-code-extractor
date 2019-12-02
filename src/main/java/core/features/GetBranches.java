@@ -1,24 +1,17 @@
 package core.features;
 
-import java.io.File;
 import java.util.stream.Collectors;
 
 import org.eclipse.jgit.api.errors.GitAPIException;
 
-import core.features.Feature;
+import core.data.Branch;
 import core.resource.Resource;
 import core.resource.ResourceType;
-import core.data.Branch;
-import repository.Repository;
 import repository.exception.GitRepositoryException;
 
-public class GetBranches extends Feature<Branch[]> {
+public class GetBranches implements RepositoryFeature<Branch[]> {
 
   private String repository;
-
-  public GetBranches() {
-    super();
-  }
 
   @Override
   public Feature<Branch[]> setParams(String... params) {
@@ -55,10 +48,7 @@ public class GetBranches extends Feature<Branch[]> {
     throws GitRepositoryException, 
            GitAPIException {
     
-    var repo = Repository.create(new File(
-	    player.settings().folderOfRepositories() + "/" +
-	    repository
-	  ));
+    var repo = createRepository(repository);
     
 	  var list = repo
 	  	.branches()
@@ -70,7 +60,7 @@ public class GetBranches extends Feature<Branch[]> {
 	  	.collect(Collectors.toList());
     
 	  Resource
-	  .create(
+    .create(
 	    repository, 
 	    ResourceType.LIST_OF_BRANCHES
 	  )

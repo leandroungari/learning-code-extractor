@@ -1,15 +1,12 @@
 package core.features;
 
 import core.Player;
+import core.controller.DataController;
 
-public abstract class Feature<T> {
+public interface Feature<T> {
 
-  protected Player player;
-
-  protected Feature() {
-
-    player = new Player();
-  }
+  final Player player = new Player();
+  final DataController data = new DataController();
   
   public abstract Feature<T> setParams(String...params);
   public abstract T  action();

@@ -1,22 +1,14 @@
 package core.features;
 
-import java.io.File;
-
 import org.eclipse.jgit.api.errors.GitAPIException;
-import core.features.Feature;
-import repository.Repository;
-import repository.commit.CommitInfo;
-import repository.exception.GitRepositoryException;
 
-public class GetCommitInfo extends Feature<CommitInfo> {
+import repository.commit.CommitInfo;
+
+public class GetCommitInfo implements RepositoryFeature<CommitInfo> {
 
   private String repository;
   private String branch;
   private String commit;
-
-  public GetCommitInfo() {
-    super();
-  }
 
   @Override
   public Feature<CommitInfo> setParams(String... params) {
@@ -33,17 +25,14 @@ public class GetCommitInfo extends Feature<CommitInfo> {
     
     try {
       
-      var repo = Repository.create(new File(
-		  	player.settings().folderOfRepositories() + "/"
-		  	+ repository
-		  ));
+      var repo = createRepository(repository);
       
 		  return repo
 		  	.branch(branch)
 		  	.commit(commit)
 		  	.info();
     }
-    catch(GitRepositoryException | GitAPIException e) {
+    catch(GitAPIException e) {
       e.printStackTrace();
     }
     

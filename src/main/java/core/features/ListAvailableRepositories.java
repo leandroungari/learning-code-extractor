@@ -4,7 +4,7 @@ import java.util.List;
 
 import util.FileUtil;
 
-public class ListAvailableRepositories extends Feature<List<String>> {
+public class ListAvailableRepositories implements RepositoryFeature<List<String>> {
 
   @Override
   public Feature<List<String>> setParams(String... params) {
@@ -16,9 +16,7 @@ public class ListAvailableRepositories extends Feature<List<String>> {
   public List<String> action() {
 
     return FileUtil.listOfFolders(
-      player
-      .settings()
-      .folderOfRepositories()
+      settings.folderOfRepositories()
     );
   }
 

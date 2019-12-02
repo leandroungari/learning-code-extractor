@@ -1,12 +1,6 @@
 package core.features;
 
-import java.io.File;
-
-import core.features.Feature;
-import repository.Repository;
-import repository.exception.GitRepositoryException;
-
-public class DownloadRepository extends Feature<Void> {
+public class DownloadRepository implements RepositoryFeature<Void> {
 
   private String repository;
   private String url;
@@ -23,20 +17,7 @@ public class DownloadRepository extends Feature<Void> {
   @Override
   public Void action() {
 
-    try {
-    
-      Repository.create(
-		  	url, 
-		  	new File(
-		  		player.settings().folderOfRepositories() + "/" +
-		  		repository
-		  	)
-		  );
-    
-    } catch (GitRepositoryException e) {
-      e.printStackTrace();
-    }
-    
+    createRepository(repository, url);
     return null;
   }
 

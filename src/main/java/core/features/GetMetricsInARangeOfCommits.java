@@ -1,16 +1,16 @@
 package core.features;
 
-import java.io.File;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.eclipse.jgit.api.errors.GitAPIException;
 
 import core.data.MetricsData;
-import repository.Repository;
-import repository.exception.GitRepositoryException;
+import repository.Commit;
 
-public class GetMetricsInARangeOfCommits extends Feature<Map<String, MetricsData>> {
+public class GetMetricsInARangeOfCommits 
+  implements RepositoryFeature<Map<String, MetricsData>> {
 
   private String repository;
   private String branch;
@@ -31,27 +31,27 @@ public class GetMetricsInARangeOfCommits extends Feature<Map<String, MetricsData
   @Override
   public Map<String, MetricsData> action() {
 
-    var map = new HashMap<String, MetricsData>();
-
     try {
       
-      var repo = Repository.create(new File(
-        player.settings().folderOfRepositories() 
-        + "/" + repository
-      ));
-
+      var repo = createRepository(repository);
       var commits = repo.branch(branch).commits(from, to);
+      return getMetricsOfCommits(commits);
 
-      for (var commit : commits) {
-        var result = player
-          .<MetricsData>get(FeatureType.METRICS_IN_COMMIT)
-          .setParams(repository, commit.id().name())
-          .action();
-
-        map.put(commit.id().name(), result);
-      }
-    } catch (GitRepositoryException | GitAPIException e) {
+      
+    } catch (GitAPIException e) {
       e.printStackTrace();
+    }
+
+    return null;
+  }
+
+  private Map<String, MetricsData> getMetricsOfCommits(List<Commit> commits) {
+    
+    var map = new HashMap<String, MetricsData>();
+
+    for (var commit : commits) {
+      var result = data.metrics(repository, commit.id().name());
+      map.put(commit.id().name(), result);
     }
 
     return map;

@@ -1,4 +1,4 @@
-package core.executor;
+package core.controller;
 
 import java.io.File;
 import java.io.IOException;
@@ -8,9 +8,9 @@ import java.nio.file.Paths;
 
 import util.FileUtil;
 
-public class SettingsExecutor {
-	
-	private static String base;
+public class SettingsController {
+
+  private static String base;
 	
 	private static File folder;
 	private static File metrics;
@@ -20,7 +20,7 @@ public class SettingsExecutor {
 	public static final int USER_FOLDER = 1;
 	public static final int CURRENT_FOLDER = 2;
 	
-	public SettingsExecutor () {
+	public SettingsController () {
 		
 	}
 	
@@ -98,7 +98,7 @@ public class SettingsExecutor {
 	}
 
 	private void setBase(String base) {
-		SettingsExecutor.base = base;
+		SettingsController.base = base;
 	}
 
 }

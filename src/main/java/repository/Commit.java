@@ -3,11 +3,11 @@ package repository;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.lib.ObjectId;
-import org.eclipse.jgit.revwalk.RevCommit;
 import org.eclipse.jgit.treewalk.AbstractTreeIterator;
 import org.eclipse.jgit.treewalk.EmptyTreeIterator;
 
@@ -162,5 +162,16 @@ public class Commit {
 	@Override
 	public String toString() {
 		return id.toString();
+	}
+
+	public ArrayList<Map<String, String>> showDiff() {
+		
+		var factory = new GitFactory();
+
+		var result = new ArrayList<Map<String,String>>();
+    for(var item: diff()) {
+      result.add(factory.contentOfDiffCommit(this,item));
+	  }
+		return result;
 	}
 }

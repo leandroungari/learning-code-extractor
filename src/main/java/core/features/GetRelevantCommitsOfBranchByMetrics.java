@@ -7,9 +7,10 @@ import java.util.List;
 import java.util.Map;
 
 import core.data.Branch;
+import repository.Commit;
 import repository.Repository;
 
-public class GetRelevantCommitsOfBranchByMetrics extends Feature<Map<String, List<Map<String, Double>>>> {
+public class GetRelevantCommitsOfBranchByMetrics implements RepositoryFeature<Map<String, List<Map<String, Double>>>> {
 
   private static final String SUM_OPERATION = "sum";
   private static final String AVERAGE_OPERATION = "average";
@@ -19,13 +20,9 @@ public class GetRelevantCommitsOfBranchByMetrics extends Feature<Map<String, Lis
   private String metric;
   private String type;
 
-  public GetRelevantCommitsOfBranchByMetrics() {
-    super();
-  }
-
   @Override
   public Feature<Map<String, List<Map<String, Double>>>> setParams(String... params) {
-    
+
     repository = params[0];
     branch = params[1];
     metric = params[2];
@@ -36,44 +33,49 @@ public class GetRelevantCommitsOfBranchByMetrics extends Feature<Map<String, Lis
 
   @Override
   public Map<String, List<Map<String, Double>>> action() {
-    
-    var data = new HashMap<String, List<Map<String,Double>>>();
 
-    var average = derivateRepository(repository, type)
-      .get(branch);
-      
+    var data = new HashMap<String, List<Map<String, Double>>>();
+
+    var average = derivateRepository(repository, type).get(branch);
+
     var branchData = derivateBranch(repository, branchId, type);
-  
-    var good = new ArrayList<Map<String,Double>>();
-    branchData.forEach((commit,metrics) -> {
-      if(metrics.get(metric) < average.get(metric)) {
-        good.add(Map.<String,Double>of(commit,metrics.get(metric)));
+
+    var good = new ArrayList<Map<String, Double>>();
+    branchData.forEach((commit, metrics) -> {
+      if (metrics.get(metric) < average.get(metric)) {
+        good.add(Map.<String, Double>of(commit, metrics.get(metric)));
       }
     });
 
-    good.sort((a,b) -> {
+    good.sort((a, b) -> {
       var firstValue = a.values().toArray(new Double[1])[0];
       var secondValue = b.values().toArray(new Double[1])[0];
 
-      if(firstValue < secondValue) return -1;
-      else if(firstValue > secondValue) return 1;
-      else return 0;
+      if (firstValue < secondValue)
+        return -1;
+      else if (firstValue > secondValue)
+        return 1;
+      else
+        return 0;
     });
 
-    var bad = new ArrayList<Map<String,Double>>();
-    branchData.forEach((commit,metrics) -> {
-      if(metrics.get(metric) > average.get(metric)) {
-        bad.add(Map.<String,Double>of(commit,metrics.get(metric)));
+    var bad = new ArrayList<Map<String, Double>>();
+    branchData.forEach((commit, metrics) -> {
+      if (metrics.get(metric) > average.get(metric)) {
+        bad.add(Map.<String, Double>of(commit, metrics.get(metric)));
       }
     });
 
-    bad.sort((a,b) -> {
+    bad.sort((a, b) -> {
       var firstValue = a.values().toArray(new Double[1])[0];
       var secondValue = b.values().toArray(new Double[1])[0];
 
-      if(firstValue < secondValue) return 1;
-      else if(firstValue > secondValue) return -1;
-      else return 0;
+      if (firstValue < secondValue)
+        return 1;
+      else if (firstValue > secondValue)
+        return -1;
+      else
+        return 0;
     });
 
     data.put("good", good);
@@ -85,11 +87,8 @@ public class GetRelevantCommitsOfBranchByMetrics extends Feature<Map<String, Lis
   private Map<String, Map<String, Double>> calculateAverageOfBranch() {
 
     Map<String, Map<String, Double>> result = new HashMap<>();
-    
-    var branches = player
-      .<Branch[]>get(FeatureType.BRANCHES_OF_REPOSITORY)
-      .setParams(repository)
-      .action();
+
+    var branches = player.<Branch[]>get(FeatureType.BRANCHES_OF_REPOSITORY).setParams(repository).action();
 
     for (var branch : branches) {
       var name = branch.getId().getName();
@@ -99,40 +98,32 @@ public class GetRelevantCommitsOfBranchByMetrics extends Feature<Map<String, Lis
     return result;
   }
 
-  private Map<String,Double> calculateDerivateFromCommits() {
+  private Map<String, Double> calculateDerivateFromCommits() {
 
-    var repo = Repository.create(new File(
-      player.settings().folderOfRepositories()
-      + "/" + repository
-    ));
+    var repo = createRepository(repository);
+    var commits = repo.branch(branch).commits();
 
-    var firstCommit = 
+    var firstCommit = commits.get(0);
+    var lastCommit = commits.get(commits.size() - 1);
 
-    var metricsStart = (
-      SUM_OPTION.equals(type) ?
-      getSumOfMetricsOfFiles() : 
-      getAverageOfMetricsOfFiles() 
-    )
-    .apply(
-      player
-      .metrics(repository)
-      .metricsFromAllFilesInACommit(branch, commitBegin)
-      .getFiles()
-    );
-    
-    var metricsEnd = (
-      SUM_OPTION.equals(type) ?
-      getSumOfMetricsOfFiles() : 
-      getAverageOfMetricsOfFiles() 
-    )
-    .apply(
-      player
-      .metrics(repository)
-      .metricsFromAllFilesInACommit(branch, commitEnd)
-      .getFiles()
-    );
-    
+    var derivate = calculateDerivateFromCommits(firstCommit, lastCommit);
+
+    var metricsStart = (SUM_OPTION.equals(type) ? getSumOfMetricsOfFiles() : getAverageOfMetricsOfFiles())
+        .apply(player.metrics(repository).metricsFromAllFilesInACommit(branch, commitBegin).getFiles());
+
+    var metricsEnd = (SUM_OPTION.equals(type) ? getSumOfMetricsOfFiles() : getAverageOfMetricsOfFiles())
+        .apply(player.metrics(repository).metricsFromAllFilesInACommit(branch, commitEnd).getFiles());
+
     return derivateMetrics(metricsStart, metricsEnd, size);
+  }
+
+  private void calculateDerivateFromCommits(Commit firstCommit, Commit lastCommit) {
+    
+
+  }
+
+  private void calculateMetricsFromCommitByAverage() {
+    
   }
 
 }
