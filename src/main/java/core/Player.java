@@ -17,6 +17,7 @@ import core.features.GetMetricsInARangeOfCommits;
 import core.features.GetNumberOfContributorsByBranch;
 import core.features.GetNumberOfFilesInCommitsByBranch;
 import core.features.GetRelevantCommitsOfBranchByMetrics;
+import core.features.GetSumOfMetricsOfFiles;
 import core.features.ListAvailableRepositories;
 
 public class Player {
@@ -54,6 +55,7 @@ public class Player {
       add(FeatureType.RELEVANT_COMMITS_BY_METRIC, new GetRelevantCommitsOfBranchByMetrics());
 
       add(FeatureType.AVERAGE_OF_METRICS_OF_FILES, new GetAverageOfMetricsOfFiles());
+      add(FeatureType.SUM_OF_METRICS_OF_FILES, new GetSumOfMetricsOfFiles());
     }
   }
 
