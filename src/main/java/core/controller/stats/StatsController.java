@@ -1,4 +1,4 @@
-package core.controller;
+package core.controller.stats;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -48,4 +48,13 @@ public class StatsController {
       "wmc", sum.get("wmc")/(size != 0 ? size : 1)
     );
   }
+
+  public Map<String,Map<String,Double>> normalizeMetrics(
+    Map<String,Map<String,Double>> metrics) {
+
+    var command = new NormalizeMetrics(metrics);
+    return command.execute();
+  }
+
+  
 }
