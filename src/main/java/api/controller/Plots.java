@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import core.Player;
+import core.features.FeatureType;
 import repository.exception.GitRepositoryException;
 
 @RestController
@@ -21,15 +22,16 @@ public class Plots {
   public Map<String,Map<String,Double>> averageMetricsFiles(
     @PathVariable String repository, 
     @PathVariable String branch, 
-    @PathVariable Integer from, 
-    @PathVariable Integer to,
-    @PathVariable Integer step)
+    @PathVariable String from, 
+    @PathVariable String to,
+    @PathVariable String step)
       throws GitRepositoryException, 
              GitAPIException {
 
     return player
-      .metrics(repository)
-      .averageOfMetricsOfFiles(branch, from, to, step);
+      .<Map<String,Map<String,Double>>>get(FeatureType.AVERAGE_OF_METRICS_OF_FILES)
+      .setParams(repository,branch,from,to,step)
+      .action();
   }
 
   @GetMapping("/plots/sumMetricsFiles/{repository}/{branch}/{from}/{to}/{step}")
@@ -37,15 +39,16 @@ public class Plots {
   public Map<String,Map<String,Double>> sumMetricsFiles(
     @PathVariable String repository, 
     @PathVariable String branch, 
-    @PathVariable Integer from, 
-    @PathVariable Integer to,
-    @PathVariable Integer step)
+    @PathVariable String   from, 
+    @PathVariable String   to,
+    @PathVariable String   step)
       throws GitRepositoryException, 
              GitAPIException {
 
     return player
-      .metrics(repository)
-      .sumOfMetricsOfFiles(branch, from, to, step);
+      .<Map<String,Map<String,Double>>>get(FeatureType.SUM_OF_METRICS_OF_FILES)
+      .setParams(repository,branch,from,to,step)
+      .action();
   }
 
   @GetMapping("/plots/sumMetricsFiles/{repository}/{branch}/{from}/{to}/{step}/normalized")
