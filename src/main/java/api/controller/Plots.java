@@ -56,15 +56,16 @@ public class Plots {
   public Map<String,Map<String,Double>> normalizedSumMetricsFiles(
     @PathVariable String repository, 
     @PathVariable String branch, 
-    @PathVariable Integer from, 
-    @PathVariable Integer to,
-    @PathVariable Integer step)
+    @PathVariable String from, 
+    @PathVariable String to,
+    @PathVariable String step)
       throws GitRepositoryException, 
              GitAPIException {
 
     return player
-      .metrics(repository)
-      .normalizedSumOfMetricsOfFiles(branch, from, to, step);
+      .<Map<String,Map<String,Double>>>get(FeatureType.NORMALIZED_SUM_OF_METRICS_OF_FILES)
+      .setParams(repository,branch,from,to,step)
+      .action();
   }
 
   @GetMapping("/plots/averageMetricsFiles/{repository}/{branch}/{from}/{to}/{step}/normalized")
@@ -72,15 +73,16 @@ public class Plots {
   public Map<String,Map<String,Double>> normalizedAverageMetricsFiles(
     @PathVariable String repository, 
     @PathVariable String branch, 
-    @PathVariable Integer from, 
-    @PathVariable Integer to,
-    @PathVariable Integer step)
+    @PathVariable String from, 
+    @PathVariable String to,
+    @PathVariable String step)
       throws GitRepositoryException, 
              GitAPIException {
 
     return player
-      .metrics(repository)
-      .normalizedAverageOfMetricsOfFiles(branch, from, to, step);
+      .<Map<String,Map<String,Double>>>get(FeatureType.NORMALIZED_AVERAGE_OF_METRICS_OF_FILES)
+      .setParams(repository,branch,from,to,step)
+      .action();
   }
 
   @GetMapping("/plots/evolution/{repository}/{branch}/{from}/{to}/{step}/{metric}")
