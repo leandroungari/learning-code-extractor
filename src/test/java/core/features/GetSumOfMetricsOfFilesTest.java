@@ -2,12 +2,7 @@ package core.features;
 
 import static org.junit.Assert.assertTrue;
 
-import java.util.Map;
-
-import org.junit.BeforeClass;
 import org.junit.Test;
-
-import core.Player;
 
 public class GetSumOfMetricsOfFilesTest {
 
@@ -17,18 +12,12 @@ public class GetSumOfMetricsOfFilesTest {
   private final String TO = "64";
   private final String STEP = "4";
 
-  private static Player player;
-
-  @BeforeClass
-  public static void start() {
-    player = new Player();
-  }
-
   @Test
   public void run() {
 
-    var result = player
-      .<Map<String,Map<String,Double>>>get(FeatureType.SUM_OF_METRICS_OF_FILES)
+    var command = new GetSumOfMetricsOfFiles();
+
+    var result = command
       .setParams(REPOSITORY,BRANCH,FROM,TO,STEP)
       .action();
 
