@@ -8,10 +8,11 @@ import java.util.Map;
 import org.eclipse.jgit.api.errors.GitAPIException;
 
 import core.controller.DataController;
-import core.controller.StatsController;
+import core.controller.stats.StatsController;
 import repository.Commit;
 
-public class GetRelevantCommitsOfBranchByMetrics implements RepositoryFeature<Map<String, List<Map<String, Double>>>> {
+public class GetRelevantCommitsOfBranchByMetrics 
+  implements RepositoryFeature<Map<String,List<Map<String, Double>>>> {
 
   public static final String SUM_OPERATION = "sum";
   public static final String AVERAGE_OPERATION = "average";

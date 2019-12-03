@@ -3,8 +3,7 @@ package core.features;
 import java.util.HashMap;
 import java.util.Map;
 
-import core.controller.DataController;
-import core.controller.StatsController;
+import core.controller.stats.StatsController;
 
 public class GetAverageOfMetricsOfFiles implements Feature<Map<String,Map<String, Double>>> {
 
