@@ -15,7 +15,7 @@ public class GetBranchesTest {
     command.setParams(REPOSITORY);
 
     var result = command.action();
-    assertTrue(result.length == 2);
+    assertTrue(result.length == 2 || result.length == 3);
   }
 
   

@@ -17,10 +17,6 @@ public class Resource {
 
 	private SettingsController settings;
 
-	public Resource() {
-		
-		settings = SettingsController.get();
-	}
 
 	private static Map<ResourceType, String> options = Map
 		.ofEntries(
@@ -44,11 +40,12 @@ public class Resource {
 			)
 		);
 	
-	private Resource(String name, ResourceType code) {
-		this.code = code;
-		this.repository = name;
-		this.branch = "";
-		this.filename = "";
+	private Resource(String name, ResourceType c) {
+		code = c;
+		repository = name;
+		branch = "";
+		filename = "";
+		settings = SettingsController.get();
 	}
 
 	public static Resource create(
