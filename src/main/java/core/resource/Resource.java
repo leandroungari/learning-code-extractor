@@ -4,7 +4,7 @@ import java.util.Map;
 
 import com.google.gson.Gson;
 
-import core.Player;
+import core.controller.SettingsController;
 import util.FileUtil;
 import util.Storage;
 
@@ -14,6 +14,8 @@ public class Resource {
 	private String branch;
 	private String filename;
 	private ResourceType code;
+
+	private SettingsController settings = new SettingsController();
 
 	private static Map<ResourceType, String> options = Map
 		.ofEntries(
@@ -67,7 +69,6 @@ public class Resource {
 	}
 
 	private Storage typeOfStorage() {
-    var player = new Player();
     
 		switch(code) {
 		
@@ -77,8 +78,7 @@ public class Resource {
 		case DIFF_FILES:
 			
 			return new Storage(
-        player
-        .settings()
+        settings
 				.folderOfMetadata()
 				.getAbsolutePath());
 			
@@ -92,8 +92,7 @@ public class Resource {
 		case METRICS_DIFF_FILES:
 		case METRICS_ALL_FILES:
 			return new Storage(
-        player
-        .settings()
+        settings
         .folderOfMetrics()
 				.getAbsolutePath());
 			 

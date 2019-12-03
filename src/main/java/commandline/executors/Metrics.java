@@ -1,13 +1,11 @@
 package commandline.executors;
 
-import org.eclipse.jgit.api.errors.GitAPIException;
+import java.util.Map;
 
 import commandline.Executor;
 import core.Player;
-import core.data.Branch;
-import core.data.Commit;
+import core.data.MetricsData;
 import core.features.FeatureType;
-import repository.exception.GitRepositoryException;
 
 
 /**
@@ -21,9 +19,9 @@ import repository.exception.GitRepositoryException;
 public class Metrics implements Executor {
 
 	private String repository;
-	private String type;
 	private String branch;
-	private String rangeOfCommits;
+	private Integer from;
+	private Integer to;
 	private boolean isHelper;
 	
 	private Player player = new Player();
@@ -35,55 +33,10 @@ public class Metrics implements Executor {
 			helper();
 		}
 		else {
-			try {
-			
-				processEntireRepository();
-			
-			} catch (GitAPIException
-				| GitRepositoryException e) {
-				e.printStackTrace();
-			}
-		}
-	}
-	
-	private void processEntireRepository() 
-		throws GitAPIException, GitRepositoryException {
-		
-		var branches = player
-			.<Branch[]>get(FeatureType.BRANCHES_OF_REPOSITORY)
-			.setParams(repository)
-			.action();
-
-		for(var i = 0; i < branches.length; i++) {
-			processingABranch(
-				branches[i]
-					.getId()
-					.getName()
-			);
-		}
-	}
-	
-
-	private void processingABranch(String branch) {
-		
-		try {
-			
-			var listOfCommits = player
-				.<Commit[]>get(FeatureType.COMMITS_OF_BRANCH)
-				.setParams(repository, branch)
-				.action();
-				
 			player
-			.metrics(repository)
-			.metricsFromDiffFilesInARangeOfCommits(
-				branch, 
-				listOfCommits
-			);
-		
-		} catch (GitAPIException
-			| GitRepositoryException e) {
-
-			e.printStackTrace();
+      .<Map<String,MetricsData>>get(FeatureType.METRICS_IN_RANGE_COMMITS)
+      .setParams(repository,branch,from.toString(),to.toString())
+      .action();
 		}
 	}
 
@@ -93,10 +46,10 @@ public class Metrics implements Executor {
 			isHelper = true;
 		}
 		else {
-			this.repository = params[0];
-			this.type = params[1];
-			this.branch = params[2];
-			this.rangeOfCommits = params[3];
+			repository = params[0];
+			branch = params[1];
+			from = Integer.valueOf(params[2]);
+			to = Integer.parseInt(params[3]);
 		}
 	}
 
@@ -105,9 +58,9 @@ public class Metrics implements Executor {
 		System.out.println("This command analyses a repository to extract code metrics");
 		System.out.println("metrics [repository] [type] [rangeOfCommits]");
 		System.out.println(" - [repository] Name of repository");
-		System.out.println(" - [type] Diff or all files of commit");
 		System.out.println(" - [branch] All branches or id");
-		System.out.println(" - [rangeOfCommits] all or from-to : Ex. 0-10.");
+		System.out.println(" - [from] Initial commit");
+		System.out.println(" - [to] Last commit");
 	}
 
 }
