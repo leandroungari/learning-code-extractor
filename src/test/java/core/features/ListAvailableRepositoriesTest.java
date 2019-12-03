@@ -14,7 +14,7 @@ public class ListAvailableRepositoriesTest {
 
   @Before
   public void before() {
-    settings = new SettingsController();
+    settings = SettingsController.get();
   }
 
   @Test

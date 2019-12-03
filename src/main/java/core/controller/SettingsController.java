@@ -19,9 +19,35 @@ public class SettingsController {
 	
 	public static final int USER_FOLDER = 1;
 	public static final int CURRENT_FOLDER = 2;
+
+	private static SettingsController settings;
 	
-	public SettingsController () {
+	private SettingsController () {
 		
+		start(USER_FOLDER);
+	}
+
+	private SettingsController (Integer folderOption) {
+		
+		start(folderOption);
+	}
+
+	public static SettingsController get() {
+		
+		if(settings == null) {
+			settings = new SettingsController();
+		}
+		
+		return settings;
+	}
+
+	public static SettingsController get(Integer folderOption) {
+		
+		if(settings == null) {
+			settings = new SettingsController(folderOption);
+		}
+		
+		return settings;
 	}
 	
 	public File base() {

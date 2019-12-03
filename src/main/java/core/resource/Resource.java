@@ -15,7 +15,12 @@ public class Resource {
 	private String filename;
 	private ResourceType code;
 
-	private SettingsController settings = new SettingsController();
+	private SettingsController settings;
+
+	public Resource() {
+		
+		settings = SettingsController.get();
+	}
 
 	private static Map<ResourceType, String> options = Map
 		.ofEntries(

@@ -23,7 +23,7 @@ public class RepositoryTest {
   @BeforeClass
   public static void start() throws GitRepositoryException {
 
-    settings = new SettingsController();
+    settings = SettingsController.get();
 
     repo = Repository.create(new File(
       settings.folderOfRepositories() + 

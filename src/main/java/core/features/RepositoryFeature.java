@@ -8,7 +8,7 @@ import repository.exception.GitRepositoryException;
 
 public interface RepositoryFeature<T> extends Feature<T> {
 
-  final SettingsController settings = new SettingsController();
+  final SettingsController settings = SettingsController.get();
 
   default Repository createRepository(String nameOfRepository) {
 

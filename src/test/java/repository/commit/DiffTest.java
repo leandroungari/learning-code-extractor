@@ -25,7 +25,7 @@ public class DiffTest {
   public static void start() 
     throws GitRepositoryException, GitAPIException {
     
-    settings = new SettingsController();
+    settings = SettingsController.get();
 
     repo = Repository.create(new java.io.File(
 	    settings.folderOfRepositories() + "/" +

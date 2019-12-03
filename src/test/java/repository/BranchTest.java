@@ -27,7 +27,7 @@ public class BranchTest {
     throws GitRepositoryException, 
            GitAPIException {
     
-    settings = new SettingsController();
+    settings = SettingsController.get();
 
     repo = Repository.create(new File(
 	    settings.folderOfRepositories() + "/" +
