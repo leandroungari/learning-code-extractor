@@ -12,6 +12,7 @@ import core.features.GetBranches;
 import core.features.GetCommitInfo;
 import core.features.GetCommitsByBranch;
 import core.features.GetDiffFilesInCommit;
+import core.features.GetEvolutionOfFilesByMetrics;
 import core.features.GetMetricsInACommit;
 import core.features.GetMetricsInARangeOfCommits;
 import core.features.GetNumberOfContributorsByBranch;
@@ -56,6 +57,7 @@ public class Player {
 
       add(FeatureType.AVERAGE_OF_METRICS_OF_FILES, new GetAverageOfMetricsOfFiles());
       add(FeatureType.SUM_OF_METRICS_OF_FILES, new GetSumOfMetricsOfFiles());
+      add(FeatureType.EVOLUTION_OF_FILES_BY_METRICS, new GetEvolutionOfFilesByMetrics());
     }
   }
 
