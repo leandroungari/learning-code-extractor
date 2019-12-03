@@ -1,5 +1,6 @@
 package api.controller;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import org.eclipse.jgit.api.errors.GitAPIException;
@@ -87,18 +88,19 @@ public class Plots {
 
   @GetMapping("/plots/evolution/{repository}/{branch}/{from}/{to}/{step}/{metric}")
   @ResponseBody
-  public Map<String,Map<String,Double>> evolutionOfFilesByMetrics(
+  public HashMap<String,HashMap<String,Double>> evolutionOfFilesByMetrics(
     @PathVariable String repository, 
     @PathVariable String branch, 
-    @PathVariable Integer from, 
-    @PathVariable Integer to,
-    @PathVariable Integer step,
+    @PathVariable String from, 
+    @PathVariable String to,
+    @PathVariable String step,
     @PathVariable String metric)
       throws GitRepositoryException, 
              GitAPIException {
 
     return player
-      .metrics(repository)
-      .evolutionOfFilesByMetrics(branch, from, to, step, metric);
+      .<HashMap<String,HashMap<String,Double>>>get(FeatureType.EVOLUTION_OF_FILES_BY_METRICS)
+      .setParams(repository,branch,from,to,step)
+      .action();
   }
 }
