@@ -87,11 +87,12 @@ class NormalizeMetrics {
     values.add(new ArrayList<Double>());
   
     for(Map<String,Double> item: set.values()) {
+      
       values.get(0).add(item.get("cbo"));
-      values.get(0).add(item.get("dit"));
-      values.get(0).add(item.get("nosi"));
-      values.get(0).add(item.get("rfc"));
-      values.get(0).add(item.get("nosi"));
+      values.get(1).add(item.get("dit"));
+      values.get(2).add(item.get("nosi"));
+      values.get(3).add(item.get("rfc"));
+      values.get(4).add(item.get("nosi"));
     }
 
     return values;
