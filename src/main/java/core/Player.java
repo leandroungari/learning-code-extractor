@@ -3,7 +3,6 @@ package core;
 import java.util.HashMap;
 import java.util.Map;
 
-import core.executor.MetricsExecutor;
 import core.features.DownloadRepository;
 import core.features.Feature;
 import core.features.FeatureType;
@@ -25,14 +24,7 @@ public class Player {
 
   private static Map<FeatureType,Feature<?>> features;
 
-  protected static MetricsExecutor metricsExecutor;
-
   public Player() {
-
-    initialize();
-  }
-
-  public static void initialize() {
 
     initializeFeatures();
   }
