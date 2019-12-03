@@ -4,7 +4,7 @@ import org.eclipse.jgit.api.errors.GitAPIException;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import core.Player;
+import core.controller.SettingsController;
 import repository.Commit;
 import repository.GitFactory;
 import repository.Repository;
@@ -12,7 +12,7 @@ import repository.exception.GitRepositoryException;
 
 public class DiffTest {
 
-  private static Player player;
+  private static SettingsController settings;
 
   private static Repository repo;
   private static Commit commit;
@@ -25,10 +25,10 @@ public class DiffTest {
   public static void start() 
     throws GitRepositoryException, GitAPIException {
     
-    player = new Player();
+    settings = new SettingsController();
 
     repo = Repository.create(new java.io.File(
-	    player.settings().folderOfRepositories() + "/" +
+	    settings.folderOfRepositories() + "/" +
 	    REPOSITORY
     ));
     

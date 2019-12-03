@@ -9,7 +9,7 @@ import org.eclipse.jgit.api.errors.GitAPIException;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import core.Player;
+import core.controller.SettingsController;
 import repository.exception.GitRepositoryException;
 
 public class BranchTest {
@@ -20,17 +20,17 @@ public class BranchTest {
   private static Repository repo;
   private static Branch branch;
 
-  private static Player player;
+  private static SettingsController settings;
 
   @BeforeClass
   public static void start() 
     throws GitRepositoryException, 
            GitAPIException {
     
-    player = new Player();
+    settings = new SettingsController();
 
     repo = Repository.create(new File(
-	    player.settings().folderOfRepositories() + "/" +
+	    settings.folderOfRepositories() + "/" +
 	    REPOSITORY
     ));
     

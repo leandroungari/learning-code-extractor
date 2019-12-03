@@ -5,25 +5,23 @@ import static org.junit.Assert.assertTrue;
 import org.junit.Before;
 import org.junit.Test;
 
-import core.Player;
+import core.controller.SettingsController;
 import util.FileUtil;
 
 public class ListAvailableRepositoriesTest {
 
-  private Player player;
+  private SettingsController settings;
 
   @Before
   public void before() {
-    player = new Player();
+    settings = new SettingsController();
   }
 
   @Test
   public void run() {
 
     var result = FileUtil.listOfFolders(
-      player
-      .settings()
-      .folderOfRepositories()
+      settings.folderOfRepositories()
     );
 
     assertTrue(result != null);

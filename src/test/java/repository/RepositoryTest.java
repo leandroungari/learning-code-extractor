@@ -8,12 +8,12 @@ import org.eclipse.jgit.api.errors.GitAPIException;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import core.Player;
+import core.controller.SettingsController;
 import repository.exception.GitRepositoryException;
 
 public class RepositoryTest {
 
-  private static Player player;
+  private static SettingsController settings;
 
   private static Repository repo;
   private static final String REPOSITORY = "refactoring-toy-example";
@@ -23,10 +23,10 @@ public class RepositoryTest {
   @BeforeClass
   public static void start() throws GitRepositoryException {
 
-    player = new Player();
+    settings = new SettingsController();
 
     repo = Repository.create(new File(
-      player.settings().folderOfRepositories() + 
+      settings.folderOfRepositories() + 
       "/" + REPOSITORY
     ));
   }
