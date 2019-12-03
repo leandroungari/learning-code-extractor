@@ -1,10 +1,11 @@
 package core.features;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import core.controller.StatsController;
 
-public class GetSumOfMetricsOfFiles implements Feature<Map<String, Double>> {
+public class GetSumOfMetricsOfFiles implements Feature<Map<String, Map<String, Double>>> {
 
   private String repository;
   private String branch;
@@ -15,7 +16,7 @@ public class GetSumOfMetricsOfFiles implements Feature<Map<String, Double>> {
   private StatsController stats = new StatsController();
 
   @Override
-  public Feature<Map<String, Double>> setParams(String... params) {
+  public Feature<Map<String, Map<String, Double>>> setParams(String... params) {
     
     repository = params[0];
     branch = params[1];
@@ -27,15 +28,20 @@ public class GetSumOfMetricsOfFiles implements Feature<Map<String, Double>> {
   }
 
   @Override
-  public Map<String, Double> action() {
+  public Map<String, Map<String, Double>> action() {
     
+    var result = new HashMap<String,Map<String,Double>>();
     var metrics = getMetricsFromCommits();
-    return stats.sumOfMetrics(metrics);
+    metrics.forEach((commit, files) -> {
+      result.put(commit,stats.averageOfMetrics(files));
+    });
+
+    return result;
   }
 
-  private Map<String, Map<String, Double>> getMetricsFromCommits() {
+  private Map<String,Map<String, Map<String, Double>>> getMetricsFromCommits() {
     return player
-      .<Map<String,Map<String,Double>>>get(FeatureType.METRICS_IN_RANGE_COMMITS)
+      .<Map<String,Map<String, Map<String, Double>>>>get(FeatureType.METRICS_IN_RANGE_COMMITS)
       .setParams(repository, branch, from.toString(), to.toString(), step.toString())
       .action();
   }
