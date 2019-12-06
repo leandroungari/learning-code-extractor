@@ -8,15 +8,21 @@ import core.controller.SettingsController;
 import util.FileUtil;
 import util.Storage;
 
-public class Resource {
+public abstract class Resource {
 
 	private String repository;
 	private String branch;
 	private String filename;
 	private ResourceType code;
 
-	private SettingsController settings;
+	protected SettingsController settings;
 
+	protected Resource() {
+
+		if(settings == null) {
+			settings = SettingsController.get();
+		}
+	}
 
 	private static Map<ResourceType, String> options = Map
 		.ofEntries(
@@ -39,14 +45,6 @@ public class Resource {
 				ResourceType.METRICS_ALL_FILES, ""
 			)
 		);
-	
-	private Resource(String name, ResourceType c) {
-		code = c;
-		repository = name;
-		branch = "";
-		filename = "";
-		settings = SettingsController.get();
-	}
 
 	public static Resource create(
 		String repository,
@@ -70,54 +68,20 @@ public class Resource {
 		return this;
 	}
 
-	private Storage typeOfStorage() {
-    
-		switch(code) {
-		
-		case LIST_OF_BRANCHES:
-		case LIST_OF_COMMITS:
-		case COMMIT_INFO:
-		case DIFF_FILES:
-			
-			return new Storage(
-        settings
-				.folderOfMetadata()
-				.getAbsolutePath());
-			
-			/*
-			 * return new Storage(
-				settings
-				.repositoriesFolder()
-				.getAbsolutePath());
-			 */
-			
-		case METRICS_DIFF_FILES:
-		case METRICS_ALL_FILES:
-			return new Storage(
-        settings
-        .folderOfMetrics()
-				.getAbsolutePath());
-			 
-			default:
-				return null;
-		}
-	
-	}
+	protected abstract String getFolder();
+
+	protected abstract String getFile();
 
 	public boolean exists() {
 
-		Storage storage = typeOfStorage();
-
-		return storage
-			.folder(repository + branch)
-			.exists(options.get(code) + filename);
+		var storage = new Storage(getFolder());
+		return storage.exists(getFile());
 	}
 
 	public <T> T read(Class<T> type) {
 
-		String content = typeOfStorage()
-			.folder(repository + branch)
-			.get(options.get(code) + filename);
+		String content = new Storage(getFolder())
+			.get(getFile());
 
 		var gson = new Gson();
 		return gson.fromJson(content, type);
@@ -128,17 +92,15 @@ public class Resource {
 		var gson = new Gson();
 		var content = gson.toJson(data);
 		
-		typeOfStorage()
-		.folder(repository + branch)
-		.file(options.get(code) + filename, content);
+		new Storage(getFolder())
+		.file(getFile(), content);
 	}
 	
 	public void delete() {
 		
 		FileUtil
 		.deleteFolder(
-			typeOfStorage()
-			.getFile(options.get(code) + filename)
+			new Storage(getFolder()).getFile(getFile())
 		);
 	}
 
