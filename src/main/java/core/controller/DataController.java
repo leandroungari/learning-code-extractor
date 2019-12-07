@@ -5,6 +5,7 @@ import java.util.Map;
 
 import core.data.MetricsData;
 import core.resource.Resource;
+import core.resource.ResourceTrack;
 import core.resource.ResourceType;
 import repository.metrics.MetricsAnalyzer;
 
@@ -18,18 +19,21 @@ public class DataController {
   private static final Integer RFC = 5;
   private static final Integer WMC = 6;
 
+  private ResourceTrack track = new ResourceTrack();
+
+  private Resource resource;
+
   public Map<String, Map<String, Double>> metrics(String repository, String commit) {
 
-    var resourceAll = Resource
-      .create(repository, ResourceType.METRICS_ALL_FILES)
-      .folder("commits")
-      .name(commit);
+    resource = track
+      .get(ResourceType.METRICS_FILES)
+      .setParams(repository, commit);
 
-    if (!resourceAll.exists()) {
+    if (!resource.exists()) {
       analyzeCommit(repository, commit);
     }
 
-    var metrics = resourceAll.read(MetricsData.class);
+    var metrics = resource.read(MetricsData.class);
     return convertFileMetricsToMap(metrics);
   }
 
@@ -64,10 +68,6 @@ public class DataController {
       data.addFiles(file, result);
     });
 
-    Resource
-    .create(repository, ResourceType.METRICS_ALL_FILES)
-    .folder("commits")
-    .name(commit)
-    .write(data);
+    resource.write(data);
   }
 }

@@ -7,6 +7,7 @@ import org.eclipse.jgit.lib.ObjectId;
 
 import core.data.Commit;
 import core.resource.Resource;
+import core.resource.ResourceTrack;
 import core.resource.ResourceType;
 import repository.exception.GitRepositoryException;
 
@@ -14,6 +15,10 @@ public class GetCommitsByBranch implements RepositoryFeature<Commit[]> {
 
   private String repository;
   private String branch;
+
+  private Resource resource;
+
+  private ResourceTrack track = new ResourceTrack();
 
   @Override
   public Feature<Commit[]> setParams(String... params) {
@@ -29,18 +34,15 @@ public class GetCommitsByBranch implements RepositoryFeature<Commit[]> {
 
     try {
       
-      var resource = Resource.create(
-        repository, 
-        ResourceType.LIST_OF_COMMITS
-      )
-      .branch(branch);
+      resource = track
+        .get(ResourceType.LIST_OF_COMMITS)
+        .setParams(repository, branch);
 
       if (!resource.exists()) {
         createResource();
       }
 
-      return resource
-        .read(Commit[].class);
+      return resource.read(Commit[].class);
         
     } catch (GitAPIException | GitRepositoryException e) {
       e.printStackTrace();
@@ -65,13 +67,7 @@ public class GetCommitsByBranch implements RepositoryFeature<Commit[]> {
 			))
 			.collect(Collectors.toList());
 		
-		Resource
-		.create(
-			repository, 
-			ResourceType.LIST_OF_COMMITS
-		)
-		.branch(branch)
-		.write(list);
+		resource.write(list);
   }
 
 }

@@ -8,6 +8,7 @@ import org.eclipse.jgit.api.errors.GitAPIException;
 import core.data.Commit;
 import core.data.DiffFile;
 import core.resource.Resource;
+import core.resource.ResourceTrack;
 import core.resource.ResourceType;
 
 public class GetDiffFilesInCommit implements RepositoryFeature<List<DiffFile>>{
@@ -15,6 +16,10 @@ public class GetDiffFilesInCommit implements RepositoryFeature<List<DiffFile>>{
   private String repository;
   private String branch;
   private String commit;
+
+  private Resource resource;
+
+  private ResourceTrack track = new ResourceTrack();
 
   @Override
   public Feature<List<DiffFile>> setParams(String... params) {
@@ -29,12 +34,9 @@ public class GetDiffFilesInCommit implements RepositoryFeature<List<DiffFile>>{
   @Override
   public List<DiffFile> action() {
     
-    var resource = Resource
-    .create(
-      repository, 
-      ResourceType.DIFF_FILES
-    )
-    .branch(branch);
+    resource = track
+      .get(ResourceType.LIST_OF_COMMITS)
+      .setParams(repository, branch);
 
     createResource();
     
@@ -80,10 +82,7 @@ public class GetDiffFilesInCommit implements RepositoryFeature<List<DiffFile>>{
   }
 
   private void setDiffFilesInCommit(List<DiffFile> diffs) {
-    var resource = Resource
-			.create(repository, ResourceType.DIFF_FILES)
-			.branch(branch);
-		
+  		
 		var listOfCommits = resource.read(Commit[].class);
 		
 		for(var i = 0; i < listOfCommits.length; i++) {

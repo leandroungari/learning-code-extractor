@@ -6,12 +6,17 @@ import org.eclipse.jgit.api.errors.GitAPIException;
 
 import core.data.Branch;
 import core.resource.Resource;
+import core.resource.ResourceTrack;
 import core.resource.ResourceType;
 import repository.exception.GitRepositoryException;
 
 public class GetBranches implements RepositoryFeature<Branch[]> {
 
   private String repository;
+
+  private Resource resource;
+
+  private ResourceTrack track = new ResourceTrack();
 
   @Override
   public Feature<Branch[]> setParams(String... params) {
@@ -26,10 +31,9 @@ public class GetBranches implements RepositoryFeature<Branch[]> {
     
     try {
     
-		  var resource = Resource.create(
-        repository, 
-        ResourceType.LIST_OF_BRANCHES
-      );
+      resource = track
+        .get(ResourceType.LIST_OF_BRANCHES)
+        .setParams(repository);
 
       if (!resource.exists()) {
         createResource();
@@ -59,12 +63,7 @@ public class GetBranches implements RepositoryFeature<Branch[]> {
 	  	))
 	  	.collect(Collectors.toList());
     
-	  Resource
-    .create(
-	    repository, 
-	    ResourceType.LIST_OF_BRANCHES
-	  )
-	  .write(list); 
+	  resource.write(list); 
     
   }
   

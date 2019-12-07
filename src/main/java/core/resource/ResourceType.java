@@ -3,8 +3,5 @@ package core.resource;
 public enum ResourceType {
 	LIST_OF_BRANCHES,
 	LIST_OF_COMMITS,
-	COMMIT_INFO, 
-	DIFF_FILES, 
-	METRICS_ALL_FILES, 
-	METRICS_DIFF_FILES
+	METRICS_FILES
 }
