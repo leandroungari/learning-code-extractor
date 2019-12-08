@@ -4,6 +4,7 @@ import java.util.Map;
 
 import commandline.Executor;
 import core.Player;
+import core.data.Branch;
 import core.data.MetricsData;
 import core.features.FeatureType;
 
@@ -31,6 +32,21 @@ public class Metrics implements Executor {
 		
 		if(isHelper) {
 			helper();
+		}
+		else if(branch == null) {
+
+			var branches = player
+				.<Branch[]>get(FeatureType.BRANCHES_OF_REPOSITORY)
+				.setParams(repository)
+				.action();
+
+			for(var b: branches) {
+				player
+      	.<Map<String,MetricsData>>get(FeatureType.METRICS_IN_RANGE_COMMITS)
+      	.setParams(repository,b.getId().getName())
+      	.action();
+			}
+
 		}
 		else if (from == null) {
 			player
