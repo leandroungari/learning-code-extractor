@@ -44,7 +44,7 @@ class NormalizeMetrics {
       (
         limits.get(metric).get("max") - limits.get(metric).get("min") != 0 ?
         limits.get(metric).get("max") - limits.get(metric).get("min") :
-        1git
+        1
       )
     );
   }
