@@ -59,12 +59,12 @@ public class Repo {
 	@GetMapping("/repo/{name}/{branch}/numberOfFiles")
 	@ResponseBody
 	public List<Integer> numberOfFiles(
-		@PathVariable String repository, 
+		@PathVariable String name, 
 		@PathVariable String branch) {
 
 		return player
 			.<List<Integer>>get(FeatureType.NUMBER_OF_FILES_IN_COMMITS_BY_BRANCH)
-			.setParams(repository, branch)
+			.setParams(name, branch)
 			.action();
 	}
 
