@@ -32,6 +32,12 @@ public class Metrics implements Executor {
 		if(isHelper) {
 			helper();
 		}
+		else if (from == null) {
+			player
+      .<Map<String,MetricsData>>get(FeatureType.METRICS_IN_RANGE_COMMITS)
+      .setParams(repository,branch)
+      .action();
+		}
 		else {
 			player
       .<Map<String,MetricsData>>get(FeatureType.METRICS_IN_RANGE_COMMITS)
@@ -48,8 +54,8 @@ public class Metrics implements Executor {
 		else {
 			repository = params[0];
 			branch = params[1];
-			from = Integer.valueOf(params[2]);
-			to = Integer.parseInt(params[3]);
+			from = params[2] != null ? Integer.valueOf(params[2]) : null;
+			to = params[3] != null ? Integer.parseInt(params[3]) : null;
 		}
 	}
 

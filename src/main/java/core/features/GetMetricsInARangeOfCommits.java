@@ -25,8 +25,8 @@ public class GetMetricsInARangeOfCommits
 
     repository = params[0];
     branch = params[1];
-    from = Integer.valueOf(params[2]);
-    to = Integer.valueOf(params[3]);
+    from = (params[2] != null ? Integer.valueOf(params[2]) : -1);
+    to = (params[3] != null ? Integer.valueOf(params[3]) : -1);
     step = (params[4] != null ? Integer.valueOf(params[4]) : -1);
 
     return this;
@@ -43,7 +43,11 @@ public class GetMetricsInARangeOfCommits
     
     try {
       var repo = createRepository(repository);
-      if(step == -1) {
+
+      if(from == -1) {
+        return repo.branch(branch).commits();
+      }
+      else if(step == -1) {
         return repo.branch(branch).commits(from, to);
       }
       else {
