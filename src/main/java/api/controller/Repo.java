@@ -71,12 +71,12 @@ public class Repo {
 	@GetMapping("/repo/{name}/{branch}/contributors")
 	@ResponseBody
 	public List<Integer> numberOfContributors(
-		@PathVariable String repository, 
+		@PathVariable String name, 
 		@PathVariable String branch) {
 
 		return player
 			.<List<Integer>>get(FeatureType.NUMBER_OF_CONTRIBUTORS_BY_BRANCH)
-			.setParams(repository, branch)
+			.setParams(name, branch)
 			.action();
 	}
 	
