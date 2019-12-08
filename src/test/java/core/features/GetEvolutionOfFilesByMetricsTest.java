@@ -11,6 +11,7 @@ public class GetEvolutionOfFilesByMetricsTest {
   private final String FROM = "0";
   private final String TO = "64";
   private final String STEP = "4";
+  private final String METRIC = "wmc";
 
   @Test
   public void run() {
@@ -18,7 +19,7 @@ public class GetEvolutionOfFilesByMetricsTest {
     var command = new GetEvolutionOfFilesByMetrics();
     
     var result = command
-      .setParams(REPOSITORY,BRANCH,FROM,TO,STEP)
+      .setParams(REPOSITORY,BRANCH,FROM,TO,STEP,METRIC)
       .action();
 
     assertTrue(result != null);

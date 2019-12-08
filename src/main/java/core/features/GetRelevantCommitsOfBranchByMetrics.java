@@ -149,7 +149,7 @@ public class GetRelevantCommitsOfBranchByMetrics
     result.put("nosi", ((b.get("nosi") - a.get("nosi"))/2));
     result.put("rfc", ((b.get("rfc") - a.get("rfc"))/2));
     result.put("wmc", ((b.get("wmc") - a.get("wmc"))/2));
-    System.out.println(result);
+    
     return result;
   }
 
