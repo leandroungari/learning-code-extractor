@@ -40,63 +40,51 @@ public class GetRelevantCommitsOfBranchByMetrics
   public Map<String, List<Map<String, Double>>> action() {
 
     var data = new HashMap<String, List<Map<String, Double>>>();
-    var derivateOfBranch = calculateDerivateOfBranch();
     var derivateOfCommits = calculateDerivateOfAllCommits();
+    var ordered = sort(derivateOfCommits);
 
-    data.put("good", identifyGoodCommits(derivateOfBranch, derivateOfCommits));
-    data.put("bad", identifyBadCommits(derivateOfBranch, derivateOfCommits));
+    data.put("good", identifyGoodCommits(ordered));
+    data.put("bad", identifyBadCommits(ordered));
 
     return data;
   }
 
-  private List<Map<String,Double>> identifyBadCommits (
-    Map<String, Double> average, 
-    Map<String, Map<String, Double>> derivates) {
+  private List<Map<String,Double>> sort(Map<String, Map<String, Double>> values) {
+
+    var list = new ArrayList<Map<String,Double>>();
+    values.forEach((id, metrics) -> {
+      list.add(Map.<String,Double>of(id,metrics.get(metric)));
+    });
+
+    list.sort((a,b) -> {
+      if(getValue(a) < getValue(b)) return -1;
+      if(getValue(a) > getValue(b)) return 1;
+      return 0;
+    });
+
+    return list;
+  }
+
+  private Double getValue(Map<String,Double> value) {
+    return value.values().toArray(new Double[1])[0];
+  }
+
+  private List<Map<String,Double>> identifyBadCommits(List<Map<String,Double>> list) {
 
     var bad = new ArrayList<Map<String, Double>>();
-    derivates.forEach((commit, metrics) -> {
-      if (metrics.get(metric) > average.get(metric)) {
-        bad.add(Map.<String, Double>of(commit, metrics.get(metric)));
-      }
-    });
-
-    bad.sort((a, b) -> {
-      var firstValue = a.values().toArray(new Double[1])[0];
-      var secondValue = b.values().toArray(new Double[1])[0];
-
-      if (firstValue < secondValue)
-        return 1;
-      else if (firstValue > secondValue)
-        return -1;
-      else
-        return 0;
-    });
+    for(var i = Math.round(list.size()/2); i < list.size(); i++) {
+      bad.add(0, list.get(i));
+    }
 
     return bad;
   } 
 
-  private List<Map<String, Double>> identifyGoodCommits (
-    Map<String, Double> average, 
-    Map<String, Map<String, Double>> derivates) {
+  private List<Map<String, Double>> identifyGoodCommits (List<Map<String,Double>> list) {
 
     var good = new ArrayList<Map<String, Double>>();
-    derivates.forEach((commit, metrics) -> {
-      if (metrics.get(metric) < average.get(metric)) {
-        good.add(Map.<String, Double>of(commit, metrics.get(metric)));
-      }
-    });
-
-    good.sort((a, b) -> {
-      var firstValue = a.values().toArray(new Double[1])[0];
-      var secondValue = b.values().toArray(new Double[1])[0];
-
-      if (firstValue < secondValue)
-        return -1;
-      else if (firstValue > secondValue)
-        return 1;
-      else
-        return 0;
-    });
+    for(var i = 0; i < Math.round(list.size()/2); i++) {
+      good.add(list.get(i));
+    }
 
     return good;
   }
@@ -116,25 +104,6 @@ public class GetRelevantCommitsOfBranchByMetrics
       }
 
       return result;
-    
-    } catch (GitAPIException e) {
-      e.printStackTrace();
-    }
-
-    return null;
-  }
-
-  private Map<String, Double> calculateDerivateOfBranch() {
-
-    try {
-
-      var repo = createRepository(repository);
-      var commits = repo.branch(branch).commits();
-
-      var firstCommit = commits.get(0);
-      var lastCommit = commits.get(commits.size() - 1);
-
-      return derivateMetricsFromCommits(firstCommit, lastCommit);
     
     } catch (GitAPIException e) {
       e.printStackTrace();
@@ -180,7 +149,7 @@ public class GetRelevantCommitsOfBranchByMetrics
     result.put("nosi", ((b.get("nosi") - a.get("nosi"))/2));
     result.put("rfc", ((b.get("rfc") - a.get("rfc"))/2));
     result.put("wmc", ((b.get("wmc") - a.get("wmc"))/2));
-  
+    System.out.println(result);
     return result;
   }
 
