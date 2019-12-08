@@ -100,7 +100,7 @@ public class Plots {
 
     return player
       .<HashMap<String,HashMap<String,Double>>>get(FeatureType.EVOLUTION_OF_FILES_BY_METRICS)
-      .setParams(repository,branch,from,to,step)
+      .setParams(repository,branch,from,to,step,metric)
       .action();
   }
 }

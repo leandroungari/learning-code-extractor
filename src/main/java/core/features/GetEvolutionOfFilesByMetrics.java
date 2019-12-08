@@ -10,6 +10,7 @@ public class GetEvolutionOfFilesByMetrics
   private String branch;
   private Integer from;
   private Integer to;
+  private Integer step;
   private String metric;
 
   @Override
@@ -19,7 +20,8 @@ public class GetEvolutionOfFilesByMetrics
     branch = params[1];
     from = Integer.valueOf(params[2]);
     to = Integer.valueOf(params[3]);
-    metric = params[4];
+    step = Integer.valueOf(params[4]);
+    metric = params[5];
 
     return this;
   }
@@ -43,6 +45,7 @@ public class GetEvolutionOfFilesByMetrics
       commit.forEach((file,metrics) -> {
         instanceOfFiles.put(file, metrics.get(metric));
       });
+      result.put(id, instanceOfFiles);
     });
 
     return result;
@@ -52,7 +55,7 @@ public class GetEvolutionOfFilesByMetrics
     
     return player
       .<Map<String,Map<String,Map<String, Double>>>>get(FeatureType.METRICS_IN_RANGE_COMMITS)
-      .setParams(repository,branch,from.toString(),to.toString(),metric)
+      .setParams(repository,branch,from.toString(),to.toString(),step.toString())
       .action();
   }
 
