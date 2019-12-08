@@ -18,7 +18,7 @@ public class GetNumberOfContributorsByBranch implements RepositoryFeature<List<I
 
   public GetNumberOfContributorsByBranch() {
     super();
-    authors = new ArrayList<>();
+    authors = null;
   }
 
   @Override
@@ -26,6 +26,8 @@ public class GetNumberOfContributorsByBranch implements RepositoryFeature<List<I
 
     repository = params[0];
     branch = params[1];
+
+    authors = new ArrayList<>();
 
     return this;
   }
