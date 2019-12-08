@@ -25,9 +25,9 @@ public class GetMetricsInARangeOfCommits
 
     repository = params[0];
     branch = params[1];
-    from = (params[2] != null ? Integer.valueOf(params[2]) : -1);
-    to = (params[3] != null ? Integer.valueOf(params[3]) : -1);
-    step = (params[4] != null ? Integer.valueOf(params[4]) : -1);
+    from = (params.length > 2 ? Integer.valueOf(params[2]) : -1);
+    to = (params.length > 3 ? Integer.valueOf(params[3]) : -1);
+    step = (params.length > 4 ? Integer.valueOf(params[4]) : -1);
 
     return this;
   }

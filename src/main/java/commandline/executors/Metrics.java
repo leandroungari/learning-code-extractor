@@ -1,5 +1,6 @@
 package commandline.executors;
 
+import java.util.Arrays;
 import java.util.Map;
 
 import commandline.Executor;
@@ -69,9 +70,11 @@ public class Metrics implements Executor {
 		}
 		else {
 			repository = params[0];
-			branch = params[1];
-			from = params[2] != null ? Integer.valueOf(params[2]) : null;
-			to = params[3] != null ? Integer.parseInt(params[3]) : null;
+			System.out.println("aqui");
+			System.out.println(Arrays.toString(params));
+			branch = params.length > 1 ? params[1] : null;
+			from = params.length > 2 ? Integer.valueOf(params[2]) : null;
+			to = params.length > 3 ? Integer.parseInt(params[3]) : null;
 		}
 	}
 
