@@ -24,7 +24,7 @@ class NormalizeMetrics {
   public Map<String,Map<String, Double>> normalize() {
 
     var result = new HashMap<String,Map<String,Double>>();
-    result.forEach((commit,metrics) -> {
+    data.forEach((commit,metrics) -> {
       result.put(commit, Map.<String,Double>of(
         "cbo", normalizeMetric("cbo", metrics),
         "dit", normalizeMetric("dit", metrics),
@@ -41,7 +41,11 @@ class NormalizeMetrics {
 
     return (
       item.get(metric) - limits.get(metric).get("min")/
-      limits.get(metric).get("max") - limits.get(metric).get("min")
+      (
+        limits.get(metric).get("max") - limits.get(metric).get("min") != 0 ?
+        limits.get(metric).get("max") - limits.get(metric).get("min") :
+        1git
+      )
     );
   }
 
