@@ -66,7 +66,7 @@ public class GetMetricsInARangeOfCommits
     var map = new HashMap<String,Map<String,Map<String,Double>>>();
 
     for (var commit : commits) {
-      var result = data.metrics(repository, commit.id().name());
+      var result = data.metrics(repository, commit);
       map.put(commit.id().name(), result);
     }
 

@@ -38,7 +38,7 @@ public class DiffTest {
   @Test
   public void gettingDiff() {
 
-    var factory = new GitFactory();
+    var factory = new GitFactory(repo);
     var result = factory
       .contentOfDiffCommit(commit, commit.diff().get(0));
 

@@ -18,28 +18,30 @@ import repository.commit.File;
 public class Commit {
 
 	private ObjectId id;
+	private Branch branch;
 	
-	public static Commit create(ObjectId commitId) {
-		
-		return new Commit(commitId);
-	}
-	
-	private Commit(ObjectId commitId) {
+	Commit(Branch branch, ObjectId commitId) {
 		id = commitId;
+		this.branch = branch;
 	}
 	
 	public ObjectId id() {
 		return id;
 	}
+
+	public Branch containedBranch() {
+		return branch;
+	}
 	
 	public List<File> allFiles() {
 		
 		var list = new ArrayList<File>();
-		var factory = new GitFactory();
+		var factory = new GitFactory(branch.containedRepository());
 	
 		try {
 			factory.treeStart(id, walk -> {
 				list.add(new File(
+					this,
 					walk.getPathString(), 
 					walk.getObjectId(0)
 				));
@@ -60,15 +62,15 @@ public class Commit {
 	
 	private AbstractTreeIterator createTreeParser() {
 
-		var factory = new GitFactory();
+		var factory = new GitFactory(branch.containedRepository());
 		return factory.createTreeParser(id);
 	}
 	
 	public Commit before() {
 		
-		var factory = new GitFactory();
+		var factory = new GitFactory(branch.containedRepository());
 		try {
-			return Commit.create(factory.commit(id, 1));
+			return new Commit(branch, factory.commit(id, 1));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -86,7 +88,7 @@ public class Commit {
 	
 	public List<Diff> diff() {
 		
-    var factory = new GitFactory();
+    var factory = new GitFactory(branch.containedRepository());
 
 		var list = new ArrayList<Diff>();
 		var otherCommit = before();
@@ -110,9 +112,9 @@ public class Commit {
 	
 	public File getFile(String filename) {
 		
-		var factory = new GitFactory();
+		var factory = new GitFactory(branch.containedRepository());
 		try {
-			return factory.filterFile(id, filename);
+			return factory.filterFile(this, filename);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -121,7 +123,7 @@ public class Commit {
 	
 	public CommitInfo info() {
 		
-		var factory = new GitFactory();
+		var factory = new GitFactory(branch.containedRepository());
 		
 		try {
 			var commit = factory.commit(id);
@@ -166,7 +168,7 @@ public class Commit {
 
 	public ArrayList<Map<String, String>> showDiff() {
 		
-		var factory = new GitFactory();
+		var factory = new GitFactory(branch.containedRepository());
 
 		var result = new ArrayList<Map<String,String>>();
     for(var item: diff()) {

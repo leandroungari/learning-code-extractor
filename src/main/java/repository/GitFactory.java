@@ -30,11 +30,11 @@ import repository.commit.File;
 
 public class GitFactory {
 
-	private static Git git;
+	private Git git;
 	
-	public GitFactory() {
+	public GitFactory(Repository repo) {
 		
-		if(git == null) git = Repository.get().git();
+		git = repo.git();
 	}
 	
 public String absoluteFolder() {
@@ -185,12 +185,12 @@ public String absoluteFolder() {
 		.forEach(action);
 	}
 	
-	public File filterFile(ObjectId commitId, String filename) 
+	public File filterFile(Commit commit, String filename) 
 		throws MissingObjectException, 
 						IncorrectObjectTypeException, 
 						IOException {
 		
-		var tree = commit(commitId).getTree();
+		var tree = commit(commit.id()).getTree();
 		var treeWalk = treeWalk();
 		treeWalk.addTree(tree);
 		treeWalk.setRecursive(true);
@@ -203,7 +203,7 @@ public String absoluteFolder() {
 		
 		treeWalk.close();
 		
-		return new File(filename, id);
+		return new File(commit, filename, id);
 	}
 
 	public String fileContent(ObjectId id) 
@@ -222,9 +222,7 @@ public String absoluteFolder() {
 		
     try(var formatter = new DiffFormatter(output)) {
 			formatter.setRepository(
-				Repository
-				.get()
-				.git()
+				git
 				.getRepository()
 			);
 

@@ -4,14 +4,17 @@ import java.io.IOException;
 
 import org.eclipse.jgit.lib.ObjectId;
 
+import repository.Commit;
 import repository.GitFactory;
 
 public class File {
 
+	private Commit commit;
 	private String name;
 	private ObjectId id;
 	
-	public File(String name, ObjectId id) {
+	public File(Commit commit,String name, ObjectId id) {
+		this.commit = commit;
 		this.name = name;
 		this.id = id;
 	}
@@ -26,7 +29,7 @@ public class File {
 	
 	public String get() {
 		
-		var factory = new GitFactory();
+		var factory = new GitFactory(commit.containedBranch().containedRepository());
 		try {
 			return factory.fileContent(id);
 		} catch (IOException e) {

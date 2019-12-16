@@ -8,26 +8,15 @@ import org.eclipse.jgit.lib.ObjectId;
 
 public class Branch {
 
+	private Repository repository;
 	private String name;
 	private ObjectId id;
 	
-	/**
-	 * This method instanciates a branch
-	 * @param name
-	 * @param id
-	 * @return
-	 */
-	public static Branch create(String name, String id) {
-		
-		return new Branch(
-			name, 
-			ObjectId.fromString(id)
-		);
-	}
 	
-	private Branch(String name, ObjectId id) {
+	Branch(Repository repo, String name, String id) {
 		this.name = name;
-		this.id = id;
+		this.id = ObjectId.fromString(id);
+		this.repository = repo;
 	}
 	
 	/**
@@ -53,13 +42,13 @@ public class Branch {
 	 */
 	public List<Commit> commits() {
 		
-		var factory = new GitFactory();
+		var factory = new GitFactory(repository);
 		var list = new ArrayList<Commit>();
 		try {
 			
 			factory.commitStart(id, revcommit -> {
 		
-				list.add(0, Commit.create(revcommit.getId()));
+				list.add(0, new Commit(this, revcommit.getId()));
 			});
 
 		} catch (IOException e) {
@@ -99,7 +88,10 @@ public class Branch {
 	
 	public Commit commit(String id) {
 		
-		return Commit
-			.create(ObjectId.fromString(id));
+		return new Commit(this, ObjectId.fromString(id));
+	}
+
+	public Repository containedRepository() {
+		return repository;
 	}
 }

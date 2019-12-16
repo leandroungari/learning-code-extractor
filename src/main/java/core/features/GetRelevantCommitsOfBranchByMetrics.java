@@ -130,13 +130,13 @@ public class GetRelevantCommitsOfBranchByMetrics
 
   private Map<String,Double> calculateMetricsFromCommitByAverage(Commit commit) {
     
-    var metrics = data.metrics(repository, commit.id().name());
+    var metrics = data.metrics(repository, commit);
     return stats.averageOfMetrics(metrics);
   }
 
   private Map<String,Double> calculateMetricsFromCommitBySum(Commit commit) {
     
-    var metrics = data.metrics(repository, commit.id().name());
+    var metrics = data.metrics(repository, commit);
     return stats.sumOfMetrics(metrics);
   }
 

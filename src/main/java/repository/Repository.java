@@ -18,8 +18,6 @@ public class Repository {
 	private String url;
 	private File folder;
 
-	private static Repository current;
-
 	/**
 	 * It instanciates a new repo
 	 * 
@@ -78,8 +76,7 @@ public class Repository {
 			throw new NullPointerException(
 					"The folder must not be null!");
 
-		current = new Repository(null, folder);
-		return current;
+		return new Repository(null, folder);
 	}
 
 	public static Repository create(String url, File folder)
@@ -89,17 +86,7 @@ public class Repository {
 			throw new NullPointerException(
 					"The folder or url must not be empty!");
 
-		current = new Repository(url, folder);
-		return current;
-	}
-
-	/**
-	 * It gets the current repository
-	 * 
-	 * @return repository
-	 */
-	public static Repository get() {
-		return current;
+		return new Repository(url, folder);
 	}
 
 	/**
@@ -165,13 +152,6 @@ public class Repository {
 	}
 
 	/**
-	 * Unset the current repository
-	 */
-	public void close() {
-		current = null;
-	}
-
-	/**
 	 * Get a list of remote branches of repository
 	 * 
 	 * @throws GitAPIException
@@ -179,12 +159,13 @@ public class Repository {
 	 */
 	public List<Branch> branches() throws GitAPIException {
 
-		var factory = new GitFactory();
+		var factory = new GitFactory(this);
 		return factory
 			.branches()
 			.stream()
 			.map(ref -> {
-				return Branch.create(
+				return new Branch(
+					this,
 					ref.getName(),
 					ref.getObjectId().getName());
 			})

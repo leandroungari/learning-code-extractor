@@ -1,5 +1,6 @@
 package core.controller;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -7,11 +8,15 @@ import core.data.MetricsData;
 import core.resource.Resource;
 import core.resource.ResourceTrack;
 import core.resource.ResourceType;
+import repository.Commit;
+import repository.Repository;
+import repository.exception.GitRepositoryException;
 import repository.metrics.MetricsAnalyzer;
 
 public class DataController {
 
   private static final MetricsAnalyzer analyzer = new MetricsAnalyzer();
+  private static final SettingsController settings = SettingsController.get();
 
   private static final Integer CBO = 0;
   private static final Integer DIT = 1;
@@ -23,11 +28,11 @@ public class DataController {
 
   private Resource resource;
 
-  public Map<String, Map<String, Double>> metrics(String repository, String commit) {
+  public Map<String, Map<String, Double>> metrics(String repository, Commit commit) {
 
     resource = track
       .get(ResourceType.METRICS_FILES)
-      .setParams(repository, commit);
+      .setParams(repository, commit.id().getName());
 
     if (!resource.exists()) {
       analyzeCommit(repository, commit);
@@ -57,16 +62,25 @@ public class DataController {
     return result;
   }
 
-  private void analyzeCommit(String repository, String commit) {
+  private void analyzeCommit(String repository, Commit commit) {
     
     var data = new MetricsData();
     
-    analyzer
-    .repositoryName(repository)
-    .enableLogs(false)
-    .process(commit, (file, result) -> {
-      data.addFiles(file, result);
-    });
+    try {
+      analyzer
+      .repository(Repository.create(new File(
+        settings.folderOfRepositories() + "/" +
+        repository
+      )))
+      .enableLogs(false)
+      .process(commit, (file, result) -> {
+        data.addFiles(file, result);
+      });
+    }
+    catch(GitRepositoryException e) {
+      e.printStackTrace();
+    }
+    
 
     resource.write(data);
   }
