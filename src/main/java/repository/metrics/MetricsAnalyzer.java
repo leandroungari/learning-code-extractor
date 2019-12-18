@@ -9,7 +9,6 @@ import java.util.stream.Collectors;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.eclipse.jgit.api.errors.GitAPIException;
-import org.eclipse.jgit.lib.ObjectId;
 
 import com.github.mauricioaniche.ck.CKClassResult;
 import com.google.gson.Gson;
@@ -18,11 +17,9 @@ import core.data.MetricsData;
 import repository.Branch;
 import repository.Commit;
 import repository.Repository;
-import util.Analyzer;
 import util.Storage;
 
-public class MetricsAnalyzer 
-  implements Analyzer{
+public class MetricsAnalyzer {
 
 	private File folder;
 	
@@ -32,8 +29,7 @@ public class MetricsAnalyzer
 	public MetricsAnalyzer() { }
 	
 	
-	
-	@Override
+
 	public MetricsAnalyzer localFolder(File folder) {
 	  this.folder = folder;
 	  return this;
@@ -44,8 +40,7 @@ public class MetricsAnalyzer
 		return this;
 	}
 	
-	@Override
-	public void run() throws FileNotFoundException {
+	/*public void run() throws FileNotFoundException {
 		
 		if(folder == null) throw new FileNotFoundException(
 			"You must define a local folder!"
@@ -75,7 +70,7 @@ public class MetricsAnalyzer
     } catch (GitAPIException e) {
       System.err.println(e.getMessage());
     }
-	}
+	}*/
 	
 	private void processing(
 	  Storage storage, 
@@ -123,9 +118,8 @@ public class MetricsAnalyzer
 	  
 	  var data = new MetricsData();
 	  
-	  new CKMetric()
-	  .calculate(
-	    commit.id(), 
+	  new CKMetric(repo).calculate(
+	    commit, 
 	    result -> {
 	    	
 	    	var text = filterFilename(result.getFile());
@@ -141,12 +135,12 @@ public class MetricsAnalyzer
 	}
 	
 	public void process(
-		String commitId, 
+		Commit commit, 
 		BiConsumer<String,CKClassResult> consumer) {
 		
-		new CKMetric()
+		new CKMetric(repo)
 	  .calculate(
-	  	ObjectId.fromString(commitId),
+	  	commit,
 	  	result -> {
 	  		consumer.accept(
 	  			filterFilename(result.getFile()), 
@@ -182,15 +176,8 @@ public class MetricsAnalyzer
 	  return gson.fromJson(data, MetricsData.class);	  
 	}
 
-  @Override
   public MetricsAnalyzer repository(Repository r) {
     this.repo = r;
-    return this;
-  }
-
-  @Override
-  public MetricsAnalyzer repositoryName(String name) {
-    this.name = name;
     return this;
   }
 

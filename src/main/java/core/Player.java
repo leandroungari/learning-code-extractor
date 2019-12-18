@@ -3,44 +3,31 @@ package core;
 import java.util.HashMap;
 import java.util.Map;
 
-import core.executor.MetricsExecutor;
-import core.executor.RepositoryExecutor;
-import core.executor.SettingsExecutor;
+import core.features.DownloadRepository;
+import core.features.Feature;
 import core.features.FeatureType;
+import core.features.GetAverageOfMetricsOfFiles;
+import core.features.GetBranches;
 import core.features.GetCommitInfo;
+import core.features.GetCommitsByBranch;
+import core.features.GetDiffFilesInCommit;
+import core.features.GetDiffInCommit;
+import core.features.GetEvolutionOfFilesByMetrics;
+import core.features.GetMetricsInACommit;
+import core.features.GetMetricsInARangeOfCommits;
+import core.features.GetNormalizedAverageOfMetricsOfFiles;
+import core.features.GetNormalizedSumOfMetricsOfFiles;
 import core.features.GetNumberOfContributorsByBranch;
 import core.features.GetNumberOfFilesInCommitsByBranch;
-import core.player.MetricsPlayer;
-import core.player.RepositoryPlayer;
-import core.player.SettingsPlayer;
+import core.features.GetRelevantCommitsOfBranchByMetrics;
+import core.features.GetSumOfMetricsOfFiles;
+import core.features.ListAvailableRepositories;
 
 public class Player {
 
   private static Map<FeatureType,Feature<?>> features;
 
-  protected static RepositoryExecutor repositoryExecutor;
-  protected static MetricsExecutor metricsExecutor;
-  protected static SettingsExecutor settingsExecutor;
-
   public Player() {
-
-    if (repositoryExecutor == null) {
-      repositoryExecutor = new RepositoryExecutor(this);
-    }
-    if (metricsExecutor == null) {
-      metricsExecutor = new MetricsExecutor(this);
-    }
-    if (settingsExecutor == null) {
-      settingsExecutor = new SettingsExecutor();
-      if (!settingsExecutor.isSet()) {
-        settingsExecutor.start(SettingsExecutor.USER_FOLDER);
-      }
-    }
-
-    initialize();
-  }
-
-  public static void initialize() {
 
     initializeFeatures();
   }
@@ -53,6 +40,22 @@ public class Player {
       add(FeatureType.COMMIT_INFO, new GetCommitInfo());
       add(FeatureType.NUMBER_OF_CONTRIBUTORS_BY_BRANCH, new GetNumberOfContributorsByBranch());
       add(FeatureType.NUMBER_OF_FILES_IN_COMMITS_BY_BRANCH, new GetNumberOfFilesInCommitsByBranch());
+      add(FeatureType.BRANCHES_OF_REPOSITORY, new GetBranches());
+      add(FeatureType.COMMITS_OF_BRANCH, new GetCommitsByBranch());
+      add(FeatureType.DOWNLOAD_REPOSITORY, new DownloadRepository());
+      add(FeatureType.DIFF_FILES_IN_COMMIT, new GetDiffFilesInCommit());
+      add(FeatureType.DIFF_IN_COMMIT, new GetDiffInCommit());
+
+      add(FeatureType.LIST_AVAILABLE_REPOSITORIES, new ListAvailableRepositories());
+      add(FeatureType.METRICS_IN_COMMIT, new GetMetricsInACommit());
+      add(FeatureType.METRICS_IN_RANGE_COMMITS, new GetMetricsInARangeOfCommits());
+      add(FeatureType.RELEVANT_COMMITS_BY_METRIC, new GetRelevantCommitsOfBranchByMetrics());
+
+      add(FeatureType.AVERAGE_OF_METRICS_OF_FILES, new GetAverageOfMetricsOfFiles());
+      add(FeatureType.NORMALIZED_AVERAGE_OF_METRICS_OF_FILES, new GetNormalizedAverageOfMetricsOfFiles());
+      add(FeatureType.SUM_OF_METRICS_OF_FILES, new GetSumOfMetricsOfFiles());
+      add(FeatureType.NORMALIZED_SUM_OF_METRICS_OF_FILES, new GetNormalizedSumOfMetricsOfFiles());
+      add(FeatureType.EVOLUTION_OF_FILES_BY_METRICS, new GetEvolutionOfFilesByMetrics());
     }
   }
 
@@ -65,25 +68,5 @@ public class Player {
   public <T> Feature<T> get(FeatureType name) {
     
     return (Feature<T>) features.get(name);
-  }
-
-  public RepositoryPlayer repository(final String nameOfRepository) {
-
-    return new RepositoryPlayer(nameOfRepository);
-  }
-
-  public MetricsPlayer metrics(final String nameOfRepository) {
-    
-    return new MetricsPlayer(nameOfRepository);
-  }
-
-  public SettingsPlayer settings() {
-    
-    return new SettingsPlayer();
-  }
-
-  protected Stats stats() {
-
-    return new Stats(this);
   }
 }

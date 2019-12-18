@@ -1,11 +1,8 @@
 package api.controller;
 
-import java.io.IOException;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.jgit.api.errors.GitAPIException;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -18,7 +15,6 @@ import core.data.Commit;
 import core.data.DiffFile;
 import core.features.FeatureType;
 import repository.commit.CommitInfo;
-import repository.exception.GitRepositoryException;
 
 @RestController
 public class Repo {
@@ -27,28 +23,24 @@ public class Repo {
 
 	@GetMapping("/repo/{name}/branches")
 	@ResponseBody
-	public Branch[] allBranches(
-		@PathVariable String name)
-		throws GitRepositoryException,
-						GitAPIException {
+	public Branch[] allBranches(@PathVariable String name) {
 
 		return player
-			.repository(name)
-			.branches();
+			.<Branch[]>get(FeatureType.BRANCHES_OF_REPOSITORY)
+			.setParams(name)
+			.action();
 	}
 
 	@GetMapping("/repo/{name}/{branch}/commits")
 	@ResponseBody
 	public Commit[] allCommits(
 		@PathVariable String name,
-		@PathVariable String branch)
-		throws GitRepositoryException,
-						GitAPIException, 
-						IOException {
+		@PathVariable String branch) {
 
 		return player
-			.repository(name)
-			.commits(branch);
+			.<Commit[]>get(FeatureType.COMMITS_OF_BRANCH)
+			.setParams(name, branch)
+			.action();
 	}
 
 	@GetMapping("/repo/{name}/{branch}/{commit}/info")
@@ -56,10 +48,7 @@ public class Repo {
 	public CommitInfo commitInfo(
 		@PathVariable String name,
 		@PathVariable String branch,
-		@PathVariable String commit)
-		throws GitRepositoryException,
-					 GitAPIException, 
-					 IOException {
+		@PathVariable String commit) {
 
 		return player
 			.<CommitInfo>get(FeatureType.COMMIT_INFO)
@@ -70,44 +59,38 @@ public class Repo {
 	@GetMapping("/repo/{name}/{branch}/numberOfFiles")
 	@ResponseBody
 	public List<Integer> numberOfFiles(
-		@PathVariable String repository, 
+		@PathVariable String name, 
 		@PathVariable String branch) {
 
 		return player
 			.<List<Integer>>get(FeatureType.NUMBER_OF_FILES_IN_COMMITS_BY_BRANCH)
-			.setParams(repository, branch)
+			.setParams(name, branch)
 			.action();
 	}
 
 	@GetMapping("/repo/{name}/{branch}/contributors")
 	@ResponseBody
 	public List<Integer> numberOfContributors(
-		@PathVariable String repository, 
+		@PathVariable String name, 
 		@PathVariable String branch) {
 
 		return player
 			.<List<Integer>>get(FeatureType.NUMBER_OF_CONTRIBUTORS_BY_BRANCH)
-			.setParams(repository, branch)
+			.setParams(name, branch)
 			.action();
 	}
-
 	
 	@GetMapping("/repo/{name}/{branch}/{commit}/diffFiles")
 	@ResponseBody
 	public List<DiffFile> diffFiles(
 		@PathVariable String name,
 		@PathVariable String branch,
-		@PathVariable String commit)
-		throws GitRepositoryException,
-					 GitAPIException, 
-					 IOException {
+		@PathVariable String commit) {
 
 		return player
-			.repository(name)
-			.diffFilesFromCommit(
-				branch, 
-    	  commit
-    	);
+			.<List<DiffFile>>get(FeatureType.DIFF_FILES_IN_COMMIT)
+			.setParams(name, branch, commit)
+			.action();
 	}
 
 	@GetMapping("/repo/{name}/{branch}/{commit}/diffInCommit")
@@ -115,35 +98,35 @@ public class Repo {
 	public List<Map<String,String>> diffInCommit(
 		@PathVariable String name,
 		@PathVariable String branch,
-		@PathVariable String commit)
-		throws GitRepositoryException,
-					 GitAPIException, 
-					 IOException {
+		@PathVariable String commit) {
 
 		return player
-			.repository(name)
-			.diffInCommit(
-				branch, 
-    	  commit
-    	);
+			.<List<Map<String,String>>>get(FeatureType.DIFF_IN_COMMIT)
+			.setParams(name, branch, commit)
+			.action();
 	}
 	
 	@GetMapping("/repo/download")
 	@ResponseBody
-	public Map<String, Boolean> download(
-		@RequestBody Map<String,String> body) 
-			throws GitRepositoryException {
+	public Map<String, Boolean> download(@RequestBody Map<String,String> body)  {
 
 		var repository = body.get("repository");
 		var url = body.get("url");
 		
 		player
-		.repository(repository)
-		.download(url);
+		.<Void>get(FeatureType.DOWNLOAD_REPOSITORY)
+		.setParams(repository, url)
+		.action();
     
-    var map = new HashMap<String,Boolean>();
-    map.put("result", true);
-    
-    return map;
+    return Map.of("result", true);
 	}
+
+	@GetMapping("/repo/availableRepositories")
+	@ResponseBody
+	public List<String> listOfAvailableRepositories() {
+
+    return player
+      .<List<String>>get(FeatureType.LIST_AVAILABLE_REPOSITORIES)
+      .action();
+  }
 }

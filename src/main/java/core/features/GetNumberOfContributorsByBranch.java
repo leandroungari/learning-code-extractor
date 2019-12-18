@@ -1,23 +1,15 @@
 package core.features;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import org.eclipse.jgit.api.errors.GitAPIException;
-import org.eclipse.jgit.lib.ObjectId;
 
-import core.Feature;
-import core.Player;
 import repository.Commit;
-import repository.Repository;
 import repository.commit.CommitInfo;
-import repository.exception.GitRepositoryException;
 
-public class GetNumberOfContributorsByBranch implements Feature<List<Integer>> {
-
-  private Player player;
+public class GetNumberOfContributorsByBranch implements RepositoryFeature<List<Integer>> {
 
   private String repository;
   private String branch;
@@ -25,8 +17,8 @@ public class GetNumberOfContributorsByBranch implements Feature<List<Integer>> {
   private ArrayList<String> authors;
 
   public GetNumberOfContributorsByBranch() {
-    player = new Player();
-    authors = new ArrayList<>();
+    super();
+    authors = null;
   }
 
   @Override
@@ -35,6 +27,8 @@ public class GetNumberOfContributorsByBranch implements Feature<List<Integer>> {
     repository = params[0];
     branch = params[1];
 
+    authors = new ArrayList<>();
+
     return this;
   }
 
@@ -42,13 +36,10 @@ public class GetNumberOfContributorsByBranch implements Feature<List<Integer>> {
   public List<Integer> action() {
 
     try {
-      var repo = Repository.create(new File(
-        player.settings().folderOfRepositories() 
-        + "/" + repository
-      ));
+      var repo = createRepository(repository);
 
       var result = repo
-		    .branch(ObjectId.fromString(branch))
+		    .branch(branch)
         .commits();
       
       return result
@@ -56,7 +47,7 @@ public class GetNumberOfContributorsByBranch implements Feature<List<Integer>> {
         .map(this::getNumberOfContributors)
         .collect(Collectors.toList());
 
-    } catch (GitRepositoryException | GitAPIException e) {
+    } catch (GitAPIException e) {
       e.printStackTrace();
     }
     

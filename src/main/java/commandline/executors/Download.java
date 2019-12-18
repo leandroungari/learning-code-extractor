@@ -2,7 +2,7 @@ package commandline.executors;
 
 import commandline.Executor;
 import core.Player;
-import repository.exception.GitRepositoryException;
+import core.features.FeatureType;
 
 public class Download implements Executor{
 
@@ -19,14 +19,10 @@ public class Download implements Executor{
 		}
 		else {
 			
-			try {
-				player
-				.repository(repository)
-				.download(url);
-			} catch (GitRepositoryException e) {
-				
-				e.printStackTrace();
-			}
+			player
+			.<Void>get(FeatureType.DOWNLOAD_REPOSITORY)
+			.setParams(repository, url)
+			.action();
 		}
 	}
 

@@ -1,122 +1,57 @@
 package core.resource;
 
-import java.util.Map;
-
 import com.google.gson.Gson;
 
-import core.Player;
+import core.controller.SettingsController;
 import util.FileUtil;
 import util.Storage;
 
-public class Resource {
+public abstract class Resource {
 
-	private String repository;
-	private String branch;
-	private String filename;
-	private ResourceType code;
+	protected String repository;
+	protected String folder;
+	protected String file;
 
-	private static Map<ResourceType, String> options = Map
-		.ofEntries(
-			Map.entry(
-				ResourceType.LIST_OF_BRANCHES,"branches.json"
-			),
-			Map.entry(
-				ResourceType.LIST_OF_COMMITS, "commits.json"
-			),
-			Map.entry(
-				ResourceType.COMMIT_INFO, "commits.json"
-			),
-			Map.entry(
-				ResourceType.DIFF_FILES, "commits.json"
-			),
-			Map.entry(
-				ResourceType.METRICS_DIFF_FILES, "diff - "
-			),
-			Map.entry(
-				ResourceType.METRICS_ALL_FILES, ""
-			)
-		);
-	
-	private Resource(String name, ResourceType code) {
-		this.code = code;
-		this.repository = name;
-		this.branch = "";
-		this.filename = "";
+	protected static SettingsController settings;
+
+	Resource() {
+
+		initializeSettings();
 	}
 
-	public static Resource create(
-		String repository,
-		ResourceType resourceCode) {
-
-		return new Resource(repository, resourceCode);
-	}
-	
-	public Resource branch(String id) {
-		branch += "/" + id;
-		return this;
-	}
-	
-	public Resource folder(String name) {
-		branch += "/" + name;
-		return this;
-	}
-	
-	public Resource name(String name) {
-		filename = name + ".json";
-		return this;
-	}
-
-	private Storage typeOfStorage() {
-    var player = new Player();
-    
-		switch(code) {
-		
-		case LIST_OF_BRANCHES:
-		case LIST_OF_COMMITS:
-		case COMMIT_INFO:
-		case DIFF_FILES:
-			
-			return new Storage(
-        player
-        .settings()
-				.folderOfMetadata()
-				.getAbsolutePath());
-			
-			/*
-			 * return new Storage(
-				settings
-				.repositoriesFolder()
-				.getAbsolutePath());
-			 */
-			
-		case METRICS_DIFF_FILES:
-		case METRICS_ALL_FILES:
-			return new Storage(
-        player
-        .settings()
-        .folderOfMetrics()
-				.getAbsolutePath());
-			 
-			default:
-				return null;
+	private void initializeSettings() {
+		if(settings == null) {
+			settings = SettingsController.get();
 		}
+	}
+
+	public abstract Resource setParams(String... params);
+
+	protected abstract String getBaseFolder();
 	
+	protected String getFolder() {
+
+		return getBaseFolder()
+      + "/" 
+      + repository 
+      + (folder == null || "".equals(folder) ? "" : "/" + folder);
+	}
+
+	protected String getFile() {
+		
+		return (file == null ? "" : file);
 	}
 
 	public boolean exists() {
 
-		Storage storage = typeOfStorage();
-
-		return storage
-			.folder(repository + branch)
-			.exists(options.get(code) + filename);
+		var storage = new Storage(getFolder());
+		return storage.exists(getFile());
 	}
 
 	public <T> T read(Class<T> type) {
 
-		String content = typeOfStorage()
-			.folder(repository + branch)
-			.get(options.get(code) + filename);
+		String content = new Storage(getFolder())
+			.get(getFile());
 
 		var gson = new Gson();
 		return gson.fromJson(content, type);
@@ -127,17 +62,13 @@ public class Resource {
 		var gson = new Gson();
 		var content = gson.toJson(data);
 		
-		typeOfStorage()
-		.folder(repository + branch)
-		.file(options.get(code) + filename, content);
+		new Storage(getFolder()).file(getFile(), content);
 	}
 	
 	public void delete() {
 		
-		FileUtil
-		.deleteFolder(
-			typeOfStorage()
-			.getFile(options.get(code) + filename)
+		FileUtil.deleteFolder(
+			new Storage(getFolder()).getFile(getFile())
 		);
 	}
 

@@ -30,11 +30,11 @@ import repository.commit.File;
 
 public class GitFactory {
 
-	private static Git git;
+	private Git git;
 	
-	public GitFactory() {
+	public GitFactory(Repository repo) {
 		
-		if(git == null) git = Repository.get().git();
+		git = repo.git();
 	}
 	
 public String absoluteFolder() {
@@ -50,10 +50,10 @@ public String absoluteFolder() {
 	public String folder() {
 		
 		var list = git
-		.getRepository()
-		.getDirectory()
-		.getAbsolutePath()
-		.split(java.util.regex.Pattern.quote("/"));
+			.getRepository()
+			.getDirectory()
+			.getAbsolutePath()
+			.split(java.util.regex.Pattern.quote("/"));
 		
 		return list[list.length - 2];
 	}
@@ -98,8 +98,8 @@ public String absoluteFolder() {
 	
 	public RevCommit commit(ObjectId id, Integer num) 
 		throws MissingObjectException, 
-						IncorrectObjectTypeException, 
-						IOException {
+					 IncorrectObjectTypeException, 
+					 IOException {
 		
 		var revWalk = walk();
 		
@@ -185,12 +185,12 @@ public String absoluteFolder() {
 		.forEach(action);
 	}
 	
-	public File filterFile(ObjectId commitId, String filename) 
+	public File filterFile(Commit commit, String filename) 
 		throws MissingObjectException, 
 						IncorrectObjectTypeException, 
 						IOException {
 		
-		var tree = commit(commitId).getTree();
+		var tree = commit(commit.id()).getTree();
 		var treeWalk = treeWalk();
 		treeWalk.addTree(tree);
 		treeWalk.setRecursive(true);
@@ -203,7 +203,7 @@ public String absoluteFolder() {
 		
 		treeWalk.close();
 		
-		return new File(filename, id);
+		return new File(commit, filename, id);
 	}
 
 	public String fileContent(ObjectId id) 
@@ -222,9 +222,7 @@ public String absoluteFolder() {
 		
     try(var formatter = new DiffFormatter(output)) {
 			formatter.setRepository(
-				Repository
-				.get()
-				.git()
+				git
 				.getRepository()
 			);
 
@@ -240,10 +238,10 @@ public String absoluteFolder() {
     
     var oldFile = commit
       .before()
-      .filter(diff.oldPath());
+      .getFile(diff.oldPath());
 
     var newFile = commit
-      .filter(diff.newPath());
+      .getFile(diff.newPath());
 
     return Map.of(
       "oldFile", diff.oldPath(), 

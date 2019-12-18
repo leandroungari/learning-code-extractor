@@ -9,7 +9,6 @@ import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.api.errors.InvalidRemoteException;
 import org.eclipse.jgit.api.errors.TransportException;
-import org.eclipse.jgit.lib.ObjectId;
 
 import repository.exception.GitRepositoryException;
 
@@ -19,8 +18,6 @@ public class Repository {
 	private String url;
 	private File folder;
 
-	private static Repository current;
-
 	/**
 	 * It instanciates a new repo
 	 * 
@@ -29,7 +26,7 @@ public class Repository {
 	 * @throws GitRepositoryException
 	 */
 	private Repository(String url, File folder)
-			throws GitRepositoryException {
+		throws GitRepositoryException {
 		
 		if (url != null) {
 
@@ -39,7 +36,8 @@ public class Repository {
 
 			if (!isRepository(folder))
 				throw new GitRepositoryException(
-						"This local folder is not a git repository!");
+					"This local folder is not a git repository!"
+				);
 
 			git = open(folder);
 		}
@@ -78,8 +76,7 @@ public class Repository {
 			throw new NullPointerException(
 					"The folder must not be null!");
 
-		current = new Repository(null, folder);
-		return current;
+		return new Repository(null, folder);
 	}
 
 	public static Repository create(String url, File folder)
@@ -89,17 +86,7 @@ public class Repository {
 			throw new NullPointerException(
 					"The folder or url must not be empty!");
 
-		current = new Repository(url, folder);
-		return current;
-	}
-
-	/**
-	 * It gets the current repository
-	 * 
-	 * @return repository
-	 */
-	public static Repository get() {
-		return current;
+		return new Repository(url, folder);
 	}
 
 	/**
@@ -152,21 +139,16 @@ public class Repository {
 	private Git cloneRepository(String url, File local) {
 
 		try {
-			return Git.cloneRepository().setURI(url)
-					.setDirectory(local).call();
+			return Git
+				.cloneRepository()
+				.setURI(url)
+				.setDirectory(local)
+				.call();
 		} catch (GitAPIException e) {
-
-			System.err.println(e.getMessage());
+			e.printStackTrace();
 		}
 
 		return null;
-	}
-
-	/**
-	 * Unset the current repository
-	 */
-	public void close() {
-		current = null;
 	}
 
 	/**
@@ -177,27 +159,25 @@ public class Repository {
 	 */
 	public List<Branch> branches() throws GitAPIException {
 
-		var factory = new GitFactory();
-		return factory.branches().stream().map(ref -> {
-			return Branch.create(ref.getName(),
-					ref.getObjectId());
-		}).collect(Collectors.toList());
-	}
-
-	public Branch branch(String name) throws IOException {
-
-		var factory = new GitFactory();
-		var ref = factory.branch(name);
-
-		return Branch.create(ref.getName(), ref.getObjectId());
+		var factory = new GitFactory(this);
+		return factory
+			.branches()
+			.stream()
+			.map(ref -> {
+				return new Branch(
+					this,
+					ref.getName(),
+					ref.getObjectId().getName());
+			})
+			.collect(Collectors.toList());
 	}
 	
-	public Branch branch(ObjectId id) 
+	public Branch branch(String id) 
 	  throws GitAPIException {
 	  
 	  return branches()
 	    .stream()
-	    .filter(branch -> branch.id().equals(id))
+	    .filter(branch -> branch.id().name().equals(id))
 	    .collect(Collectors.toList())
 	    .get(0);
 	}

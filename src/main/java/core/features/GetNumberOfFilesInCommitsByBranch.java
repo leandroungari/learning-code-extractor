@@ -1,28 +1,19 @@
 package core.features;
 
-import java.io.File;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import org.eclipse.jgit.api.errors.GitAPIException;
-import org.eclipse.jgit.lib.ObjectId;
 
-import core.Feature;
-import core.Player;
 import repository.Commit;
-import repository.Repository;
-import repository.exception.GitRepositoryException;
 
-public class GetNumberOfFilesInCommitsByBranch implements Feature<List<Integer>>{
-
-  private Player player;
+public class GetNumberOfFilesInCommitsByBranch implements RepositoryFeature<List<Integer>>{
 
   private String repository;
   private String branch;
 
   public GetNumberOfFilesInCommitsByBranch() {
-
-    player = new Player();
+    super();
   }
 
   @Override
@@ -38,21 +29,18 @@ public class GetNumberOfFilesInCommitsByBranch implements Feature<List<Integer>>
   public List<Integer> action() {
 
     try {
-      var repo = Repository.create(new File(
-			  player.settings().folderOfRepositories() + "/"
-			  + repository
-		  ));
+      var repo = createRepository(repository);
     
-		var result = repo
-		  .branch(ObjectId.fromString(branch))
-      .commits();
-    
-    return result
-      .stream()
-      .map(this::getNumberOfJavaFilesInCommit)
-      .collect(Collectors.toList());
+		  var result = repo
+		    .branch(branch)
+        .commits();
+      
+      return result
+        .stream()
+        .map(this::getNumberOfJavaFilesInCommit)
+        .collect(Collectors.toList());
     }
-    catch(GitAPIException | GitRepositoryException e) {
+    catch(GitAPIException e) {
       e.printStackTrace();
     }
 

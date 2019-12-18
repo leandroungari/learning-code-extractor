@@ -9,31 +9,36 @@ import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTParser;
 import org.eclipse.jdt.core.dom.CompilationUnit;
-import org.eclipse.jgit.lib.ObjectId;
-
 import com.github.mauricioaniche.ck.CK;
 import com.github.mauricioaniche.ck.CKNotifier;
 import com.github.mauricioaniche.ck.MetricsExecutor;
 import com.github.mauricioaniche.ck.util.MetricsFinder;
 
 import repository.commit.File;
+import repository.Commit;
 import repository.GitFactory;
+import repository.Repository;
 
-class CKMetric extends CK {
+public class CKMetric extends CK {
 
-	CKMetric() {
+	private Repository repository;
+
+	CKMetric(Repository repo) {
 		super();
+
+		this.repository = repo;
 	}
 
 	private List<File> obtainingFiles(
 		GitFactory factory, 
-		ObjectId commitId, 
+		Commit commit, 
 		String fileExtension) {
 		
 		var list = new ArrayList<File>();
 		try {
-			factory.treeStart(commitId, walk -> {
+			factory.treeStart(commit.id(), walk -> {
 				var file = new File(
+					commit,
 					walk.getPathString(), 
 					walk.getObjectId(0)
 				);
@@ -63,15 +68,15 @@ class CKMetric extends CK {
 	
 	
 	public void calculate(
-		ObjectId commitId, 
+		Commit commit, 
 		CKNotifier notifier) {
 
-		var factory = new GitFactory();
+		var factory = new GitFactory(this.repository);
 		var folder = factory.folder();
 
 		var storage = executor(notifier);
 
-		for (var file : obtainingFiles(factory, commitId, ".java")) {
+		for (var file : obtainingFiles(factory, commit, ".java")) {
 			ASTParser parser = ASTParser.newParser(AST.JLS11);
 			parser.setSource(file.get().toCharArray());
 

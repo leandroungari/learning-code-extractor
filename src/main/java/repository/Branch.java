@@ -8,23 +8,15 @@ import org.eclipse.jgit.lib.ObjectId;
 
 public class Branch {
 
+	private Repository repository;
 	private String name;
 	private ObjectId id;
 	
-	/**
-	 * This method instanciates a branch
-	 * @param name
-	 * @param id
-	 * @return
-	 */
-	public static Branch create(String name, ObjectId id) {
-		
-		return new Branch(name, id);
-	}
 	
-	private Branch(String name, ObjectId id) {
+	Branch(Repository repo, String name, String id) {
 		this.name = name;
-		this.id = id;
+		this.id = ObjectId.fromString(id);
+		this.repository = repo;
 	}
 	
 	/**
@@ -50,25 +42,56 @@ public class Branch {
 	 */
 	public List<Commit> commits() {
 		
-		var factory = new GitFactory();
+		var factory = new GitFactory(repository);
 		var list = new ArrayList<Commit>();
 		try {
 			
 			factory.commitStart(id, revcommit -> {
 		
-				list.add(Commit.create(revcommit.getId()));
+				list.add(0, new Commit(this, revcommit.getId()));
 			});
 
 		} catch (IOException e) {
-		
-			System.err.println(e.getMessage());
+			e.printStackTrace();
 		}
 		
 		return list;
 	}
+
+	public List<Commit> commits(Integer from, Integer to) {
+
+		var result = commits();
+		if(from < 0 || to > result.size()-1 || from > to) {
+			throw new Error("Invalid positions of range");
+		}
+		return result.subList(from, to+1);
+	}
+
+	public List<Commit> commits(Integer from, Integer to, Integer step) {
+
+		var result = new ArrayList<Commit>();
+		var sub = commits(from, to);
+		for(var i = 0; i < sub.size(); i+= step) {
+			result.add(sub.get(i));
+		}
+		return result;
+	}
+
+	public Commit commit(Integer position) {
+
+		var result = commits();
+		if(0 <= position && position < result.size()) {
+			return result.get(position);
+		}
+		throw new Error("Invalid position in range of commits");
+	}
 	
-	public Commit commit(ObjectId id) {
+	public Commit commit(String id) {
 		
-		return Commit.create(id);
+		return new Commit(this, ObjectId.fromString(id));
+	}
+
+	public Repository containedRepository() {
+		return repository;
 	}
 }

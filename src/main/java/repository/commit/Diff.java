@@ -1,7 +1,8 @@
 package repository.commit;
 
-import org.eclipse.jgit.diff.DiffEntry;
 import com.google.gson.Gson;
+
+import org.eclipse.jgit.diff.DiffEntry;
 
 public class Diff {
 
@@ -24,9 +25,9 @@ public class Diff {
 		this.type = type;
   }
   
-  public static String show(DiffEntry entry) {
+  /*public static String show(DiffEntry entry) {
     return entry.toString();
-  }
+  }*/
 	
 	public String type() {
 		return type;

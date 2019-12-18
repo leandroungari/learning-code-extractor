@@ -1,5 +1,6 @@
 package api.controller;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import org.eclipse.jgit.api.errors.GitAPIException;
@@ -9,6 +10,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import core.Player;
+import core.features.FeatureType;
 import repository.exception.GitRepositoryException;
 
 @RestController
@@ -21,15 +23,16 @@ public class Plots {
   public Map<String,Map<String,Double>> averageMetricsFiles(
     @PathVariable String repository, 
     @PathVariable String branch, 
-    @PathVariable Integer from, 
-    @PathVariable Integer to,
-    @PathVariable Integer step)
+    @PathVariable String from, 
+    @PathVariable String to,
+    @PathVariable String step)
       throws GitRepositoryException, 
              GitAPIException {
 
     return player
-      .metrics(repository)
-      .averageOfMetricsOfFiles(branch, from, to, step);
+      .<Map<String,Map<String,Double>>>get(FeatureType.AVERAGE_OF_METRICS_OF_FILES)
+      .setParams(repository,branch,from,to,step)
+      .action();
   }
 
   @GetMapping("/plots/sumMetricsFiles/{repository}/{branch}/{from}/{to}/{step}")
@@ -37,15 +40,16 @@ public class Plots {
   public Map<String,Map<String,Double>> sumMetricsFiles(
     @PathVariable String repository, 
     @PathVariable String branch, 
-    @PathVariable Integer from, 
-    @PathVariable Integer to,
-    @PathVariable Integer step)
+    @PathVariable String   from, 
+    @PathVariable String   to,
+    @PathVariable String   step)
       throws GitRepositoryException, 
              GitAPIException {
 
     return player
-      .metrics(repository)
-      .sumOfMetricsOfFiles(branch, from, to, step);
+      .<Map<String,Map<String,Double>>>get(FeatureType.SUM_OF_METRICS_OF_FILES)
+      .setParams(repository,branch,from,to,step)
+      .action();
   }
 
   @GetMapping("/plots/sumMetricsFiles/{repository}/{branch}/{from}/{to}/{step}/normalized")
@@ -53,15 +57,16 @@ public class Plots {
   public Map<String,Map<String,Double>> normalizedSumMetricsFiles(
     @PathVariable String repository, 
     @PathVariable String branch, 
-    @PathVariable Integer from, 
-    @PathVariable Integer to,
-    @PathVariable Integer step)
+    @PathVariable String from, 
+    @PathVariable String to,
+    @PathVariable String step)
       throws GitRepositoryException, 
              GitAPIException {
 
     return player
-      .metrics(repository)
-      .normalizedSumOfMetricsOfFiles(branch, from, to, step);
+      .<Map<String,Map<String,Double>>>get(FeatureType.NORMALIZED_SUM_OF_METRICS_OF_FILES)
+      .setParams(repository,branch,from,to,step)
+      .action();
   }
 
   @GetMapping("/plots/averageMetricsFiles/{repository}/{branch}/{from}/{to}/{step}/normalized")
@@ -69,31 +74,33 @@ public class Plots {
   public Map<String,Map<String,Double>> normalizedAverageMetricsFiles(
     @PathVariable String repository, 
     @PathVariable String branch, 
-    @PathVariable Integer from, 
-    @PathVariable Integer to,
-    @PathVariable Integer step)
+    @PathVariable String from, 
+    @PathVariable String to,
+    @PathVariable String step)
       throws GitRepositoryException, 
              GitAPIException {
 
     return player
-      .metrics(repository)
-      .normalizedAverageOfMetricsOfFiles(branch, from, to, step);
+      .<Map<String,Map<String,Double>>>get(FeatureType.NORMALIZED_AVERAGE_OF_METRICS_OF_FILES)
+      .setParams(repository,branch,from,to,step)
+      .action();
   }
 
   @GetMapping("/plots/evolution/{repository}/{branch}/{from}/{to}/{step}/{metric}")
   @ResponseBody
-  public Map<String,Map<String,Double>> evolutionOfFilesByMetrics(
+  public HashMap<String,HashMap<String,Double>> evolutionOfFilesByMetrics(
     @PathVariable String repository, 
     @PathVariable String branch, 
-    @PathVariable Integer from, 
-    @PathVariable Integer to,
-    @PathVariable Integer step,
+    @PathVariable String from, 
+    @PathVariable String to,
+    @PathVariable String step,
     @PathVariable String metric)
       throws GitRepositoryException, 
              GitAPIException {
 
     return player
-      .metrics(repository)
-      .evolutionOfFilesByMetrics(branch, from, to, step, metric);
+      .<HashMap<String,HashMap<String,Double>>>get(FeatureType.EVOLUTION_OF_FILES_BY_METRICS)
+      .setParams(repository,branch,from,to,step,metric)
+      .action();
   }
 }
