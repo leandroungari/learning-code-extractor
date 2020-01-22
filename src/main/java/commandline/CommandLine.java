@@ -5,6 +5,7 @@ import java.util.Arrays;
 
 import commandline.executors.Download;
 import commandline.executors.Metrics;
+import commandline.executors.MetricsFromDiffFiles;
 import commandline.executors.Test;
 import repository.exception.GitRepositoryException;
 
@@ -30,6 +31,12 @@ public class CommandLine {
 			
 		case "metrics":
 			executor = new Metrics();
+			break;
+
+		case "metrics-diff-files":
+			executor = new MetricsFromDiffFiles();
+			break;
+		
 		}
 		
 		if(executor != null) {
