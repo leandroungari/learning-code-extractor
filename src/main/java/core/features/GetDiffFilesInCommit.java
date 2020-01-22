@@ -43,7 +43,7 @@ public class GetDiffFilesInCommit implements RepositoryFeature<List<DiffFile>>{
     var listOfCommits = resource.read(Commit[].class);
     Commit commitItem = null;
     for (var i = 0; i < listOfCommits.length; i++) {
-      if (commit.equals(listOfCommits[i].getId().getName())) {
+      if (commit.equals(listOfCommits[i].getId())) {
         commitItem = listOfCommits[i];
       }
     }
@@ -88,7 +88,6 @@ public class GetDiffFilesInCommit implements RepositoryFeature<List<DiffFile>>{
 		for(var i = 0; i < listOfCommits.length; i++) {
 			if(listOfCommits[i]
 				.getId()
-				.getName()
 				.equals(commit)) {
 
 				listOfCommits[i].setDiffFiles(diffs);

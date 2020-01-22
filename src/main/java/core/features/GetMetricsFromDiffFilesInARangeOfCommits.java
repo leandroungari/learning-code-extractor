@@ -6,7 +6,6 @@ import java.util.Map;
 
 import org.eclipse.jgit.api.errors.GitAPIException;
 
-import core.controller.DataController;
 import repository.Commit;
 
 public class GetMetricsFromDiffFilesInARangeOfCommits 
@@ -17,8 +16,6 @@ public class GetMetricsFromDiffFilesInARangeOfCommits
   private Integer from;
   private Integer to;
   private Integer step;
-
-  private DataController data = new DataController();
 
   @Override
   public Feature<Map<String,Map<String,Map<String, Double>>>> setParams(String... params) {
