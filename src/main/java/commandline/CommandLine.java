@@ -4,6 +4,7 @@ import java.io.FileNotFoundException;
 import java.util.Arrays;
 
 import commandline.executors.Download;
+import commandline.executors.Metadata;
 import commandline.executors.Metrics;
 import commandline.executors.MetricsFromDiffFiles;
 import commandline.executors.Test;
@@ -35,6 +36,10 @@ public class CommandLine {
 
 		case "metrics-diff-files":
 			executor = new MetricsFromDiffFiles();
+			break;
+
+		case "metadata":
+			executor = new Metadata();
 			break;
 		
 		}
