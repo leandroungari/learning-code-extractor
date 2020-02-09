@@ -44,7 +44,7 @@ public class ASTComparator {
 
 	
 	@SuppressWarnings("rawtypes")
-	private List<Operation> editScript() {
+	public List<Operation> editScript() {
 
 		return diff.getAllOperations();
 	}

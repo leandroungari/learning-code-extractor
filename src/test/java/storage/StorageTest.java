@@ -1,38 +1,46 @@
 package storage;
 
+import static org.junit.Assert.assertTrue;
+
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 
 import org.junit.Test;
 
 import core.controller.SettingsController;
+import storage.storagetest.Person;
 
 public class StorageTest {
 
-  private class Person {
-
-    private String name;
-    private Integer age;
-
-    Person(String name, Integer age) {
-      this.name = name;
-      this.age = age;
-    }
-
-  }
-
   private static final String FILE = "teste.csv";
-  private static String FOLDER = 
-    SettingsController.get().folderOfMetadata().getAbsolutePath();
+  private static String FOLDER = SettingsController.get().folderOfMetadata().getAbsolutePath();
 
   @Test
   public void writeCSVFile() throws IOException {
 
     var storage = new Storage(FOLDER);
-    
-    storage.<Person>csv(FILE)
+
+    storage
+    .<Person>csv(FILE)
     .add(new Person("Leandro", 23))
     .add(new Person("Laura", 21))
     .add(new Person("Bruno", 24))
     .write();
+  }
+
+  @Test
+  public void readCSVFile() throws IOException, NoSuchMethodException, SecurityException, InstantiationException,
+      IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+
+    var storage = new Storage(FOLDER);
+    
+    var result = storage.<Person>csv(FILE)
+    .read(Person.class);
+
+    for(var p: result) {
+      System.out.println(p.getName() + " -- " + p.getAge());
+    }
+
+    assertTrue("The size is 3", result.size() == 3);
   }
 }

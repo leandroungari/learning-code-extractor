@@ -11,7 +11,7 @@ public class Storage {
     this.folder = folder;
   }
 
-  public <T> CSV<T> csv(String filename) {
+  public <T extends Storable<T>> CSV<T> csv(String filename) {
     
     this.filename = filename;
     return new CSV<T>(this);
