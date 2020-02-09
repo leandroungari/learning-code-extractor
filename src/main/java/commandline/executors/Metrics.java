@@ -44,7 +44,7 @@ public class Metrics implements Executor {
 			for(var b: branches) {
 				player
       	.<Map<String,MetricsData>>get(FeatureType.METRICS_IN_RANGE_COMMITS)
-      	.setParams(repository,b.getId().getName())
+      	.setParams(repository,b.getId())
       	.action();
 			}
 

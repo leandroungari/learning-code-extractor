@@ -3,8 +3,6 @@ package core.features;
 import java.util.stream.Collectors;
 
 import org.eclipse.jgit.api.errors.GitAPIException;
-import org.eclipse.jgit.lib.ObjectId;
-
 import core.data.Commit;
 import core.resource.Resource;
 import core.resource.ResourceTrack;
@@ -61,9 +59,7 @@ public class GetCommitsByBranch implements RepositoryFeature<Commit[]> {
 			.branch(branch)
 			.commits().stream()
 			.map(commit -> new Commit(
-				ObjectId.fromString(
-					commit.id().getName()
-				)
+				commit.id().getName()
 			))
 			.collect(Collectors.toList());
 		

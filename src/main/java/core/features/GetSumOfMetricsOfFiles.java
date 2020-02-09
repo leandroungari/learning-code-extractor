@@ -33,7 +33,7 @@ public class GetSumOfMetricsOfFiles implements Feature<Map<String, Map<String, D
     var result = new HashMap<String,Map<String,Double>>();
     var metrics = getMetricsFromCommits();
     metrics.forEach((commit, files) -> {
-      result.put(commit,stats.averageOfMetrics(files));
+      result.put(commit,stats.sumOfMetrics(files));
     });
 
     return result;

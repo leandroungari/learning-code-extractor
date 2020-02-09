@@ -59,7 +59,7 @@ public class GetBranches implements RepositoryFeature<Branch[]> {
 	  	.stream()
 	  	.map(branch -> new Branch(
 	  		branch.name(), 
-	  		branch.id()
+	  		branch.id().getName()
 	  	))
 	  	.collect(Collectors.toList());
     

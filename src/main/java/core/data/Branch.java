@@ -5,14 +5,14 @@ import org.eclipse.jgit.lib.ObjectId;
 public class Branch {
 
 	private String name;
-	private ObjectId id;
+	private String id;
   
   /**
    * This method creates a reference to a branch
    * @param name Name of branch ex.: "refs/origin/master"
    * @param id ID of branch (hash)
    */
-	public Branch(String name, ObjectId id) {
+	public Branch(String name, String id) {
 		this.name = name;
 		this.id = id;
 	}
@@ -35,14 +35,14 @@ public class Branch {
   /**
    * It gets the ID of the branch
    */
-	public ObjectId getId() {
+	public String getId() {
 		return id;
 	}
 
   /**
    * It sets the ID of the branch
    */
-	public void setId(ObjectId id) {
+	public void setId(String id) {
 		this.id = id;
 	}
 }
