@@ -28,23 +28,41 @@ public class CSV<T> {
     return this;
   }
 
-  private String[] getAttributesOfElements() {
-    
-    if(content.isEmpty()) throw new Error("CSV content must not be empty!");
-    
+  private String[] getAttributesOfElement() {
+
+    if (content.isEmpty())
+      throw new Error("CSV content must not be empty!");
+
     var fields = content.get(0).getClass().getDeclaredFields();
-    
+
     var names = new ArrayList<>();
-    Arrays.asList(fields)
-    .stream()
-    .forEach(field -> {
+    Arrays.asList(fields).stream().forEach(field -> {
       var name = field.getName();
-      if(!(name.contains("this"))) {
-        names.add(field.getName());
+      if (!(name.contains("this"))) {
+        names.add(name);
       }
     });
 
-    return names.toArray(new String[fields.length]);
+    return names.toArray(new String[names.size()]);
+  }
+
+  public List<String> getValuesOfElement(T item) {
+
+    var values = new ArrayList<String>();
+
+    try {
+      for (var attribute : getAttributesOfElement()) {
+        if (attribute != null) {
+
+          var field = item.getClass().getDeclaredField(attribute);
+          field.setAccessible(true);
+          values.add(field.get(item).toString());
+        }
+      }
+    } catch (NoSuchFieldException | SecurityException | IllegalArgumentException | IllegalAccessException e) {
+      throw new Error("Failed extraction of values of object!");
+    }
+    return values;
   }
 
   public void write() throws IOException {
@@ -54,34 +72,22 @@ public class CSV<T> {
       Paths.get(file.getAbsolutePath())
     );
 
-    try(var printer = new CSVPrinter(
+    var printer = new CSVPrinter(
       writer, 
       CSVFormat.DEFAULT
-      .withHeader(getAttributesOfElements())
-    )) {
+      .withHeader(getAttributesOfElement())
+      .withDelimiter(',')
+    );
 
-      var values = new ArrayList<String>();
-      for(var item: content) {
-        
-        for(var attribute: getAttributesOfElements()) {
-          if(attribute != null) {
-            var field = item.getClass().getDeclaredField(attribute);
-            field.setAccessible(true);
-            values.add(field.get(item).toString());
-          }
-        }
-        printer.printRecords(item);
-
-        values.clear();
-      }
-      printer.close();
-    } catch (NoSuchFieldException | SecurityException | IllegalArgumentException | IllegalAccessException e) {
-      e.printStackTrace();
-    }
-
+    var result = content
+      .stream()
+      .map(item -> getValuesOfElement(item))
+      .collect(Collectors.toList());
+    
+    printer.printRecords(result);
+    printer.flush();
+    printer.close();
     writer.close();
   }
-
-  
 
 }

@@ -21,7 +21,8 @@ public class StorageTest {
   }
 
   private static final String FILE = "teste.csv";
-  private static String FOLDER = SettingsController.get().folderOfMetadata().getAbsolutePath();
+  private static String FOLDER = 
+    SettingsController.get().folderOfMetadata().getAbsolutePath();
 
   @Test
   public void writeCSVFile() throws IOException {
