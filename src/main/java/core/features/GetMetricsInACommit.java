@@ -5,8 +5,10 @@ import java.util.Map;
 import org.eclipse.jgit.api.errors.GitAPIException;
 
 import core.controller.DataController;
+import core.data.MetricsData;
 
-public class GetMetricsInACommit implements RepositoryFeature<Map<String, Map<String, Double>>> {
+public class GetMetricsInACommit 
+  implements RepositoryFeature<Map<String, MetricsData>> {
 
   private DataController data = new DataController();
 
@@ -15,7 +17,7 @@ public class GetMetricsInACommit implements RepositoryFeature<Map<String, Map<St
   private String commit;
 
   @Override
-  public Feature<Map<String, Map<String, Double>>> setParams(String... params) {
+  public Feature<Map<String, MetricsData>> setParams(String... params) {
 
     repository = params[0];
     branch = params[1];
@@ -24,15 +26,20 @@ public class GetMetricsInACommit implements RepositoryFeature<Map<String, Map<St
   }
 
   @Override
-  public Map<String, Map<String, Double>> action() {
+  public Map<String, MetricsData> action() {
 
     var repo = createRepository(repository);
-
     try {
-      return data.metrics(repository, repo.branch(branch).commit(commit));
+
+      return data.metrics(
+        repository, 
+        repo.branch(branch).commit(commit)
+      );
+
     } catch (GitAPIException e) {
       e.printStackTrace();
     }
+
     return null;
   }
 }

@@ -4,7 +4,7 @@ import java.util.HashMap;
 
 public class ResourceTrack {
 
-  private static HashMap<ResourceType, Resource> list;
+  private static HashMap<ResourceType, Resource<?>> list;
 
   public ResourceTrack() {
     
@@ -23,12 +23,13 @@ public class ResourceTrack {
 		}
 	}
 
-	public Resource get(ResourceType type) {
+	@SuppressWarnings("unchecked")
+	public <T> Resource<T> get(ResourceType type) {
 
-    return list.get(type);
+    return (Resource<T>) list.get(type);
   }
 
-  private void addResource(ResourceType type, Resource resource) {
+  private <T> void addResource(ResourceType type, Resource<T> resource) {
 		
 		list.put(type, resource);
 	}

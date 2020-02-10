@@ -3,8 +3,6 @@ package storage;
 import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
-
 import org.junit.Test;
 
 import core.controller.SettingsController;
@@ -29,18 +27,17 @@ public class StorageTest {
   }
 
   @Test
-  public void readCSVFile() throws IOException, NoSuchMethodException, SecurityException, InstantiationException,
-      IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+  public void readCSVFile() throws IOException {
 
     var storage = new Storage(FOLDER);
     
     var result = storage.<Person>csv(FILE)
-    .read(Person.class);
+      .read(Person.class);
 
     for(var p: result) {
       System.out.println(p.getName() + " -- " + p.getAge());
     }
 
-    assertTrue("The size is 3", result.size() == 3);
+    assertTrue("The size is 3", result.length == 3);
   }
 }

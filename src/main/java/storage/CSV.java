@@ -2,6 +2,7 @@ package storage;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Array;
 import java.lang.reflect.InvocationTargetException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -30,6 +31,11 @@ public class CSV<T extends Storable<T>> {
 
     if(type == null) type = (Class<T>) item.getClass();
     content.add(item);
+    return this;
+  }
+
+  public CSV<T> addAll(T[] items) {
+    content = List.of(items);
     return this;
   }
 
@@ -69,7 +75,8 @@ public class CSV<T extends Storable<T>> {
    * @return
    * @throws IOException
    */
-  public List<T> read(Class<T> type) 
+  @SuppressWarnings("unchecked")
+  public T[] read(Class<T> type) 
     throws IOException {
 
     var result = new ArrayList<T>();
@@ -84,7 +91,7 @@ public class CSV<T extends Storable<T>> {
 
     parser.close();
 
-    return result;
+    return result.toArray((T[]) Array.newInstance(type, result.size()));
   }
 
   private String[] createValues(CSVRecord record, T data) {

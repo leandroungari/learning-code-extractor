@@ -9,8 +9,10 @@ import org.eclipse.jgit.api.errors.GitAPIException;
 
 import core.controller.DataController;
 import core.data.DiffFile;
+import core.data.MetricsData;
 
-public class GetMetricsFromDiffFilesInACommit implements RepositoryFeature<Map<String, Map<String, Double>>> {
+public class GetMetricsFromDiffFilesInACommit 
+  implements RepositoryFeature<Map<String,MetricsData>> {
 
   private DataController data = new DataController();
 
@@ -19,7 +21,7 @@ public class GetMetricsFromDiffFilesInACommit implements RepositoryFeature<Map<S
   private String commit;
 
   @Override
-  public Feature<Map<String, Map<String, Double>>> setParams(String... params) {
+  public Feature<Map<String, MetricsData>> setParams(String... params) {
 
     repository = params[0];
     branch = params[1];
@@ -28,19 +30,23 @@ public class GetMetricsFromDiffFilesInACommit implements RepositoryFeature<Map<S
   }
 
   @Override
-  public Map<String, Map<String, Double>> action() {
+  public Map<String,MetricsData> action() {
 
     var repo = createRepository(repository);
-    var result = new HashMap<String, Map<String,Double>>();
+    var result = new HashMap<String, MetricsData>();
 
     try {
-      var metrics = data.metrics(repository, repo.branch(branch).commit(commit));
+      var metrics = data.metrics(
+        repository, 
+        repo.branch(branch).commit(commit)
+      );
 
       var modifiedFiles = getModifiedFilesFromCommit();
 
-      metrics.forEach((file,data) -> {
-        
-        if(modifiedFiles.contains(file)) result.put(file, data);
+      metrics.forEach((file, metric) -> {
+        if(modifiedFiles.contains(metric.getFile())) {
+          result.put(metric.getFile(), metric);
+        }
       });
 
     } catch (GitAPIException e) {

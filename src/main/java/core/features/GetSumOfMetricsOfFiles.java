@@ -3,7 +3,7 @@ package core.features;
 import java.util.HashMap;
 import java.util.Map;
 
-import core.controller.stats.StatsController;
+import core.controller.StatsController;
 
 public class GetSumOfMetricsOfFiles implements Feature<Map<String, Map<String, Double>>> {
 

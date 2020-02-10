@@ -1,24 +1,64 @@
 package core.resource;
 
-public class ListOfCommitsResource extends Resource {
+import java.io.IOException;
+
+import core.data.Commit;
+import storage.Storage;
+
+public class ListOfCommitsResource extends Resource<Commit[]> {
+
+  private final String FILENAME = "commits.json";
+
+  private String repository;
+  private String branch;
 
   ListOfCommitsResource() {
-    file = "commits.json";
+    
   }
 
   @Override
-  public Resource setParams(String... params) {
+  public Resource<Commit[]> setParams(String... params) {
   
     repository = params[0];
-    folder = params[1];
+    branch = params[1];
+
+    storage = new Storage(
+      settings.folderOfMetadata()
+      .getAbsolutePath() +
+      "/" + repository + 
+      "/" + branch + 
+      "/"
+    );
 
     return this;
   }
 
   @Override
-  protected String getBaseFolder() {
+  public Commit[] read(Class<Commit[]> type) {
     
-    return settings.folderOfMetadata().getAbsolutePath();
+    try {
+      return storage
+      .<Commit[]>json(FILENAME)
+      .read(Commit[].class);
+    }
+    catch(IOException e) {
+      e.printStackTrace();
+    }
+
+    return null;
+  }
+
+  @Override
+  public void write(Commit[] data) {
+    
+    try {
+      storage
+      .<Commit[]>json(FILENAME)
+      .write(data);
+    }
+    catch(IOException e) {
+      e.printStackTrace();
+    }
   }
 
 }

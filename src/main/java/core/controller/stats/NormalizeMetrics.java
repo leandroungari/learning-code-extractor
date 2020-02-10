@@ -1,121 +1,140 @@
 package core.controller.stats;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
-class NormalizeMetrics {
+import core.data.MetricsData;
 
-  private Map<String,Map<String,Double>> data;
-  private Map<String,Map<String,Double>> limits;
+public class NormalizeMetrics {
 
-  NormalizeMetrics(Map<String,Map<String,Double>> metrics) {
+  private Map<String,MetricsData> data;
+  private Map<String,MetricsData> limits;
+
+  public NormalizeMetrics(Map<String,MetricsData> metrics) {
     data = metrics;
   }
 
-  public Map<String, Map<String, Double>> execute() {
+  public Map<String, MetricsData> execute() {
     
     limits = extractMinMaxOfRangeOfValues();
     return normalize();
   }
 
-  public Map<String,Map<String, Double>> normalize() {
+  public Map<String,MetricsData> normalize() {
 
-    var result = new HashMap<String,Map<String,Double>>();
-    data.forEach((commit,metrics) -> {
-      result.put(commit, Map.<String,Double>of(
-        "cbo", normalizeMetric("cbo", metrics),
-        "dit", normalizeMetric("dit", metrics),
-        "nosi", normalizeMetric("nosi", metrics),
-        "rfc", normalizeMetric("rfc", metrics),
-        "wmc", normalizeMetric("wmc", metrics)
+    var result = new HashMap<String,MetricsData>();
+    data.forEach((commit,values) -> {
+      
+      var metric = new MetricsData();
+      metric.setCbo(transform(
+        limits.get("min").getCbo(), 
+        limits.get("max").getCbo(), 
+        values.getCbo()
       ));
+      metric.setWmc(transform(
+        limits.get("min").getWmc(), 
+        limits.get("max").getWmc(), 
+        values.getWmc()
+      ));
+      metric.setNosi(transform(
+        limits.get("min").getNosi(), 
+        limits.get("max").getNosi(), 
+        values.getNosi()
+      ));
+      metric.setRfc(transform(
+        limits.get("min").getRfc(), 
+        limits.get("max").getRfc(), 
+        values.getRfc()
+      ));
+      metric.setDit(transform(
+        limits.get("min").getDit(), 
+        limits.get("max").getDit(), 
+        values.getDit()
+      ));
+
+      
     });
 
     return result;
   }
 
-  private Double normalizeMetric(String metric, Map<String, Double> item) {
+  private Double transform(Double min, Double max, Double value) {
 
-    return (
-      item.get(metric) - limits.get(metric).get("min")/
-      (
-        limits.get(metric).get("max") - limits.get(metric).get("min") != 0 ?
-        limits.get(metric).get("max") - limits.get(metric).get("min") :
-        1
-      )
+    return (value - min/(max - min != 0 ? max - min : 1));
+  }
+
+
+  private Map<String,MetricsData> extractMinMaxOfRangeOfValues() {
+
+    return Map.of(
+      "min", extractMin(),
+      "max", extractMax()
     );
   }
 
-  private Map<String,Map<String,Double>> initializeComparator() {
-    
-    var first = extractFirstElement();
-    return cloneElement(first);
+  private MetricsData extractMin() {
+
+    var result = new MetricsData();
+
+    result.setWmc(
+      data.values().stream()
+      .map(metric -> metric.getWmc()).min(Double::compare).get()
+    );
+
+    result.setCbo(
+      data.values().stream()
+      .map(metric -> metric.getCbo()).min(Double::compare).get()
+    );
+
+    result.setDit(
+      data.values().stream()
+      .map(metric -> metric.getDit()).min(Double::compare).get()
+    );
+
+    result.setNosi(
+      data.values().stream()
+      .map(metric -> metric.getNosi()).min(Double::compare).get()
+    );
+
+    result.setRfc(
+      data.values().stream()
+      .map(metric -> metric.getNosi()).min(Double::compare).get()
+    );
+
+    return result;
   }
 
-  private Map<String, Map<String, Double>> cloneElement(Map<String, Double> element) {
-    var result = new HashMap<String,Map<String,Double>>();
-    element.forEach((metric,value) -> {
-      result.put(metric, Map.of("min",value,"max",value));
-    });
+  private MetricsData extractMax() {
+
+    var result = new MetricsData();
+
+    result.setWmc(
+      data.values().stream()
+      .map(metric -> metric.getWmc()).max(Double::compare).get()
+    );
+
+    result.setCbo(
+      data.values().stream()
+      .map(metric -> metric.getCbo()).max(Double::compare).get()
+    );
+
+    result.setDit(
+      data.values().stream()
+      .map(metric -> metric.getDit()).max(Double::compare).get()
+    );
+
+    result.setNosi(
+      data.values().stream()
+      .map(metric -> metric.getNosi()).max(Double::compare).get()
+    );
+
+    result.setRfc(
+      data.values().stream()
+      .map(metric -> metric.getNosi()).max(Double::compare).get()
+    );
+
     return result;
   }
 
 
-  private Map<String, Double> extractFirstElement() {
-
-    return data
-      .values()
-      .stream()
-      .collect(Collectors.toList())
-      .get(0);
-  }
-
-  private Map<String,Map<String,Double>> extractMinMaxOfRangeOfValues() {
-
-    var comparator = initializeComparator();
-    var values = extractValuesFromMetrics(data);
-
-    return generateMinMax(comparator, values);
-  }
-
-  private ArrayList<ArrayList<Double>> extractValuesFromMetrics(Map<String, Map<String, Double>> set) {
-
-    var values = new ArrayList<ArrayList<Double>>();
-    values.add(new ArrayList<Double>());
-    values.add(new ArrayList<Double>());
-    values.add(new ArrayList<Double>());
-    values.add(new ArrayList<Double>());
-    values.add(new ArrayList<Double>());
-  
-    for(Map<String,Double> item: set.values()) {
-      
-      values.get(0).add(item.get("cbo"));
-      values.get(1).add(item.get("dit"));
-      values.get(2).add(item.get("nosi"));
-      values.get(3).add(item.get("rfc"));
-      values.get(4).add(item.get("nosi"));
-    }
-
-    return values;
-  }
-
-  private Map<String, Map<String, Double>> generateMinMax(
-    Map<String,Map<String,Double>> comparator,
-    ArrayList<ArrayList<Double>> values) {
-
-    var label = new String[]{"cbo","dit","nosi","rfc","wmc"};
-    var pointer = 0;
-    for(List<Double> list: values) {
-      comparator.put(label[pointer], Map.<String,Double>of(
-        "min", list.stream().min(Double::compare).get(),
-        "max", list.stream().max(Double::compare).get()
-      ));
-
-      pointer++;
-    }
-    return comparator;
-  }
 }

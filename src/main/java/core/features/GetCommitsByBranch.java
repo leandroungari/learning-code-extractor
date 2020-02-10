@@ -14,7 +14,7 @@ public class GetCommitsByBranch implements RepositoryFeature<Commit[]> {
   private String repository;
   private String branch;
 
-  private Resource resource;
+  private Resource<Commit[]> resource;
 
   private ResourceTrack track = new ResourceTrack();
 
@@ -33,7 +33,7 @@ public class GetCommitsByBranch implements RepositoryFeature<Commit[]> {
     try {
       
       resource = track
-        .get(ResourceType.LIST_OF_COMMITS)
+        .<Commit[]>get(ResourceType.LIST_OF_COMMITS)
         .setParams(repository, branch);
 
       if (!resource.exists()) {
@@ -63,7 +63,7 @@ public class GetCommitsByBranch implements RepositoryFeature<Commit[]> {
 			))
 			.collect(Collectors.toList());
 		
-		resource.write(list);
+		resource.write(list.toArray(new Commit[list.size()]));
   }
 
 }

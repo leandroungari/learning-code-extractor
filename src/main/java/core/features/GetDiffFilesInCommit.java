@@ -17,7 +17,7 @@ public class GetDiffFilesInCommit implements RepositoryFeature<List<DiffFile>>{
   private String branch;
   private String commit;
 
-  private Resource resource;
+  private Resource<Commit[]> resource;
 
   private ResourceTrack track = new ResourceTrack();
 
@@ -35,7 +35,7 @@ public class GetDiffFilesInCommit implements RepositoryFeature<List<DiffFile>>{
   public List<DiffFile> action() {
     
     resource = track
-      .get(ResourceType.LIST_OF_COMMITS)
+      .<Commit[]>get(ResourceType.LIST_OF_COMMITS)
       .setParams(repository, branch);
 
     createResource();

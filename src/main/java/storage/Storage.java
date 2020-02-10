@@ -2,6 +2,8 @@ package storage;
 
 import java.io.File;
 
+import util.FileUtil;
+
 public class Storage {
 
   private String folder;
@@ -17,6 +19,12 @@ public class Storage {
     return new CSV<T>(this);
   }
 
+  public <T> JSON<T> json(String filename) {
+
+    this.filename = filename;
+    return new JSON<T>(this);
+  }
+
   File resource() {
 
     var folder = new File(this.folder);
@@ -24,7 +32,8 @@ public class Storage {
     return new File(folder + "/" + filename);
   }
 
-  public String file() {
-    return filename;
-  }
+  public boolean exists() {
+    
+		return FileUtil.folderExists(resource());
+	}
 }

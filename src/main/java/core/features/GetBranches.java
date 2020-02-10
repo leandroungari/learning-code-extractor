@@ -14,7 +14,7 @@ public class GetBranches implements RepositoryFeature<Branch[]> {
 
   private String repository;
 
-  private Resource resource;
+  private Resource<Branch[]> resource;
 
   private ResourceTrack track = new ResourceTrack();
 
@@ -32,7 +32,7 @@ public class GetBranches implements RepositoryFeature<Branch[]> {
     try {
     
       resource = track
-        .get(ResourceType.LIST_OF_BRANCHES)
+        .<Branch[]>get(ResourceType.LIST_OF_BRANCHES)
         .setParams(repository);
 
       if (!resource.exists()) {
@@ -63,7 +63,7 @@ public class GetBranches implements RepositoryFeature<Branch[]> {
 	  	))
 	  	.collect(Collectors.toList());
     
-	  resource.write(list); 
+	  resource.write(list.toArray(new Branch[list.size()])); 
     
   }
   

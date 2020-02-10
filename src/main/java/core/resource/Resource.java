@@ -1,16 +1,11 @@
 package core.resource;
 
-import com.google.gson.Gson;
-
 import core.controller.SettingsController;
-import util.FileUtil;
-import util.Storage;
+import storage.Storage;
 
-public abstract class Resource {
+public abstract class Resource<T> {
 
-	protected String repository;
-	protected String folder;
-	protected String file;
+	protected Storage storage;
 
 	protected static SettingsController settings;
 
@@ -25,51 +20,19 @@ public abstract class Resource {
 		}
 	}
 
-	public abstract Resource setParams(String... params);
-
-	protected abstract String getBaseFolder();
-	
-	protected String getFolder() {
-
-		return getBaseFolder()
-      + "/" 
-      + repository 
-      + (folder == null || "".equals(folder) ? "" : "/" + folder);
+	public Storage storage() {
+		return storage;
 	}
 
-	protected String getFile() {
-		
-		return (file == null ? "" : file);
-	}
+	public abstract Resource<T> setParams(String... params);
+
+	public abstract T read(Class<T> type);
+
+	public abstract void write(T data);
 
 	public boolean exists() {
 
-		var storage = new Storage(getFolder());
-		return storage.exists(getFile());
-	}
-
-	public <T> T read(Class<T> type) {
-
-		String content = new Storage(getFolder())
-			.get(getFile());
-
-		var gson = new Gson();
-		return gson.fromJson(content, type);
-	}
-
-	public <T> void write(T data) {
-
-		var gson = new Gson();
-		var content = gson.toJson(data);
-		
-		new Storage(getFolder()).file(getFile(), content);
-	}
-	
-	public void delete() {
-		
-		FileUtil.deleteFolder(
-			new Storage(getFolder()).getFile(getFile())
-		);
+		return storage().exists();
 	}
 
 }

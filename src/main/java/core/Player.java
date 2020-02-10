@@ -23,7 +23,6 @@ import core.features.GetNumberOfContributorsByBranch;
 import core.features.GetNumberOfFilesInCommitsByBranch;
 import core.features.GetRelevantCommitsOfBranchByMetrics;
 import core.features.GetSumOfMetricsOfFiles;
-import core.features.ListAvailableRepositories;
 
 public class Player {
 
@@ -48,7 +47,6 @@ public class Player {
       add(FeatureType.DIFF_FILES_IN_COMMIT, new GetDiffFilesInCommit());
       add(FeatureType.DIFF_IN_COMMIT, new GetDiffInCommit());
 
-      add(FeatureType.LIST_AVAILABLE_REPOSITORIES, new ListAvailableRepositories());
       add(FeatureType.METRICS_IN_COMMIT, new GetMetricsInACommit());
       add(FeatureType.METRICS_IN_RANGE_COMMITS, new GetMetricsInARangeOfCommits());
       add(FeatureType.RELEVANT_COMMITS_BY_METRIC, new GetRelevantCommitsOfBranchByMetrics());

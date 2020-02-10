@@ -8,7 +8,8 @@ import java.util.Map;
 import org.eclipse.jgit.api.errors.GitAPIException;
 
 import core.controller.DataController;
-import core.controller.stats.StatsController;
+import core.controller.StatsController;
+import core.data.MetricsData;
 import repository.Commit;
 
 public class GetRelevantCommitsOfBranchByMetrics 
@@ -49,9 +50,9 @@ public class GetRelevantCommitsOfBranchByMetrics
     return data;
   }
 
-  private List<Map<String,Double>> sort(Map<String, Map<String, Double>> values) {
+  private List<MetricsData> sort(Map<String, MetricsData> values) {
 
-    var list = new ArrayList<Map<String,Double>>();
+    var list = new ArrayList<MetricsData>();
     values.forEach((id, metrics) -> {
       list.add(Map.<String,Double>of(id,metrics.get(metric)));
     });
@@ -69,9 +70,9 @@ public class GetRelevantCommitsOfBranchByMetrics
     return value.values().toArray(new Double[1])[0];
   }
 
-  private List<Map<String,Double>> identifyBadCommits(List<Map<String,Double>> list) {
+  private List<MetricsData> identifyBadCommits(List<MetricsData> list) {
 
-    var bad = new ArrayList<Map<String, Double>>();
+    var bad = new ArrayList<MetricsData>();
     for(var i = Math.round(list.size()/2); i < list.size(); i++) {
       bad.add(0, list.get(i));
     }
@@ -79,9 +80,9 @@ public class GetRelevantCommitsOfBranchByMetrics
     return bad;
   } 
 
-  private List<Map<String, Double>> identifyGoodCommits (List<Map<String,Double>> list) {
+  private List<MetricsData> identifyGoodCommits (List<MetricsData> list) {
 
-    var good = new ArrayList<Map<String, Double>>();
+    var good = new ArrayList<MetricsData>();
     for(var i = 0; i < Math.round(list.size()/2); i++) {
       good.add(list.get(i));
     }
@@ -89,13 +90,13 @@ public class GetRelevantCommitsOfBranchByMetrics
     return good;
   }
 
-  private Map<String, Map<String, Double>> calculateDerivateOfAllCommits() {
+  private Map<String, MetricsData> calculateDerivateOfAllCommits() {
 
     try {
       var repo = createRepository(repository);
       var commits = repo.branch(branch).commits();
 
-      var result = new HashMap<String,Map<String,Double>>();
+      var result = new HashMap<String,MetricsData>();
       for(var i = 0; i < commits.size() - 1; i++) {
         result.put(
           commits.get(i+1).id().name(),
@@ -112,9 +113,9 @@ public class GetRelevantCommitsOfBranchByMetrics
     return null;
   }
 
-  private Map<String, Double> derivateMetricsFromCommits(Commit firstCommit, Commit lastCommit) {
+  private MetricsData derivateMetricsFromCommits(Commit firstCommit, Commit lastCommit) {
     
-    Map<String, Double> metricsFromFirstCommit, metricsFromLastCommit;
+    MetricsData metricsFromFirstCommit, metricsFromLastCommit;
 
     if(SUM_OPERATION.equals(type)) {
       metricsFromFirstCommit = calculateMetricsFromCommitBySum(firstCommit);
@@ -128,28 +129,27 @@ public class GetRelevantCommitsOfBranchByMetrics
     return derivateValues(metricsFromFirstCommit, metricsFromLastCommit);
   }
 
-  private Map<String,Double> calculateMetricsFromCommitByAverage(Commit commit) {
+  private MetricsData calculateMetricsFromCommitByAverage(Commit commit) {
     
     var metrics = data.metrics(repository, commit);
     return stats.averageOfMetrics(metrics);
   }
 
-  private Map<String,Double> calculateMetricsFromCommitBySum(Commit commit) {
+  private MetricsData calculateMetricsFromCommitBySum(Commit commit) {
     
     var metrics = data.metrics(repository, commit);
     return stats.sumOfMetrics(metrics);
   }
 
-  private Map<String,Double> derivateValues(Map<String,Double> a, Map<String,Double> b) {
+  private MetricsData derivateValues(MetricsData a, MetricsData b) {
 
-    var result = new HashMap<String,Double>();
-  
-    result.put("cbo", ((b.get("cbo") - a.get("cbo"))/2));
-    result.put("dit", ((b.get("dit") - a.get("dit"))/2));
-    result.put("nosi", ((b.get("nosi") - a.get("nosi"))/2));
-    result.put("rfc", ((b.get("rfc") - a.get("rfc"))/2));
-    result.put("wmc", ((b.get("wmc") - a.get("wmc"))/2));
-    
+    var result = new MetricsData();
+    result.setCbo((b.getCbo() - a.getCbo())/2);
+    result.setDit((b.getDit() - a.getDit())/2);
+    result.setRfc((b.getRfc() - a.getRfc())/2);
+    result.setWmc((b.getWmc() - a.getWmc())/2);
+    result.setNosi((b.getNosi() - a.getNosi())/2);
+
     return result;
   }
 

@@ -20,31 +20,6 @@ public class FileUtil {
 		return file.exists();
 	}
 	
-	public static void createFile(String path, String data) {
-		
-		try {
-      var out = new FileOutputStream(new File(path));
-      out.write(data.getBytes());
-      out.close();
-    } catch (IOException e) {
-      System.err.println(e.getMessage());
-    }
-		
-	}
-	
-	public static String readFile(String path) {
-	  
-	  try {
-      var in = new FileInputStream(new File(path));
-      var data = new String(in.readAllBytes());
-      in.close();
-      return data;
-    } catch (IOException e) {
-      System.err.println(e.getMessage());
-    }
-	  return null;
-	}
-	
 	public static List<String> listOfFolders(File parentFolder) {
 	  
 	  var list = new ArrayList<String>();
@@ -73,6 +48,21 @@ public class FileUtil {
 	public static void deleteFolder(File file) {
 		
 		file.delete();
+	}
+
+	public static void createFile(String path, String data) throws IOException {
+		
+    var out = new FileOutputStream(new File(path));
+    out.write(data.getBytes());
+    out.close();
+	}
+	
+	public static String readFile(String path) throws IOException {
+	  
+    var in = new FileInputStream(new File(path));
+    var data = new String(in.readAllBytes());
+    in.close();
+    return data;
 	}
 	
 }

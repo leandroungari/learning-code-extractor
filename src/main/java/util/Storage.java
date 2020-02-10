@@ -6,7 +6,7 @@ public class Storage {
 
 	private String path;
 	
-	public Storage(String path) {
+	/*public Storage(String path) {
 		this.path = path;
 	}
 	
@@ -32,9 +32,7 @@ public class Storage {
 	public File getFile(String filename) {
 		
 		return new File(path + "/" + filename);
-	}
+	}*/
+
 	
-	public boolean exists(String fileOrFolder) {
-		return FileUtil.folderExists(new File(path + "/" + fileOrFolder));
-	}
 }

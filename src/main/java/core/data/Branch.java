@@ -1,12 +1,16 @@
 package core.data;
 
-import org.eclipse.jgit.lib.ObjectId;
+import storage.Storable;
 
-public class Branch {
+public class Branch implements Storable<Branch> {
 
 	private String name;
 	private String id;
   
+  public Branch() {
+
+  }
+
   /**
    * This method creates a reference to a branch
    * @param name Name of branch ex.: "refs/origin/master"
@@ -45,4 +49,26 @@ public class Branch {
 	public void setId(String id) {
 		this.id = id;
 	}
+
+  @Override
+  public String[] attributes() {
+    
+    return new String[]{"name","id"};
+  }
+
+  @Override
+  public String[] write() {
+    
+    return new String[]{
+      getName(), 
+      getId()
+    };
+  }
+
+  @Override
+  public Branch read(String[] values) {
+    setName(values[0]);
+    setId(values[1]);
+    return this;
+  }
 }

@@ -1,8 +1,11 @@
 package core.controller;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+
+import com.github.mauricioaniche.ck.CKClassResult;
 
 import core.data.MetricsData;
 import core.resource.Resource;
@@ -18,53 +21,44 @@ public class DataController {
   private static final MetricsAnalyzer analyzer = new MetricsAnalyzer();
   private static final SettingsController settings = SettingsController.get();
 
-  private static final Integer CBO = 0;
-  private static final Integer DIT = 1;
-  private static final Integer NOSI = 4;
-  private static final Integer RFC = 5;
-  private static final Integer WMC = 6;
-
   private ResourceTrack track = new ResourceTrack();
 
-  private Resource resource;
+  private Resource<MetricsData[]> resource;
+  private String repository;
 
-  public Map<String, Map<String, Double>> metrics(String repository, Commit commit) {
+  public Map<String,MetricsData> metrics(String repository, Commit commit) {
+
+    this.repository = repository;
 
     resource = track
-      .get(ResourceType.METRICS_FILES)
+      .<MetricsData[]>get(ResourceType.METRICS_FILES)
       .setParams(repository, commit.id().getName());
 
-    if (!resource.exists()) {
+    if (!resource.storage().exists()) {
       analyzeCommit(repository, commit);
     }
 
-    var metrics = resource.read(MetricsData.class);
-    return convertFileMetricsToMap(metrics);
+    var result = resource.read(MetricsData[].class);
+    var map = new HashMap<String,MetricsData>();
+
+    for(var metric: result) {
+      map.put(metric.getFile(), metric);
+    }
+
+    return map;
   }
 
-  private HashMap<String, Map<String, Double>> convertFileMetricsToMap(MetricsData metrics) {
-    
-    var result = new HashMap<String,Map<String,Double>>();
 
-    metrics.getFiles().forEach((file,data) -> {
-      result.put(
-        file,
-        Map.of(
-          "cbo", data[CBO],
-          "dit", data[DIT],
-          "nosi", data[NOSI],
-          "rfc", data[RFC],
-          "wmc", data[WMC]
-        )
-      );
-    });
-
-    return result;
-  }
+  private String filterFilename(String path) {
+		var position = path
+  		.lastIndexOf(repository + repository.length()) + 1;
+  	
+  	return path.substring(position);
+	}
 
   private void analyzeCommit(String repository, Commit commit) {
     
-    var data = new MetricsData();
+    var data = new ArrayList<MetricsData>();
     
     try {
       analyzer
@@ -74,14 +68,31 @@ public class DataController {
       )))
       .enableLogs(false)
       .process(commit, (file, result) -> {
-        data.addFiles(file, result);
+        var metrics = createMetrics(file, result);        
+	      data.add(metrics);
       });
     }
     catch(GitRepositoryException e) {
       e.printStackTrace();
     }
-    
+  
+    resource.write(data.toArray(new MetricsData[data.size()]));
+  }
 
-    resource.write(data);
+  private MetricsData createMetrics(String file, CKClassResult result) {
+
+    var metrics = new MetricsData();
+		metrics.setFile(filterFilename(result.getFile()));
+		metrics.setCbo((double) result.getCbo());
+		metrics.setDit((double) result.getDit());
+		metrics.setLcom((double) result.getLcom());
+		metrics.setLoc((double) result.getLoc());
+		metrics.setNosi((double) result.getNosi());
+		metrics.setNumberOfFields((double) result.getNumberOfFields());
+		metrics.setNumberOfMethods((double) result.getNumberOfMethods());
+		metrics.setRfc((double) result.getRfc());
+    metrics.setWmc((double) result.getWmc());
+    
+    return metrics;
   }
 }

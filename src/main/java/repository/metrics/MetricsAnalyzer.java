@@ -2,6 +2,7 @@ package repository.metrics;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.ArrayList;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
@@ -26,10 +27,10 @@ public class MetricsAnalyzer {
 	private String name;
 	private Repository repo;
 	
-	public MetricsAnalyzer() { }
-	
-	
+	public MetricsAnalyzer() { 
 
+	}
+	
 	public MetricsAnalyzer localFolder(File folder) {
 	  this.folder = folder;
 	  return this;
@@ -40,68 +41,26 @@ public class MetricsAnalyzer {
 		return this;
 	}
 	
-	/*public void run() throws FileNotFoundException {
-		
-		if(folder == null) throw new FileNotFoundException(
-			"You must define a local folder!"
-		); 
-		
-	  var storage = new Storage(
-	    folder.getAbsolutePath() + "/" + name
-	  );
-	  try {
-	    
-	    var list = repo
-      .branches()
-      .stream()
-      .map(branch -> 
-        CompletableFuture
-        .runAsync(
-           () -> this.processing(storage, branch)
-        )
-      )
-      .collect(Collectors.toList());
-	    
-	    CompletableFuture.allOf(
-	      list.toArray(new CompletableFuture[list.size()])
-	    ).join();
-      
-      
-    } catch (GitAPIException e) {
-      System.err.println(e.getMessage());
-    }
-	}*/
-	
-	private void processing(
-	  Storage storage, 
-	  Branch branch) {
+	private void processing(String path, Branch branch) {
 
-	  var commits = branch
-	  .commits();
+	  var commits = branch.commits();
 	  
 	  for(Integer i = 0; i < commits.size(); i+= 4) {
 	    
-	    var list = commits
-	    .subList(
-	      i, 
-	      (i+4 < commits.size() ? i+4 : commits.size())
-	    )
-	    .stream()
-	    .map(commit ->
-	      CompletableFuture
-	      .runAsync(() -> 
-	        this.processing(
-	          storage.folder(branch.id().getName()),
-	          commit
-	      ))
-	    )
-	    .collect(Collectors.toList());
+	    var list = commits.subList(i, (i+4 < commits.size() ? i+4 : commits.size()))
+	    	.stream()
+	    	.map(commit -> CompletableFuture.runAsync(() -> 
+	      	this.processing(
+	        	path + "/" + branch.id().getName(),
+	        	commit
+					)
+				))
+	    	.collect(Collectors.toList());
 	      
-	    CompletableFuture
-	    .allOf(list.toArray(new CompletableFuture[list.size()]))
+			CompletableFuture
+			.allOf(list.toArray(new CompletableFuture[list.size()]))
 	    .join();
 	  }
-
 	}
 	
 	private String filterFilename(String path) {
@@ -113,17 +72,28 @@ public class MetricsAnalyzer {
 	}
 	
 	private void processing(
-	  Storage storage, 
+	  String path, 
 	  Commit commit) {
 	  
-	  var data = new MetricsData();
-	  
+		var data = new ArrayList<MetricsData>();
+	
 	  new CKMetric(repo).calculate(
 	    commit, 
 	    result -> {
 	    	
-	    	var text = filterFilename(result.getFile());
-	      data.addFiles(text, result);	      
+				var text = filterFilename(result.getFile());
+				var metrics = new MetricsData();
+				metrics.setFile(text);
+				metrics.setCbo(result.getCbo());
+				metrics.setDit(result.getDit());
+				metrics.setLcom(result.getLcom());
+				metrics.setLoc(result.getLoc());
+				metrics.setNosi(result.getNosi());
+				metrics.setNumberOfFields(result.getNumberOfFields());
+				metrics.setNumberOfMethods(result.getNumberOfMethods());
+				metrics.setRfc(result.getRfc());
+				metrics.setWmc(result.getWmc());
+	      data.add(metrics);
 	    }
 	  );
 	  
@@ -161,7 +131,7 @@ public class MetricsAnalyzer {
     storage.file(filename, data);
 	}
 	
-	public MetricsData get(
+	/*public MetricsData get(
 	  String branch,
 	  String commit) {
 	
@@ -174,7 +144,7 @@ public class MetricsAnalyzer {
 	  .get(commit + ".json");
 	  
 	  return gson.fromJson(data, MetricsData.class);	  
-	}
+	}*/
 
   public MetricsAnalyzer repository(Repository r) {
     this.repo = r;
