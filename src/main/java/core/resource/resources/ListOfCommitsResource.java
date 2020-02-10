@@ -1,8 +1,9 @@
-package core.resource;
+package core.resource.resources;
 
 import java.io.IOException;
 
 import core.data.Commit;
+import core.resource.Resource;
 import storage.Storage;
 
 public class ListOfCommitsResource extends Resource<Commit[]> {
@@ -12,7 +13,7 @@ public class ListOfCommitsResource extends Resource<Commit[]> {
   private String repository;
   private String branch;
 
-  ListOfCommitsResource() {
+  public ListOfCommitsResource() {
     
   }
 

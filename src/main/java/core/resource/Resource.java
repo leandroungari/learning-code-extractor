@@ -9,7 +9,7 @@ public abstract class Resource<T> {
 
 	protected static SettingsController settings;
 
-	Resource() {
+	public Resource() {
 
 		initializeSettings();
 	}

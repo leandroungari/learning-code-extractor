@@ -1,8 +1,9 @@
-package core.resource;
+package core.resource.resources;
 
 import java.io.IOException;
 
 import core.data.MetricsData;
+import core.resource.Resource;
 import storage.Storage;
 
 public class MetricsFilesResource extends Resource<MetricsData[]> {
@@ -10,7 +11,7 @@ public class MetricsFilesResource extends Resource<MetricsData[]> {
   private String repository;
   private String commit;
 
-  MetricsFilesResource() {
+  public MetricsFilesResource() {
 
   }
 

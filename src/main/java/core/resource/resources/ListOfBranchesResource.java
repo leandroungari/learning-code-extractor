@@ -1,8 +1,9 @@
-package core.resource;
+package core.resource.resources;
 
 import java.io.IOException;
 
 import core.data.Branch;
+import core.resource.Resource;
 import storage.Storage;
 
 public class ListOfBranchesResource extends Resource<Branch[]> {
@@ -10,7 +11,7 @@ public class ListOfBranchesResource extends Resource<Branch[]> {
   private String repository;
   private final String FILENAME = "branch.csv";
 
-  ListOfBranchesResource() {
+  public ListOfBranchesResource() {
 
   }
 

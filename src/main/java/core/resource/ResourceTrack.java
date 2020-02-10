@@ -2,6 +2,10 @@ package core.resource;
 
 import java.util.HashMap;
 
+import core.resource.resources.ListOfBranchesResource;
+import core.resource.resources.ListOfCommitsResource;
+import core.resource.resources.MetricsFilesResource;
+
 public class ResourceTrack {
 
   private static HashMap<ResourceType, Resource<?>> list;
