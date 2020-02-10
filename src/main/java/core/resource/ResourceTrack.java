@@ -2,6 +2,7 @@ package core.resource;
 
 import java.util.HashMap;
 
+import core.resource.resources.CommitsInfoResource;
 import core.resource.resources.ListOfBranchesResource;
 import core.resource.resources.ListOfCommitsResource;
 import core.resource.resources.MetricsFilesResource;
@@ -24,6 +25,7 @@ public class ResourceTrack {
 			addResource(ResourceType.LIST_OF_BRANCHES, new ListOfBranchesResource());
 			addResource(ResourceType.LIST_OF_COMMITS, new ListOfCommitsResource());
 			addResource(ResourceType.METRICS_FILES, new MetricsFilesResource());
+			addResource(ResourceType.COMMITS_INFO, new CommitsInfoResource());
 		}
 	}
 

@@ -1,14 +1,23 @@
 package core.features;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.eclipse.jgit.api.errors.GitAPIException;
 
-import repository.commit.CommitInfo;
+import core.resource.Resource;
+import core.resource.ResourceTrack;
+import core.resource.ResourceType;
+import core.data.CommitInfo;
 
 public class GetCommitInfo implements RepositoryFeature<CommitInfo> {
 
   private String repository;
   private String branch;
   private String commit;
+
+  private Resource<CommitInfo[]> resource;
+  private ResourceTrack track = new ResourceTrack();
 
   @Override
   public Feature<CommitInfo> setParams(String... params) {
@@ -25,19 +34,33 @@ public class GetCommitInfo implements RepositoryFeature<CommitInfo> {
     
     try {
       
-      var repo = createRepository(repository);
+      resource = track
+        .<CommitInfo[]>get(ResourceType.COMMITS_INFO)
+        .setParams(repository, branch);
+
+      if(!resource.exists()){
+        createResource();
+      }
       
-		  return repo
-		  	.branch(branch)
-		  	.commit(commit)
-		  	.info();
     }
     catch(GitAPIException e) {
       e.printStackTrace();
     }
     
-    return null;
+    var data = resource.read(CommitInfo[].class);
+
+    return List.of(data).stream()
+      .filter(a -> a.getId().equals(commit))
+      .collect(Collectors.toList()).get(0);
   }
 
+  public void createResource() throws GitAPIException {
 
+    var repo = createRepository(repository);
+      
+		repo
+		  .branch(branch)
+		  .commit(commit)
+		  .info();
+  }
 }
