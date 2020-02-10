@@ -20,7 +20,16 @@ public class MetricsData implements Storable<MetricsData>{
   
   public MetricsData() {
     
-    
+    this.file = null;
+    this.cbo = 0d;
+    this.dit = 0d;
+    this.numberOfFields = 0d;
+    this.numberOfMethods = 0d;
+    this.nosi = 0d;
+    this.rfc = 0d;
+    this.wmc = 0d;
+    this.loc = 0d;
+    this.lcom = 0d;
   }
 
   /**

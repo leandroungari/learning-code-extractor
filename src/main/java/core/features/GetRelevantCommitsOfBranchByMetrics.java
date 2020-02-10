@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.eclipse.jgit.api.errors.GitAPIException;
 
@@ -13,7 +14,7 @@ import core.data.MetricsData;
 import repository.Commit;
 
 public class GetRelevantCommitsOfBranchByMetrics 
-  implements RepositoryFeature<Map<String,List<Map<String, Double>>>> {
+  implements RepositoryFeature<Map<String,List<MetricsData>>> {
 
   public static final String SUM_OPERATION = "sum";
   public static final String AVERAGE_OPERATION = "average";
@@ -27,7 +28,7 @@ public class GetRelevantCommitsOfBranchByMetrics
   private StatsController stats = new StatsController();
 
   @Override
-  public Feature<Map<String, List<Map<String, Double>>>> setParams(String... params) {
+  public Feature<Map<String, List<MetricsData>>> setParams(String... params) {
 
     repository = params[0];
     branch = params[1];
@@ -38,9 +39,9 @@ public class GetRelevantCommitsOfBranchByMetrics
   }
 
   @Override
-  public Map<String, List<Map<String, Double>>> action() {
+  public Map<String, List<MetricsData>> action() {
 
-    var data = new HashMap<String, List<Map<String, Double>>>();
+    var data = new HashMap<String, List<MetricsData>>();
     var derivateOfCommits = calculateDerivateOfAllCommits();
     var ordered = sort(derivateOfCommits);
 
@@ -52,10 +53,8 @@ public class GetRelevantCommitsOfBranchByMetrics
 
   private List<MetricsData> sort(Map<String, MetricsData> values) {
 
-    var list = new ArrayList<MetricsData>();
-    values.forEach((id, metrics) -> {
-      list.add(Map.<String,Double>of(id,metrics.get(metric)));
-    });
+    var list = values.values()
+      .stream().collect(Collectors.toList());
 
     list.sort((a,b) -> {
       if(getValue(a) < getValue(b)) return -1;
@@ -66,8 +65,23 @@ public class GetRelevantCommitsOfBranchByMetrics
     return list;
   }
 
-  private Double getValue(Map<String,Double> value) {
-    return value.values().toArray(new Double[1])[0];
+  private Double getValue(MetricsData item) {
+
+    switch(metric.toLowerCase()) {
+
+      case "wmc":
+        return item.getWmc();
+      case "cbo":
+        return item.getCbo();
+      case "dit":
+        return item.getDit();
+      case "nosi":
+        return item.getNosi();
+      case "rfc":
+        return item.getRfc();
+      default:
+        throw new Error("Inexisting metric type");
+    }
   }
 
   private List<MetricsData> identifyBadCommits(List<MetricsData> list) {
@@ -76,7 +90,6 @@ public class GetRelevantCommitsOfBranchByMetrics
     for(var i = Math.round(list.size()/2); i < list.size(); i++) {
       bad.add(0, list.get(i));
     }
-
     return bad;
   } 
 

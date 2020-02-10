@@ -3,6 +3,8 @@ package core.features;
 import java.util.HashMap;
 import java.util.Map;
 
+import core.data.MetricsData;
+
 public class GetEvolutionOfFilesByMetrics 
   implements Feature<HashMap<String,HashMap<String,Double>>> {
 
@@ -36,14 +38,14 @@ public class GetEvolutionOfFilesByMetrics
   }
 
   private HashMap<String,HashMap<String,Double>> extractMetricOfAllFiles(
-    Map<String, Map<String, Map<String, Double>>> data,
+    Map<String, Map<String, MetricsData>> data,
     Map<String, Double> files) {
 
     var result = new HashMap<String,HashMap<String,Double>>();
     data.forEach((id, commit) -> {
       var instanceOfFiles = cloneMap(files);
       commit.forEach((file,metrics) -> {
-        instanceOfFiles.put(file, metrics.get(metric));
+        instanceOfFiles.put(file, getValues(metrics));
       });
       result.put(id, instanceOfFiles);
     });
@@ -51,16 +53,34 @@ public class GetEvolutionOfFilesByMetrics
     return result;
   }
 
-  private Map<String, Map<String, Map<String, Double>>> getMetricsOfCommits() {
+  private Double getValues(MetricsData metrics) {
+
+    switch(metric) {
+      case "wmc":
+        return metrics.getWmc();
+      case "rfc":
+        return metrics.getRfc();
+      case "nosi":
+        return metrics.getNosi();
+      case "cbo":
+        return metrics.getCbo();
+      case "dit":
+        return metrics.getDit();
+      default:
+        return 0d;
+    }
+  }
+
+  private Map<String, Map<String, MetricsData>> getMetricsOfCommits() {
     
     return player
-      .<Map<String,Map<String,Map<String, Double>>>>get(FeatureType.METRICS_IN_RANGE_COMMITS)
+      .<Map<String,Map<String,MetricsData>>>get(FeatureType.METRICS_IN_RANGE_COMMITS)
       .setParams(repository,branch,from.toString(),to.toString(),step.toString())
       .action();
   }
 
   private Map<String, Double> extractAllExistingFiles(
-    Map<String, Map<String, Map<String, Double>>> metrics) {
+    Map<String, Map<String, MetricsData>> metrics) {
 
     var listOfFiles = new HashMap<String,Double>();
     metrics.values().forEach(commit -> {

@@ -17,36 +17,23 @@ import org.apache.commons.csv.CSVRecord;
 public class CSV<T extends Storable<T>> {
 
   private Storage store;
-  private List<T> content;
-  private Class<T> type;
 
   CSV(Storage store) {
     this.store = store;
-    this.content = new ArrayList<>();
-    this.type = null;
   }
 
   @SuppressWarnings("unchecked")
-  public CSV<T> add(T item) {
+  public void write(T[] content) throws IOException {
 
-    if(type == null) type = (Class<T>) item.getClass();
-    content.add(item);
-    return this;
-  }
+    var type = (Class<T>) content.getClass().getComponentType();
 
-  public CSV<T> addAll(T[] items) {
-    content = List.of(items);
-    return this;
-  }
-
-  public void write() throws IOException {
-
+    var headers = generateElement(type).attributes();
     var file = store.resource();
-    var printer = createPrinter(file);
+    var printer = createPrinter(file, headers);
 
     var result = new ArrayList<List<String>>();
-    for (var i = 0; i < content.size(); i++) {
-      result.add(List.of(content.get(i).write()));
+    for (var i = 0; i < content.length; i++) {
+      result.add(List.of(content[i].write()));
     }
 
     printer.printRecords(result);
@@ -54,16 +41,15 @@ public class CSV<T extends Storable<T>> {
     printer.close();
   }
 
-  private CSVPrinter createPrinter(File file) 
+  private CSVPrinter createPrinter(File file, String[] headers) 
     throws IOException {
 
-    var writer = Files
-      .newBufferedWriter(Paths.get(file.getAbsolutePath()));
+    var writer = Files.newBufferedWriter(Paths.get(file.getAbsolutePath()));
 
     return new CSVPrinter(
       writer, 
       CSVFormat.DEFAULT
-      .withHeader(content.get(0).attributes())
+      .withHeader(headers)
       .withDelimiter(',')
     );
   }

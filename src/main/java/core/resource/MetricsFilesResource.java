@@ -27,7 +27,6 @@ public class MetricsFilesResource extends Resource<MetricsData[]> {
     );
 
     return this;
-
   }
 
   @Override
@@ -53,8 +52,7 @@ public class MetricsFilesResource extends Resource<MetricsData[]> {
       
       storage
       .<MetricsData>csv(commit + ".csv")
-      .addAll(data)
-      .write();
+      .write(data);
     
     } catch(IOException e) {
       e.printStackTrace();

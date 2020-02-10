@@ -24,11 +24,8 @@ public class DataController {
   private ResourceTrack track = new ResourceTrack();
 
   private Resource<MetricsData[]> resource;
-  private String repository;
 
   public Map<String,MetricsData> metrics(String repository, Commit commit) {
-
-    this.repository = repository;
 
     resource = track
       .<MetricsData[]>get(ResourceType.METRICS_FILES)
@@ -48,21 +45,12 @@ public class DataController {
     return map;
   }
 
-
-  private String filterFilename(String path) {
-		var position = path
-  		.lastIndexOf(repository + repository.length()) + 1;
-  	
-  	return path.substring(position);
-	}
-
   private void analyzeCommit(String repository, Commit commit) {
     
     var data = new ArrayList<MetricsData>();
     
     try {
-      analyzer
-      .repository(Repository.create(new File(
+      analyzer.repository(Repository.create(new File(
         settings.folderOfRepositories() + "/" +
         repository
       )))
@@ -82,7 +70,7 @@ public class DataController {
   private MetricsData createMetrics(String file, CKClassResult result) {
 
     var metrics = new MetricsData();
-		metrics.setFile(filterFilename(result.getFile()));
+		metrics.setFile(file);
 		metrics.setCbo((double) result.getCbo());
 		metrics.setDit((double) result.getDit());
 		metrics.setLcom((double) result.getLcom());

@@ -20,10 +20,11 @@ public class StorageTest {
 
     storage
     .<Person>csv(FILE)
-    .add(new Person("Leandro", 23))
-    .add(new Person("Laura", 21))
-    .add(new Person("Bruno", 24))
-    .write();
+    .write(new Person[]{
+      new Person("Leandro", 23),
+      new Person("Laura", 21),
+      new Person("Bruno", 24)
+    });
   }
 
   @Test

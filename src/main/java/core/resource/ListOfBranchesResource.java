@@ -52,8 +52,7 @@ public class ListOfBranchesResource extends Resource<Branch[]> {
       
       storage
       .<Branch>csv(FILENAME)
-      .addAll(data)
-      .write();
+      .write(data);
     
     } catch (IOException e) {
       e.printStackTrace();

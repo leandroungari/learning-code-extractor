@@ -1,13 +1,10 @@
 package ast;
 
-import java.io.File;
-
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
 import repository.exception.GitRepositoryException;
-import spoon.reflect.path.CtRole;
 import spoon.support.reflect.declaration.CtMethodImpl;
 
 public class ASTComparatorTest {
