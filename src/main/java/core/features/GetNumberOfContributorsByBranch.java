@@ -6,8 +6,11 @@ import java.util.stream.Collectors;
 
 import org.eclipse.jgit.api.errors.GitAPIException;
 
+import core.resource.Resource;
+import core.resource.ResourceTrack;
+import core.resource.ResourceType;
 import repository.Commit;
-import repository.commit.CommitInfo;
+import core.data.CommitInfo;
 
 public class GetNumberOfContributorsByBranch implements RepositoryFeature<List<Integer>> {
 
@@ -15,6 +18,9 @@ public class GetNumberOfContributorsByBranch implements RepositoryFeature<List<I
   private String branch;
 
   private ArrayList<String> authors;
+
+  private Resource<CommitInfo[]> resource;
+  private ResourceTrack track = new ResourceTrack();
 
   public GetNumberOfContributorsByBranch() {
     super();
@@ -27,25 +33,34 @@ public class GetNumberOfContributorsByBranch implements RepositoryFeature<List<I
     repository = params[0];
     branch = params[1];
 
-    authors = new ArrayList<>();
-
     return this;
   }
 
   @Override
   public List<Integer> action() {
 
-    try {
-      var repo = createRepository(repository);
+    var result = new ArrayList<Integer>();
+    authors = new ArrayList<>();
 
-      var result = repo
-		    .branch(branch)
-        .commits();
-      
-      return result
-        .stream()
-        .map(this::getNumberOfContributors)
-        .collect(Collectors.toList());
+    try {
+
+      resource = track
+        .<CommitInfo[]>get(ResourceType.COMMITS_INFO)
+        .setParams(repository, branch);
+
+      if(!resource.exists()){
+        createResource();
+      }
+
+      var data = resource.read(CommitInfo[].class);
+      for(var info: data) {
+        if(!authors.contains(info.getEmail())) {
+          authors.add(info.getEmail());
+        }
+        result.add(authors.size());
+      }
+    
+      return result;
 
     } catch (GitAPIException e) {
       e.printStackTrace();
@@ -54,23 +69,18 @@ public class GetNumberOfContributorsByBranch implements RepositoryFeature<List<I
     return null;
   }
 
-  private Integer getNumberOfContributors(Commit commit) {
-    
-    var identifier = getIdentifierOfCommit(commit);
-    if(!authors.contains(identifier)) {
-      authors.add(identifier);
+  public void createResource() throws GitAPIException {
+
+    var repo = createRepository(repository);
+      
+    var result = new ArrayList<CommitInfo>();
+
+    for(var commit: repo.branch(branch).commits()) {
+      
+      result.add(commit.info().data());
     }
 
-    return authors.size();
-  }
-
-  private String getIdentifierOfCommit(Commit commit) {
-
-    return player
-      .<CommitInfo>get(FeatureType.COMMIT_INFO)
-      .setParams(repository, branch, commit.id().getName())
-      .action()
-      .getEmail();
+		resource.write(result.toArray(new CommitInfo[result.size()]));
   }
 
 }

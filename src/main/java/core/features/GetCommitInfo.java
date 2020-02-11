@@ -1,5 +1,6 @@
 package core.features;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -58,9 +59,13 @@ public class GetCommitInfo implements RepositoryFeature<CommitInfo> {
 
     var repo = createRepository(repository);
       
-		repo
-		  .branch(branch)
-		  .commit(commit)
-		  .info();
+    var result = new ArrayList<CommitInfo>();
+
+    for(var commit: repo.branch(branch).commits()) {
+      
+      result.add(commit.info().data());
+    }
+
+		resource.write(result.toArray(new CommitInfo[result.size()]));
   }
 }
