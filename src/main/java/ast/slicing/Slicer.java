@@ -4,10 +4,13 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import spoon.Launcher;
+import spoon.reflect.code.CtFieldAccess;
+import spoon.reflect.code.CtStatement;
 import spoon.reflect.declaration.CtClass;
+import spoon.reflect.reference.CtFieldReference;
+import spoon.reflect.visitor.filter.FieldAccessFilter;
 
 public class Slicer {
-
 
   private CtClass<?> element;
 
@@ -17,28 +20,27 @@ public class Slicer {
   }
 
   /**
-   * [
-   *  Verificar o acesso ao atributo de superclasses
-   *  mesmo não tendo a declaração da superclasse
-   * ]
+   * [ Verificar o acesso ao atributo de superclasses mesmo não tendo a declaração
+   * da superclasse ]
+   * 
    * @return
    */
-  public List<String> getAllFields() {
+  public List<CtFieldReference<?>> getAllFields() {
 
-    return element
-      .getAllFields()
-      .stream().map(field -> {
-        return field.getSimpleName();
-      })
-      .collect(Collectors.toList());
+    return element.getAllFields().stream().collect(Collectors.toList());
   }
 
   public void getStatementsThatContainsFields() {
 
-    element.getAllMethods().stream().map(method -> {
-      method.getBody().getStatements().
-    });
+    
 
+  }
+
+  private List<CtFieldAccess<?>> statementContainsFieldCall(
+    CtStatement state, 
+    CtFieldReference<?> ref) {
+
+    return state.getElements(new FieldAccessFilter(ref));
   }
 
 
