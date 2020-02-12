@@ -7,6 +7,9 @@ import spoon.Launcher;
 import spoon.reflect.code.CtFieldAccess;
 import spoon.reflect.code.CtStatement;
 import spoon.reflect.declaration.CtClass;
+import spoon.reflect.declaration.CtElement;
+import spoon.reflect.declaration.CtMethod;
+import spoon.reflect.path.CtRole;
 import spoon.reflect.reference.CtFieldReference;
 import spoon.reflect.visitor.filter.FieldAccessFilter;
 
@@ -30,17 +33,30 @@ public class Slicer {
     return element.getAllFields().stream().collect(Collectors.toList());
   }
 
-  public void getStatementsThatContainsFields() {
+  public void getVariablesFromMethod(CtMethod<?> method) {
+
+    method.getElements(element -> {
+      element.getRoleInParent().compareTo(CtRole.)
+      return false;
+    });
+  }
+
+  public void getParamsFromMethod(CtMethod<?> method) {
+
+    
+  }
+
+  public void getElementThatContainsFieldCalls() {
 
     
 
   }
 
-  private List<CtFieldAccess<?>> statementContainsFieldCall(
-    CtStatement state, 
+  private boolean elementContainsFieldCall(
+    CtElement element, 
     CtFieldReference<?> ref) {
 
-    return state.getElements(new FieldAccessFilter(ref));
+    return element.getElements(new FieldAccessFilter(ref)).size() > 0;
   }
 
 
