@@ -7,6 +7,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.io.FileUtils;
+
 
 public class FileUtil {
 
@@ -45,9 +47,9 @@ public class FileUtil {
 		return System.getProperty("user.home");
 	}
 	
-	public static void deleteFolder(File file) {
+	public static void deleteFolder(File folder) throws IOException {
 		
-		file.delete();
+		FileUtils.deleteDirectory(folder);
 	}
 
 	public static void createFile(String path, String data) throws IOException {

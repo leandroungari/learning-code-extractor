@@ -22,12 +22,7 @@ public class Slicer {
     element = Launcher.parseClass(content);
   }
 
-  /**
-   * [ Verificar o acesso ao atributo de superclasses mesmo não tendo a declaração
-   * da superclasse ]
-   * 
-   * @return
-   */
+
   public List<CtFieldReference<?>> getAllFields() {
 
     return element.getAllFields().stream().collect(Collectors.toList());
