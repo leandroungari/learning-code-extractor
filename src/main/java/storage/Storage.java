@@ -25,6 +25,12 @@ public class Storage {
     return new JSON<T>(this);
   }
 
+  public PlainText plainText(String filename) {
+    
+    this.filename = filename;
+    return new PlainText(this);
+  }
+
   File resource() {
 
     var folder = new File(this.folder);
