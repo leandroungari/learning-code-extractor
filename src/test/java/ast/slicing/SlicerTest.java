@@ -51,14 +51,62 @@ public class SlicerTest {
 
 
   @Test
-  public void getNameOfFields() {
+  public void getFields() {
 
     var result = slicer.getAllFields();
+
+    System.out.println(result.get(0).getSimpleName());
 
     assertTrue(
       "The number of fields is 1", 
       result.size() == 1
     );
+  }
+
+  @Test
+  public void getMethods() {
+
+    var result = slicer.getAllMethods();
+
+    for(var method: result) {
+      System.out.println(method.getSignature());
+    }
+  }
+
+  @Test
+  public void getAccessToVariables() {
+
+    var method = slicer.getMethod("doStuff()");
+    var result = slicer.getAccessVariables(method);
+
+    System.out.println("Tamanho: " + result.size());
+    for(var item: result) {
+      System.out.println(item);
+    }
+  }
+
+  @Test
+  public void getWriteToVariables() {
+
+    var method = slicer.getMethod("doStuff()");
+    var result = slicer.getWriteVariables(method);
+
+    System.out.println("Tamanho: " + result.size());
+    for(var item: result) {
+      System.out.println(item);
+    }
+  }
+
+  @Test
+  public void getParametersFromMethod() {
+    
+    System.out.println("=================");
+    var methodOne = slicer.getMethod("doStuff()");
+    slicer.getParamsFromMethod(methodOne);
+
+    System.out.println("=================");
+    var methodTwo = slicer.getMethod("barkBark");
+    slicer.getParamsFromMethod(methodTwo);
   }
 
 }

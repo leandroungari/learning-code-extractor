@@ -4,14 +4,14 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import spoon.Launcher;
-import spoon.reflect.code.CtFieldAccess;
-import spoon.reflect.code.CtStatement;
+import spoon.reflect.code.CtVariableAccess;
+import spoon.reflect.code.CtVariableWrite;
 import spoon.reflect.declaration.CtClass;
 import spoon.reflect.declaration.CtElement;
 import spoon.reflect.declaration.CtMethod;
-import spoon.reflect.path.CtRole;
+import spoon.reflect.declaration.CtParameter;
 import spoon.reflect.reference.CtFieldReference;
-import spoon.reflect.visitor.filter.FieldAccessFilter;
+import spoon.reflect.visitor.filter.TypeFilter;
 
 public class Slicer {
 
@@ -33,32 +33,31 @@ public class Slicer {
     return element.getAllFields().stream().collect(Collectors.toList());
   }
 
-  public void getVariablesFromMethod(CtMethod<?> method) {
+  public List<CtMethod<?>> getAllMethods() {
 
-    method.getElements(element -> {
-      element.getRoleInParent().compareTo(CtRole.)
-      return false;
-    });
+    return element.getAllMethods().stream().collect(Collectors.toList());
   }
 
-  public void getParamsFromMethod(CtMethod<?> method) {
+  public CtMethod<?> getMethod(String signature) {
 
-    
+    return getAllMethods().stream().filter(method -> method.getSignature().contains(signature))
+        .collect(Collectors.toList()).get(0);
   }
 
-  public void getElementThatContainsFieldCalls() {
+  public List<CtVariableAccess<?>> getAccessVariables(CtElement element) {
 
-    
-
+    return element.getElements(new TypeFilter<>(CtVariableAccess.class));
   }
 
-  private boolean elementContainsFieldCall(
-    CtElement element, 
-    CtFieldReference<?> ref) {
+  public List<CtVariableWrite<?>> getWriteVariables(CtElement element) {
 
-    return element.getElements(new FieldAccessFilter(ref)).size() > 0;
+    return element.getElements(new TypeFilter<>(CtVariableWrite.class));
   }
 
+  public List<CtParameter<?>> getParamsFromMethod(CtMethod<?> method) {
+
+    return method.getParameters();
+  }
 
 
 }
