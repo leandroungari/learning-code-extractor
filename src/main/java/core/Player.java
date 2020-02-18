@@ -13,6 +13,7 @@ import core.features.GetCommitsByBranch;
 import core.features.GetDiffFilesInCommit;
 import core.features.GetDiffInCommit;
 import core.features.GetEvolutionOfFilesByMetrics;
+import core.features.GetFileContent;
 import core.features.GetListOfFiles;
 import core.features.GetMetricsFromDiffFilesInACommit;
 import core.features.GetMetricsFromDiffFilesInARangeOfCommits;
@@ -48,6 +49,7 @@ public class Player {
       add(FeatureType.DIFF_FILES_IN_COMMIT, new GetDiffFilesInCommit());
       add(FeatureType.DIFF_IN_COMMIT, new GetDiffInCommit());
       add(FeatureType.LIST_OF_FILES, new GetListOfFiles());
+      add(FeatureType.FILE_CONTENT, new GetFileContent());
 
       add(FeatureType.METRICS_IN_COMMIT, new GetMetricsInACommit());
       add(FeatureType.METRICS_IN_RANGE_COMMITS, new GetMetricsInARangeOfCommits());
