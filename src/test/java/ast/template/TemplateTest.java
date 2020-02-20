@@ -46,8 +46,16 @@ public class TemplateTest {
   public void verifyTypeOfElement() {
 
     var template = new Template(clazz);
-
     System.out.println(template.getType(clazz));
+  }
+
+  @Test
+  public void extractTree() {
+
+    var template = new Template(clazz);
+    var tree = template.extract();
+
+    System.out.println(tree);
   }
 
 
