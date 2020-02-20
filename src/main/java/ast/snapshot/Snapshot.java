@@ -5,25 +5,31 @@ import java.util.ArrayList;
 import java.util.List;
 
 import core.controller.SettingsController;
+import spoon.Launcher;
+import spoon.SpoonAPI;
+import spoon.reflect.CtModel;
 import storage.Storage;
 
 public class Snapshot {
 
   private List<String> files;
   private Storage storage;
+  private SpoonAPI api;
+
+  private static SettingsController settings = SettingsController.get();
 
   public Snapshot() {
 
-    var settings = SettingsController.get();
-
     files = new ArrayList<>();
     storage = new Storage(settings.folderOfMetadata() + "/.temp");
+
+    api = new Launcher();
   }
 
   public void add(String name, String content) {
 
     try {
-      if(!files.contains(name)) {
+      if (!files.contains(name)) {
         storage.plainText(name).write(content);
         files.add(name);
       }
@@ -43,7 +49,13 @@ public class Snapshot {
   }
 
   public void clear() {
-    
+
     storage.remove();
+  }
+
+  public CtModel model() {
+    api.addInputResource(settings.folderOfMetadata() + "/.temp/src/");
+    System.out.println(settings.folderOfMetadata() + "/.temp/src/");
+    return api.getModel();
   }
 }

@@ -5,6 +5,8 @@ import static org.junit.Assert.assertTrue;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import spoon.Launcher;
+
 public class SlicerTest {
 
   private static final String CONTENT = 
@@ -46,7 +48,8 @@ public class SlicerTest {
   @BeforeClass
   public static void start() {
 
-    slicer = new Slicer(CONTENT);
+    var clazz = Launcher.parseClass(CONTENT);
+    slicer = new Slicer(clazz);
   }
 
 

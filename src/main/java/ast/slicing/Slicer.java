@@ -17,9 +17,9 @@ public class Slicer {
 
   private CtClass<?> element;
 
-  public Slicer(String content) {
+  public Slicer(CtClass<?> clazz) {
 
-    element = Launcher.parseClass(content);
+    this.element = clazz;
   }
 
 

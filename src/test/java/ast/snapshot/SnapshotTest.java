@@ -7,6 +7,8 @@ import org.junit.Test;
 import core.Player;
 import core.features.FeatureType;
 import repository.commit.File;
+import spoon.reflect.declaration.CtPackage;
+import spoon.reflect.visitor.filter.TypeFilter;
 
 public class SnapshotTest {
 
@@ -29,11 +31,34 @@ public class SnapshotTest {
     filesOfCommit
     .stream()
     .forEach(file -> {
-      System.out.println(file.name());
       snapshot.add(file.name(), file.get());
     });
 
     snapshot.clear();
+  }
+
+  @Test
+  public void buildModel() {
+
+    var snapshot = new Snapshot();
+
+    var filesOfCommit = player
+      .<List<File>>get(FeatureType.LIST_OF_FILES)
+      .setParams(REPOSITORY,BRANCH,COMMIT)
+      .action();
+
+    filesOfCommit
+    .stream()
+    .forEach(file -> {
+      snapshot.add(file.name(), file.get());
+    });
+
+    var result = snapshot.model()
+      .getElements(new TypeFilter<>(CtPackage.class));
+    
+    result.forEach(item -> {
+      System.out.println(item.getQualifiedName());
+    });
   }
 
 }

@@ -13,7 +13,7 @@ public class PlainText {
   }
 
   public void write(String content) throws IOException {
-    System.out.println(store.resource().getAbsolutePath());
+  
     FileUtil.createFile(
       store.resource().getAbsolutePath(), 
       content
