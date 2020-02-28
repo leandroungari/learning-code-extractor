@@ -3,6 +3,7 @@ package ast.template;
 import java.util.LinkedHashSet;
 
 import spoon.reflect.declaration.CtElement;
+import spoon.reflect.visitor.filter.TypeFilter;
 
 public class Template {
 
@@ -36,14 +37,28 @@ public class Template {
           item.isImplicit() ? null : getValue(item)
         );
         tree.add(syntax);
-        
-        if(getType(item) != null) {
+
+        if(hasChildren(item)) {
           syntax.setChildren(extractChildNodes(syntax.getChildren(), item));
         }
+        else {
+          syntax.setChildren(null);
+        }
+        
+        /*if(getType(item) != null) {
+          syntax.setChildren(extractChildNodes(syntax.getChildren(), item));
+        }*/
       }
     });
 
     return tree;
+  }
+
+  private boolean hasChildren(CtElement item) {
+    
+    return item.getElements(
+      new TypeFilter<>(CtElement.class)
+    ).size() != 1;
   }
 
   public String getValue(CtElement element) {
