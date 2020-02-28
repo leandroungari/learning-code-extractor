@@ -23,18 +23,25 @@ public class Template {
     return extractChildNodes(syntax.getChildren(), element);
   }
 
+  /**
+   * Nesse método são extraídos os elementos
+   * 
+   * A princípio optou-se por identificar somente os valores dos elementos
+   * com 2 ou menos elementos.
+   * @param tree
+   * @param element
+   * @return
+   */
   private LinkedHashSet<SyntaxElement> extractChildNodes(
     LinkedHashSet<SyntaxElement> tree, 
     CtElement element) {
-    
-    
 
     element.descendantIterator().forEachRemaining(item -> {
       if(element == item.getParent()) {
         
         var syntax = new SyntaxElement(
           getType(item), 
-          item.isImplicit() ? null : getValue(item)
+          item.isImplicit() || howManyChildren(item) > 2 ? null : getValue(item)
         );
         tree.add(syntax);
 
@@ -54,11 +61,16 @@ public class Template {
     return tree;
   }
 
-  private boolean hasChildren(CtElement item) {
-    
+  private Integer howManyChildren(CtElement item) {
+
     return item.getElements(
       new TypeFilter<>(CtElement.class)
-    ).size() != 1;
+    ).size();
+  }
+
+  private boolean hasChildren(CtElement item) {
+    
+    return howManyChildren(item) != 1;
   }
 
   public String getValue(CtElement element) {
