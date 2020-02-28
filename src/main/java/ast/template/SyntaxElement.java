@@ -1,18 +1,20 @@
-package ast.template.syntax;
+package ast.template;
 
-import ast.template.Tree;
+import java.util.LinkedHashSet;
 
-public class SyntaxElement implements Treeable<SyntaxElement> {
+import com.google.gson.Gson;
+
+public class SyntaxElement {
 
   private String type;
   private String value;
 
-  private Tree<SyntaxElement> children;
+  private LinkedHashSet<SyntaxElement> children;
 
   public SyntaxElement(String type, String value) {
     this.type = type;
     this.value = value;
-    this.children = new Tree<SyntaxElement>();
+    this.children = new LinkedHashSet<>();
   }
 
   /**
@@ -46,16 +48,24 @@ public class SyntaxElement implements Treeable<SyntaxElement> {
   /**
    * @return the children
    */
-  public Tree<SyntaxElement> getChildren() {
+  public LinkedHashSet<SyntaxElement> getChildren() {
     return children;
   }
 
   /**
    * @param children the children to set
    */
-  public void setChildren(Tree<SyntaxElement> children) {
+  public void setChildren(LinkedHashSet<SyntaxElement> children) {
     this.children = children;
   }
+
+  @Override
+  public String toString() {
+
+    var gson = new Gson();
+    return gson.toJson(this);
+  }
+
 }
 
 

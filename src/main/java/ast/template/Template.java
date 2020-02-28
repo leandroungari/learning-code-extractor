@@ -1,6 +1,7 @@
 package ast.template;
 
-import ast.template.syntax.SyntaxElement;
+import java.util.LinkedHashSet;
+
 import spoon.reflect.declaration.CtElement;
 
 public class Template {
@@ -12,33 +13,37 @@ public class Template {
     this.element = element;
   }
 
-  public Tree<SyntaxElement> extract() {
+  public LinkedHashSet<SyntaxElement> extract() {
 
     var syntax = new SyntaxElement(getType(element), null);
-    var tree = new Tree<SyntaxElement>();
+    var tree = new LinkedHashSet<SyntaxElement>();
 
-    
+    tree.add(syntax);
+    return extractChildNodes(syntax.getChildren(), element);
   }
 
-  private Tree<SyntaxElement> extractChildNodes(
-    Tree<SyntaxElement> builder, 
+  private LinkedHashSet<SyntaxElement> extractChildNodes(
+    LinkedHashSet<SyntaxElement> tree, 
     CtElement element) {
     
+    
+
     element.descendantIterator().forEachRemaining(item -> {
       if(element == item.getParent()) {
         
-        builder.add(
+        var syntax = new SyntaxElement(
           getType(item), 
-          item.descendantIterator().hasNext() ? null : getValue(item)
+          item.isImplicit() ? null : getValue(item)
         );
+        tree.add(syntax);
         
         if(getType(item) != null) {
-          extractChildNodes(builder.select(getType(item)), item);
+          syntax.setChildren(extractChildNodes(syntax.getChildren(), item));
         }
       }
     });
 
-    return builder;
+    return tree;
   }
 
   public String getValue(CtElement element) {
