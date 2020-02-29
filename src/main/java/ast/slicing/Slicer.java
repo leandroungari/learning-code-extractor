@@ -3,7 +3,6 @@ package ast.slicing;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import spoon.Launcher;
 import spoon.reflect.code.CtVariableAccess;
 import spoon.reflect.code.CtVariableWrite;
 import spoon.reflect.declaration.CtClass;
@@ -35,8 +34,10 @@ public class Slicer {
 
   public CtMethod<?> getMethod(String signature) {
 
-    return getAllMethods().stream().filter(method -> method.getSignature().contains(signature))
-        .collect(Collectors.toList()).get(0);
+    return getAllMethods()
+      .stream()
+      .filter(method -> method.getSignature().contains(signature))
+      .collect(Collectors.toList()).get(0);
   }
 
   public List<CtVariableAccess<?>> getAccessVariables(CtElement element) {

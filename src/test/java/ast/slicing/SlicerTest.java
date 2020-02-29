@@ -105,11 +105,13 @@ public class SlicerTest {
     
     System.out.println("=================");
     var methodOne = slicer.getMethod("doStuff()");
-    slicer.getParamsFromMethod(methodOne);
+    var params1 = slicer.getParamsFromMethod(methodOne);
+    System.out.println(params1);
 
     System.out.println("=================");
     var methodTwo = slicer.getMethod("barkBark");
-    slicer.getParamsFromMethod(methodTwo);
+    var params2 = slicer.getParamsFromMethod(methodTwo);
+    System.out.println(params2);
   }
 
 }
