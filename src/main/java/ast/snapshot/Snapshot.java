@@ -1,5 +1,6 @@
 package ast.snapshot;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -9,21 +10,34 @@ import spoon.Launcher;
 import spoon.SpoonAPI;
 import spoon.reflect.CtModel;
 import storage.Storage;
+import util.FileUtil;
 
 public class Snapshot {
 
+  private String commit;
   private List<String> files;
   private Storage storage;
   private SpoonAPI api;
 
   private static SettingsController settings = SettingsController.get();
 
-  public Snapshot() {
+  public Snapshot(String commit) {
 
+    this.commit = commit;
     files = new ArrayList<>();
-    storage = new Storage(settings.folderOfMetadata() + "/.temp");
+    storage = new Storage(settings.folderOfMetadata() + "/.temp/" + this.commit);
 
     api = new Launcher();
+
+    var parentFolder = new File(settings.folderOfMetadata() + "/.temp");
+    if(parentFolder.exists()) {
+      var listOfFolder = FileUtil.listOfFolders(parentFolder);
+      if(listOfFolder.size() > 3) {
+        var position =  Math.round((float)Math.random()*10) % listOfFolder.size();
+        var oldResource = new Storage(settings.folderOfMetadata() + "/.temp/" + listOfFolder.get(position));
+        oldResource.remove();
+      }
+    }
   }
 
   public void add(String name, String content) {
@@ -54,8 +68,7 @@ public class Snapshot {
   }
 
   public CtModel model() {
-    api.addInputResource(settings.folderOfMetadata() + "/.temp/src/");
-    System.out.println(settings.folderOfMetadata() + "/.temp/src/");
+    api.addInputResource(settings.folderOfMetadata() + "/.temp/"+ this.commit +"/src/");
     return api.getModel();
   }
 }

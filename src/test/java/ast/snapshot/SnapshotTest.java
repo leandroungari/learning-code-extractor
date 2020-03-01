@@ -7,6 +7,7 @@ import org.junit.Test;
 import core.Player;
 import core.features.FeatureType;
 import repository.commit.File;
+import spoon.reflect.declaration.CtElement;
 import spoon.reflect.declaration.CtPackage;
 import spoon.reflect.visitor.filter.TypeFilter;
 
@@ -21,7 +22,7 @@ public class SnapshotTest {
   @Test
   public void creatingSnapshot() {
 
-    var snapshot = new Snapshot();
+    var snapshot = new Snapshot(COMMIT);
 
     var filesOfCommit = player
       .<List<File>>get(FeatureType.LIST_OF_FILES)
@@ -40,7 +41,7 @@ public class SnapshotTest {
   @Test
   public void buildModel() {
 
-    var snapshot = new Snapshot();
+    var snapshot = new Snapshot(COMMIT);
 
     var filesOfCommit = player
       .<List<File>>get(FeatureType.LIST_OF_FILES)
@@ -54,10 +55,10 @@ public class SnapshotTest {
     });
 
     var result = snapshot.model()
-      .getElements(new TypeFilter<>(CtPackage.class));
+      .getElements(new TypeFilter<>(CtElement.class));
     
     result.forEach(item -> {
-      System.out.println(item.getQualifiedName());
+      System.out.println(item);
     });
   }
 
