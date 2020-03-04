@@ -24,12 +24,18 @@ public class Slicer {
 
   public List<CtFieldReference<?>> getAllFields() {
 
-    return element.getAllFields().stream().collect(Collectors.toList());
+    return element
+      .getAllFields()
+      .stream()
+      .collect(Collectors.toList());
   }
 
   public List<CtMethod<?>> getAllMethods() {
 
-    return element.getAllMethods().stream().collect(Collectors.toList());
+    return element
+      .getAllMethods()
+      .stream()
+      .collect(Collectors.toList());
   }
 
   public CtMethod<?> getMethod(String signature) {
@@ -42,12 +48,14 @@ public class Slicer {
 
   public List<CtVariableAccess<?>> getAccessVariables(CtElement element) {
 
-    return element.getElements(new TypeFilter<>(CtVariableAccess.class));
+    return element
+      .getElements(new TypeFilter<>(CtVariableAccess.class));
   }
 
   public List<CtVariableWrite<?>> getWriteVariables(CtElement element) {
 
-    return element.getElements(new TypeFilter<>(CtVariableWrite.class));
+    return element
+      .getElements(new TypeFilter<>(CtVariableWrite.class));
   }
 
   public List<CtParameter<?>> getParamsFromMethod(CtMethod<?> method) {
