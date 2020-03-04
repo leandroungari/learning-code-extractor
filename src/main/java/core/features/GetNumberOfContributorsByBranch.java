@@ -2,15 +2,13 @@ package core.features;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.eclipse.jgit.api.errors.GitAPIException;
 
+import core.data.CommitInfo;
 import core.resource.Resource;
 import core.resource.ResourceTrack;
 import core.resource.ResourceType;
-import repository.Commit;
-import core.data.CommitInfo;
 
 public class GetNumberOfContributorsByBranch implements RepositoryFeature<List<Integer>> {
 

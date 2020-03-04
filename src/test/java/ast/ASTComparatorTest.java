@@ -160,4 +160,28 @@ public class ASTComparatorTest {
     System.out.println(node.getCamelCaseName());
   }
 
+  @Test
+  public void getOldElements() {
+
+    var comparator = new ASTComparator(src, dest);
+    var result = comparator.getOldModifiedElements();
+
+    for(var item: result) {
+      System.out.println(item);
+      System.out.println(item.getPath().toString());
+    }
+  }
+
+  @Test
+  public void getNewElements() {
+
+    var comparator = new ASTComparator(src, dest);
+    var result = comparator.getNewModifiedElements();
+
+    for(var item: result) {
+      System.out.println(item);
+      System.out.println(item.getPath().toString());
+    }
+  }
+
 }
