@@ -52,6 +52,11 @@ public class Snapshot {
     }
   }
 
+  public boolean contains(String filename) {
+    
+    return files.contains(filename);
+  }
+
   public String get(String name) {
 
     try {
