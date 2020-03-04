@@ -55,7 +55,7 @@ public class SnapshotTest {
     });
 
     var result = snapshot.model()
-      .getElements(new TypeFilter<>(CtElement.class));
+      .getElements(new TypeFilter<>(CtPackage.class));
     
     result.forEach(item -> {
       System.out.println(item);

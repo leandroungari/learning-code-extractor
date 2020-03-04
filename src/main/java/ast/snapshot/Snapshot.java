@@ -68,7 +68,8 @@ public class Snapshot {
   }
 
   public CtModel model() {
-    api.addInputResource(settings.folderOfMetadata() + "/.temp/"+ this.commit +"/src/");
+    api.addInputResource(settings.folderOfMetadata() + "/.temp/"+ this.commit +"/");
+    api.buildModel();
     return api.getModel();
   }
 }
