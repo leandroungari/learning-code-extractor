@@ -180,7 +180,7 @@ public class ASTComparatorTest {
 
     for(var item: result) {
       System.out.println(item);
-      System.out.println(item.getPath().toString());
+      System.out.println(item.getPath());
     }
   }
 
