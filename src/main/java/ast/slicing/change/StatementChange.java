@@ -16,14 +16,19 @@ public class StatementChange extends Change<CtStatement> {
   @Override
   public List<CtElement> build(CtModel model) {
     var result = new ArrayList<CtElement>();
-
-    var containedVariables = slicer.get
+    var containedVariables = slicer.getVariables(element);
 
     var block = getParentMethod().getBody();
-    block.forEach(statement -> {
+  
+    for(var statement: block) {
+      if(slicer.statementSetOneVariables(statement, containedVariables)) {
+        result.add(statement);
+      }
 
-    });
-    
+      if(element.toString().equals(statement.toString())) {
+        break;
+      };
+    }
     return result;
   }
 }

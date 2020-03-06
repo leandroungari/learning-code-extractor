@@ -26,6 +26,11 @@ public class Extractor {
 
     var item = getModification(path);
     var change = verifyTypeOfModification(item);
+    var result = change.build(model);
+    System.out.println("========");
+    for(var e: result) {
+      System.out.println(e);
+    }
 
     
   }

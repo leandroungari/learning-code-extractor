@@ -77,10 +77,10 @@ public class SlicerTest {
   }
 
   @Test
-  public void getAccessToVariables() {
+  public void getVariables() {
 
     var method = slicer.getMethod("doStuff()");
-    var result = slicer.getAccessVariables(method);
+    var result = slicer.getVariables(method);
 
     System.out.println("Tamanho: " + result.size());
     for(var item: result) {
@@ -88,17 +88,6 @@ public class SlicerTest {
     }
   }
 
-  @Test
-  public void getWriteToVariables() {
-
-    var method = slicer.getMethod("doStuff()");
-    var result = slicer.getWriteVariables(method);
-
-    System.out.println("Tamanho: " + result.size());
-    for(var item: result) {
-      System.out.println(item);
-    }
-  }
 
   @Test
   public void getParametersFromMethod() {

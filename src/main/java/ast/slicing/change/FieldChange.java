@@ -20,7 +20,7 @@ public class FieldChange extends Change<CtFieldReference<?>> {
 
     var clazz = getParentClass();
     var slicer = new Slicer(clazz);
-    var data = slicer.getAccessVariables(element);
+    var data = slicer.getVariables(element);
     
     System.out.println(data);
 
