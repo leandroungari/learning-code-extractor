@@ -5,9 +5,12 @@ import java.util.List;
 
 import spoon.reflect.CtModel;
 import spoon.reflect.code.CtStatement;
+import spoon.reflect.code.CtVariableAccess;
 import spoon.reflect.declaration.CtElement;
 
 public class StatementChange extends Change<CtStatement> {
+
+  private List<CtVariableAccess<?>> variables;
 
   public StatementChange(CtStatement st) {
     super(st);
@@ -16,19 +19,34 @@ public class StatementChange extends Change<CtStatement> {
   @Override
   public List<CtElement> build(CtModel model) {
     var result = new ArrayList<CtElement>();
-    var containedVariables = slicer.getVariables(element);
-
-    var block = getParentMethod().getBody();
-  
-    for(var statement: block) {
-      if(slicer.statementSetOneVariables(statement, containedVariables)) {
-        result.add(statement);
+    this.variables = slicer.getAccessVariables(element);
+    
+    var block = slicer.getMethodBlock(getParentMethod());
+    for(var i = block.indexOf(element); i >= 0; i--) {
+      System.out.println(block.get(i));
+      if(hasDependency(block.get(i))) {
+        result.add(0, block.get(i));
       }
 
-      if(element.toString().equals(statement.toString())) {
-        break;
-      };
     }
+
+
     return result;
+  }
+
+  private boolean hasDependency(CtStatement state) {
+    var writeVariables = slicer.getWriteVariables(state);
+    for(var variable: writeVariables) {
+      if(variables.contains(variable)) {
+        return true;
+      }
+    }
+    var localVariables = slicer.getDefinitionVariables(state);
+    for(var variable: localVariables) {
+      if(variables.contains(variable.getReference())) {
+        return true;
+      }
+    }
+    return false;
   }
 }

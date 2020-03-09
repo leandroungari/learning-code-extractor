@@ -77,10 +77,10 @@ public class SlicerTest {
   }
 
   @Test
-  public void getVariables() {
+  public void getAccessVariables() {
 
     var method = slicer.getMethod("doStuff()");
-    var result = slicer.getVariables(method);
+    var result = slicer.getAccessVariables(method);
 
     System.out.println("Tamanho: " + result.size());
     for(var item: result) {
