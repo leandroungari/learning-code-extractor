@@ -5,12 +5,12 @@ import java.util.List;
 
 import spoon.reflect.CtModel;
 import spoon.reflect.code.CtStatement;
-import spoon.reflect.code.CtVariableAccess;
 import spoon.reflect.declaration.CtElement;
+import spoon.reflect.reference.CtVariableReference;
 
 public class StatementChange extends Change<CtStatement> {
 
-  private List<CtVariableAccess<?>> variables;
+  private List<CtVariableReference<?>> variables;
 
   public StatementChange(CtStatement st) {
     super(st);
@@ -41,9 +41,10 @@ public class StatementChange extends Change<CtStatement> {
         return true;
       }
     }
-    var localVariables = slicer.getDefinitionVariables(state);
-    for(var variable: localVariables) {
-      if(variables.contains(variable.getReference())) {
+    
+    var definitionVariables = slicer.getDefinitionVariables(state);
+    for(var variable: definitionVariables) {
+      if(variables.contains(variable)) {
         return true;
       }
     }

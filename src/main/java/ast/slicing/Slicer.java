@@ -14,6 +14,7 @@ import spoon.reflect.declaration.CtMethod;
 import spoon.reflect.declaration.CtParameter;
 import spoon.reflect.declaration.CtVariable;
 import spoon.reflect.reference.CtFieldReference;
+import spoon.reflect.reference.CtVariableReference;
 import spoon.reflect.visitor.filter.TypeFilter;
 
 public class Slicer {
@@ -50,24 +51,36 @@ public class Slicer {
       .collect(Collectors.toList()).get(0);
   }
 
-  public List<CtVariableAccess<?>> getAccessVariables(CtElement e) {
+  public List<CtVariableReference<?>> getAccessVariables(CtElement e) {
 
-    return e.getElements(new TypeFilter<>(CtVariableAccess.class));
+    return e.getElements(new TypeFilter<>(CtVariableAccess.class))
+      .stream()
+      .map(v -> v.getVariable())
+      .collect(Collectors.toList());
   }
 
-  public List<CtLocalVariable<?>> getDefinitionVariables(CtElement e) {
+  public List<CtVariableReference<?>> getDefinitionVariables(CtElement e) {
 
-    return e.getElements(new TypeFilter<>(CtLocalVariable.class));
+    return e.getElements(new TypeFilter<>(CtLocalVariable.class))
+      .stream()
+      .map(v -> v.getReference())
+      .collect(Collectors.toList());
   }
 
-  public List<CtVariableRead<?>> getReadVariables(CtElement e) {
+  public List<CtVariableReference<?>> getReadVariables(CtElement e) {
 
-    return e.getElements(new TypeFilter<>(CtVariableRead.class));
+    return e.getElements(new TypeFilter<>(CtVariableRead.class))
+      .stream()
+      .map(v -> v.getVariable())
+      .collect(Collectors.toList());
   }
 
-  public List<CtVariableWrite<?>> getWriteVariables(CtElement e) {
+  public List<CtVariableReference<?>> getWriteVariables(CtElement e) {
 
-    return e.getElements(new TypeFilter<>(CtVariableWrite.class));
+    return e.getElements(new TypeFilter<>(CtVariableWrite.class))
+      .stream()
+      .map(v -> v.getVariable())
+      .collect(Collectors.toList());
   }
 
   public List<CtParameter<?>> getParamsFromMethod(CtMethod<?> method) {
