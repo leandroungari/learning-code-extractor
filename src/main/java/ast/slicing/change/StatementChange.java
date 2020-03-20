@@ -23,25 +23,23 @@ public class StatementChange extends Change<CtStatement> {
     
     var block = slicer.getMethodBlock(getParentMethod());
     for(var i = block.indexOf(element); i >= 0; i--) {
-      System.out.println(block.get(i));
       if(hasDependency(block.get(i))) {
         result.add(0, block.get(i));
       }
-
     }
-
 
     return result;
   }
 
   private boolean hasDependency(CtStatement state) {
+    //verifica se alguma variável dependência foi atribuída no comando
     var writeVariables = slicer.getWriteVariables(state);
     for(var variable: writeVariables) {
       if(variables.contains(variable)) {
         return true;
       }
     }
-    
+    //verifica se alguma variável dependência foi definida no comando
     var definitionVariables = slicer.getDefinitionVariables(state);
     for(var variable: definitionVariables) {
       if(variables.contains(variable)) {

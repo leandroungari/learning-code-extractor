@@ -1,6 +1,5 @@
 package ast.slicing;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import ast.slicing.change.Change;
@@ -54,9 +53,11 @@ public class Extractor {
 
     if(element instanceof CtMethod) {
       change = new MethodChange((CtMethod<?>) element);
+      System.err.println("### ELEMENTO TIPO MÉTODO");
     }
     else if(element instanceof CtFieldReference) {
       change = new FieldChange((CtFieldReference<?>) element);
+      System.err.println("### ELEMENTO TIPO ATRIBUTO");
     }
     else {
       //os demais comandos

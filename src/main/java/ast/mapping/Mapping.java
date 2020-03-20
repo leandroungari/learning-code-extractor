@@ -33,12 +33,17 @@ public class Mapping {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		
-		return new Mapping(
-			operation,
-			o.getSrcNode(),
-			o.getDstNode()
-		);
+
+		if(operation == OperationType.INSERT) {
+			return new Mapping(operation,null,o.getSrcNode());
+		}
+		else if(operation == OperationType.UPDATE || 
+						operation == OperationType.MOVE) {
+			return new Mapping(operation,o.getSrcNode(),o.getDstNode());
+		}
+		else {
+			return new Mapping(operation,null,o.getSrcNode());
+		}
 	}
 	
 	public OperationType type() {
@@ -77,18 +82,11 @@ public class Mapping {
 	}
 	
 	
-	private static OperationType defineType(String type) 
-		throws Exception {
+	private static OperationType defineType(String type) {
 		
 		if(type.contains("INS")) return OperationType.INSERT;
 		else if(type.contains("DEL")) return OperationType.DELETE;
 		else if(type.contains("UPD")) return OperationType.UPDATE;
-		else if(type.contains("MOV")) return OperationType.MOVE;
-		else 
-			throw new Exception(
-				"Undefined type operation!" + " --- " + type
-			);
+		else return OperationType.MOVE;
 	}
-	
-	
 }

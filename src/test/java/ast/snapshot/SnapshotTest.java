@@ -7,7 +7,6 @@ import org.junit.Test;
 import core.Player;
 import core.features.FeatureType;
 import repository.commit.File;
-import spoon.reflect.declaration.CtElement;
 import spoon.reflect.declaration.CtPackage;
 import spoon.reflect.visitor.filter.TypeFilter;
 
