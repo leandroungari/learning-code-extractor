@@ -5,7 +5,6 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import repository.exception.GitRepositoryException;
-import spoon.support.reflect.declaration.CtMethodImpl;
 
 public class ASTComparatorTest {
 
@@ -91,97 +90,18 @@ public class ASTComparatorTest {
     mappings.forEach(a -> {
       System.out.println("=====================");
       System.out.println(a.type());
-      System.out.println(a.source().get());
-      System.out.println(a.destination().get());
-    });
-
-  }
-
-  @Test
-  public void generateScript() {
-
-    var comparator = new ASTComparator(src, dest);
-    var list = comparator.editScript();
-
-    list.forEach(a -> {
-      System.out.println("=====================");
-      System.out.println(a.getAction().getName());
-      System.out.println(a.getSrcNode());
-      System.out.println(a.getDstNode());
+      System.out.println(a.source());
+      System.out.println(a.destination());
     });
   }
 
   @Test
-  public void walkingInTree() {
-
+  public void extractModifications() {
     var comparator = new ASTComparator(src, dest);
-    var element = comparator.editScript().get(0);
-
-    element.getSrcNode().asIterable().forEach(e -> {
-      System.out.println(e.getShortRepresentation());
-    });
-  }
-
-  @Test 
-  public void verifyTypeOfElement() {
-
-    var comparator = new ASTComparator(src, dest);
-    var element = comparator.editScript().get(0);
-
-    var node = element.getSrcNode();
-    System.out.println(node.getShortRepresentation());
-    System.out.println(node instanceof CtMethodImpl);
-  }
-
-  @Test
-  public void transversingChildrenElement() {
-
-    var comparator = new ASTComparator(src, dest);
-    var element = comparator.editScript().get(0);
-
-    var node = element.getSrcNode();
-
-    node.descendantIterator().forEachRemaining(e -> {
-      System.out.println("=====================");
-      System.out.println(e.getPath());
-      System.out.println(e.getShortRepresentation());
-    
-    });
-  }
-
-  @Test
-  public void handleMethodDeclaration() {
-
-    var comparator = new ASTComparator(src, dest);
-    var element = comparator.editScript().get(0);
-
-    var node = element.getSrcNode().getRoleInParent();
-
-    System.out.println(node.getCamelCaseName());
-  }
-
-  @Test
-  public void getOldElements() {
-
-    var comparator = new ASTComparator(src, dest);
-    var result = comparator.getOldModifiedElements();
-
-    for(var item: result) {
-      System.out.println(item);
-      System.out.println(item.getPath().toString());
+    for(var modification: comparator.extract()) {
+      //System.out.println(modification);
     }
   }
 
-  @Test
-  public void getNewElements() {
-
-    var comparator = new ASTComparator(src, dest);
-    var result = comparator.getNewModifiedElements();
-
-    for(var item: result) {
-      System.out.println(item);
-      System.out.println(item.getPath());
-    }
-  }
-
+  
 }

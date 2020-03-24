@@ -6,10 +6,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import ast.snapshot.Snapshot;
-import spoon.Launcher;
 import spoon.reflect.code.CtExpression;
-import spoon.reflect.code.CtFieldAccess;
-import spoon.reflect.code.CtStatement;
 import spoon.reflect.declaration.CtMethod;
 
 public class ExtractorTest {

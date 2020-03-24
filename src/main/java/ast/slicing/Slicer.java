@@ -12,7 +12,6 @@ import spoon.reflect.declaration.CtClass;
 import spoon.reflect.declaration.CtElement;
 import spoon.reflect.declaration.CtMethod;
 import spoon.reflect.declaration.CtParameter;
-import spoon.reflect.declaration.CtVariable;
 import spoon.reflect.reference.CtFieldReference;
 import spoon.reflect.reference.CtVariableReference;
 import spoon.reflect.visitor.filter.TypeFilter;

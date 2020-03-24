@@ -2,8 +2,10 @@ package ast;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import ast.mapping.Mapping;
+import ast.mapping.Modification;
 import ast.mapping.OperationType;
 import gumtree.spoon.AstComparator;
 import gumtree.spoon.diff.Diff;
@@ -16,115 +18,128 @@ public class ASTComparator {
 	private SourceCodeFile a;
 	private SourceCodeFile b;
 	private static AstComparator comparator = new AstComparator();
+
+	private List<Modification> result;
 	
 	private Diff diff;
 	
-	public ASTComparator(
-		SourceCodeFile oldSource, 
-		SourceCodeFile newSource
-		) {
+	public ASTComparator(SourceCodeFile oldSource, SourceCodeFile newSource) {
 		a = oldSource;
 		b = newSource;
 
-		diff = comparator.compare(
-			a.content(),
-			b.content()
-		);
+		diff = comparator.compare(a.content(),b.content());
+		result = new ArrayList<Modification>();
 	}
 	
 	public List<Mapping> mappings() {
 		
 		var list = new ArrayList<Mapping>();
-		
-		editScript().forEach(o -> {
-			list.add(Mapping.create(o));
-		});
-		
+		for(Operation<?> o: diff.getAllOperations()) {
+			list.add(new Mapping(o));
+		}
+
 		return list;
 	}
 
-	public List<CtElement> getNewModifiedElements() {
-
-		var result = new ArrayList<CtElement>();
-		CtElement item;
-
+	public List<Modification> extract() {
+		
+		result.clear();
+		Modification modification = null;
 		for(var mapping: mappings()) {
-
-			item = getNewElement(mapping);
-			
-			if(item != null && !containsParent(result, item)) {
-				result.add(item);
+			if(modification == null) {
+				modification = new Modification(mapping);
+			}
+			else if(mapping.type() == OperationType.INSERT) {
+				modification = extractInsertion(modification, mapping);
+			}
+			else if(mapping.type() == OperationType.MOVE || 
+							mapping.type() == OperationType.UPDATE
+			) {
+				modification = extractUpdateMove(modification, mapping);
+			}
+			else {
+				modification = extractDeletion(modification, mapping);
 			}
 		}
 
 		return result;
 	}
 
-	private CtElement getNewElement(Mapping mapping) {
-
-		CtElement item = null;
-		if(mapping.type() == OperationType.INSERT) {
-			item = mapping.source().get();
+	private Modification extractInsertion(Modification modification, Mapping mapping) {
+		var sources = getDestinations(modification);
+		var mappings = modification.getMappings();
+		if(mapping.type() != mappings.get(mappings.size()-1).type() ||
+			 containsParent(sources, mapping.destination()) == -1 
+		) {
+			result.add(modification);
+			return new Modification(mapping);
 		}
-		else if(mapping.type() == OperationType.UPDATE) {
-			item = mapping.destination().get();
-		}
-		else if(mapping.type() == OperationType.MOVE) {
-			item = mapping.source().get();
-		}
-
-		return item;
+		return modification;
 	}
 
-	public List<CtElement> getOldModifiedElements() {
+	private Modification extractUpdateMove(Modification modification, Mapping mapping) {
+		var sources = getSources(modification);
+		var destinations = getDestinations(modification);
 
-		var result = new ArrayList<CtElement>();
-		CtElement item = null;
-		
-		for(var mapping: mappings()) {
+		var position = containsParent(
+			sources, 
+			mapping.source()
+		);
 
-			item = getOldElement(mapping);
-
-			if(item != null && !containsParent(result, item)) {
-				result.add(item);
-			}
+		var mappings = modification.getMappings();
+		if(position == -1 || 
+			 mapping.type() != mappings.get(mappings.size()-1).type()	||
+			 !mapping
+			 .destination()
+			 .hasParent(destinations.get(position))
+		) {
+			result.add(modification);
+			return new Modification(mapping);
 		}
-
-		return result;
+		return modification;
 	}
 
-	private CtElement getOldElement(Mapping mapping) {
-		
-		CtElement item = null;
-		
-		if(mapping.type() == OperationType.DELETE) {
-			item = mapping.source().get();
+	private Modification extractDeletion(Modification modification, Mapping mapping) {
+		var sources = getSources(modification);
+		var mappings = modification.getMappings();
+		if(mapping.type() != mappings.get(mappings.size()-1).type() ||
+			 containsParent(sources, mapping.source()) == -1
+		) {
+			result.add(modification);
+			return new Modification(mapping);
 		}
-		else if(mapping.type() == OperationType.UPDATE) {
-			item = mapping.source().get();
-		}
-		else if(mapping.type() == OperationType.MOVE) {
-			item = mapping.source().get();
-		}
-
-		return item;
+		return modification;
 	}
 
-	private boolean containsParent(List<CtElement> list, CtElement element) {
-
-		for(var parent: list) {
-			if(element.hasParent(parent)) {
-				return true;
-			}
-		}
-		return false;
+	private List<CtElement> getSources(Modification modification) {
+		return modification
+			.getMappings()
+			.stream()
+			.map(item -> item.source())
+			.collect(Collectors.toList());
 	}
 
+	private List<CtElement> getDestinations(Modification modification) {
+		return modification
+			.getMappings()
+			.stream()
+			.map(item -> item.destination())
+			.collect(Collectors.toList());
+	}
+
+	private Integer containsParent(List<CtElement> list, CtElement element) {
 	
-	@SuppressWarnings("rawtypes")
-	public List<Operation> editScript() {
-
-		return diff.getAllOperations();
+		for(var i = 0; i < list.size(); i++) {
+			System.out.println("\n======");
+			System.out.println(list.get(i));
+			System.out.println(element);
+			System.out.println(element.hasParent(list.get(i)));
+			System.out.println(list.get(i).getPath().toString());
+			if(element.hasParent(list.get(i))) {
+				return i;
+			}
+		}
+		return -1;
 	}
 	
 	public CtType<?> sourceTree() {

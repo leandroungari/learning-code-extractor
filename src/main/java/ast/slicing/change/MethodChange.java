@@ -1,6 +1,5 @@
 package ast.slicing.change;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import spoon.reflect.CtModel;
@@ -16,7 +15,7 @@ public class MethodChange extends Change<CtMethod<?>> {
   @Override
   public List<CtElement> build(CtModel model) {
     
-    var result = new ArrayList<CtElement>();
+    //var result = new ArrayList<CtElement>();
 
     
     return null;
