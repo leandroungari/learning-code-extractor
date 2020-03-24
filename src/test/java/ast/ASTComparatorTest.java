@@ -4,6 +4,7 @@ import org.eclipse.jgit.api.errors.GitAPIException;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import ast.mapping.OperationType;
 import repository.exception.GitRepositoryException;
 
 public class ASTComparatorTest {
@@ -99,9 +100,35 @@ public class ASTComparatorTest {
   public void extractModifications() {
     var comparator = new ASTComparator(src, dest);
     for(var modification: comparator.extract()) {
-      //System.out.println(modification);
+      System.out.println(modification);
     }
   }
 
+  @Test
+  public void listChildrenOfModifications() {
+    var comparator = new ASTComparator(src, dest);
+    for(var modification: comparator.extract()) {
+      System.out.println(">>>>>>>>>>>>>>>>>");
+      for(var mapping: modification) {
+        
+        if(mapping.type() == OperationType.INSERT) {
+          System.out.println("+++++");
+          mapping.destination().asIterable().forEach(System.out::println);
+        }
+        else if(mapping.type() == OperationType.DELETE) {
+          System.out.println("-----");
+          mapping.source().asIterable().forEach(System.out::println);
+        }
+        else {
+          System.out.println("-----");
+          mapping.source().asIterable().forEach(System.out::println);
+          System.out.println("+++++");
+          mapping.destination().asIterable().forEach(System.out::println);
+        }
+      }
+    }
+    
+  }
+  
   
 }
