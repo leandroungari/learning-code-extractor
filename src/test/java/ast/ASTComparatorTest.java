@@ -4,8 +4,8 @@ import org.eclipse.jgit.api.errors.GitAPIException;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import ast.mapping.OperationType;
 import repository.exception.GitRepositoryException;
-import spoon.support.reflect.declaration.CtMethodImpl;
 
 public class ASTComparatorTest {
 
@@ -91,73 +91,44 @@ public class ASTComparatorTest {
     mappings.forEach(a -> {
       System.out.println("=====================");
       System.out.println(a.type());
-      System.out.println(a.source().get());
-      System.out.println(a.destination().get());
-    });
-
-  }
-
-  @Test
-  public void generateScript() {
-
-    var comparator = new ASTComparator(src, dest);
-    var list = comparator.editScript();
-
-    list.forEach(a -> {
-      System.out.println("=====================");
-      System.out.println(a.getAction().getName());
-      System.out.println(a.getSrcNode());
-      System.out.println(a.getDstNode());
+      System.out.println(a.source());
+      System.out.println(a.destination());
     });
   }
 
   @Test
-  public void walkingInTree() {
-
+  public void extractModifications() {
     var comparator = new ASTComparator(src, dest);
-    var element = comparator.editScript().get(0);
-
-    element.getSrcNode().asIterable().forEach(e -> {
-      System.out.println(e.getShortRepresentation());
-    });
-  }
-
-  @Test 
-  public void verifyTypeOfElement() {
-
-    var comparator = new ASTComparator(src, dest);
-    var element = comparator.editScript().get(0);
-
-    var node = element.getSrcNode();
-    System.out.println(node.getShortRepresentation());
-    System.out.println(node instanceof CtMethodImpl);
+    for(var modification: comparator.extract()) {
+      System.out.println(modification);
+    }
   }
 
   @Test
-  public void transversingChildrenElement() {
-
+  public void listChildrenOfModifications() {
     var comparator = new ASTComparator(src, dest);
-    var element = comparator.editScript().get(0);
-
-    var node = element.getSrcNode();
-
-    node.descendantIterator().forEachRemaining(e -> {
-      System.out.println("=====================");
-      System.out.println(e.getPath());
-      System.out.println(e.getShortRepresentation());
+    for(var modification: comparator.extract()) {
+      System.out.println(">>>>>>>>>>>>>>>>>");
+      for(var mapping: modification) {
+        
+        if(mapping.type() == OperationType.INSERT) {
+          System.out.println("+++++");
+          mapping.destination().asIterable().forEach(System.out::println);
+        }
+        else if(mapping.type() == OperationType.DELETE) {
+          System.out.println("-----");
+          mapping.source().asIterable().forEach(System.out::println);
+        }
+        else {
+          System.out.println("-----");
+          mapping.source().asIterable().forEach(System.out::println);
+          System.out.println("+++++");
+          mapping.destination().asIterable().forEach(System.out::println);
+        }
+      }
+    }
     
-    });
   }
-
-  @Test
-  public void handleMethodDeclaration() {
-
-    var comparator = new ASTComparator(src, dest);
-    var element = comparator.editScript().get(0);
-
-    var node = element.getSrcNode().getRoleInParent();
-
-    System.out.println(node.getCamelCaseName());
-  }
-
+  
+  
 }

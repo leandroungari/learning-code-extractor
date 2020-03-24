@@ -10,16 +10,16 @@ import storage.storagetest.Person;
 
 public class StorageTest {
 
-  private static final String FILE = "teste.csv";
   private static String FOLDER = SettingsController.get().folderOfMetadata().getAbsolutePath();
 
   @Test
   public void writeCSVFile() throws IOException {
 
     var storage = new Storage(FOLDER);
+    var file = "teste.csv";
 
     storage
-    .<Person>csv(FILE)
+    .<Person>csv(file)
     .write(new Person[]{
       new Person("Leandro", 23),
       new Person("Laura", 21),
@@ -31,8 +31,9 @@ public class StorageTest {
   public void readCSVFile() throws IOException {
 
     var storage = new Storage(FOLDER);
-    
-    var result = storage.<Person>csv(FILE)
+    var file = "teste.csv";
+
+    var result = storage.<Person>csv(file)
       .read(Person.class);
 
     for(var p: result) {
@@ -41,4 +42,35 @@ public class StorageTest {
 
     assertTrue("The size is 3", result.length == 3);
   }
+
+  //TODO
+  //fazer testes para formato JSON
+
+  @Test
+  public void writePlainTextFile() throws IOException {
+
+    var file = "teste.txt";
+
+    var storage = new Storage(FOLDER);
+    
+    System.out.println(
+      storage
+      .plainText(file)
+      .read()
+    );
+  }
+
+  @Test
+  public void readPlainTextFile() throws IOException {
+
+    var file = "teste.txt";
+
+    var storage = new Storage(FOLDER);
+  
+    storage
+    .plainText(file)
+    .write("meu teste geral!");
+  }
+
+
 }
