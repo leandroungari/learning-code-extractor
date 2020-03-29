@@ -1,4 +1,4 @@
-package ast.slicing;
+package ast;
 
 import static org.junit.Assert.assertTrue;
 

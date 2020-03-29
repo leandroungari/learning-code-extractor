@@ -1,4 +1,4 @@
-package ast.slicing.change;
+package ast.change;
 
 import java.util.List;
 import java.util.stream.Collectors;

@@ -1,11 +1,11 @@
-package ast.slicing;
+package ast;
 
 import java.util.List;
 
-import ast.slicing.change.Change;
-import ast.slicing.change.FieldChange;
-import ast.slicing.change.MethodChange;
-import ast.slicing.change.StatementChange;
+import ast.change.Change;
+import ast.change.FieldChange;
+import ast.change.MethodChange;
+import ast.change.StatementChange;
 import spoon.reflect.CtModel;
 import spoon.reflect.code.CtStatement;
 import spoon.reflect.declaration.CtElement;
