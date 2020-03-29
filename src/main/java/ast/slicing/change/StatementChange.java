@@ -55,7 +55,7 @@ public class StatementChange extends Change<CtStatement> {
     return false;
   }
 
-  public List<CtVariableReference<?>> getAccessVariables(CtElement e) {
+  private List<CtVariableReference<?>> getAccessVariables(CtElement e) {
 
     return e.getElements(new TypeFilter<>(CtVariableAccess.class))
       .stream()
@@ -63,7 +63,7 @@ public class StatementChange extends Change<CtStatement> {
       .collect(Collectors.toList());
   }
 
-  public List<CtVariableReference<?>> getDefinitionVariables(CtElement e) {
+  private List<CtVariableReference<?>> getDefinitionVariables(CtElement e) {
 
     return e.getElements(new TypeFilter<>(CtLocalVariable.class))
       .stream()
@@ -71,7 +71,7 @@ public class StatementChange extends Change<CtStatement> {
       .collect(Collectors.toList());
   }
 
-  public List<CtVariableReference<?>> getReadVariables(CtElement e) {
+  private List<CtVariableReference<?>> getReadVariables(CtElement e) {
 
     return e.getElements(new TypeFilter<>(CtVariableRead.class))
       .stream()
@@ -79,7 +79,7 @@ public class StatementChange extends Change<CtStatement> {
       .collect(Collectors.toList());
   }
 
-  public List<CtVariableReference<?>> getWriteVariables(CtElement e) {
+  private List<CtVariableReference<?>> getWriteVariables(CtElement e) {
 
     return e.getElements(new TypeFilter<>(CtVariableWrite.class))
       .stream()
