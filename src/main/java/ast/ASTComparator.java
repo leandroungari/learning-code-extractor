@@ -14,19 +14,19 @@ import spoon.reflect.declaration.CtType;
 
 public class ASTComparator {
 
-	private SourceCodeFile a;
-	private SourceCodeFile b;
+	private String before;
+	private String after;
 	private static AstComparator comparator = new AstComparator();
 
 	private List<Modification> result;
 	
 	private Diff diff;
 	
-	public ASTComparator(SourceCodeFile oldSource, SourceCodeFile newSource) {
-		a = oldSource;
-		b = newSource;
+	public ASTComparator(String before, String after) {
+		this.before = before;
+		this.after = after;
 
-		diff = comparator.compare(a.content(),b.content());
+		diff = comparator.compare(before,after);
 		result = new ArrayList<Modification>();
 	}
 	
@@ -138,11 +138,11 @@ public class ASTComparator {
 	
 	public CtType<?> sourceTree() {
 		
-		return comparator.getCtType(a.content());
+		return comparator.getCtType(before);
 	}
 	
 	public CtType<?> destinationTree() {
-		return comparator.getCtType(b.content());
+		return comparator.getCtType(after);
 	}
 	
 	
