@@ -32,4 +32,9 @@ public abstract class Change<T extends CtElement> {
 
     return element.getParent(new TypeFilter<>(CtMethod.class));
   }
+
+  public T get() {
+    
+    return element;
+  }
 }
