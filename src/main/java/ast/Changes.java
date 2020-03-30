@@ -4,32 +4,30 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import ast.change.Change;
+public class Changes implements Iterable<ChangeItem> {
 
-public class Changes implements Iterable<Change<?>> {
-
-  private List<Change<?>> changes;
+  private List<ChangeItem> changes;
 
   public Changes() {
     changes = new ArrayList<>();
   }
 
-  public void add(Change<?> change) {
+  public void add(ChangeItem change) {
 
     changes.add(change);
   }
 
-  public Change<?> first() {
+  public ChangeItem first() {
 
     return changes.get(0);
   }
 
-  public Change<?> last() {
+  public ChangeItem last() {
 
     return changes.get(size() - 1);
   }
 
-  public Change<?> get(Integer position) {
+  public ChangeItem get(Integer position) {
 
     return changes.get(position);
   }
@@ -39,7 +37,7 @@ public class Changes implements Iterable<Change<?>> {
   }
 
   @Override
-  public Iterator<Change<?>> iterator() {
+  public Iterator<ChangeItem> iterator() {
     
     return changes.iterator();
   }

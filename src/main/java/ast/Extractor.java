@@ -1,72 +1,36 @@
 package ast;
 
-import java.util.List;
-
-import ast.change.Change;
-import ast.change.FieldChange;
-import ast.change.MethodChange;
-import ast.change.StatementChange;
-import spoon.reflect.CtModel;
-import spoon.reflect.code.CtStatement;
-import spoon.reflect.declaration.CtElement;
-import spoon.reflect.declaration.CtMethod;
-import spoon.reflect.path.CtPathStringBuilder;
-import spoon.reflect.reference.CtFieldReference;
+import ast.extractor.ModificationBuilder;
 
 public class Extractor {
 
-  private CtModel model;
+  private String repository;
+  private String branch;
+  private String commit;
 
-  public Extractor(CtModel model) {
-    this.model = model;
+  public Extractor(
+    String repository, 
+    String branch, 
+    String commit) {
+
+    this.repository = repository;
+    this.branch = branch;
+    this.commit = commit;
   }
 
-  public void execute(String path) {
+  public void transformModifications() {
 
-    var item = getModification(path);
-    var change = verifyTypeOfModification(item);
-    var result = change.build(model);
-    System.out.println("========");
-    for(var e: result) {
-      System.out.println(e);
-    }
+    var builder = new ModificationBuilder(
+      repository,
+      branch,
+      commit
+    );
 
-    
+    builder.create();
   }
 
-  public CtElement getModification(String path) {
 
-    var mainLine = getElementByPath(path);
-    return mainLine.get(0);
-  }
-
-  private List<CtElement> getElementByPath(String path) {
-
-    var builder = new CtPathStringBuilder()
-      .fromString(path);    
-    return builder.evaluateOn(model.getRootPackage());
-  }
-
-  private Change<?> verifyTypeOfModification(CtElement element) {
-
-    Change<?> change = null;
-
-    if(element instanceof CtMethod) {
-      change = new MethodChange((CtMethod<?>) element);
-      System.err.println("### ELEMENTO TIPO MÉTODO");
-    }
-    else if(element instanceof CtFieldReference) {
-      change = new FieldChange((CtFieldReference<?>) element);
-      System.err.println("### ELEMENTO TIPO ATRIBUTO");
-    }
-    else {
-      //os demais comandos
-      //por enquanto os statements
-      change = new StatementChange((CtStatement) element);
-    }
-
-    return change;
-  }
+  
 
 
 }
