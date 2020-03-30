@@ -5,7 +5,6 @@ import java.util.List;
 
 import ast.mapping.Mapping;
 import ast.mapping.Modification;
-import ast.mapping.OperationType;
 import gumtree.spoon.AstComparator;
 import gumtree.spoon.diff.Diff;
 import gumtree.spoon.diff.operations.Operation;

@@ -4,7 +4,6 @@ import org.eclipse.jgit.api.errors.GitAPIException;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import ast.mapping.OperationType;
 import repository.exception.GitRepositoryException;
 
 public class ASTComparatorTest {

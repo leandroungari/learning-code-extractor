@@ -1,5 +1,6 @@
 package ast.mapping;
 
+import ast.OperationType;
 import gumtree.spoon.diff.operations.Operation;
 import spoon.reflect.declaration.CtElement;
 
