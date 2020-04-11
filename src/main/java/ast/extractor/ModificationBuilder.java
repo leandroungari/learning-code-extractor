@@ -137,7 +137,7 @@ public class ModificationBuilder {
         .source(createChange(mapping.source()));
     }
     else {
-      ChangeItem item = new ChangeItem()
+      return new ChangeItem()
         .type(mapping.type())
         .source(createChange(mapping.source()))
         .destination(createChange(mapping.destination()));
