@@ -84,9 +84,8 @@ public class ModificationBuilder {
       // por enquanto os statements
       try {
         change = new StatementChange((CtStatement) element);
-      }
-      catch(ClassCastException ex) {
-        if(element instanceof CtTypeReference) {
+      } catch (ClassCastException ex) {
+        if (element instanceof CtTypeReference) {
           var statement = element.getParent(new TypeFilter<>(CtStatement.class));
           change = new StatementChange(statement);
         }
@@ -120,7 +119,7 @@ public class ModificationBuilder {
 
   private Changes processModification(Modification m) {
     var changes = new Changes();
-    for(var mapping: m) {
+    for (var mapping : m) {
       changes.add(processMapping(mapping));
     }
     return changes;
@@ -134,12 +133,12 @@ public class ModificationBuilder {
     }
     else if(mapping.type() == OperationType.DELETE) {
       return new ChangeItem()
-        .type(OperationType.INSERT)
+        .type(OperationType.DELETE)
         .source(createChange(mapping.source()));
     }
     else {
-      return new ChangeItem()
-        .type(OperationType.INSERT)
+      ChangeItem item = new ChangeItem()
+        .type(mapping.type())
         .source(createChange(mapping.source()))
         .destination(createChange(mapping.destination()));
     }
