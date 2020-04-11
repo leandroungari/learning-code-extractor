@@ -1,14 +1,19 @@
-package ast;
+package ast.extractor;
 
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+
+import ast.Mappable;
+import ast.OperationType;
 import ast.change.Change;
 
-public class ChangeItem {
+public class ChangeItem implements Mappable {
 
   private Change<?> source;
   private Change<?> destination;
   private OperationType type;
 
-  public ChangeItem() {
+  ChangeItem() {
 
   }
 
@@ -37,5 +42,13 @@ public class ChangeItem {
 
   public Change<?> destination() {
     return destination;
+  }
+
+  public JsonElement toMap() {
+    var json = new JsonObject();
+    json.addProperty("source", source != null ? source.toString() : "null");
+    json.addProperty("destination", destination != null ? destination.toString() : "null");
+    json.addProperty("type", type.toString());
+    return json;
   }
 }

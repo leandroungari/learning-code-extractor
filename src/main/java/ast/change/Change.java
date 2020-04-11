@@ -32,4 +32,9 @@ public abstract class Change<T extends CtElement> {
     
     return element;
   }
+
+  @Override
+  public String toString() {
+    return element.toString();
+  }
 }
