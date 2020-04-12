@@ -40,19 +40,49 @@ public class ASTComparator {
 	}
 
 	public List<Modification> extract() {
-		
 		result.clear();
-		Modification modification = null;
-		for(var mapping: mappings()) {
-			modification = extractByType(modification, mapping);
-		}
+		return verifyParentRelationship(mappings());
+	}
 
-		if(modification != null) {
-			result.add(modification);
+	private List<Modification> createModificationResult(List<Mapping> list) {
+		var result = new ArrayList<Modification>();
+		if(!list.isEmpty()) result.add(new Modification(list.get(0)));
+		return result;
+	}
+
+	private List<Modification> verifyParentRelationship(List<Mapping> list) {
+
+		var result = createModificationResult(list);
+		for(var unsetted: list) {
+			for(var modification: result) {
+				for(var setted: modification.getMappings()) {
+					if(unsetted.isSameType(setted)) {
+						//verificar cada tipo de modificação
+						// e verificar se um elemento é pai ou filho do outro
+						if(unsetted.type() == OperationType.INSERT) {
+							if() {
+
+							}
+						}
+						else if(list.get(unsetted).type() == OperationType.DELETE) {
+
+						}
+						else {
+
+						}
+					}
+				}
+			}
 		}
 
 		return result;
 	}
+
+
+
+	//comparar todos os elementos contra todos para verificar se um é pai do 
+	//outro, o retorno ele pode acontecer antes do elemento pai e causar
+	//falha na implementação atual
 
 	private Modification extractByType(Modification modification, Mapping mapping) {
 		if(modification == null) {

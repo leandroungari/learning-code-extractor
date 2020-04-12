@@ -40,6 +40,10 @@ public class Modification implements Iterable<Mapping> {
     return mappings.size();
   }
 
+  public List<Mapping> getMappings() {
+    return mappings;
+  }
+
   public List<CtElement> sources() {
     return mappings
       .stream()

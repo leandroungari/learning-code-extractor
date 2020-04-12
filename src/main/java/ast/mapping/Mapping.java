@@ -51,6 +51,11 @@ public class Mapping {
 			return OperationType.MOVE;
 	}
 
+	public Boolean isSameType(Mapping other) {
+		
+		return type() == other.type();
+	}
+
 	@Override
   public String toString() {
 
