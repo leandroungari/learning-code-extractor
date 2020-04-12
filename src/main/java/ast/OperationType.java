@@ -1,4 +1,4 @@
-package ast.mapping;
+package ast;
 
 public enum OperationType {
 	INSERT,

@@ -4,16 +4,12 @@ import org.eclipse.jgit.api.errors.GitAPIException;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import ast.mapping.OperationType;
 import repository.exception.GitRepositoryException;
 
 public class ASTComparatorTest {
 
-  private static SourceCodeFile src;
-  private static SourceCodeFile dest;
-
-  private static final String FILE = "src/DogManager.java";
-
+  private static String src;
+  private static String dest;
 
   @BeforeClass
   public static void start() throws GitRepositoryException, GitAPIException {
@@ -77,8 +73,8 @@ public class ASTComparatorTest {
       "}"+
     "}";
 
-    src = SourceCodeFile.create(FILE, contentA);
-    dest = SourceCodeFile.create(FILE, contentB);
+    src = contentA;
+    dest = contentB;
   }
 
   @Test

@@ -1,5 +1,6 @@
 package ast.mapping;
 
+import ast.OperationType;
 import gumtree.spoon.diff.operations.Operation;
 import spoon.reflect.declaration.CtElement;
 
@@ -48,6 +49,11 @@ public class Mapping {
 			return OperationType.UPDATE;
 		else
 			return OperationType.MOVE;
+	}
+
+	public Boolean isSameType(Mapping other) {
+		
+		return type() == other.type();
 	}
 
 	@Override
