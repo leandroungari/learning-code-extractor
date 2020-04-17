@@ -1,9 +1,6 @@
 package ast;
 
-import java.util.List;
-
-import ast.extractor.Changes;
-import ast.extractor.ModificationBuilder;
+import ast.extractor.ModificationsBuilder;
 
 public class Extractor {
 
@@ -21,9 +18,9 @@ public class Extractor {
     this.commit = commit;
   }
 
-  public CommitChanges transformModifications() {
+  public CommitModifications transformModifications() {
 
-    var builder = new ModificationBuilder(
+    var builder = new ModificationsBuilder(
       repository,
       branch,
       commit
@@ -31,9 +28,5 @@ public class Extractor {
 
     return builder.create();
   }
-
-
-  
-
 
 }

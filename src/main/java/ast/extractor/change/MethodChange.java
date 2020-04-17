@@ -1,8 +1,8 @@
-package ast.change;
+package ast.extractor.change;
 
 import java.util.List;
 
-import spoon.reflect.CtModel;
+import ast.extractor.Change;
 import spoon.reflect.code.CtStatement;
 import spoon.reflect.declaration.CtElement;
 import spoon.reflect.declaration.CtMethod;
@@ -15,11 +15,8 @@ public class MethodChange extends Change<CtMethod<?>> {
   }
 
   @Override
-  public List<CtElement> build(CtModel model) {
-    
-    //var result = new ArrayList<CtElement>();
-
-    
+  public List<CtElement> getCompleteChange() {
+    // TODO Auto-generated method stub
     return null;
   }
 
