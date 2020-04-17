@@ -11,7 +11,6 @@ public class DeleteMapping extends Mapping {
   public DeleteMapping(CtElement source) {
     super();
     this.source = Change.createChange(source);
-    System.out.println(this.source.getClass());
   }
 
   public Change<?> source() {
@@ -28,8 +27,7 @@ public class DeleteMapping extends Mapping {
   @Override
   public JsonElement toMap() {
     var json = new JsonObject();
-    json.addProperty("source", source.toString());
-
+    json.add("source", source.toMap());
     return json;
   }
 

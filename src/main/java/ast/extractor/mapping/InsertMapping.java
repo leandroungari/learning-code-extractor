@@ -11,7 +11,6 @@ public class InsertMapping extends Mapping {
   public InsertMapping(CtElement destination) {
     super();
     this.destination = Change.createChange(destination);
-    System.out.println(this.destination.getClass());
   }
 
   public Change<?> destination() {
@@ -28,8 +27,7 @@ public class InsertMapping extends Mapping {
   @Override
   public JsonElement toMap() {
     var json = new JsonObject();
-    json.addProperty("destination", destination.toString());
-
+    json.add("destination", destination.toMap());
     return json;
   }
 

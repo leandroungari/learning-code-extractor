@@ -2,6 +2,10 @@ package ast.extractor;
 
 import java.util.List;
 
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+
+import ast.Mappable;
 import ast.extractor.change.ClassChange;
 import ast.extractor.change.FieldChange;
 import ast.extractor.change.MethodChange;
@@ -14,7 +18,7 @@ import spoon.reflect.declaration.CtMethod;
 import spoon.reflect.reference.CtFieldReference;
 import spoon.reflect.visitor.filter.TypeFilter;
 
-public abstract class Change<T extends CtElement> {
+public abstract class Change<T extends CtElement> implements Mappable {
 
   protected T element;
   private String path;
@@ -76,7 +80,16 @@ public abstract class Change<T extends CtElement> {
   }
 
   @Override
+  public JsonElement toMap() {
+    var json = new JsonObject();
+    json.addProperty("element", element.toString());
+    json.addProperty("path", path);
+    json.addProperty("type", getClass().getSimpleName());
+    return json;
+  }
+
+  @Override
   public String toString() {
-    return element.toString();
+    return toMap().toString();
   }
 }

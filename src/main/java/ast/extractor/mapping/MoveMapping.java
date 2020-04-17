@@ -32,8 +32,8 @@ public class MoveMapping extends Mapping {
   @Override
   public JsonElement toMap() {
     var json = new JsonObject();
-    json.addProperty("source", source.toString());
-    json.addProperty("destination", destination.toString());
+    json.add("source", source.toMap());
+    json.add("destination", destination.toMap());
 
     return json;
   }
