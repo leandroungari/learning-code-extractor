@@ -1,9 +1,9 @@
-package ast.change;
+package ast.extractor.change;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
-import spoon.reflect.CtModel;
+import ast.extractor.Change;
 import spoon.reflect.declaration.CtClass;
 import spoon.reflect.declaration.CtElement;
 import spoon.reflect.declaration.CtMethod;
@@ -16,10 +16,11 @@ public class ClassChange extends Change<CtClass<?>> {
   }
 
   @Override
-  public List<CtElement> build(CtModel model) {
-    
+  public List<CtElement> getCompleteChange() {
+    // TODO Auto-generated method stub
     return null;
   }
+
 
   public List<CtFieldReference<?>> getAllFields() {
 
@@ -44,5 +45,4 @@ public class ClassChange extends Change<CtClass<?>> {
       .filter(method -> method.getSignature().contains(signature))
       .collect(Collectors.toList()).get(0);
   }
-
 }

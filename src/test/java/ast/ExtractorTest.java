@@ -20,6 +20,9 @@ public class ExtractorTest {
   @Test
   public void transform() {
 
+    //criar RuntimeExceptions nos locais de erros
+    //temporários para permitir a execução dos 
+    //exemplos que funcinam
     var result = extractor.transformModifications();
     System.out.println(result);
   }

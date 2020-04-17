@@ -1,10 +1,10 @@
-package ast.change;
+package ast.extractor.change;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import spoon.reflect.CtModel;
+import ast.extractor.Change;
 import spoon.reflect.code.CtLocalVariable;
 import spoon.reflect.code.CtStatement;
 import spoon.reflect.code.CtVariableAccess;
@@ -23,7 +23,7 @@ public class StatementChange extends Change<CtStatement> {
   }
 
   @Override
-  public List<CtElement> build(CtModel model) {
+  public List<CtElement> getCompleteChange() {
     var result = new ArrayList<CtElement>();
     this.variables = getAccessVariables(element);
     
