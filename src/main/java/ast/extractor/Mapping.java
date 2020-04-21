@@ -1,11 +1,14 @@
 package ast.extractor;
 
+import java.util.List;
+
 import ast.Mappable;
+import spoon.reflect.declaration.CtElement;
 
 public abstract class Mapping implements Mappable {
 
-	protected Change<?> source;
-	protected Change<?> destination;
+	protected List<Change<?>> source;
+	protected List<Change<?>> destination;
 
 	public Boolean isSameType(Mapping other) {
 
@@ -23,5 +26,25 @@ public abstract class Mapping implements Mappable {
 	public boolean equals(Object obj) {
 		var other = (Mapping) obj;
 		return toString().equals(other.toString());
+	}
+
+	protected Boolean verifyCorrespondence(
+    Integer totalOfElements, 
+    Integer numberOfMatches) {
+
+    if (totalOfElements == numberOfMatches) {
+      return true;
+    } else if (totalOfElements != 0) {
+      System.err.println("Correspondência parcial");
+    }
+    return false;
+	}
+	
+	protected List<CtElement> dependencies(
+		CtElement target) {
+			
+		return Change
+      .createChange(target)
+      .getCompleteChange();
 	}
 }

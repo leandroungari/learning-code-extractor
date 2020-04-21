@@ -1,5 +1,9 @@
 package ast.extractor.mapping;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
@@ -11,10 +15,14 @@ public class DeleteMapping extends Mapping {
 
   public DeleteMapping(CtElement source) {
     super();
-    this.source = Change.createChange(source);
+    this.source = new ArrayList<>();
+
+    for (var element : dependencies(source)) {
+      this.source.add(Change.createChange(element));
+    }
   }
 
-  public Change<?> source() {
+  public List<Change<?>> source() {
 
     return source;
   }
@@ -28,20 +36,30 @@ public class DeleteMapping extends Mapping {
   @Override
   public JsonElement toMap() {
     var json = new JsonObject();
-    json.add("source", source.toMap());
+    var listSource = new JsonArray();
+    for (var item : source) {
+      listSource.add(item.toMap());
+    }
+    json.add("source", listSource);
     return json;
   }
 
   @Override
   public Boolean isParentOf(Mapping other) {
     if (isSameType(other)) {
-      var element = (DeleteMapping) other;
-      try {
-        return element.source().get().hasParent(source.get());
-      } catch (NullPointerException ex) {
-        System.err.println("== Erro na definição da modificação ==");
-        System.out.println(element.source().path());
+      var numberOfMatches = 0;
+      var otherMapping = (DeleteMapping) other;
+      for (var otherChange : otherMapping.source()) {
+        for (var change : this.source()) {
+          if (otherChange.get().hasParent(change.get())) {
+            numberOfMatches++;
+          }
+        }
       }
+      return verifyCorrespondence(
+        otherMapping.source().size(), 
+        numberOfMatches
+      );
     }
     return false;
   }
@@ -49,13 +67,19 @@ public class DeleteMapping extends Mapping {
   @Override
   public Boolean isChildOf(Mapping other) {
     if (isSameType(other)) {
-      var element = (DeleteMapping) other;
-      try {
-        return source.get().hasParent(element.source().get());
-      } catch (NullPointerException ex) {
-        System.err.println("== Erro na definição da modificação ==");
-        System.out.println(element.source().path());
+      var otherMapping = (DeleteMapping) other;
+      var numberOfMatches = 0;
+      for (var change : this.source()) {
+        for (var otherChange : otherMapping.source()) {
+          if (change.get().hasParent(otherChange.get())) {
+            numberOfMatches++;
+          }
+        }
       }
+      return verifyCorrespondence(
+        this.source().size(), 
+        numberOfMatches
+      );
     }
     return false;
   }

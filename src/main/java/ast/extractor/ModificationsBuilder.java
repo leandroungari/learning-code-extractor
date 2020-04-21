@@ -69,14 +69,20 @@ public class ModificationsBuilder {
 
       comparator = new ASTComparator(oldSource, newSource);
       var list = comparator.mappings();
+      
+      var modification = createNewModification(
+        diff.getOldPath(),
+        diff.getNewPath()
+      );
 
       if(!list.isEmpty()) {
         groupingMappings(
           list,
-          diff.getOldPath(),
-          diff.getNewPath()
+          modification
         );
       }
+
+      this.modifications.add(modification);
     }
 
     return modifications;
@@ -84,30 +90,21 @@ public class ModificationsBuilder {
 
   private void groupingMappings(
     List<Mapping> mappings,
-    String oldPath,
-    String newPath) {
+    Modification modification) {
 
     for(var unsetted: mappings) {
-      AssignModificationAction result = AssignModificationAction.CREATE_MODIFICATION;
-      for(var modification: modifications.getModifications()) {
-        result = assignMappingToModification(modification, unsetted);
-        if(result == AssignModificationAction.NEXT_MAPPING) {
-          break;
-        }
-      }
-      if(result == AssignModificationAction.CREATE_MODIFICATION) {
-        modifications.add(
-          createNewModification(
-            unsetted, 
-            oldPath, 
-            newPath
-          )
-        );
+      var result = verifyAggregationOfMappings(
+        modification, 
+        unsetted
+      );
+      
+      if(result == AssignMappingAction.CREATE_MAPPING) {
+        modification.getMappings().add(unsetted);
       }
     }
   }
 
-  private AssignModificationAction assignMappingToModification(
+  private AssignMappingAction verifyAggregationOfMappings(
     Modification modification, 
     Mapping mapping) {
     
@@ -115,25 +112,23 @@ public class ModificationsBuilder {
     for(var setted: settedMappings) {
       if(setted.isParentOf(mapping) || 
          setted.equals(mapping)) {
-        return AssignModificationAction.NEXT_MAPPING;
+        return AssignMappingAction.NEXT_MAPPING;
       } else if(setted.isChildOf(mapping)) {
         settedMappings.set(
           settedMappings.indexOf(setted), 
           mapping
         );
-        return AssignModificationAction.REPLACED_MAPPING;
+        return AssignMappingAction.REPLACED_MAPPING;
       }
     }
-    
-    return AssignModificationAction.CREATE_MODIFICATION;
+    return AssignMappingAction.CREATE_MAPPING;
   }
 
   private Modification createNewModification(
-    Mapping mapping,
     String oldPath,
     String newPath) {
 
-    var modification = new Modification(mapping);
+    var modification = new Modification();
     modification.setNewPath(newPath);
     modification.setOldPath(oldPath);
     return modification;

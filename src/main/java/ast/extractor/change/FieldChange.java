@@ -14,7 +14,6 @@ public class FieldChange extends Change<CtField<?>> {
 
   @Override
   public List<CtElement> getCompleteChange() {
-    // TODO Auto-generated method stub
-    return null;
+    return List.of(this.element);
   }
 }

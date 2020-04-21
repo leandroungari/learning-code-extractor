@@ -16,8 +16,7 @@ public class MethodChange extends Change<CtMethod<?>> {
 
   @Override
   public List<CtElement> getCompleteChange() {
-    // TODO Auto-generated method stub
-    return null;
+    return List.of(this.element);
   }
 
   public List<CtParameter<?>> getParamsFromMethod() {

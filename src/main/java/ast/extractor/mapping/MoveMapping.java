@@ -1,5 +1,9 @@
 package ast.extractor.mapping;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
@@ -9,17 +13,30 @@ import spoon.reflect.declaration.CtElement;
 
 public class MoveMapping extends Mapping {
 
-  public MoveMapping(CtElement source, CtElement destination) {
-    this.source = Change.createChange(source);
-    this.destination = Change.createChange(destination);
+  public MoveMapping(
+    CtElement source, 
+    CtElement destination) {
+
+    this.source = new ArrayList<>();
+    for(var element: dependencies(source)) {
+      this.source.add(
+        Change.createChange(element)
+      );
+    }
+    this.destination = new ArrayList<>();
+    for(var element: dependencies(destination)) {
+      this.destination.add(
+        Change.createChange(element)
+      );
+    }
   }
 
-  public Change<?> source() {
+  public List<Change<?>> source() {
 
     return source;
   }
 
-  public Change<?> destination() {
+  public List<Change<?>> destination() {
 
     return destination;
   }
@@ -33,8 +50,17 @@ public class MoveMapping extends Mapping {
   @Override
   public JsonElement toMap() {
     var json = new JsonObject();
-    json.add("source", source.toMap());
-    json.add("destination", destination.toMap());
+    var listSource = new JsonArray();
+    for(var item: source) {
+      listSource.add(item.toMap());
+    }
+    json.add("source", listSource);
+
+    var listDestination = new JsonArray();
+    for(var item: destination) {
+      listDestination.add(item.toMap());
+    }
+    json.add("destination", listDestination);
 
     return json;
   }
@@ -42,16 +68,29 @@ public class MoveMapping extends Mapping {
   @Override
   public Boolean isParentOf(Mapping other) {
     if (isSameType(other)) {
-      var element = (MoveMapping) other;
-      try {
-        return (element.source().get().hasParent(source.get())
-            && element.destination().get().hasParent(destination.get()));
-      } catch (NullPointerException ex) {
-        System.err.println("== Erro na definição da modificação ==");
-        System.out.println(element.source.path());
-        System.out.println(element.destination.path());
+      var numberOfMatches = 0;
+
+      var otherMapping = (MoveMapping) other;
+      for (var otherChange : otherMapping.source()) {
+        for (var change : this.source()) {
+          if (otherChange.get().hasParent(change.get())) {
+            numberOfMatches++;
+          }
+        }
+      }
+      for (var otherChange : otherMapping.destination()) {
+        for (var change : this.destination()) {
+          if (otherChange.get().hasParent(change.get())) {
+            numberOfMatches++;
+          }
+        }
       }
 
+      return verifyCorrespondence(
+        otherMapping.source().size() + 
+        otherMapping.destination().size(),
+        numberOfMatches
+      );
     }
     return false;
   }
@@ -59,15 +98,29 @@ public class MoveMapping extends Mapping {
   @Override
   public Boolean isChildOf(Mapping other) {
     if (isSameType(other)) {
-      var element = (MoveMapping) other;
-      try {
-        return (source.get().hasParent(element.source().get())
-            && destination.get().hasParent(element.destination().get()));
-      } catch (NullPointerException ex) {
-        System.err.println("== Erro na definição da modificação ==");
-        System.out.println(element.source.path());
-        System.out.println(element.destination.path());
+      var numberOfMatches = 0;
+
+      var otherMapping = (MoveMapping) other;
+      for (var change : this.source()) {
+        for (var otherChange : otherMapping.source()) {
+          if (change.get().hasParent(otherChange.get())) {
+            numberOfMatches++;
+          }
+        }
       }
+      for (var change : this.destination()) {
+        for (var otherChange : otherMapping.destination()) {
+          if (change.get().hasParent(otherChange.get())) {
+            numberOfMatches++;
+          }
+        }
+      }
+
+      return verifyCorrespondence(
+        otherMapping.source().size() + 
+        otherMapping.destination().size(),
+        numberOfMatches
+      );
     }
     return false;
   }
