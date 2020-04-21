@@ -1,6 +1,8 @@
 package ast.extractor;
 
 import java.util.List;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -36,7 +38,7 @@ public abstract class Change<T extends CtElement> implements Mappable {
   public abstract List<CtElement> getCompleteChange();
 
   public static Change<?> createChange(CtElement element) {
-    System.out.println(element.getPath());
+
     if (element instanceof CtClass) {
       return new ClassChange((CtClass<?>) element);
     } else if (element instanceof CtMethod) {
@@ -77,6 +79,17 @@ public abstract class Change<T extends CtElement> implements Mappable {
   public T get() {
 
     return element;
+  }
+
+  protected static <A,B> List<B> childrenFilter(
+    CtElement target,
+    Class<A> clazz, 
+    Function<A,B> action) {
+
+    return target.getElements(new TypeFilter<>(clazz))
+      .stream()
+      .map(item -> action.apply(item))
+      .collect(Collectors.toList());
   }
 
   @Override

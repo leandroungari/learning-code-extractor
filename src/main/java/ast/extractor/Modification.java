@@ -37,6 +37,14 @@ public class Modification implements Mappable {
     this.newPath = path;
   }
 
+  public String getOldPath() {
+    return oldPath;
+  }
+
+  public String getNewPath() {
+    return newPath;
+  }
+
   @Override
   public String toString() {
 

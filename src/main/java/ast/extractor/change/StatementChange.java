@@ -2,7 +2,6 @@ package ast.extractor.change;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import ast.extractor.Change;
 import spoon.reflect.code.CtLocalVariable;
@@ -12,7 +11,6 @@ import spoon.reflect.code.CtVariableRead;
 import spoon.reflect.code.CtVariableWrite;
 import spoon.reflect.declaration.CtElement;
 import spoon.reflect.reference.CtVariableReference;
-import spoon.reflect.visitor.filter.TypeFilter;
 
 public class StatementChange extends Change<CtStatement> {
 
@@ -55,35 +53,35 @@ public class StatementChange extends Change<CtStatement> {
     return false;
   }
 
-  private List<CtVariableReference<?>> getAccessVariables(CtElement e) {
-
-    return e.getElements(new TypeFilter<>(CtVariableAccess.class))
-      .stream()
-      .map(v -> v.getVariable())
-      .collect(Collectors.toList());
+  private List<CtVariableReference<?>> getAccessVariables(CtElement target) {
+    return Change.childrenFilter(
+      target, 
+      CtVariableAccess.class, 
+      item -> item.getVariable()
+    );
   }
 
-  private List<CtVariableReference<?>> getDefinitionVariables(CtElement e) {
-
-    return e.getElements(new TypeFilter<>(CtLocalVariable.class))
-      .stream()
-      .map(v -> v.getReference())
-      .collect(Collectors.toList());
+  private List<CtVariableReference<?>> getDefinitionVariables(CtElement target) {
+    return Change.childrenFilter(
+      target, 
+      CtLocalVariable.class, 
+      item -> item.getReference()
+    );
   }
 
-  private List<CtVariableReference<?>> getReadVariables(CtElement e) {
-
-    return e.getElements(new TypeFilter<>(CtVariableRead.class))
-      .stream()
-      .map(v -> v.getVariable())
-      .collect(Collectors.toList());
+  private List<CtVariableReference<?>> getReadVariables(CtElement target) {
+    return Change.childrenFilter(
+      target, 
+      CtVariableRead.class, 
+      item -> item.getVariable()
+    );
   }
 
-  private List<CtVariableReference<?>> getWriteVariables(CtElement e) {
-
-    return e.getElements(new TypeFilter<>(CtVariableWrite.class))
-      .stream()
-      .map(v -> v.getVariable())
-      .collect(Collectors.toList());
+  private List<CtVariableReference<?>> getWriteVariables(CtElement target) {
+    return Change.childrenFilter(
+      target, 
+      CtVariableWrite.class, 
+      item -> item.getVariable()
+    );
   }
 }
