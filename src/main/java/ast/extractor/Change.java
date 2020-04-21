@@ -44,7 +44,7 @@ public abstract class Change<T extends CtElement> implements Mappable {
     } else if (element instanceof CtMethod) {
       return new MethodChange((CtMethod<?>) element);
     } else if (element instanceof CtFieldReference) {
-      return new FieldChange((CtFieldReference<?>) element);
+      return new FieldChange((CtField<?>) element);
     } else if (element instanceof CtStatement) {
       return new StatementChange((CtStatement) element);
     } else {
@@ -55,7 +55,7 @@ public abstract class Change<T extends CtElement> implements Mappable {
         } else if(parent instanceof CtMethod) {
           return new MethodChange((CtMethod<?>) parent);
         } else if (parent instanceof CtField) {
-          return new FieldChange((CtFieldReference<?>) parent);
+          return new FieldChange((CtField<?>) parent);
         } else if(parent instanceof CtStatement) {
           return new StatementChange((CtStatement) parent);
         }

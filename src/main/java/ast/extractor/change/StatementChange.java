@@ -1,7 +1,6 @@
 package ast.extractor.change;
 
 import java.util.ArrayList;
-import java.util.LinkedHashSet;
 import java.util.List;
 
 import ast.extractor.Change;
@@ -13,6 +12,7 @@ import spoon.reflect.code.CtVariableAccess;
 import spoon.reflect.code.CtVariableRead;
 import spoon.reflect.code.CtVariableWrite;
 import spoon.reflect.declaration.CtElement;
+import spoon.reflect.declaration.CtVariable;
 import spoon.reflect.reference.CtVariableReference;
 
 public class StatementChange extends Change<CtStatement> {
@@ -26,7 +26,7 @@ public class StatementChange extends Change<CtStatement> {
   @Override
   public List<CtElement> getCompleteChange() {
     var result = new ArrayList<CtElement>();
-    this.variables = getAccessVariables(element);
+    this.variables = getVariablesDependencies(element);
     
     var block = getParentMethod().getBody().getStatements();
     for(var i = block.indexOf(element); i >= 0; i--) {
@@ -41,7 +41,7 @@ public class StatementChange extends Change<CtStatement> {
   private boolean hasDependency(CtStatement state) {
 
     //verifica se alguma variável dependência foi atribuída no comando
-    var writeVariables = getWriteVariables(state);
+    /*var writeVariables = getWriteVariables(state);
     for(var variable: writeVariables) {
       if(variables.contains(variable)) {
         return true;
@@ -53,18 +53,36 @@ public class StatementChange extends Change<CtStatement> {
       if(variables.contains(variable)) {
         return true;
       }
+    }*/
+    var dependencies = this.getVariablesDependencies(state);
+    for(var variable: dependencies) {
+      if(variables.contains(variable)) {
+        return true;
+      }
     }
+
     return false;
   }
 
-  private List<CtVariableReference<?>> getAccessVariables(CtElement target) {
+  private List<CtVariableReference<?>> getVariablesDependencies(
+    CtStatement target) {
+      
+    return Change.childrenFilter(
+      target, 
+      CtVariableReference.class,
+      item -> item
+    );
+  }
+
+  /*private List<CtVariableReference<?>> getAccessVariables(CtElement target) {
     return Change.childrenFilter(
       target, 
       CtVariableAccess.class, 
       item -> item.getVariable()
     );
-  }
+  }*/
 
+  /*
   private List<CtVariableReference<?>> getDefinitionVariables(CtElement target) {
     return Change.childrenFilter(
       target, 
@@ -103,5 +121,5 @@ public class StatementChange extends Change<CtStatement> {
       CtFieldWrite.class,
       item -> item.getVariable()  
     );
-  }
+  }*/
 }

@@ -4,11 +4,11 @@ import java.util.List;
 
 import ast.extractor.Change;
 import spoon.reflect.declaration.CtElement;
-import spoon.reflect.reference.CtFieldReference;
+import spoon.reflect.declaration.CtField;
 
-public class FieldChange extends Change<CtFieldReference<?>> {
+public class FieldChange extends Change<CtField<?>> {
 
-  public FieldChange(CtFieldReference<?> e) {
+  public FieldChange(CtField<?> e) {
     super(e);
   }
 
