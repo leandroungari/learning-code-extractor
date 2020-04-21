@@ -4,15 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import ast.extractor.Change;
-import spoon.reflect.code.CtFieldRead;
-import spoon.reflect.code.CtFieldWrite;
-import spoon.reflect.code.CtLocalVariable;
 import spoon.reflect.code.CtStatement;
-import spoon.reflect.code.CtVariableAccess;
-import spoon.reflect.code.CtVariableRead;
-import spoon.reflect.code.CtVariableWrite;
 import spoon.reflect.declaration.CtElement;
-import spoon.reflect.declaration.CtVariable;
 import spoon.reflect.reference.CtVariableReference;
 
 public class StatementChange extends Change<CtStatement> {

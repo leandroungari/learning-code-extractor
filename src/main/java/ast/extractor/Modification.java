@@ -8,7 +8,6 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 import ast.Mappable;
-import ast.extractor.mapping.Mapping;
 
 public class Modification implements Mappable {
 
@@ -23,6 +22,10 @@ public class Modification implements Mappable {
   public Modification(Mapping mapping) {
     mappings = new ArrayList<>();
     mappings.add(mapping);
+  }
+
+  public Modification(List<Mapping> mappings) {
+    this.mappings = mappings;
   }
 
   public List<Mapping> getMappings() {
@@ -58,13 +61,22 @@ public class Modification implements Mappable {
     json.addProperty("newPath", newPath);
 
     var array = new JsonArray();
-    for(var mapping: mappings) {
+    for (var mapping : mappings) {
       array.add(mapping.toMap());
     }
     json.add("mappings", array);
-    
+
     return json;
   }
 
-  
+  /*public void buildDependenciesMappings() {
+
+    var completeMappings = new ArrayList<Mapping>();
+    for(var mapping: this.mappings) {
+      var changes = mapping.dependencies();
+    }
+
+    this.mappings = completeMappings;
+  }*/
+
 }

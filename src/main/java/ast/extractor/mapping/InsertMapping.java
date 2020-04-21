@@ -4,6 +4,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 import ast.extractor.Change;
+import ast.extractor.Mapping;
 import spoon.reflect.declaration.CtElement;
 
 public class InsertMapping extends Mapping {
@@ -33,11 +34,11 @@ public class InsertMapping extends Mapping {
 
   @Override
   public Boolean isParentOf(Mapping other) {
-    if(isSameType(other)) {
+    if (isSameType(other)) {
       var element = (InsertMapping) other;
       try {
         return element.destination().get().hasParent(destination.get());
-      } catch(NullPointerException ex) {
+      } catch (NullPointerException ex) {
         System.err.println("== Erro na definição da modificação ==");
         System.out.println(element.destination.path());
       }
@@ -47,17 +48,15 @@ public class InsertMapping extends Mapping {
 
   @Override
   public Boolean isChildOf(Mapping other) {
-    if(isSameType(other)) {
+    if (isSameType(other)) {
       var element = (InsertMapping) other;
       try {
         return destination.get().hasParent(element.destination().get());
-      } catch(NullPointerException ex) {
+      } catch (NullPointerException ex) {
         System.err.println("== Erro na definição da modificação ==");
         System.out.println(element.destination.path());
       }
     }
     return false;
   }
-
-
 }

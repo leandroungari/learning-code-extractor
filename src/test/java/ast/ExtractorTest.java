@@ -4,10 +4,10 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import ast.extractor.Change;
+import ast.extractor.Mapping;
 import ast.extractor.change.StatementChange;
 import ast.extractor.mapping.DeleteMapping;
 import ast.extractor.mapping.InsertMapping;
-import ast.extractor.mapping.Mapping;
 import ast.extractor.mapping.MoveMapping;
 import ast.extractor.mapping.UpdateMapping;
 
