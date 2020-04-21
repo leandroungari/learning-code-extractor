@@ -26,7 +26,7 @@ public class Extractor {
       commit
     );
 
-    return builder.create();
+    return builder.createModifications();
   }
 
 }

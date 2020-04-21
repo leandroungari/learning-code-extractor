@@ -2,17 +2,11 @@ package ast.extractor.change;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import ast.extractor.Change;
-import spoon.reflect.code.CtLocalVariable;
 import spoon.reflect.code.CtStatement;
-import spoon.reflect.code.CtVariableAccess;
-import spoon.reflect.code.CtVariableRead;
-import spoon.reflect.code.CtVariableWrite;
 import spoon.reflect.declaration.CtElement;
 import spoon.reflect.reference.CtVariableReference;
-import spoon.reflect.visitor.filter.TypeFilter;
 
 public class StatementChange extends Change<CtStatement> {
 
@@ -25,7 +19,7 @@ public class StatementChange extends Change<CtStatement> {
   @Override
   public List<CtElement> getCompleteChange() {
     var result = new ArrayList<CtElement>();
-    this.variables = getAccessVariables(element);
+    this.variables = getVariablesDependencies(element);
     
     var block = getParentMethod().getBody().getStatements();
     for(var i = block.indexOf(element); i >= 0; i--) {
@@ -38,8 +32,9 @@ public class StatementChange extends Change<CtStatement> {
   }
 
   private boolean hasDependency(CtStatement state) {
+
     //verifica se alguma variável dependência foi atribuída no comando
-    var writeVariables = getWriteVariables(state);
+    /*var writeVariables = getWriteVariables(state);
     for(var variable: writeVariables) {
       if(variables.contains(variable)) {
         return true;
@@ -51,39 +46,73 @@ public class StatementChange extends Change<CtStatement> {
       if(variables.contains(variable)) {
         return true;
       }
+    }*/
+    var dependencies = this.getVariablesDependencies(state);
+    for(var variable: dependencies) {
+      if(variables.contains(variable)) {
+        return true;
+      }
     }
+
     return false;
   }
 
-  private List<CtVariableReference<?>> getAccessVariables(CtElement e) {
-
-    return e.getElements(new TypeFilter<>(CtVariableAccess.class))
-      .stream()
-      .map(v -> v.getVariable())
-      .collect(Collectors.toList());
+  private List<CtVariableReference<?>> getVariablesDependencies(
+    CtStatement target) {
+      
+    return Change.childrenFilter(
+      target, 
+      CtVariableReference.class,
+      item -> item
+    );
   }
 
-  private List<CtVariableReference<?>> getDefinitionVariables(CtElement e) {
+  /*private List<CtVariableReference<?>> getAccessVariables(CtElement target) {
+    return Change.childrenFilter(
+      target, 
+      CtVariableAccess.class, 
+      item -> item.getVariable()
+    );
+  }*/
 
-    return e.getElements(new TypeFilter<>(CtLocalVariable.class))
-      .stream()
-      .map(v -> v.getReference())
-      .collect(Collectors.toList());
+  /*
+  private List<CtVariableReference<?>> getDefinitionVariables(CtElement target) {
+    return Change.childrenFilter(
+      target, 
+      CtLocalVariable.class, 
+      item -> item.getReference()
+    );
   }
 
-  private List<CtVariableReference<?>> getReadVariables(CtElement e) {
-
-    return e.getElements(new TypeFilter<>(CtVariableRead.class))
-      .stream()
-      .map(v -> v.getVariable())
-      .collect(Collectors.toList());
+  private List<CtVariableReference<?>> getReadVariables(CtElement target) {
+    return Change.childrenFilter(
+      target, 
+      CtVariableRead.class, 
+      item -> item.getVariable()
+    );
   }
 
-  private List<CtVariableReference<?>> getWriteVariables(CtElement e) {
-
-    return e.getElements(new TypeFilter<>(CtVariableWrite.class))
-      .stream()
-      .map(v -> v.getVariable())
-      .collect(Collectors.toList());
+  private List<CtVariableReference<?>> getWriteVariables(CtElement target) {
+    return Change.childrenFilter(
+      target, 
+      CtVariableWrite.class, 
+      item -> item.getVariable()
+    );
   }
+
+  private List<CtVariableReference<?>> getReadFields(CtElement target) {
+    return Change.childrenFilter(
+      target, 
+      CtFieldRead.class,
+      item -> item.getVariable()  
+    );
+  }
+
+  private List<CtVariableReference<?>> getWriteFields(CtElement target) {
+    return Change.childrenFilter(
+      target, 
+      CtFieldWrite.class,
+      item -> item.getVariable()  
+    );
+  }*/
 }

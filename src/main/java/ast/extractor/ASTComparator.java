@@ -2,7 +2,6 @@ package ast.extractor;
 
 import java.util.List;
 
-import ast.extractor.mapping.Mapping;
 import gumtree.spoon.AstComparator;
 import gumtree.spoon.diff.Diff;
 import spoon.reflect.declaration.CtType;

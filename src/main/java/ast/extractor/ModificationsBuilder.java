@@ -3,7 +3,6 @@ package ast.extractor;
 import java.util.List;
 
 import ast.CommitModifications;
-import ast.extractor.mapping.Mapping;
 import core.Player;
 import core.data.DiffFile;
 import core.features.FeatureType;
@@ -62,7 +61,7 @@ public class ModificationsBuilder {
     return commit.getFile(file).get();
   }
 
-  public CommitModifications create() {
+  public CommitModifications createModifications() {
 
     for (var diff : diffFiles) {
       var oldSource = getContentOfFile(before, diff.getOldPath());
@@ -97,16 +96,20 @@ public class ModificationsBuilder {
         }
       }
       if(result == AssignModificationAction.CREATE_MODIFICATION) {
-        var modification = new Modification(unsetted);
-        modification.setNewPath(newPath);
-        modification.setOldPath(oldPath);
-        modifications.add(modification);
+        modifications.add(
+          createNewModification(
+            unsetted, 
+            oldPath, 
+            newPath
+          )
+        );
       }
     }
   }
 
   private AssignModificationAction assignMappingToModification(
-    Modification modification, Mapping mapping) {
+    Modification modification, 
+    Mapping mapping) {
     
     var settedMappings = modification.getMappings();
     for(var setted: settedMappings) {
@@ -123,6 +126,17 @@ public class ModificationsBuilder {
     }
     
     return AssignModificationAction.CREATE_MODIFICATION;
+  }
+
+  private Modification createNewModification(
+    Mapping mapping,
+    String oldPath,
+    String newPath) {
+
+    var modification = new Modification(mapping);
+    modification.setNewPath(newPath);
+    modification.setOldPath(oldPath);
+    return modification;
   }
 
 }

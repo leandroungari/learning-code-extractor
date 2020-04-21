@@ -5,7 +5,6 @@ import java.util.List;
 
 import ast.extractor.mapping.DeleteMapping;
 import ast.extractor.mapping.InsertMapping;
-import ast.extractor.mapping.Mapping;
 import ast.extractor.mapping.MoveMapping;
 import ast.extractor.mapping.UpdateMapping;
 import gumtree.spoon.diff.Diff;
