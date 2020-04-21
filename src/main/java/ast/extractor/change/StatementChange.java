@@ -1,9 +1,12 @@
 package ast.extractor.change;
 
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
 
 import ast.extractor.Change;
+import spoon.reflect.code.CtFieldRead;
+import spoon.reflect.code.CtFieldWrite;
 import spoon.reflect.code.CtLocalVariable;
 import spoon.reflect.code.CtStatement;
 import spoon.reflect.code.CtVariableAccess;
@@ -36,6 +39,7 @@ public class StatementChange extends Change<CtStatement> {
   }
 
   private boolean hasDependency(CtStatement state) {
+
     //verifica se alguma variável dependência foi atribuída no comando
     var writeVariables = getWriteVariables(state);
     for(var variable: writeVariables) {
@@ -82,6 +86,22 @@ public class StatementChange extends Change<CtStatement> {
       target, 
       CtVariableWrite.class, 
       item -> item.getVariable()
+    );
+  }
+
+  private List<CtVariableReference<?>> getReadFields(CtElement target) {
+    return Change.childrenFilter(
+      target, 
+      CtFieldRead.class,
+      item -> item.getVariable()  
+    );
+  }
+
+  private List<CtVariableReference<?>> getWriteFields(CtElement target) {
+    return Change.childrenFilter(
+      target, 
+      CtFieldWrite.class,
+      item -> item.getVariable()  
     );
   }
 }
