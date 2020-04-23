@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import core.features.DownloadRepository;
+import core.features.ExtractModifications;
 import core.features.Feature;
 import core.features.FeatureType;
 import core.features.GetAverageOfMetricsOfFiles;
@@ -63,6 +64,10 @@ public class Player {
       
       add(FeatureType.METRICS_DIFF_FILES_IN_COMMIT, new GetMetricsFromDiffFilesInACommit());
       add(FeatureType.METRICS_DIFF_FILES_IN_RANGE_COMMITS, new GetMetricsFromDiffFilesInARangeOfCommits());
+
+
+      ///////////////////////////////q
+      add(FeatureType.EXTRACT_MODIFICATIONS, new ExtractModifications());
       
     }
   }

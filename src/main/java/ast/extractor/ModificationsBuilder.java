@@ -57,32 +57,46 @@ public class ModificationsBuilder {
   }
 
   private String getContentOfFile(Commit commit, String file) {
+    var content = "";
+    if(!file.equals("/dev/null")) {
+      content = commit.getFile(file).get();
+    }
+    return content;
+  }
 
-    return commit.getFile(file).get();
+  private Boolean isJavaFile(String path) {
+
+    return path.contains(".java");
   }
 
   public CommitModifications createModifications() {
 
     for (var diff : diffFiles) {
-      var oldSource = getContentOfFile(before, diff.getOldPath());
-      var newSource = getContentOfFile(current, diff.getNewPath());
-
-      comparator = new ASTComparator(oldSource, newSource);
-      var list = comparator.mappings();
       
-      var modification = createNewModification(
-        diff.getOldPath(),
-        diff.getNewPath()
-      );
 
-      if(!list.isEmpty()) {
-        groupingMappings(
-          list,
-          modification
+      if(isJavaFile(diff.getOldPath()) ||
+         isJavaFile(diff.getNewPath())) {
+
+        var oldSource = getContentOfFile(before, diff.getOldPath());
+        var newSource = getContentOfFile(current, diff.getNewPath());
+
+        comparator = new ASTComparator(oldSource, newSource);
+        var list = comparator.mappings();
+          
+        var modification = createNewModification(
+          diff.getOldPath(),
+          diff.getNewPath()
         );
+          
+        if(!list.isEmpty()) {
+          groupingMappings(
+            list,
+            modification
+          );
+        }
+      
+        this.modifications.add(modification);
       }
-
-      this.modifications.add(modification);
     }
 
     return modifications;
