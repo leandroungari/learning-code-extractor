@@ -33,13 +33,12 @@ public class ExtractModifications implements RepositoryFeature<Void> {
     for(var i = 1; i < commits.length; i++) {
       var commit = commits[i].getId();
       
-      this.createResource(commit);
+      resource = track
+        .<CommitModifications>get(ResourceType.MODIFICATIONS)
+        .setParams(repository, commit);
           
       if(!resource.exists()) {
-        this.extractor = new Extractor(repository, branch, commit);
-        var result = this.extractor.transformModifications(); 
-      
-        resource.write(result);
+        createResource(commit);
       }
     }
 
@@ -47,9 +46,11 @@ public class ExtractModifications implements RepositoryFeature<Void> {
   }
 
   private void createResource(String commit) {
-    this.resource = track
-      .<CommitModifications>get(ResourceType.MODIFICATIONS)
-      .setParams(repository, commit);
+    System.out.println("- " + commit);
+    this.extractor = new Extractor(repository, branch, commit);
+    var result = this.extractor.transformModifications(); 
+      
+    resource.write(result);
   }
 
   private Commit[] commitsFromBranch() {

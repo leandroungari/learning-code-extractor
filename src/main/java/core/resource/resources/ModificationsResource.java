@@ -20,8 +20,10 @@ public class ModificationsResource
     storage = new Storage(
       settings.folderOfMetadata().getAbsolutePath()
       + "/" + repository 
-      + "/modifications/"
+      + "/modifications"
     );
+
+    storage.plainText(commit + ".json");
 
     return this;
   }
