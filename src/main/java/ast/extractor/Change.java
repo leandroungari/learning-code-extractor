@@ -10,14 +10,15 @@ import com.google.gson.JsonObject;
 import ast.Mappable;
 import ast.extractor.change.ClassChange;
 import ast.extractor.change.FieldChange;
+import ast.extractor.change.InterfaceChange;
 import ast.extractor.change.MethodChange;
 import ast.extractor.change.StatementChange;
 import spoon.reflect.code.CtStatement;
 import spoon.reflect.declaration.CtClass;
 import spoon.reflect.declaration.CtElement;
 import spoon.reflect.declaration.CtField;
+import spoon.reflect.declaration.CtInterface;
 import spoon.reflect.declaration.CtMethod;
-import spoon.reflect.reference.CtFieldReference;
 import spoon.reflect.visitor.filter.TypeFilter;
 
 public abstract class Change<T extends CtElement> implements Mappable {
@@ -41,9 +42,11 @@ public abstract class Change<T extends CtElement> implements Mappable {
 
     if (element instanceof CtClass) {
       return new ClassChange((CtClass<?>) element);
+    } else if (element instanceof CtInterface) {
+      return new InterfaceChange((CtInterface<?>) element);
     } else if (element instanceof CtMethod) {
       return new MethodChange((CtMethod<?>) element);
-    } else if (element instanceof CtFieldReference) {
+    } else if (element instanceof CtField) {
       return new FieldChange((CtField<?>) element);
     } else if (element instanceof CtStatement) {
       return new StatementChange((CtStatement) element);
