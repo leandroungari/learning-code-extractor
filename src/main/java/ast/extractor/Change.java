@@ -9,12 +9,14 @@ import com.google.gson.JsonObject;
 
 import ast.Mappable;
 import ast.extractor.change.ClassChange;
+import ast.extractor.change.ConstructorChange;
 import ast.extractor.change.FieldChange;
 import ast.extractor.change.InterfaceChange;
 import ast.extractor.change.MethodChange;
 import ast.extractor.change.StatementChange;
 import spoon.reflect.code.CtStatement;
 import spoon.reflect.declaration.CtClass;
+import spoon.reflect.declaration.CtConstructor;
 import spoon.reflect.declaration.CtElement;
 import spoon.reflect.declaration.CtField;
 import spoon.reflect.declaration.CtInterface;
@@ -40,33 +42,29 @@ public abstract class Change<T extends CtElement> implements Mappable {
 
   public static Change<?> createChange(CtElement element) {
 
-    if (element instanceof CtClass) {
-      return new ClassChange((CtClass<?>) element);
-    } else if (element instanceof CtInterface) {
-      return new InterfaceChange((CtInterface<?>) element);
-    } else if (element instanceof CtMethod) {
-      return new MethodChange((CtMethod<?>) element);
-    } else if (element instanceof CtField) {
-      return new FieldChange((CtField<?>) element);
-    } else if (element instanceof CtStatement) {
-      return new StatementChange((CtStatement) element);
-    } else {
-      CtElement parent = element.getParent();
-      do {
-        if(parent instanceof CtClass){
-          return new ClassChange((CtClass<?>) parent);
-        } else if(parent instanceof CtMethod) {
-          return new MethodChange((CtMethod<?>) parent);
-        } else if (parent instanceof CtField) {
-          return new FieldChange((CtField<?>) parent);
-        } else if(parent instanceof CtStatement) {
-          return new StatementChange((CtStatement) parent);
-        }
-        parent = parent.getParent();
-      } while (parent != null);
+    var temp = element;
+    do {
+      if (temp instanceof CtClass) {
+        return new ClassChange((CtClass<?>) temp);
+      } else if (temp instanceof CtInterface) {
+        return new InterfaceChange((CtInterface<?>) temp);
+      } else if (temp instanceof CtConstructor) {
+        return new ConstructorChange((CtConstructor<?>) temp);
+      } else if (temp instanceof CtMethod) {
+        return new MethodChange((CtMethod<?>) temp);
+      } else if (temp instanceof CtField) {
+        return new FieldChange((CtField<?>) temp);
+      } else if (temp instanceof CtStatement) {
+        return new StatementChange((CtStatement) temp);
+      }
 
-      throw new Error("Unexpected type -- " + element.getClass());
-    }
+      temp = temp.getParent();
+
+    } while (temp != null);
+
+    System.err.println("aqui - " + element);
+    throw new Error("Unexpected type -- " + element.getClass());
+
   }
 
   public CtClass<?> getParentClass() {
@@ -74,25 +72,15 @@ public abstract class Change<T extends CtElement> implements Mappable {
     return element.getParent(new TypeFilter<>(CtClass.class));
   }
 
-  public CtMethod<?> getParentMethod() {
-
-    return element.getParent(new TypeFilter<>(CtMethod.class));
-  }
-
   public T get() {
 
     return element;
   }
 
-  protected static <A,B> List<B> childrenFilter(
-    CtElement target,
-    Class<A> clazz, 
-    Function<A,B> action) {
+  protected static <A, B> List<B> childrenFilter(CtElement target, Class<A> clazz, Function<A, B> action) {
 
-    return target.getElements(new TypeFilter<>(clazz))
-      .stream()
-      .map(item -> action.apply(item))
-      .collect(Collectors.toList());
+    return target.getElements(new TypeFilter<>(clazz)).stream().map(item -> action.apply(item))
+        .collect(Collectors.toList());
   }
 
   @Override
