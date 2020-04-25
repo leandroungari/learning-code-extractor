@@ -3,6 +3,7 @@ package storage;
 import java.io.IOException;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 import util.FileUtil;
 
@@ -17,7 +18,7 @@ public class JSON<T> {
 
   public void write(T item) throws IOException {
 
-    var gson = new Gson();
+    var gson = new GsonBuilder().disableHtmlEscaping().create();
     var data = gson.toJson(item);
 
     FileUtil.createFile(store.resource().getAbsolutePath(), data);
