@@ -41,6 +41,7 @@ public class DeleteMapping extends Mapping {
       listSource.add(item.toMap());
     }
     json.add("source", listSource);
+    json.addProperty("type", "delete");
     return json;
   }
 

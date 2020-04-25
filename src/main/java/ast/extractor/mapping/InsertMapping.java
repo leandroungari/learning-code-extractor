@@ -43,6 +43,7 @@ public class InsertMapping extends Mapping {
       listDestination.add(item.toMap());
     }
     json.add("destination", listDestination);
+    json.addProperty("type", "insert");
     return json;
   }
 

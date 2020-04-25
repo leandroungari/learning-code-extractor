@@ -2,7 +2,6 @@ package core.features;
 
 import com.google.gson.JsonElement;
 
-import ast.CommitModifications;
 import ast.Extractor;
 import core.data.Commit;
 import core.resource.Resource;

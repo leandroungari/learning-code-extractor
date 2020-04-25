@@ -42,4 +42,16 @@ public class CommitModifications implements Mappable {
     json.add("result", list);
     return json;
   }
+
+  public static CommitModifications create(JsonObject json) {
+    
+    var instance = new CommitModifications(json.get("id").getAsString());
+
+    var result = json.get("result").getAsJsonArray();
+    for(var item: result) {
+      instance.add(Modification.create(item.getAsJsonObject()));
+    }
+    
+    return instance;
+  }
 }

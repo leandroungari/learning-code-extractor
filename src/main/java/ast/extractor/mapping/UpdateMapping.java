@@ -61,6 +61,7 @@ public class UpdateMapping extends Mapping {
       listDestination.add(item.toMap());
     }
     json.add("destination", listDestination);
+    json.addProperty("type", "update");
 
     return json;
   }
