@@ -20,8 +20,20 @@ public class StatementChange extends Change<CtStatement> {
   public List<CtElement> getCompleteChange() {
     var result = new ArrayList<CtElement>();
     this.variables = getVariablesDependencies(element);
-    
-    var block = getParentMethod().getBody().getStatements();
+
+    if(element == null) {
+      System.err.println("teste => ");
+    }
+    //TODO
+    //depois do comando this.age = age
+    // o méotodo pai é nulo por algum motivo
+    // 3f3552830d3e464f96f99bd55641a7c7b16bdd11
+    // esse comando está dentro do constructor
+    // e o constructor não é considerado um método
+    // é preciso verificar esse tipo
+
+    var parentMethod = getParentMethod();
+    var block = parentMethod.getBody().getStatements();
     for(var i = block.indexOf(element); i >= 0; i--) {
       if(hasDependency(block.get(i))) {
         result.add(0, block.get(i));
