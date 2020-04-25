@@ -2,6 +2,8 @@ package ast.extractor;
 
 import java.util.List;
 
+import com.google.gson.JsonObject;
+
 import ast.Mappable;
 import spoon.reflect.declaration.CtElement;
 
@@ -46,5 +48,10 @@ public abstract class Mapping implements Mappable {
 		return Change
       .createChange(target)
       .getCompleteChange();
+	}
+
+	public static <T extends Mapping> T create(JsonObject object) {
+		//TODO
+		throw new Error("Not implemented yet! Serialization of mappings");
 	}
 }

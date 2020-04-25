@@ -69,14 +69,19 @@ public class Modification implements Mappable {
     return json;
   }
 
-  /*public void buildDependenciesMappings() {
-
-    var completeMappings = new ArrayList<Mapping>();
-    for(var mapping: this.mappings) {
-      var changes = mapping.dependencies();
+  public static Modification create(JsonObject json) {
+    
+    var modification = new Modification();
+    modification.setNewPath(json.get("oldPath").getAsString());
+    modification.setOldPath(json.get("newPath").getAsString());
+    
+    for(var item: json.get("mappings").getAsJsonArray()) {
+      modification
+        .getMappings()
+        .add(Mapping.create(item.getAsJsonObject()));
     }
 
-    this.mappings = completeMappings;
-  }*/
+    return modification;
+  }
 
 }

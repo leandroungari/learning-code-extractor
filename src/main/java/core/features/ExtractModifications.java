@@ -1,6 +1,7 @@
 package core.features;
 
-import ast.CommitModifications;
+import com.google.gson.JsonElement;
+
 import ast.Extractor;
 import core.data.Commit;
 import core.resource.Resource;
@@ -15,7 +16,7 @@ public class ExtractModifications implements RepositoryFeature<Void> {
 
   private Extractor extractor = null;
 
-  private Resource<CommitModifications> resource;
+  private Resource<JsonElement> resource;
 
   private ResourceTrack track = new ResourceTrack();
 
@@ -34,7 +35,7 @@ public class ExtractModifications implements RepositoryFeature<Void> {
       var commit = commits[i].getId();
       
       resource = track
-        .<CommitModifications>get(ResourceType.MODIFICATIONS)
+        .<JsonElement>get(ResourceType.MODIFICATIONS)
         .setParams(repository, commit);
           
       if(!resource.exists()) {
@@ -50,7 +51,7 @@ public class ExtractModifications implements RepositoryFeature<Void> {
     this.extractor = new Extractor(repository, branch, commit);
     var result = this.extractor.transformModifications(); 
       
-    resource.write(result);
+    resource.write(result.toMap());
   }
 
   private Commit[] commitsFromBranch() {

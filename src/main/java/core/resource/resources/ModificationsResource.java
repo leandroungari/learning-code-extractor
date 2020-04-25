@@ -2,18 +2,19 @@ package core.resource.resources;
 
 import java.io.IOException;
 
-import ast.CommitModifications;
+import com.google.gson.JsonElement;
+
 import core.resource.Resource;
 import storage.Storage;
 
 public class ModificationsResource 
-  extends Resource<CommitModifications> {
+  extends Resource<JsonElement> {
 
   private String repository;
   private String commit;
 
   @Override
-  public Resource<CommitModifications> setParams(String... params) {
+  public Resource<JsonElement> setParams(String... params) {
     repository = params[0];
     commit = params[1];
 
@@ -29,15 +30,12 @@ public class ModificationsResource
   }
 
   @Override
-  public CommitModifications read(Class<CommitModifications> type) {
+  public JsonElement read(Class<JsonElement> type) {
     
     try {
-      var texto = storage
-        .plainText(commit + ".json")
-        .read();
-
-      System.out.println("ModificationsResource.java");
-      System.out.println(texto);
+      return storage
+        .<JsonElement>json(commit + ".json")
+        .read(JsonElement.class);
     }
     catch(IOException e) {
       e.printStackTrace();
@@ -47,12 +45,12 @@ public class ModificationsResource
   }
 
   @Override
-  public void write(CommitModifications data) {
+  public void write(JsonElement data) {
     
     try {
       storage
-      .plainText(commit + ".json")
-      .write(data.toString());
+      .json(commit + ".json")
+      .write(data);
     }
     catch(IOException e) {
       e.printStackTrace();

@@ -61,6 +61,7 @@ public class MoveMapping extends Mapping {
       listDestination.add(item.toMap());
     }
     json.add("destination", listDestination);
+    json.addProperty("type", "move");
 
     return json;
   }
