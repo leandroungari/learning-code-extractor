@@ -25,17 +25,6 @@ public class StatementChange extends Change<CtStatement> {
     var result = new ArrayList<CtElement>();
     this.variables = getVariablesDependencies(element);
 
-    if (element == null) {
-      System.err.println("teste => ");
-    }
-    // TODO
-    // depois do comando this.age = age
-    // o méotodo pai é nulo por algum motivo
-    // 3f3552830d3e464f96f99bd55641a7c7b16bdd11
-    // esse comando está dentro do constructor
-    // e o constructor não é considerado um método
-    // é preciso verificar esse tipo
-
     var executable = getParentExecutable();
     var block = executable.getBody().getStatements();
     for (var i = block.indexOf(element); i >= 0; i--) {

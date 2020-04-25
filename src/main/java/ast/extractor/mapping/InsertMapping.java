@@ -17,8 +17,6 @@ public class InsertMapping extends Mapping {
     super();
 
     this.destination = new ArrayList<>();
-    System.out.println("++ "+ destination);
-    System.out.println("teste");
     for(var element: dependencies(destination)) {
       this.destination.add(
         Change.createChange(element)
