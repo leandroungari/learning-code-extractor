@@ -72,11 +72,6 @@ public abstract class Change<T extends CtElement> implements Mappable {
     return element.getParent(new TypeFilter<>(CtClass.class));
   }
 
-  public CtMethod<?> getParentMethod() {
-
-    return element.getParent(new TypeFilter<>(CtMethod.class));
-  }
-
   public T get() {
 
     return element;
