@@ -38,7 +38,7 @@ public abstract class Change<T extends CtElement> implements Mappable {
     return path;
   }
 
-  public abstract List<CtElement> getCompleteChange();
+  protected abstract List<CtElement> getCompleteChange();
 
   public static Change<?> createChange(CtElement element) {
 

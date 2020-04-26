@@ -16,7 +16,7 @@ public class ClassChange extends Change<CtClass<?>> {
   }
 
   @Override
-  public List<CtElement> getCompleteChange() {
+  protected List<CtElement> getCompleteChange() {
     return List.of(this.element);
   }
 

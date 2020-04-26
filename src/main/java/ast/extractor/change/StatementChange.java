@@ -21,7 +21,7 @@ public class StatementChange extends Change<CtStatement> {
   }
 
   @Override
-  public List<CtElement> getCompleteChange() {
+  protected List<CtElement> getCompleteChange() {
     var result = new ArrayList<CtElement>();
     this.variables = getVariablesDependencies(element);
 
