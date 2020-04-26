@@ -23,8 +23,11 @@ public class DeleteMapping extends Mapping {
   }
 
   public List<Change<?>> source() {
-
     return source;
+  }
+
+  public List<Change<?>> destination() {
+    return new ArrayList<>();
   }
 
   @Override

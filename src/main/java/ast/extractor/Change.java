@@ -14,6 +14,7 @@ import ast.extractor.change.FieldChange;
 import ast.extractor.change.InterfaceChange;
 import ast.extractor.change.MethodChange;
 import ast.extractor.change.StatementChange;
+import spoon.reflect.code.CtLiteral;
 import spoon.reflect.code.CtStatement;
 import spoon.reflect.declaration.CtClass;
 import spoon.reflect.declaration.CtConstructor;
@@ -21,6 +22,7 @@ import spoon.reflect.declaration.CtElement;
 import spoon.reflect.declaration.CtField;
 import spoon.reflect.declaration.CtInterface;
 import spoon.reflect.declaration.CtMethod;
+import spoon.reflect.reference.CtVariableReference;
 import spoon.reflect.visitor.filter.TypeFilter;
 
 public abstract class Change<T extends CtElement> implements Mappable {
@@ -81,6 +83,23 @@ public abstract class Change<T extends CtElement> implements Mappable {
 
     return target.getElements(new TypeFilter<>(clazz)).stream().map(item -> action.apply(item))
         .collect(Collectors.toList());
+  }
+
+  public List<CtVariableReference<?>> getVariablesDependencies() {
+
+    return Change.childrenFilter(
+      element, 
+      CtVariableReference.class, 
+      item -> item
+    );
+  }
+
+  public List<CtLiteral<?>> getLiterals() {
+    return Change.childrenFilter(
+      element, 
+      CtLiteral.class, 
+      item -> item
+    );
   }
 
   @Override

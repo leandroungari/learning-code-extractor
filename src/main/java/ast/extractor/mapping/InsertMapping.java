@@ -24,6 +24,10 @@ public class InsertMapping extends Mapping {
     }
   }
 
+  public List<Change<?>> source() {
+    return new ArrayList<>();
+  }
+
   public List<Change<?>> destination() {
 
     return destination;
