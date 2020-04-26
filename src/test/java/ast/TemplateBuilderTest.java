@@ -63,4 +63,13 @@ public class TemplateBuilderTest {
     System.out.println(literals);
     assertThat(literals.size(), equalTo(5));
   }
+
+  @Test
+  public void createWildcardsOfAfterModification() {
+    var builder = new TemplateBuilder<>(firstMapping);
+    var map = builder.after().createWildcards();
+
+    assertThat(map.entrySet().size(), equalTo(3));
+    System.out.println(map);
+  }
 }
