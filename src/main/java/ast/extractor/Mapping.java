@@ -17,6 +17,10 @@ public abstract class Mapping implements Mappable {
 		return getClass() == other.getClass();
 	}
 
+	public abstract List<Change<?>> source();
+
+	public abstract List<Change<?>> destination();
+
 	@Override
 	public abstract String toString();
 
