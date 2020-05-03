@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 import ast.extractor.Change;
 import spoon.reflect.code.CtLiteral;
@@ -80,7 +82,7 @@ public class ProcessorTemplate {
     var myVariable = literal.getFactory().Code()
       .createLocalVariable(
         literal.getType(), 
-        wildcards.get(literal), 
+        wildcards.get(literal.prettyprint()), 
         null
       );
 
@@ -116,5 +118,13 @@ public class ProcessorTemplate {
     }
 
     return changes;
+  }
+
+  public List<String> model() {
+    var wildcards = createWildcards();
+    return replaceElementsByWildcards(wildcards)
+      .stream()
+      .map(item -> item.get().prettyprint())
+      .collect(Collectors.toList());
   }
 }

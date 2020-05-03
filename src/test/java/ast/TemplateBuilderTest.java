@@ -85,4 +85,11 @@ public class TemplateBuilderTest {
       System.out.println(change);
     }
   }
+
+  @Test
+  public void createModel() {
+    var builder = new TemplateBuilder<>(firstMapping);
+    var map = builder.model();
+    System.out.println(map);
+  }
 }
