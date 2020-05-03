@@ -72,4 +72,17 @@ public class TemplateBuilderTest {
     assertThat(map.entrySet().size(), equalTo(3));
     System.out.println(map);
   }
+
+  @Test
+  public void replaceWildcardsAfterModification() {
+    var builder = new TemplateBuilder<>(firstMapping);
+    var wildcards = builder.after().createWildcards();
+    var changes = builder
+      .after()
+      .replaceElementsByWildcards(wildcards);
+
+    for(var change: changes) {
+      System.out.println(change);
+    }
+  }
 }

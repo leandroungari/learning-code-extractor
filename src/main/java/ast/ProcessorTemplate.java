@@ -12,6 +12,7 @@ import spoon.reflect.reference.CtVariableReference;
 public class ProcessorTemplate {
 
   private List<Change<?>> changes;
+  private Map<String, String> wildcards;
 
   ProcessorTemplate(List<Change<?>> changes) {
     this.changes = changes;
@@ -41,23 +42,79 @@ public class ProcessorTemplate {
     var wildcards = new HashMap<String, String>();
     var counter = 0;
     for (var variable : variables()) {
-      var name = variable.getSimpleName();
-      if(!wildcards.containsKey(name)) {
+      if(!wildcards.containsKey(variable.prettyprint())) {
         wildcards.put(
-          variable.getSimpleName(),
+          variable.prettyprint(),
           "$v" + counter++
         );
       }
     }
     for (var literal : literals()) {
-      var name = literal.getValue().toString();
-      if(!wildcards.containsKey(name)) {
+      if(!wildcards.containsKey(literal.prettyprint())) {
         wildcards.put(
-          name, 
+          literal.prettyprint(), 
           "$l" + counter++
         );
       }
     }
     return wildcards;
+  }
+
+  private void replaceVariablesName(
+    List<CtVariableReference<?>> variables) {
+
+    for(var variable: variables) {
+      if(variable.getDeclaration() != null) {
+        variable
+          .getDeclaration()
+          .setSimpleName(wildcards.get(variable.prettyprint()));
+      } else {
+        variable.setSimpleName(wildcards.get(variable.prettyprint()));
+      }
+    }
+  }
+
+  private void createVariableToReplaceLiteral(
+    CtLiteral<?> literal) {
+    
+    var myVariable = literal.getFactory().Code()
+      .createLocalVariable(
+        literal.getType(), 
+        wildcards.get(literal), 
+        null
+      );
+
+    try {
+      var referenceToVariable = literal.getFactory().Code()
+        .createVariableRead(myVariable.getReference(), false);
+
+      literal.replace(referenceToVariable);
+    } catch (Exception ex) {
+      System.err.println(ex);
+
+      var referenceToVariable = literal.getFactory().Code()
+        .createVariableWrite(myVariable.getReference(), false);
+
+      literal.replace(referenceToVariable);
+    }
+  }
+
+  public List<Change<?>> replaceElementsByWildcards(
+    Map<String, String> wildcards) {
+    
+    this.wildcards = wildcards;
+    var variables = new ArrayList<CtVariableReference<?>>();
+    for(var change: changes) {
+      for(var variable: change.getVariablesDependencies()) {
+        variables.add(variable);  
+      }
+      replaceVariablesName(variables);
+
+      for(var literal: change.getLiterals()) {
+        createVariableToReplaceLiteral(literal);
+      }
+    }
+
+    return changes;
   }
 }
