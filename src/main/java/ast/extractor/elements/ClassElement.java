@@ -1,26 +1,26 @@
-package ast.extractor.change;
+package ast.extractor.elements;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
-import ast.extractor.Change;
 import spoon.reflect.declaration.CtClass;
-import spoon.reflect.declaration.CtElement;
-import spoon.reflect.declaration.CtMethod;
-import spoon.reflect.reference.CtFieldReference;
 
-public class ClassChange extends Change<CtClass<?>> {
+public class ClassElement extends Element<CtClass<?>> {
 
-  public ClassChange(CtClass<?> clazz) {
+  public ClassElement(CtClass<?> clazz) {
     super(clazz);
   }
 
   @Override
-  protected List<CtElement> getCompleteChange() {
-    return List.of(this.element);
+  public List<Element<?>> dependencies() {
+    return List.of(this);
   }
 
+/*  @Override
+  protected List<CtElement> getCompleteChange() {
+    return List.of(this.element);
+  }*/
 
+/*
   public List<CtFieldReference<?>> getAllFields() {
 
     return element
@@ -43,5 +43,5 @@ public class ClassChange extends Change<CtClass<?>> {
       .stream()
       .filter(method -> method.getSignature().contains(signature))
       .collect(Collectors.toList()).get(0);
-  }
+  }*/
 }

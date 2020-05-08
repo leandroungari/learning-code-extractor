@@ -1,20 +1,6 @@
-package ast.extractor;
+package ast.extractor.elements;
 
-import java.util.List;
-import java.util.function.Function;
-import java.util.stream.Collectors;
-
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-
-import ast.Mappable;
-import ast.extractor.change.ClassChange;
-import ast.extractor.change.ConstructorChange;
-import ast.extractor.change.FieldChange;
-import ast.extractor.change.InterfaceChange;
-import ast.extractor.change.MethodChange;
-import ast.extractor.change.StatementChange;
-import spoon.reflect.code.CtLiteral;
+import ast.snapshot.Snapshot;
 import spoon.reflect.code.CtStatement;
 import spoon.reflect.declaration.CtClass;
 import spoon.reflect.declaration.CtConstructor;
@@ -22,53 +8,47 @@ import spoon.reflect.declaration.CtElement;
 import spoon.reflect.declaration.CtField;
 import spoon.reflect.declaration.CtInterface;
 import spoon.reflect.declaration.CtMethod;
-import spoon.reflect.reference.CtVariableReference;
-import spoon.reflect.visitor.filter.TypeFilter;
+import spoon.reflect.path.CtPathStringBuilder;
 
-public abstract class Change<T extends CtElement> implements Mappable {
+public class ElementFactory<T extends Element<? extends CtElement>> {
 
-  protected T element;
-  private String path;
+  public static <A extends CtElement> Element<?> create(A item) {
 
-  public Change(T e) {
-    this.element = e;
-    this.path = element.getPath().toString();
-  }
-
-  public String path() {
-
-    return path;
-  }
-
-  protected abstract List<CtElement> getCompleteChange();
-
-  public static Change<?> createChange(CtElement element) {
-
-    var temp = element;
+    CtElement temp = item;
     do {
       if (temp instanceof CtClass) {
-        return new ClassChange((CtClass<?>) temp);
+        return new ClassElement((CtClass<?>) temp);
       } else if (temp instanceof CtInterface) {
-        return new InterfaceChange((CtInterface<?>) temp);
+        return new InterfaceElement((CtInterface<?>) temp);
       } else if (temp instanceof CtConstructor) {
-        return new ConstructorChange((CtConstructor<?>) temp);
+        return new ConstructorElement((CtConstructor<?>) temp);
       } else if (temp instanceof CtMethod) {
-        return new MethodChange((CtMethod<?>) temp);
+        return new MethodElement((CtMethod<?>) temp);
       } else if (temp instanceof CtField) {
-        return new FieldChange((CtField<?>) temp);
+        return new FieldElement((CtField<?>) temp);
       } else if (temp instanceof CtStatement) {
-        return new StatementChange((CtStatement) temp);
+        return new StatementElement((CtStatement) temp);
       }
 
       temp = temp.getParent();
 
     } while (temp != null);
 
-    System.err.println("aqui - " + element);
-    throw new Error("Unexpected type -- " + element.getClass());
-
+    throw new Error("Unexpected type -- " + item.getClass());
   }
 
+  public static <A extends CtElement> Element<?> create(Snapshot snapshot, String path) {
+    var builder = new CtPathStringBuilder();
+    var pathReference = builder.fromString(path);
+
+    var item = pathReference
+      .evaluateOn(snapshot.model().getRootPackage())
+      .get(0);
+
+    return ElementFactory.create(item);
+  }
+
+  /* 
   public CtClass<?> getParentClass() {
 
     return element.getParent(new TypeFilter<>(CtClass.class));
@@ -115,4 +95,5 @@ public abstract class Change<T extends CtElement> implements Mappable {
   public String toString() {
     return toMap().toString();
   }
+  */
 }

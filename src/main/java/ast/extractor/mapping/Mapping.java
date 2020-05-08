@@ -1,25 +1,32 @@
-package ast.extractor;
+package ast.extractor.mapping;
 
-import java.util.List;
+import ast.extractor.Jsonify;
+import ast.extractor.elements.Element;
+import ast.snapshot.Snapshot;
 
-import com.google.gson.JsonObject;
+public abstract class Mapping implements Jsonify<Mapping> {
 
-import ast.Mappable;
-import spoon.reflect.declaration.CtElement;
+	protected Element<?> source;
+	protected Element<?> destination;
 
-public abstract class Mapping implements Mappable {
+	protected Snapshot snapshot;
 
-	protected List<Change<?>> source;
-	protected List<Change<?>> destination;
+	public void setSnapshot(Snapshot snap) {
+		this.snapshot = snap;
+	}
 
 	public Boolean isSameType(Mapping other) {
 
 		return getClass() == other.getClass();
 	}
 
-	public abstract List<Change<?>> source();
+	public Element<?> source() {
+		return source;
+	}
 
-	public abstract List<Change<?>> destination();
+	public Element<?> destination() {
+		return destination;
+	}
 
 	@Override
 	public abstract String toString();
@@ -34,7 +41,7 @@ public abstract class Mapping implements Mappable {
 		return toString().equals(other.toString());
 	}
 
-	protected Boolean verifyCorrespondence(
+	/*protected Boolean verifyCorrespondence(
     Integer totalOfElements, 
     Integer numberOfMatches) {
 
@@ -57,5 +64,5 @@ public abstract class Mapping implements Mappable {
 	public static <T extends Mapping> T create(JsonObject object) {
 		//TODO
 		throw new Error("Not implemented yet! Serialization of mappings");
-	}
+	}*/
 }

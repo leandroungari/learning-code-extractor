@@ -7,8 +7,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
-import ast.extractor.Change;
-import ast.extractor.Mapping;
+import ast.extractor.elements.ElementFactory;
 import spoon.reflect.declaration.CtElement;
 
 public class UpdateMapping extends Mapping {
@@ -17,38 +16,18 @@ public class UpdateMapping extends Mapping {
     CtElement source, 
     CtElement destination) {
 
-    this.source = new ArrayList<>();
-    for(var element: dependencies(source)) {
-      this.source.add(
-        Change.createChange(element)
-      );
-    }
-    this.destination = new ArrayList<>();
-    for(var element: dependencies(destination)) {
-      this.destination.add(
-        Change.createChange(element)
-      );
-    }
-  }
-
-  public List<Change<?>> source() {
-
-    return source;
-  }
-
-  public List<Change<?>> destination() {
-
-    return destination;
+    this.source = ElementFactory.create(source);
+    this.destination = ElementFactory.create(destination);
   }
 
   @Override
   public String toString() {
 
-    return toMap().toString();
+    return toJson().toString();
   }
 
   @Override
-  public JsonElement toMap() {
+  public JsonElement toJson() {
     var json = new JsonObject();
     var listSource = new JsonArray();
     for(var item: source) {

@@ -1,26 +1,24 @@
-package ast.extractor.change;
+package ast.extractor.elements;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import ast.extractor.Change;
 import spoon.reflect.code.CtStatement;
 import spoon.reflect.declaration.CtConstructor;
-import spoon.reflect.declaration.CtElement;
 import spoon.reflect.declaration.CtExecutable;
 import spoon.reflect.declaration.CtMethod;
 import spoon.reflect.reference.CtVariableReference;
 import spoon.reflect.visitor.filter.TypeFilter;
 
-public class StatementChange extends Change<CtStatement> {
+public class StatementElement extends Element<CtStatement> {
 
   private List<CtVariableReference<?>> variables;
 
-  public StatementChange(CtStatement st) {
+  public StatementElement(CtStatement st) {
     super(st);
   }
 
-  @Override
+  /*@Override
   protected List<CtElement> getCompleteChange() {
     var result = new ArrayList<CtElement>();
     this.variables = getVariablesDependencies(element);
@@ -34,9 +32,32 @@ public class StatementChange extends Change<CtStatement> {
     }
 
     return result;
+  }*/
+
+  @Override
+  public List<Element<?>> dependencies() {
+    var result = new ArrayList<Element<?>>();
+    this.variables = StatementElement.variablesOfStatement(element);
+
+    var executable = parentMethodOrConstructor();
+    var block = executable.getBody().getStatements();
+    for (var i = block.indexOf(element); i >= 0; i--) {
+      if (this.hasDependency(block.get(i))) {
+        result.add(0, ElementFactory.create(block.get(i)));
+      }
+    }
+
+    return result;
   }
 
-  public CtExecutable<?> getParentExecutable() {
+
+  /**
+   * It returns the method or constructor which the
+   * statement is contained
+   * 
+   * @return A method or constructor
+   */
+  private CtExecutable<?> parentMethodOrConstructor() {
     CtExecutable<?> executable = getParentMethod();
     if (executable == null) {
       executable = getParentConstructor();
@@ -44,11 +65,21 @@ public class StatementChange extends Change<CtStatement> {
     return executable;
   }
 
+  /**
+   * It identifies the parent method of the statement
+   * 
+   * @return It returns method element or null
+   */
   private CtMethod<?> getParentMethod() {
 
     return element.getParent(new TypeFilter<>(CtMethod.class));
   }
 
+  /**
+   * It return the parent constructor of the statement
+   * 
+   * @return It return the constructor element or null
+   */
   private CtConstructor<?> getParentConstructor() {
 
     return element.getParent(new TypeFilter<>(CtConstructor.class));
@@ -64,7 +95,7 @@ public class StatementChange extends Change<CtStatement> {
      * definitionVariables = getDefinitionVariables(state); for(var variable:
      * definitionVariables) { if(variables.contains(variable)) { return true; } }
      */
-    var dependencies = this.getVariablesDependencies(state);
+    var dependencies = StatementElement.variablesOfStatement(state);
     for (var variable : dependencies) {
       if (variables.contains(variable)) {
         return true;
@@ -74,9 +105,8 @@ public class StatementChange extends Change<CtStatement> {
     return false;
   }
 
-  private List<CtVariableReference<?>> getVariablesDependencies(CtStatement target) {
-
-    return Change.childrenFilter(target, CtVariableReference.class, item -> item);
+  private static List<CtVariableReference<?>> variablesOfStatement(CtStatement target) {
+    return target.getElements(new TypeFilter<>(CtVariableReference.class));
   }
 
   /*

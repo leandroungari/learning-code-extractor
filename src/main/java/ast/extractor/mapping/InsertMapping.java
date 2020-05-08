@@ -7,8 +7,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
-import ast.extractor.Change;
-import ast.extractor.Mapping;
+import ast.extractor.elements.ElementFactory;
 import spoon.reflect.declaration.CtElement;
 
 public class InsertMapping extends Mapping {
@@ -16,35 +15,21 @@ public class InsertMapping extends Mapping {
   public InsertMapping(CtElement destination) {
     super();
 
-    this.destination = new ArrayList<>();
-    for(var element: dependencies(destination)) {
-      this.destination.add(
-        Change.createChange(element)
-      );
-    }
-  }
-
-  public List<Change<?>> source() {
-    return new ArrayList<>();
-  }
-
-  public List<Change<?>> destination() {
-
-    return destination;
+    this.destination = ElementFactory.create(destination);
   }
 
   @Override
   public String toString() {
 
-    return toMap().toString();
+    return toJson().toString();
   }
 
   @Override
-  public JsonElement toMap() {
+  public JsonElement toJson() {
     var json = new JsonObject();
     var listDestination = new JsonArray();
     for(var item: destination) {
-      listDestination.add(item.toMap());
+      listDestination.add(item.toJson());
     }
     json.add("destination", listDestination);
     json.addProperty("type", "insert");
