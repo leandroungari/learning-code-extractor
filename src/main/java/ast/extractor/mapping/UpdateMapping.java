@@ -1,10 +1,6 @@
 package ast.extractor.mapping;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 import ast.extractor.elements.ElementFactory;
@@ -27,17 +23,17 @@ public class UpdateMapping extends Mapping {
   }
 
   @Override
-  public JsonElement toJson() {
+  public JsonObject toJson() {
     var json = new JsonObject();
     var listSource = new JsonArray();
-    for(var item: source) {
-      listSource.add(item.toMap());
+    for(var item: source.dependencies()) {
+      listSource.add(item.toJson());
     }
     json.add("source", listSource);
     
     var listDestination = new JsonArray();
-    for(var item: destination) {
-      listDestination.add(item.toMap());
+    for(var item: destination.dependencies()) {
+      listDestination.add(item.toJson());
     }
     json.add("destination", listDestination);
     json.addProperty("type", "update");
@@ -46,62 +42,24 @@ public class UpdateMapping extends Mapping {
   }
 
   @Override
+  public Mapping fromJson(JsonObject content) {
+    var destinationPath = MoveMapping.pathOfElement(content, "destination");
+    this.destination = ElementFactory.create(snapshot, destinationPath);
+
+    var sourcePath = MoveMapping.pathOfElement(content, "source");
+    this.source = ElementFactory.create(snapshot, sourcePath);
+    return this;
+  }
+
+  @Override
   public Boolean isParentOf(Mapping other) {
-    if (isSameType(other)) {
-      var numberOfMatches = 0;
-
-      var otherMapping = (UpdateMapping) other;
-      for (var otherChange : otherMapping.source()) {
-        for (var change : this.source()) {
-          if (otherChange.get().hasParent(change.get())) {
-            numberOfMatches++;
-          }
-        }
-      }
-      for (var otherChange : otherMapping.destination()) {
-        for (var change : this.destination()) {
-          if (otherChange.get().hasParent(change.get())) {
-            numberOfMatches++;
-          }
-        }
-      }
-
-      return verifyCorrespondence(
-        otherMapping.source().size() + 
-        otherMapping.destination().size(),
-        numberOfMatches
-      );
-    }
-    return false;
+    return this.source().isParentOf(other.source())
+      && this.destination().isParentOf(other.destination());
   }
 
   @Override
   public Boolean isChildOf(Mapping other) {
-    if (isSameType(other)) {
-      var numberOfMatches = 0;
-
-      var otherMapping = (UpdateMapping) other;
-      for (var change : this.source()) {
-        for (var otherChange : otherMapping.source()) {
-          if (change.get().hasParent(otherChange.get())) {
-            numberOfMatches++;
-          }
-        }
-      }
-      for (var change : this.destination()) {
-        for (var otherChange : otherMapping.destination()) {
-          if (change.get().hasParent(otherChange.get())) {
-            numberOfMatches++;
-          }
-        }
-      }
-
-      return verifyCorrespondence(
-        otherMapping.source().size() + 
-        otherMapping.destination().size(),
-        numberOfMatches
-      );
-    }
-    return false;
+    return this.source().isChildOf(other.source())
+      && this.destination().isChildOf(other.destination());
   }
 }

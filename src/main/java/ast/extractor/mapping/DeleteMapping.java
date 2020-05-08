@@ -1,7 +1,6 @@
 package ast.extractor.mapping;
 
 import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 import ast.extractor.elements.ElementFactory;
@@ -34,20 +33,18 @@ public class DeleteMapping extends Mapping {
 
   @Override
   public Mapping fromJson(JsonObject content) {
-    
-    var item = content.get("source").getAsJsonObject();
-    this.source = 
-    
+    var path = DeleteMapping.pathOfElement(content, "source");
+    this.source = ElementFactory.create(snapshot, path);
     return this;
   }
 
   @Override
   public Boolean isParentOf(Mapping other) {
-    return other.source().get().hasParent(source().get());
+    return this.source().isParentOf(other.source());
   }
 
   @Override
   public Boolean isChildOf(Mapping other) {
-    return source.get().hasParent(other.source().get());
+    return this.source().isChildOf(other.source());
   }
 }

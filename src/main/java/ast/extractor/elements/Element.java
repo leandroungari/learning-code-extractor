@@ -56,18 +56,34 @@ public abstract class Element<T extends CtElement> implements Jsonify<Element<?>
   }
 
   public Boolean isDirectParentOf(Element<?> other) {
-    return other.get().getParent() == this.get();
+    try {
+      return other.get().getParent() == this.get();
+    } catch (NullPointerException ex) {
+      return false;
+    }
   }
 
   public Boolean isDirectChildOf(Element<?> other) {
-    return this.get().getParent() == other.get();
+    try {
+      return this.get().getParent() == other.get();
+    } catch (NullPointerException ex) {
+      return false;
+    }
   }
 
   public Boolean isParentOf(Element<?> other) {
-    return other.get().hasParent(this.get());
+    try {
+      return other.get().hasParent(this.get());
+    } catch (NullPointerException ex) {
+      return false;
+    }
   }
 
   public Boolean isChildOf(Element<?> other) {
-    return this.get().hasParent(other.get());
+    try {
+      return this.get().hasParent(other.get());
+    } catch (NullPointerException ex) {
+      return false;
+    }
   }
 }

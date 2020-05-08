@@ -1,5 +1,7 @@
 package ast.extractor.mapping;
 
+import com.google.gson.JsonObject;
+
 import ast.extractor.Jsonify;
 import ast.extractor.elements.Element;
 import ast.snapshot.Snapshot;
@@ -39,6 +41,14 @@ public abstract class Mapping implements Jsonify<Mapping> {
 	public boolean equals(Object obj) {
 		var other = (Mapping) obj;
 		return toString().equals(other.toString());
+	}
+
+	protected static String pathOfElement(
+		JsonObject object, 
+		String element) {
+
+		var item = object.get(element).getAsJsonObject();
+    return item.get("path").getAsString();
 	}
 
 	/*protected Boolean verifyCorrespondence(
