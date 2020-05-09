@@ -28,15 +28,17 @@ public class Comparator {
     this.diff = astComparator.compare(before, after);
   }
 
+  /**
+   * It generates the mappings based on the provided
+   * entites of source code
+   * @return List of mappings
+   */
   public List<? extends Mapping> generateMappings() {
     var operations = this.extractOperations();
     operations = this.combineHierarchyOperations(operations);
-    //TODO
-    /**
-     * Agrupar as operações e 
-     * gerar os respectivos mapeamentos
-     */
-    return this.createMappings(operations);
+
+    var mappings = this.createMappings(operations);
+    return this.combineSiblingsMappings(mappings);
   }
 
   private List<Operation> extractOperations() {
@@ -56,7 +58,9 @@ public class Comparator {
     return result;
   }
 
-  private List<Operation> combineHierarchyOperations(List<Operation> operations) {
+  private List<Operation> combineHierarchyOperations(
+    List<Operation> operations) {
+  
     var result = new ArrayList<Operation>();
     for(var unsetted: operations) {
       var assigned = false;
@@ -76,6 +80,42 @@ public class Comparator {
     }
     return result;
   }
+
+  private List<Mapping> combineSiblingsMappings(List<Mapping> items) {
+    for(var i = 0; i < items.size()-1; i++) {
+      var a = items.get(i);
+      for(var j = i + 1; j < items.size(); j++) {
+        var b = items.get(j);
+        if(a instanceof InsertMapping && b instanceof DeleteMapping) {
+          var pathParentA = a.destination().getParent().getPath().toString();
+          var pathParentB = b.source().getParent().getPath().toString();
+          if(pathParentA.equals(pathParentB)) {
+            var newMapping = new UpdateMapping(
+              b.source().get(), 
+              a.destination().get()
+            );
+            items.set(i, newMapping);
+            items.remove(j);
+            break;
+          }
+        } else if(b instanceof InsertMapping && a instanceof DeleteMapping) {
+          var pathParentA = a.source().getParent().getPath().toString();
+          var pathParentB = b.destination().getParent().getPath().toString();
+          if(pathParentB.equals(pathParentA)) {
+            var newMapping = new UpdateMapping(
+              a.source().get(), 
+              b.destination().get()
+            );
+            items.set(j, newMapping);
+            items.remove(i);
+            break;
+          }
+        }
+      }
+    }
+    return items;
+  }
+  
 
   private List<Mapping> createMappings(List<Operation> operations) {
     var result = new ArrayList<Mapping>();

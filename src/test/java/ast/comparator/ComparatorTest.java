@@ -73,6 +73,6 @@ public class ComparatorTest {
     /*for(var mapping: result) {
       System.out.println(mapping);
     }*/
-    assertThat(result.size(), equalTo(3));
+    assertThat(result.size(), equalTo(2));
   }
 }

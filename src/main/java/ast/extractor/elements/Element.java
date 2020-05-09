@@ -86,4 +86,8 @@ public abstract class Element<T extends CtElement> implements Jsonify<Element<?>
       return false;
     }
   }
+
+  public CtElement getParent() {
+    return element.getParent();
+  }
 }

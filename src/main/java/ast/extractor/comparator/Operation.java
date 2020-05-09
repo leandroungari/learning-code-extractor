@@ -30,6 +30,18 @@ public class Operation {
     return type;
   }
 
+  public void setType(OperationType type) {
+    this.type = type;
+  }
+
+  public void setSource(CtElement source) {
+    this.source = source;
+  }
+
+  public void setDestination(CtElement destination) {
+    this.destination = destination;
+  }
+
   public Boolean isParentOf(Operation other) {
     try {
       if(this.type == OperationType.INSERT) {
