@@ -16,6 +16,7 @@ public class TemplateBuilderTest {
   private static CommitModifications modifications;
 
   private static Mapping firstMapping;
+  private static Mapping secondMapping;
 
   @BeforeClass
   public static void init() {
@@ -26,11 +27,19 @@ public class TemplateBuilderTest {
     var list = modifications.getModifications();
 
     firstMapping = list.get(0).getMappings().get(0);
+    secondMapping = list.get(0).getMappings().get(1);
   }
 
   @Test
-  public void createModel() {
+  public void createModelToFirstMapping() {
     var builder = new TemplateBuilder<>(firstMapping);
+    var map = builder.model();
+    System.out.println(map);
+  }
+
+  @Test
+  public void createModelToSecondMapping() {
+    var builder = new TemplateBuilder<>(secondMapping);
     var map = builder.model();
     System.out.println(map);
   }

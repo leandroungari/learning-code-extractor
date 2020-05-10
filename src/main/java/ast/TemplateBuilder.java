@@ -79,10 +79,10 @@ public class TemplateBuilder<T extends Mapping> {
     if(variable.getDeclaration() != null) {
       variable
         .getDeclaration()
-        .setSimpleName(wildcards.get(variable.prettyprint()));
-    } else {
-      variable.setSimpleName(wildcards.get(variable.prettyprint()));
+        .setSimpleName(wildcards.get(variable.prettyprint()));    
     }
+
+    variable.setSimpleName(wildcards.get(variable.prettyprint()));
   }
 
   private void replaceLiteral(CtLiteral<?> literal) {
@@ -109,26 +109,6 @@ public class TemplateBuilder<T extends Mapping> {
     }
   }
 
-  /*public void replaceElementsByWildcards() {
-    for(var item: source) {
-      for(var variable: item.getVariables()) {
-        replaceVariable(variable);
-      }
-      for(var literal: item.getLiterals()) {
-        replaceLiteral(literal);
-      }
-    }
-
-    for(var item: destination) {
-      for(var variable: item.getVariables()) {
-        replaceVariable(variable);
-      }
-      for(var literal: item.getLiterals()) {
-        replaceLiteral(literal);
-      }
-    }
-  }*/
-
   public Map<List<String>,List<String>> model() {
     this.variables = this.extractVariablesFromElement();
     this.literals = this.extractLiteralsFromElement();
@@ -140,7 +120,6 @@ public class TemplateBuilder<T extends Mapping> {
     for(var literal: literals) {
       this.replaceLiteral(literal);
     }
-    //replaceElementsByWildcards();
 
     var sourceItems = source
       .stream()
