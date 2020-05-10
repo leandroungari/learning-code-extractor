@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import core.controller.SettingsController;
+import repository.Repository;
 import spoon.Launcher;
 import spoon.SpoonAPI;
 import spoon.reflect.CtModel;
@@ -21,11 +22,17 @@ public class Snapshot {
 
   private static SettingsController settings = SettingsController.get();
 
-  public static Snapshot create(String repository, String commit) {
+  public static Snapshot create(Repository repository, String commit) {
+    
     throw new Error("Not implemented resource!");
   }
 
-  public Snapshot(String commit) {
+  public CtModel model() {
+    api.addInputResource(settings.folderOfMetadata() + "/.temp/"+ this.commit +"/");
+    api.buildModel();
+    return api.getModel();
+  }
+  /*public Snapshot(String commit) {
 
     this.commit = commit;
     files = new ArrayList<>();
@@ -74,11 +81,5 @@ public class Snapshot {
   public void clear() {
 
     storage.remove();
-  }
-
-  public CtModel model() {
-    api.addInputResource(settings.folderOfMetadata() + "/.temp/"+ this.commit +"/");
-    api.buildModel();
-    return api.getModel();
-  }
+  }*/
 }
