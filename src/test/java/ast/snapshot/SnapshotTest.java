@@ -11,9 +11,7 @@ public class SnapshotTest {
 
   @Test
   public void createSnapshot() throws GitAPIException {
-    var snapshot = Snapshot
-      .create(repository, branch, commit);
-
+    Snapshot.create(repository, branch, commit);
   }
 
 }
