@@ -108,7 +108,27 @@ public class Commit {
 		}
 
 	  return list;
-  }
+	}
+	
+	public List<File> getDiffFiles() {
+		var result = new ArrayList<File>();
+		for(var diff: this.diff()) {
+			if(!"/dev/null".equals(diff.newPath())) {
+				result.add(this.getFile(diff.newPath()));
+			}
+		}
+		return result;
+	}
+
+	public List<File> getDiffFiles(String extension) {
+		var result = new ArrayList<File>();
+		for(var diff: this.diff()) {
+			if(diff.newPath().contains(extension)) {
+				result.add(this.getFile(diff.newPath()));
+			}
+		}
+		return result;
+	}
 	
 	public File getFile(String filename) {
 		
