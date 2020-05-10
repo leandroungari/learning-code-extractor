@@ -4,32 +4,38 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
-import ast.Mappable;
+import ast.extractor.mapping.DeleteMapping;
+import ast.extractor.mapping.InsertMapping;
+import ast.extractor.mapping.Mapping;
+import ast.extractor.mapping.MoveMapping;
+import ast.extractor.mapping.UpdateMapping;
+import ast.snapshot.Snapshot;
+import core.Jsonify;
 
-public class Modification implements Mappable {
+public class Modification implements Jsonify<Modification> {
 
   private String oldPath;
   private String newPath;
   private List<Mapping> mappings;
 
+  private Snapshot snapshot;
+
   public Modification() {
     mappings = new ArrayList<>();
   }
 
-  public Modification(Mapping mapping) {
-    mappings = new ArrayList<>();
-    mappings.add(mapping);
-  }
-
-  public Modification(List<Mapping> mappings) {
-    this.mappings = mappings;
-  }
+	public void setSnapshot(Snapshot snap) {
+		this.snapshot = snap;
+	}
 
   public List<Mapping> getMappings() {
     return mappings;
+  }
+
+  public void setMappings(List<Mapping> mappings) {
+    this.mappings = mappings;
   }
 
   public void setOldPath(String path) {
@@ -51,25 +57,55 @@ public class Modification implements Mappable {
   @Override
   public String toString() {
 
-    return toMap().toString();
+    return toJson().toString();
   }
 
   @Override
-  public JsonElement toMap() {
+  public JsonObject toJson() {
     var json = new JsonObject();
     json.addProperty("oldPath", oldPath);
     json.addProperty("newPath", newPath);
 
     var array = new JsonArray();
     for (var mapping : mappings) {
-      array.add(mapping.toMap());
+      array.add(mapping.toJson());
     }
     json.add("mappings", array);
 
     return json;
   }
 
-  public static Modification create(JsonObject json) {
+  @Override
+  public Modification fromJson(JsonObject content) {
+    this.oldPath = content.get("oldPath").getAsString();
+    this.newPath = content.get("newPath").getAsString();
+
+    this.mappings = new ArrayList<>();
+    for(var item: content.get("mappings").getAsJsonArray()) {
+      var mapping = item.getAsJsonObject();
+      var type = mapping.get("type").getAsString();
+      if("insert".equals(type)) {
+        var insert = new InsertMapping();
+        insert.setSnapshot(this.snapshot);
+        this.mappings.add(insert.fromJson(mapping));
+      } else if("delete".equals(type)) {
+        var delete = new DeleteMapping();
+        delete.setSnapshot(this.snapshot);
+        this.mappings.add(delete.fromJson(mapping));
+      } else if("move".equals(type)) {
+        var move = new MoveMapping();
+        move.setSnapshot(this.snapshot);
+        this.mappings.add(move.fromJson(mapping));
+      } else {
+        var update = new UpdateMapping();
+        update.setSnapshot(this.snapshot);
+        this.mappings.add(update.fromJson(mapping));
+      }
+    }
+    return this;
+  }
+
+  /*public static Modification create(JsonObject json) {
     
     var modification = new Modification();
     modification.setNewPath(json.get("oldPath").getAsString());
@@ -82,6 +118,6 @@ public class Modification implements Mappable {
     }
 
     return modification;
-  }
+  }*/
 
 }

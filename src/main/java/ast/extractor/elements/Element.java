@@ -4,9 +4,12 @@ import java.util.List;
 
 import com.google.gson.JsonObject;
 
-import ast.extractor.Jsonify;
+import core.Jsonify;
 import ast.snapshot.Snapshot;
+import spoon.reflect.code.CtLiteral;
 import spoon.reflect.declaration.CtElement;
+import spoon.reflect.reference.CtVariableReference;
+import spoon.reflect.visitor.filter.TypeFilter;
 
 public abstract class Element<T extends CtElement> implements Jsonify<Element<?>> {
 
@@ -89,5 +92,13 @@ public abstract class Element<T extends CtElement> implements Jsonify<Element<?>
 
   public CtElement getParent() {
     return element.getParent();
+  }
+
+  public List<CtVariableReference<?>> getVariables() {
+    return element.getElements(new TypeFilter<>(CtVariableReference.class));
+  }
+
+  public List<CtLiteral<?>> getLiterals() {
+    return element.getElements(new TypeFilter<>(CtLiteral.class));
   }
 }

@@ -33,7 +33,7 @@ public class Comparator {
    * entites of source code
    * @return List of mappings
    */
-  public List<? extends Mapping> generateMappings() {
+  public List<Mapping> generateMappings() {
     var operations = this.extractOperations();
     operations = this.combineHierarchyOperations(operations);
 

@@ -70,9 +70,9 @@ public class ComparatorTest {
   public void mappingsFromSingleFile() {
     var comparator = new Comparator(before, after);
     var result = comparator.generateMappings();
-    /*for(var mapping: result) {
+    for(var mapping: result) {
       System.out.println(mapping);
-    }*/
+    }
     assertThat(result.size(), equalTo(2));
   }
 }

@@ -8,6 +8,10 @@ import spoon.reflect.declaration.CtElement;
 
 public class InsertMapping extends Mapping {
 
+  public InsertMapping() {
+    super(); 
+  }
+
   public InsertMapping(CtElement destination) {
     super();
 

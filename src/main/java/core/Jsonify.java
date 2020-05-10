@@ -1,4 +1,4 @@
-package ast.extractor;
+package core;
 
 import com.google.gson.JsonObject;
 

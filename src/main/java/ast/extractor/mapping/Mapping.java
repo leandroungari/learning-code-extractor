@@ -2,7 +2,7 @@ package ast.extractor.mapping;
 
 import com.google.gson.JsonObject;
 
-import ast.extractor.Jsonify;
+import core.Jsonify;
 import ast.extractor.elements.Element;
 import ast.snapshot.Snapshot;
 
@@ -70,9 +70,5 @@ public abstract class Mapping implements Jsonify<Mapping> {
       .createChange(target)
       .getCompleteChange();
 	}
-
-	public static <T extends Mapping> T create(JsonObject object) {
-		//TODO
-		throw new Error("Not implemented yet! Serialization of mappings");
-	}*/
+	*/
 }

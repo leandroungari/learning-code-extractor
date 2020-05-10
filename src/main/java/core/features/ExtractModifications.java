@@ -51,7 +51,7 @@ public class ExtractModifications implements RepositoryFeature<Void> {
     this.extractor = new Extractor(repository, branch, commit);
     var result = this.extractor.transformModifications(); 
       
-    resource.write(result.toMap());
+    resource.write(result.toJson());
   }
 
   private Commit[] commitsFromBranch() {

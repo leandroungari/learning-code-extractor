@@ -21,6 +21,10 @@ public class Snapshot {
 
   private static SettingsController settings = SettingsController.get();
 
+  public static Snapshot create(String repository, String commit) {
+    throw new Error("Not implemented resource!");
+  }
+
   public Snapshot(String commit) {
 
     this.commit = commit;

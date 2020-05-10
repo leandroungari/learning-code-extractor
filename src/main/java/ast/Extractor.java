@@ -1,6 +1,6 @@
 package ast;
 
-import ast.extractor.ModificationsBuilder;
+import ast.extractor.CommitModifications;
 
 public class Extractor {
 

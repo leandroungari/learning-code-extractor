@@ -8,6 +8,10 @@ import spoon.reflect.declaration.CtElement;
 
 public class DeleteMapping extends Mapping {
 
+  public DeleteMapping() {
+    super(); 
+  }
+
   public DeleteMapping(CtElement source) {
     super();
     this.source = ElementFactory.create(source);

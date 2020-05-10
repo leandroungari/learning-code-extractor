@@ -8,6 +8,10 @@ import spoon.reflect.declaration.CtElement;
 
 public class MoveMapping extends Mapping {
 
+  public MoveMapping() {
+    super(); 
+  }
+
   public MoveMapping(CtElement source, CtElement destination) {
 
     this.source = ElementFactory.create(source);

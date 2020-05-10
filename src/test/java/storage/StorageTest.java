@@ -43,8 +43,6 @@ public class StorageTest {
     assertTrue("The size is 3", result.length == 3);
   }
 
-  //TODO
-  //fazer testes para formato JSON
 
   @Test
   public void writePlainTextFile() throws IOException {

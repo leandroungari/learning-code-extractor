@@ -8,9 +8,11 @@ import spoon.reflect.declaration.CtElement;
 
 public class UpdateMapping extends Mapping {
 
-  public UpdateMapping(
-    CtElement source, 
-    CtElement destination) {
+  public UpdateMapping() {
+    super(); 
+  }
+
+  public UpdateMapping(CtElement source, CtElement destination) {
 
     this.source = ElementFactory.create(source);
     this.destination = ElementFactory.create(destination);

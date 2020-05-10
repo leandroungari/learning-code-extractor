@@ -1,12 +1,10 @@
 package ast;
 
-import static org.junit.Assert.assertThat;
-
-import static org.hamcrest.CoreMatchers.*;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import ast.extractor.Mapping;
+import ast.extractor.CommitModifications;
+import ast.extractor.mapping.Mapping;
 
 public class TemplateBuilderTest {
 
@@ -28,62 +26,6 @@ public class TemplateBuilderTest {
     var list = modifications.getModifications();
 
     firstMapping = list.get(0).getMappings().get(0);
-  }
-
-  @Test
-  public void getVariablesBeforeModification() {
-
-    var builder = new TemplateBuilder<>(firstMapping);
-    var variables = builder.before().variables();
-    assertThat(variables.size(), equalTo(0));
-  }
-
-  @Test
-  public void getVariablesAfterModification() {
-
-    var builder = new TemplateBuilder<>(firstMapping);
-    var variables = builder.after().variables();
-    assertThat(variables.size(), equalTo(6));
-  }
-
-  @Test
-  public void getLiteralsBeforeModification() {
-
-    var builder = new TemplateBuilder<>(firstMapping);
-    var literals = builder.before().literals();
-    assertThat(literals.size(), equalTo(0));
-  }
-
-
-  @Test
-  public void getLiteralsAfterModification() {
-
-    var builder = new TemplateBuilder<>(firstMapping);
-    var literals = builder.after().literals();
-    System.out.println(literals);
-    assertThat(literals.size(), equalTo(5));
-  }
-
-  @Test
-  public void createWildcardsOfAfterModification() {
-    var builder = new TemplateBuilder<>(firstMapping);
-    var map = builder.after().createWildcards();
-
-    assertThat(map.entrySet().size(), equalTo(3));
-    System.out.println(map);
-  }
-
-  @Test
-  public void replaceWildcardsAfterModification() {
-    var builder = new TemplateBuilder<>(firstMapping);
-    var wildcards = builder.after().createWildcards();
-    var changes = builder
-      .after()
-      .replaceElementsByWildcards(wildcards);
-
-    for(var change: changes) {
-      System.out.println(change);
-    }
   }
 
   @Test

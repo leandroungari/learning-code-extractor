@@ -1,15 +1,14 @@
-package ast;
+package ast.extractor;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
-import ast.extractor.Modification;
+import core.Jsonify;
 
-public class CommitModifications implements Mappable {
+public class CommitModifications implements Jsonify<CommitModifications> {
 
   private String commit;
   private List<Modification> modifications;
@@ -29,29 +28,30 @@ public class CommitModifications implements Mappable {
 
   @Override
   public String toString() {
-    return toMap().toString();
+    return toJson().toString();
   }
 
-  public JsonElement toMap() {
+  @Override
+  public JsonObject toJson() {
     var json = new JsonObject();
     json.addProperty("id", commit);
     var list = new JsonArray();
     for(var change: this.modifications) {
-      list.add(change.toMap());
+      list.add(change.toJson());
     }
     json.add("result", list);
     return json;
   }
 
-  public static CommitModifications create(JsonObject json) {
-    
-    var instance = new CommitModifications(json.get("id").getAsString());
-
-    var result = json.get("result").getAsJsonArray();
-    for(var item: result) {
-      instance.add(Modification.create(item.getAsJsonObject()));
+  @Override
+  public CommitModifications fromJson(JsonObject content) {
+    this.commit = content.get("id").getAsString();
+    this.modifications = new ArrayList<>();
+    for(var item: content.get("result").getAsJsonArray()) {
+      var modification = new Modification();
+      modifications.add(modification.fromJson(item.getAsJsonObject()));
     }
-    
-    return instance;
+    return this;
   }
+
 }
