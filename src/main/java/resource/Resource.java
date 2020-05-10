@@ -27,6 +27,7 @@ public class Resource<T> {
   }
 
   public void write(Storable<T> store) throws IOException {
+    System.out.println(resource.getAbsolutePath());
     this.createFile(store.write(item));
   }
 

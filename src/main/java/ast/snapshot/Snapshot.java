@@ -2,84 +2,90 @@ package ast.snapshot;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
+
+import org.apache.commons.io.FileUtils;
+import org.eclipse.jgit.api.errors.GitAPIException;
 
 import core.controller.SettingsController;
 import repository.Repository;
+import repository.exception.GitRepositoryException;
+import resource.Resource;
 import spoon.Launcher;
-import spoon.SpoonAPI;
 import spoon.reflect.CtModel;
-import storage.Storage;
-import util.FileUtil;
+
+import resource.PlainText;
 
 public class Snapshot {
 
   private String commit;
-  private List<String> files;
-  private Storage storage;
-  private SpoonAPI api;
+  private String base;
 
   private static SettingsController settings = SettingsController.get();
 
-  public static Snapshot create(Repository repository, String commit) {
-    
-    throw new Error("Not implemented resource!");
-  }
-
-  public CtModel model() {
-    api.addInputResource(settings.folderOfMetadata() + "/.temp/"+ this.commit +"/");
-    api.buildModel();
-    return api.getModel();
-  }
-  /*public Snapshot(String commit) {
+  private Snapshot(
+    String repository,
+    String commit, 
+    List<repository.commit.File> diffFiles) {
 
     this.commit = commit;
-    files = new ArrayList<>();
-    storage = new Storage(settings.folderOfMetadata() + "/.temp/" + this.commit);
+    this.base = settings.folderOfMetadata() 
+      + "/" + repository
+      + "/.temp/" + this.commit + "/";
+    this.createFiles(diffFiles);
+  }
 
-    api = new Launcher();
+  public static Snapshot create(String repo, String branch, String commit) 
+    throws GitAPIException {
 
-    var parentFolder = new File(settings.folderOfMetadata() + "/.temp");
-    if(parentFolder.exists()) {
-      var listOfFolder = FileUtil.listOfFolders(parentFolder);
-      if(listOfFolder.size() > 3) {
-        var position =  Math.round((float)Math.random()*10) % listOfFolder.size();
-        var oldResource = new Storage(settings.folderOfMetadata() + "/.temp/" + listOfFolder.get(position));
-        oldResource.remove();
+    var repository = createRepository(repo);
+    var diffFiles = repository
+      .branch(branch)
+      .commit(commit)
+      .getDiffFiles(".java");
+
+    return new Snapshot(repo, commit, diffFiles);
+  }
+
+  private void createFiles(List<repository.commit.File> diffFiles) {
+    for (var file : diffFiles) {
+      var resource = new Resource<String>(
+        this.base + file.folder(), 
+        file.file()
+      );
+      resource.setContent(file.get());
+      try {
+        resource.write(new PlainText());
+      } catch (IOException e) {
+        e.printStackTrace();
       }
     }
   }
 
-  public void add(String name, String content) {
-
+  public static Repository createRepository(String name) {
     try {
-      if (!files.contains(name)) {
-        storage.plainText(name).write(content);
-        files.add(name);
-      }
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
-  }
-
-  public boolean contains(String filename) {
-    
-    return files.contains(filename);
-  }
-
-  public String get(String name) {
-
-    try {
-      return storage.plainText(name).read();
-    } catch (IOException e) {
+      return Repository
+        .create(new File(settings.folderOfRepositories() + "/" + name));
+    } catch (GitRepositoryException e) {
       e.printStackTrace();
     }
     return null;
   }
 
-  public void clear() {
+  public CtModel model() {
+    var api = new Launcher();
+    api.addInputResource(this.base);
+    api.buildModel();
+    return api.getModel();
+  }
 
-    storage.remove();
-  }*/
+  public Boolean clear() {
+    try {
+      FileUtils.deleteDirectory(new File(this.base));
+      return true;
+    } catch (IOException e) {
+      e.printStackTrace();
+      return false;
+    }
+  }
 }

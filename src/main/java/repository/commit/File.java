@@ -22,6 +22,20 @@ public class File {
 	public String name() {
 		return name;
 	}
+
+	public String folder() {
+		var text = "";
+		var items = name.split("/");
+		for(var i = 0; i < items.length-1; i++) {
+			text += items[i] + "/";
+		}
+		return text;
+	}
+
+	public String file() {
+		var items = name.split("/");
+		return items[items.length-1];
+	}
 	
 	public ObjectId id() {
 		return id;
