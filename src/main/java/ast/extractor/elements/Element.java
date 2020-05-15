@@ -20,6 +20,8 @@ public abstract class Element<T extends CtElement> implements Jsonify<Element<?>
 
   private Snapshot snapshot;
 
+  protected Integer priority;
+
   Element(T el) {
     this.element = el;
     this.path = el.getPath().toString();

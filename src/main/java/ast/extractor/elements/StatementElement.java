@@ -15,6 +15,7 @@ public class StatementElement extends Element<CtStatement> {
 
   public StatementElement(CtStatement el) {
     super(el);
+    this.priority = 3;
   }
 
   /*@Override

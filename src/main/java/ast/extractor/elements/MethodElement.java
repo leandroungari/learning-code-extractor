@@ -9,6 +9,7 @@ public class MethodElement extends Element<CtMethod<?>> {
 
   MethodElement(CtMethod<?> el) {
     super(el);
+    this.priority = 2;
   }
 
   @Override

@@ -9,6 +9,7 @@ public class FieldElement extends Element<CtField<?>> {
 
   FieldElement(CtField<?> el) {
     super(el);
+    this.priority = 2;
   }
 
   @Override

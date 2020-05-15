@@ -9,6 +9,7 @@ public class ConstructorElement extends Element<CtConstructor<?>> {
 
   ConstructorElement(CtConstructor<?> el) {
     super(el);
+    this.priority = 2;
   }
 
   @Override

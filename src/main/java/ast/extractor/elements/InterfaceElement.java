@@ -9,6 +9,7 @@ public class InterfaceElement extends Element<CtInterface<?>> {
 
   InterfaceElement(CtInterface<?> el) {
     super(el);
+    this.priority = 1;
   }
 
   @Override

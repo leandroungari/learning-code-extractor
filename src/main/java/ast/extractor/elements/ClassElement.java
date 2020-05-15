@@ -9,6 +9,7 @@ public class ClassElement extends Element<CtClass<?>> {
 
   public ClassElement(CtClass<?> clazz) {
     super(clazz);
+    this.priority = 1;
   }
 
   @Override
