@@ -3,6 +3,7 @@ package ast.extractor.elements;
 import java.util.List;
 
 import spoon.reflect.declaration.CtClass;
+import spoon.reflect.declaration.CtElement;
 
 public class ClassElement extends Element<CtClass<?>> {
 
@@ -11,8 +12,8 @@ public class ClassElement extends Element<CtClass<?>> {
   }
 
   @Override
-  public List<Element<?>> dependencies() {
-    return List.of(this);
+  public List<? extends CtElement> dependencies() {
+    return List.of(element);
   }
 
 /*  @Override

@@ -3,6 +3,7 @@ package ast.extractor.elements;
 import java.util.List;
 
 import spoon.reflect.declaration.CtConstructor;
+import spoon.reflect.declaration.CtElement;
 
 public class ConstructorElement extends Element<CtConstructor<?>> {
 
@@ -11,8 +12,8 @@ public class ConstructorElement extends Element<CtConstructor<?>> {
   }
 
   @Override
-  public List<Element<?>> dependencies() {
-    return List.of(this);
+  public List<? extends CtElement> dependencies() {
+    return List.of(element);
   }
   
 }

@@ -1,6 +1,5 @@
 package ast.extractor.mapping;
 
-import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
 import ast.extractor.elements.ElementFactory;
@@ -26,17 +25,8 @@ public class MoveMapping extends Mapping {
   @Override
   public JsonObject toJson() {
     var json = new JsonObject();
-    var listSource = new JsonArray();
-    for(var item: source.dependencies()) {
-      listSource.add(item.toJson());
-    }
-    json.add("source", listSource);
-
-    var listDestination = new JsonArray();
-    for(var item: destination.dependencies()) {
-      listDestination.add(item.toJson());
-    }
-    json.add("destination", listDestination);
+    json.add("source", source.toJson());
+    json.add("destination", destination.toJson());
     json.addProperty("type", "move");
 
     return json;
