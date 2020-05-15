@@ -31,6 +31,10 @@ public abstract class Element<T extends CtElement> implements Jsonify<Element<?>
     this.snapshot = snap;
   }
 
+  public Integer getPriority() {
+    return priority;
+  }
+
   /**
    * It returns the ast element of AST
    */

@@ -6,7 +6,7 @@ import core.Jsonify;
 import ast.extractor.elements.Element;
 import ast.snapshot.Snapshot;
 
-public abstract class Mapping implements Jsonify<Mapping> {
+public abstract class Mapping implements Jsonify<Mapping>, Comparable<Mapping> {
 
 	protected Element<?> source;
 	protected Element<?> destination;
@@ -49,6 +49,18 @@ public abstract class Mapping implements Jsonify<Mapping> {
 
 		var item = object.get(element).getAsJsonObject();
     return item.get("path").getAsString();
+	}
+
+	protected abstract Integer getPriority();
+
+	@Override
+	public int compareTo(Mapping other) {
+		if(this.getPriority() < other.getPriority()) {
+			return -1;
+		} else if(this.getPriority() > other.getPriority()) {
+			return 1;
+		}
+		return 0;
 	}
 
 	/*protected Boolean verifyCorrespondence(

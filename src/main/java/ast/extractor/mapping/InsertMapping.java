@@ -47,4 +47,9 @@ public class InsertMapping extends Mapping {
   public Boolean isChildOf(Mapping other) {
     return this.destination().isChildOf(other.destination());
   }
+
+  @Override
+  protected Integer getPriority() {
+    return destination().getPriority();
+  }
 }

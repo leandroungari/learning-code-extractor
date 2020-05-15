@@ -54,4 +54,14 @@ public class UpdateMapping extends Mapping {
     return this.source().isChildOf(other.source())
       && this.destination().isChildOf(other.destination());
   }
+
+  @Override
+  protected Integer getPriority() {
+    var source = source().getPriority();
+    var destination = destination().getPriority();
+    if(source < destination) {
+      return source;
+    }
+    return destination;
+  }
 }

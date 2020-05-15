@@ -8,7 +8,7 @@ import org.junit.Test;
 import ast.extractor.comparator.Comparator;
 
 public class ComparatorTest {
-  private static String before = "package org;\n"+
+  private static String beforeA = "package org;\n"+
     "import org.animals.Dog;\n"+
   
     "public class DogManager {" +
@@ -32,7 +32,7 @@ public class ComparatorTest {
       "}" +
     "}";
 
-    private static String after = "package org;" +
+    private static String afterA = "package org;" +
     "import org.animals.Dog;" +
     
     
@@ -68,11 +68,64 @@ public class ComparatorTest {
   
   @Test
   public void mappingsFromSingleFile() {
-    var comparator = new Comparator(before, after);
+    var comparator = new Comparator(beforeA, afterA);
     var result = comparator.generateMappings();
     for(var mapping: result) {
       System.out.println(mapping);
     }
     assertThat(result.size(), equalTo(2));
   }
+
+  private static String afterB = "package org.animals;"
+    + "public class Dog {"
+    + "private int age = 0;"
+    + "public int magicNumber = 17;"
+  
+    + "public int getAge() {"
+    +   "return this.age;"
+    + "}"
+  
+    + "public void takeABreath() {"
+    +   "System.out.println(\"...\");"
+    + "}"
+  
+  + "}";
+
+  private static String beforeB = "package org.animals;"
+
+  + "import org.DogManager;"
+  
+  + "public class Dog {"
+  
+    + "private int age = 0;"
+    + "public int magicNumber = 17;"
+  
+    + "public int getAge() {"
+      + "return this.age;"
+    + "}"
+  
+    + "public void barkBark(DogManager manager) {"
+      + "System.out.println(\"ruff\");"
+      + "System.out.println(\"ruff\");"
+      + "takeABreath();"
+      + "System.out.println(\"ruff\");"
+      + "System.out.println(\"ruff\");"
+      + "System.out.println(\"ruff\");"
+    + "}"
+  
+    + "public void takeABreath() {"
+      + "System.out.println(\"...\");"
+    + "}"
+  + "}";
+
+  @Test
+  public void mappingsFromSingleFileB() {
+    var comparator = new Comparator(beforeB, afterB);
+    var result = comparator.generateMappings();
+    for(var mapping: result) {
+      System.out.println(mapping);
+    }
+    assertThat(result.size(), equalTo(1));
+  }
 }
+

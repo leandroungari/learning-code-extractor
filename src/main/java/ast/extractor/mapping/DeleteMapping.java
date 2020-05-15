@@ -46,4 +46,9 @@ public class DeleteMapping extends Mapping {
   public Boolean isChildOf(Mapping other) {
     return this.source().isChildOf(other.source());
   }
+
+  @Override
+  protected Integer getPriority() {
+    return source().getPriority();
+  }
 }
