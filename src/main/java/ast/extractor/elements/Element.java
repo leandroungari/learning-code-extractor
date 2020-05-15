@@ -56,7 +56,7 @@ public abstract class Element<T extends CtElement> implements Jsonify<Element<?>
     var obj = new JsonObject();
     obj.addProperty("element", this.dependencies().toString());
     obj.addProperty("path", this.path);
-    obj.addProperty("type", element.getClass().getSimpleName());
+    obj.addProperty("type", this.getClass().getSimpleName());
     return obj;
   }
 

@@ -42,9 +42,6 @@ public class Operation implements Comparable<Operation> {
     this.destination = destination;
   }
 
-  /*
-  TODO
-  Tem alguma coisa errada nesse método e consequentemente no child */
   public Boolean isParentOf(Operation other) {
     try {
       if(this.type == OperationType.INSERT) {
