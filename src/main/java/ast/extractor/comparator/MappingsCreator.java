@@ -15,15 +15,22 @@ public class MappingsCreator {
   public List<Mapping> create(List<Operation> operations) {
     var result = new PriorityQueue<Mapping>();
     for (var op : operations) {
+      Mapping mapping = null;
+      
       if (op.type() == OperationType.INSERT) {
-        result.add(new InsertMapping(op.destination()));
+        mapping = new InsertMapping(op.destination());
       } else if (op.type() == OperationType.DELETE) {
-        result.add(new DeleteMapping(op.source()));
+        mapping = new DeleteMapping(op.source());
       } else if (op.type() == OperationType.UPDATE) {
-        result.add(new UpdateMapping(op.source(), op.destination()));
+        mapping = new UpdateMapping(op.source(), op.destination());
       } else {
-        result.add(new MoveMapping(op.source(), op.destination()));
+        mapping = new MoveMapping(op.source(), op.destination());
       }
+      
+      mapping.setOldFile(op.getOldFile());
+      mapping.setNewFile(op.getNewFile());
+
+      result.add(mapping);
     }
     return result.stream().collect(Collectors.toList());
   }

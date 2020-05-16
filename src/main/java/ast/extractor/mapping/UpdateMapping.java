@@ -29,6 +29,8 @@ public class UpdateMapping extends Mapping {
     json.add("source", source.toJson());
     json.add("destination", destination.toJson());
     json.addProperty("type", "update");
+    json.addProperty("oldFile", oldFile);
+    json.addProperty("newFile", newFile);
 
     return json;
   }
@@ -40,6 +42,10 @@ public class UpdateMapping extends Mapping {
 
     var sourcePath = MoveMapping.pathOfElement(content, "source");
     this.source = ElementFactory.create(snapshot, sourcePath);
+
+    this.oldFile = content.get("oldFile").getAsString();
+    this.newFile = content.get("newFile").getAsString();
+
     return this;
   }
 

@@ -8,6 +8,9 @@ public class Operation implements Comparable<Operation> {
   private CtElement source;
   private CtElement destination;
 
+  private String oldFile;
+  private String newFile;
+
   public Operation(
     OperationType type, 
     CtElement source, 
@@ -40,6 +43,22 @@ public class Operation implements Comparable<Operation> {
 
   public void setDestination(CtElement destination) {
     this.destination = destination;
+  }
+
+  public void setOldFile(String oldFile) {
+    this.oldFile = oldFile;
+  }
+
+  public void setNewFile(String newFile) {
+    this.newFile = newFile;
+  }
+
+  public String getOldFile() {
+    return oldFile;
+  }
+  
+  public String getNewFile() {
+    return newFile;
   }
 
   public Boolean isParentOf(Operation other) {

@@ -16,18 +16,28 @@ public class Comparator {
   private SiblingsCombiner siblings;
   private MappingsCreator mapper;
 
-  public Comparator(String before, String after) {
-    this.converter = new OperationConverter();
+  public Comparator(
+    String oldFile, 
+    String oldContent, 
+    String newFile, 
+    String newContent) {
+      
+    this.converter = new OperationConverter(oldFile, newFile);
     this.hierarchy = new HierarchyCombiner();
     this.mapper = new MappingsCreator();
     this.siblings = new SiblingsCombiner();
 
     var astComparator = new AstComparator();
-    this.diff = astComparator.compare(before, after);
+    this.diff = astComparator.compare(oldContent, newContent);
   }
 
-  public Comparator(CtElement before, CtElement after) {
-    this.converter = new OperationConverter();
+  public Comparator(
+    String oldFile,
+    CtElement before, 
+    String newFile,
+    CtElement after) {
+    
+    this.converter = new OperationConverter(oldFile, newFile);
     var astComparator = new AstComparator();
     this.diff = astComparator.compare(before, after);
   }

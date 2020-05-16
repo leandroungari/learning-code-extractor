@@ -28,6 +28,8 @@ public class MoveMapping extends Mapping {
     json.add("source", source.toJson());
     json.add("destination", destination.toJson());
     json.addProperty("type", "move");
+    json.addProperty("oldFile", oldFile);
+    json.addProperty("newFile", newFile);
 
     return json;
   }
@@ -36,9 +38,13 @@ public class MoveMapping extends Mapping {
   public Mapping fromJson(JsonObject content) {
     var destinationPath = MoveMapping.pathOfElement(content, "destination");
     this.destination = ElementFactory.create(snapshot, destinationPath);
-
+    
     var sourcePath = MoveMapping.pathOfElement(content, "source");
     this.source = ElementFactory.create(snapshot, sourcePath);
+
+    this.oldFile = content.get("oldFile").getAsString();
+    this.newFile = content.get("newFile").getAsString();
+
     return this;
   }
 

@@ -2,6 +2,7 @@ package ast.extractor.comparator;
 
 import java.util.List;
 
+import ast.extractor.comparator.siblings.ModelMapping;
 import ast.extractor.mapping.DeleteMapping;
 import ast.extractor.mapping.InsertMapping;
 import ast.extractor.mapping.Mapping;
@@ -9,36 +10,65 @@ import ast.extractor.mapping.UpdateMapping;
 
 public class SiblingsCombiner {
 
+  private List<Mapping> items;
+
   SiblingsCombiner() {
-    
+
   }
   
   public List<Mapping> combine(List<Mapping> items) {
+    this.items = items;
     for (var i = 0; i < items.size() - 1; i++) {
       var a = items.get(i);
       for (var j = i + 1; j < items.size(); j++) {
         var b = items.get(j);
-        if (a instanceof InsertMapping && b instanceof DeleteMapping) {
-          var pathParentA = a.destination().getParent().getPath().toString();
-          var pathParentB = b.source().getParent().getPath().toString();
-          if (pathParentA.equals(pathParentB)) {
-            var newMapping = new UpdateMapping(b.source().get(), a.destination().get());
-            items.set(i, newMapping);
-            items.remove(j);
-            break;
-          }
-        } else if (b instanceof InsertMapping && a instanceof DeleteMapping) {
-          var pathParentA = a.source().getParent().getPath().toString();
-          var pathParentB = b.destination().getParent().getPath().toString();
-          if (pathParentB.equals(pathParentA)) {
-            var newMapping = new UpdateMapping(a.source().get(), b.destination().get());
-            items.set(j, newMapping);
-            items.remove(i);
+        if(verifyInsertAndDeleteElement(a, b)) {
+          var map = identifyElements(a, b);
+
+          var pathParentSource = map.source().getParent().getPath().toString();
+          var pathParentDestination = map.destination().getParent().getPath().toString();
+
+          if(pathParentDestination.equals(pathParentSource)) {
+            var update = createUpdateMapping(map);
+            this.items.set(i, update);
+            this.items.remove(j);
             break;
           }
         }
+        
       }
     }
     return items;
+  }
+
+  private static Boolean verifyInsertAndDeleteElement(Mapping a, Mapping b) {
+    return (a instanceof InsertMapping && b instanceof DeleteMapping) ||
+           (b instanceof DeleteMapping && a instanceof InsertMapping);    
+  }
+
+  private static ModelMapping identifyElements(Mapping a, Mapping b) {
+    if (a instanceof InsertMapping && b instanceof DeleteMapping) {
+      return new ModelMapping(
+        b.getOldFile(),
+        b.source(),
+        a.getNewFile(),
+        a.destination()
+      );
+    } else {
+      return new ModelMapping(
+        a.getOldFile(),
+        a.source(),
+        b.getNewFile(),
+        b.destination()
+      );
+    }
+  }
+
+  private UpdateMapping createUpdateMapping(ModelMapping map) {
+    var newMapping = new UpdateMapping(map.source().get(), map.destination().get());
+    newMapping.setOldFile(map.oldFile());
+    newMapping.setNewFile(map.newFile());
+    
+    return newMapping;
   }
 }

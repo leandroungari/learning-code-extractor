@@ -88,7 +88,12 @@ public class ModificationsBuilder {
           diff.getNewPath()
         );
 
-        comparator = new Comparator(oldSource, newSource);
+        comparator = new Comparator(
+          diff.getOldPath(), 
+          oldSource, 
+          diff.getNewPath(), 
+          newSource
+        );
         modification.setMappings(comparator.generateMappings());
         this.modifications.add(modification);
       }

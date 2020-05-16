@@ -27,6 +27,7 @@ public class DeleteMapping extends Mapping {
     var json = new JsonObject();
     json.add("source", source.toJson());
     json.addProperty("type", "delete");
+    json.addProperty("oldFile", oldFile);
     return json;
   }
 
@@ -34,6 +35,7 @@ public class DeleteMapping extends Mapping {
   public Mapping fromJson(JsonObject content) {
     var path = DeleteMapping.pathOfElement(content, "source");
     this.source = ElementFactory.create(snapshot, path);
+    this.oldFile = content.get("oldFile").getAsString();
     return this;
   }
 

@@ -6,8 +6,12 @@ import gumtree.spoon.diff.Diff;
 
 public class OperationConverter {
 
-  OperationConverter() {
-    
+  private String oldFile;
+  private String newFile;
+
+  OperationConverter(String oldFile, String newFile) {
+    this.oldFile = oldFile;
+    this.newFile = newFile;
   }
 
   /**
@@ -16,17 +20,25 @@ public class OperationConverter {
    */
   public PriorityQueue<Operation> convert(Diff diff) {
     var result = new PriorityQueue<Operation>();
+    
     for(var o: diff.getAllOperations()) {
       var operationType = o.getAction().toString();
+      Operation operation = null;
+      
       if (operationType.contains("INS")) {
-        result.add(new Operation(OperationType.INSERT, null, o.getSrcNode()));
+        operation = new Operation(OperationType.INSERT, null, o.getSrcNode());
       } else if (operationType.contains("DEL")) {
-        result.add(new Operation(OperationType.DELETE, o.getSrcNode(), null));
+        operation = new Operation(OperationType.DELETE, o.getSrcNode(), null);
       } else if (operationType.contains("UPD")) {
-        result.add(new Operation(OperationType.UPDATE, o.getSrcNode(), o.getDstNode()));
+        operation = new Operation(OperationType.UPDATE, o.getSrcNode(), o.getDstNode());
       } else {
-        result.add(new Operation(OperationType.MOVE, o.getSrcNode(), o.getDstNode()));
+        operation = new Operation(OperationType.MOVE, o.getSrcNode(), o.getDstNode());
       }
+      
+      operation.setOldFile(this.oldFile);
+      operation.setNewFile(this.newFile);
+
+      result.add(operation);
     }
     return result;
   }
