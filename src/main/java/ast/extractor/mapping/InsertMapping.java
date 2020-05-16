@@ -1,6 +1,5 @@
 package ast.extractor.mapping;
 
-import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
 import ast.extractor.elements.ElementFactory;
@@ -27,11 +26,7 @@ public class InsertMapping extends Mapping {
   @Override
   public JsonObject toJson() {
     var json = new JsonObject();
-    var listDestination = new JsonArray();
-    for (var item : destination.dependencies()) {
-      listDestination.add(item.toJson());
-    }
-    json.add("destination", listDestination);
+    json.add("destination", destination.toJson());
     json.addProperty("type", "insert");
     return json;
   }
@@ -51,5 +46,10 @@ public class InsertMapping extends Mapping {
   @Override
   public Boolean isChildOf(Mapping other) {
     return this.destination().isChildOf(other.destination());
+  }
+
+  @Override
+  protected Integer getPriority() {
+    return destination().getPriority();
   }
 }

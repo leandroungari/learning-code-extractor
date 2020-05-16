@@ -1,25 +1,26 @@
 package ast;
 
-import org.junit.BeforeClass;
 import org.junit.Test;
 
 public class ExtractorTest {
 
-  private static Extractor extractor;
-
   private static final String repository = "refactoring-toy-example";
   private static final String branch = "d4bce13a443cf12da40a77c16c1e591f4f985b47";
-  private static final String commit = "d4bce13a443cf12da40a77c16c1e591f4f985b47";
 
-  @BeforeClass
-  public static void start() {
+  @Test
+  public void commitD4BC() {
+    var commit = "d4bce13a443cf12da40a77c16c1e591f4f985b47";
 
-    extractor = new Extractor(repository, branch, commit);
+    var extractor = new Extractor(repository, branch, commit);
+    var result = extractor.transformModifications();
+    System.out.println(result);
   }
 
   @Test
-  public void transform() {
+  public void commit0a46() {
+    var commit = "0a46ed5c56c8b1576dfc92f3ec5bc2f0ea68aafe";
 
+    var extractor = new Extractor(repository, branch, commit);
     var result = extractor.transformModifications();
     System.out.println(result);
   }

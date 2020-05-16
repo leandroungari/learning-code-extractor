@@ -5,6 +5,7 @@ import java.util.List;
 
 import spoon.reflect.code.CtStatement;
 import spoon.reflect.declaration.CtConstructor;
+import spoon.reflect.declaration.CtElement;
 import spoon.reflect.declaration.CtExecutable;
 import spoon.reflect.declaration.CtMethod;
 import spoon.reflect.reference.CtVariableReference;
@@ -12,10 +13,9 @@ import spoon.reflect.visitor.filter.TypeFilter;
 
 public class StatementElement extends Element<CtStatement> {
 
-  private List<CtVariableReference<?>> variables;
-
-  public StatementElement(CtStatement st) {
-    super(st);
+  public StatementElement(CtStatement el) {
+    super(el);
+    this.priority = 3;
   }
 
   /*@Override
@@ -35,15 +35,15 @@ public class StatementElement extends Element<CtStatement> {
   }*/
 
   @Override
-  public List<Element<?>> dependencies() {
-    var result = new ArrayList<Element<?>>();
-    this.variables = StatementElement.variablesOfStatement(element);
+  public List<? extends CtElement> dependencies() {
+    var result = new ArrayList<CtElement>();
+    var variables = StatementElement.variablesOfStatement(element);
 
     var executable = parentMethodOrConstructor();
     var block = executable.getBody().getStatements();
     for (var i = block.indexOf(element); i >= 0; i--) {
-      if (this.hasDependency(block.get(i))) {
-        result.add(0, ElementFactory.create(block.get(i)));
+      if (this.hasDependency(block.get(i), variables)) {
+        result.add(0, block.get(i));
       }
     }
 
@@ -66,7 +66,8 @@ public class StatementElement extends Element<CtStatement> {
   }
 
   /**
-   * It identifies the parent method of the statement
+   * It identifies the parent method of the statement. 
+   * It gets the parent based on the first element of dependencies
    * 
    * @return It returns method element or null
    */
@@ -77,6 +78,7 @@ public class StatementElement extends Element<CtStatement> {
 
   /**
    * It return the parent constructor of the statement
+   * It gets the parent based on the first element of dependencies
    * 
    * @return It return the constructor element or null
    */
@@ -85,7 +87,9 @@ public class StatementElement extends Element<CtStatement> {
     return element.getParent(new TypeFilter<>(CtConstructor.class));
   }
 
-  private boolean hasDependency(CtStatement state) {
+  private boolean hasDependency(
+    CtStatement state, 
+    List<CtVariableReference<?>> variables) {
 
     // verifica se alguma variável dependência foi atribuída no comando
     /*

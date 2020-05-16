@@ -2,7 +2,7 @@ package ast.extractor.comparator;
 
 import spoon.reflect.declaration.CtElement;
 
-public class Operation {
+public class Operation implements Comparable<Operation> {
   
   private OperationType type;
   private CtElement source;
@@ -77,15 +77,41 @@ public class Operation {
     var other = (Operation) obj;
     try {
       if(this.type == OperationType.INSERT) {
-        return this.destination().hasParent(other.destination());
+        return this.destination() == other.destination();
       } else if(type == OperationType.DELETE) {
-        return this.source().hasParent(other.source());
+        return this.source() == other.source();
       } else {
-        return this.destination().hasParent(other.destination())
-          && this.source().hasParent(other.source());
+        return this.destination() == other.destination()
+          && this.source() == other.source();
       }
     } catch(NullPointerException ex) {
       return false;
     }
+  }
+
+  private static Integer size(CtElement e) {
+    return e.getPath().toString().length();
+  }
+
+  private Integer getPriority() {
+    if(this.type == OperationType.INSERT) {
+      return size(destination);
+    } else if(this.type == OperationType.DELETE) {
+      return size(source);
+    } else {
+      var a = size(source);
+      var b = size(destination);
+      return a < b ? a : b;
+    }
+  }
+
+  @Override
+  public int compareTo(Operation other) {
+    if(this.getPriority() < other.getPriority()) {
+      return -1;
+    } else if(this.getPriority() > other.getPriority()) {
+      return 1;
+    }
+    return 0;
   }
 }

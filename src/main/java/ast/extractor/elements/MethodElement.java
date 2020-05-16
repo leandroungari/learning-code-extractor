@@ -2,17 +2,19 @@ package ast.extractor.elements;
 
 import java.util.List;
 
+import spoon.reflect.declaration.CtElement;
 import spoon.reflect.declaration.CtMethod;
 
 public class MethodElement extends Element<CtMethod<?>> {
 
-  MethodElement(CtMethod<?> method) {
-    super(method);
+  MethodElement(CtMethod<?> el) {
+    super(el);
+    this.priority = 2;
   }
 
   @Override
-  public List<Element<?>> dependencies() {
-    return List.of(this);
+  public List<? extends CtElement> dependencies() {
+    return List.of(element);
   }
 
   /*@Override

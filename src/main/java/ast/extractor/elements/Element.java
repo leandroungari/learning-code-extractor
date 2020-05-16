@@ -1,6 +1,8 @@
 package ast.extractor.elements;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import com.google.gson.JsonObject;
 
@@ -18,6 +20,8 @@ public abstract class Element<T extends CtElement> implements Jsonify<Element<?>
 
   private Snapshot snapshot;
 
+  protected Integer priority;
+
   Element(T el) {
     this.element = el;
     this.path = el.getPath().toString();
@@ -27,11 +31,15 @@ public abstract class Element<T extends CtElement> implements Jsonify<Element<?>
     this.snapshot = snap;
   }
 
+  public Integer getPriority() {
+    return priority;
+  }
+
   /**
    * It returns the ast element of AST
    */
   public T get() {
-    return this.element;
+    return element;
   }
 
   /**
@@ -41,14 +49,14 @@ public abstract class Element<T extends CtElement> implements Jsonify<Element<?>
     return path;
   }
 
-  public abstract List<Element<?>> dependencies();
+  public abstract List<? extends CtElement> dependencies();
 
   @Override
   public JsonObject toJson() {
     var obj = new JsonObject();
-    obj.addProperty("element", element.toString());
+    obj.addProperty("element", this.dependencies().toString());
     obj.addProperty("path", this.path);
-    obj.addProperty("type", element.getClass().getSimpleName());
+    obj.addProperty("type", this.getClass().getSimpleName());
     return obj;
   }
 
@@ -60,45 +68,105 @@ public abstract class Element<T extends CtElement> implements Jsonify<Element<?>
 
   public Boolean isDirectParentOf(Element<?> other) {
     try {
-      return other.get().getParent() == this.get();
+      for(var parent: this.dependencies()) {
+        var isParent = true;
+        for(var child: other.dependencies()) {
+          if(child.getParent() != parent) {
+            isParent = false;
+            break;
+          }
+        }
+        if(isParent) {
+          return true;
+        }
+      }
     } catch (NullPointerException ex) {
-      return false;
+      ex.printStackTrace();
     }
+    return false;
   }
 
   public Boolean isDirectChildOf(Element<?> other) {
     try {
-      return this.get().getParent() == other.get();
+      for(var child: this.dependencies()) {
+        var isChild = true;
+        for(var parent: other.dependencies()) {
+          if(child.getParent() != parent) {
+            isChild = false;
+            break;
+          }
+        }
+        if(isChild) {
+          return true;
+        }
+      }
     } catch (NullPointerException ex) {
-      return false;
+      ex.printStackTrace();
     }
+    return false;
   }
 
   public Boolean isParentOf(Element<?> other) {
     try {
-      return other.get().hasParent(this.get());
+      for(var parent: this.dependencies()) {
+        var isParent = true;
+        for(var child: other.dependencies()) {
+          if(child.hasParent(parent)) {
+            isParent = false;
+            break;
+          }
+        }
+        if(isParent) {
+          return true;
+        }
+      }
     } catch (NullPointerException ex) {
-      return false;
+      ex.printStackTrace();
     }
+    return false;
   }
 
   public Boolean isChildOf(Element<?> other) {
     try {
-      return this.get().hasParent(other.get());
+      for(var child: this.dependencies()) {
+        var isChild = true;
+        for(var parent: other.dependencies()) {
+          if(child.hasParent(parent)) {
+            isChild = false;
+            break;
+          }
+        }
+        if(isChild) {
+          return true;
+        }
+      }
     } catch (NullPointerException ex) {
-      return false;
+      ex.printStackTrace();
     }
+    return false;
   }
 
+  /**
+   * It retrieves the parent element based on
+   * the first element from list of dependencies
+   */
   public CtElement getParent() {
     return element.getParent();
   }
 
   public List<CtVariableReference<?>> getVariables() {
-    return element.getElements(new TypeFilter<>(CtVariableReference.class));
+    var result = new HashSet<CtVariableReference<?>>();
+    for (var item: this.dependencies()) {
+      result.addAll(item.getElements(new TypeFilter<>(CtVariableReference.class)));
+    }
+    return result.stream().collect(Collectors.toList());
   }
 
   public List<CtLiteral<?>> getLiterals() {
-    return element.getElements(new TypeFilter<>(CtLiteral.class));
+    var result = new HashSet<CtLiteral<?>>();
+    for (var element: this.dependencies()) {
+      result.addAll(element.getElements(new TypeFilter<>(CtLiteral.class)));
+    }
+    return result.stream().collect(Collectors.toList());
   }
 }

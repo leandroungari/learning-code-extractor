@@ -1,6 +1,5 @@
 package ast.extractor.mapping;
 
-import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
 import ast.extractor.elements.ElementFactory;
@@ -26,11 +25,7 @@ public class DeleteMapping extends Mapping {
   @Override
   public JsonObject toJson() {
     var json = new JsonObject();
-    var listSource = new JsonArray();
-    for (var item : source.dependencies()) {
-      listSource.add(item.toJson());
-    }
-    json.add("source", listSource);
+    json.add("source", source.toJson());
     json.addProperty("type", "delete");
     return json;
   }
@@ -50,5 +45,10 @@ public class DeleteMapping extends Mapping {
   @Override
   public Boolean isChildOf(Mapping other) {
     return this.source().isChildOf(other.source());
+  }
+
+  @Override
+  protected Integer getPriority() {
+    return source().getPriority();
   }
 }

@@ -1,6 +1,5 @@
 package ast.extractor.mapping;
 
-import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
 import ast.extractor.elements.ElementFactory;
@@ -27,17 +26,8 @@ public class UpdateMapping extends Mapping {
   @Override
   public JsonObject toJson() {
     var json = new JsonObject();
-    var listSource = new JsonArray();
-    for(var item: source.dependencies()) {
-      listSource.add(item.toJson());
-    }
-    json.add("source", listSource);
-    
-    var listDestination = new JsonArray();
-    for(var item: destination.dependencies()) {
-      listDestination.add(item.toJson());
-    }
-    json.add("destination", listDestination);
+    json.add("source", source.toJson());
+    json.add("destination", destination.toJson());
     json.addProperty("type", "update");
 
     return json;
@@ -63,5 +53,15 @@ public class UpdateMapping extends Mapping {
   public Boolean isChildOf(Mapping other) {
     return this.source().isChildOf(other.source())
       && this.destination().isChildOf(other.destination());
+  }
+
+  @Override
+  protected Integer getPriority() {
+    var source = source().getPriority();
+    var destination = destination().getPriority();
+    if(source < destination) {
+      return source;
+    }
+    return destination;
   }
 }

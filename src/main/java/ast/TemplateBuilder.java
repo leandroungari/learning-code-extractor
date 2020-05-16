@@ -1,21 +1,20 @@
 package ast;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import ast.extractor.elements.Element;
 import ast.extractor.mapping.Mapping;
 import spoon.reflect.code.CtLiteral;
+import spoon.reflect.declaration.CtElement;
 import spoon.reflect.reference.CtVariableReference;
 
 public class TemplateBuilder<T extends Mapping> {
 
-  private List<Element<?>> source;
-  private List<Element<?>> destination;
+  private List<? extends CtElement> sources;
+  private List<? extends CtElement> destinations;
 
   private List<CtVariableReference<?>> variables;
   private List<CtLiteral<?>> literals;
@@ -23,52 +22,26 @@ public class TemplateBuilder<T extends Mapping> {
   private Map<String,String> wildcards;
 
   public TemplateBuilder(T mapping) {
+    
+    this.variables = this.extractVariablesFromElement(mapping);
+    this.literals = this.extractLiteralsFromElement(mapping);
 
-    this.source = TemplateBuilder.createList(mapping.source());
-    this.destination = TemplateBuilder.createList(mapping.destination());
+    this.sources = mapping.source().dependencies();
+    this.destinations = mapping.destination().dependencies();
   }
 
-  private static List<Element<?>> createList(Element<?> e) {
-    if(e == null) return new ArrayList<Element<?>>();
-    return e.dependencies();
-  }
-
-  private static List<CtVariableReference<?>> variables(
-    List<Element<?>> elements) {
-  
-    var result = new ArrayList<CtVariableReference<?>>();
-    for (var item : elements) {
-      for (var variable : item.getVariables()) {
-        result.add(variable);
-      }
-    }
-    return result;
-  }
-
-  private static List<CtLiteral<?>> literals(
-    List<Element<?>> elements) {
-
-    var result = new ArrayList<CtLiteral<?>>();
-    for (var item : elements) {
-      for (var literal : item.getLiterals()) {
-        result.add(literal);
-      }
-    }
-    return result;
-  }
-
-  private List<CtVariableReference<?>> extractVariablesFromElement() {
-    var before = variables(this.source);
-    var after = variables(this.destination);
+  private List<CtVariableReference<?>> extractVariablesFromElement(T item) {
+    var before = item.source().getVariables();
+    var after = item.destination().getVariables();
     
     return Stream
       .concat(before.stream(), after.stream())
       .collect(Collectors.toList());
   }
 
-  private List<CtLiteral<?>> extractLiteralsFromElement() {
-    var before = literals(source);
-    var after = literals(destination);
+  private List<CtLiteral<?>> extractLiteralsFromElement(T item) {
+    var before = item.source().getLiterals();
+    var after = item.destination().getLiterals();
     
     return Stream
       .concat(before.stream(), after.stream())
@@ -109,10 +82,7 @@ public class TemplateBuilder<T extends Mapping> {
     }
   }
 
-  public Map<List<String>,List<String>> model() {
-    this.variables = this.extractVariablesFromElement();
-    this.literals = this.extractLiteralsFromElement();
-    
+  public Map<List<String>,List<String>> model() {    
     this.wildcards = createWildcards();
     for(var variable: variables) {
       this.replaceVariable(variable);
@@ -121,14 +91,14 @@ public class TemplateBuilder<T extends Mapping> {
       this.replaceLiteral(literal);
     }
 
-    var sourceItems = source
+    var sourceItems = sources
       .stream()
-      .map(item -> item.get().toString())
+      .map(item -> item.toString())
       .collect(Collectors.toList());
 
-    var destinationItems = destination
+    var destinationItems = destinations
       .stream()
-      .map(item -> item.get().toString())
+      .map(item -> item.toString())
       .collect(Collectors.toList());
     
     
