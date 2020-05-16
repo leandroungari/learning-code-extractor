@@ -6,6 +6,10 @@ import gumtree.spoon.diff.Diff;
 
 public class OperationConverter {
 
+  OperationConverter() {
+    
+  }
+
   /**
    * It transform the operations from Gumtree diff
    * to internal operations
