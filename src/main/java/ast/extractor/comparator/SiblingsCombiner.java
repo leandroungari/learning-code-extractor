@@ -6,6 +6,7 @@ import ast.extractor.comparator.siblings.ModelMapping;
 import ast.extractor.mapping.DeleteMapping;
 import ast.extractor.mapping.InsertMapping;
 import ast.extractor.mapping.Mapping;
+import ast.extractor.mapping.MoveMapping;
 import ast.extractor.mapping.UpdateMapping;
 
 public class SiblingsCombiner {
@@ -28,9 +29,19 @@ public class SiblingsCombiner {
           var pathParentSource = map.source().getParent().getPath().toString();
           var pathParentDestination = map.destination().getParent().getPath().toString();
 
+          Mapping result = null;
           if(pathParentDestination.equals(pathParentSource)) {
-            var update = createUpdateMapping(map);
-            this.items.set(i, update);
+            result = createUpdateMapping(map);
+          } else {
+            var sourceItems = map.source().dependencies().toString();
+            var destinationItems = map.destination().dependencies().toString();
+            if(sourceItems.equals(destinationItems)) {
+              result = createMoveMapping(map);
+            } 
+          }
+          
+          if(result != null) {
+            this.items.set(i, result);
             this.items.remove(j);
             break;
           }
@@ -66,6 +77,14 @@ public class SiblingsCombiner {
 
   private UpdateMapping createUpdateMapping(ModelMapping map) {
     var newMapping = new UpdateMapping(map.source().get(), map.destination().get());
+    newMapping.setOldFile(map.oldFile());
+    newMapping.setNewFile(map.newFile());
+    
+    return newMapping;
+  }
+
+  private MoveMapping createMoveMapping(ModelMapping map) {
+    var newMapping = new MoveMapping(map.source().get(), map.destination().get());
     newMapping.setOldFile(map.oldFile());
     newMapping.setNewFile(map.newFile());
     
