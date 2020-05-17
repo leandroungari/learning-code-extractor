@@ -1,6 +1,8 @@
 package ast.extractor.comparator;
 
+import java.util.List;
 import java.util.PriorityQueue;
+import java.util.stream.Collectors;
 
 import gumtree.spoon.diff.Diff;
 
@@ -18,7 +20,7 @@ public class OperationConverter {
    * It transform the operations from Gumtree diff
    * to internal operations
    */
-  public PriorityQueue<Operation> convert(Diff diff) {
+  public List<Operation> convert(Diff diff) {
     var result = new PriorityQueue<Operation>();
     
     for(var o: diff.getAllOperations()) {
@@ -40,6 +42,6 @@ public class OperationConverter {
 
       result.add(operation);
     }
-    return result;
+    return result.stream().collect(Collectors.toList());
   }
 }

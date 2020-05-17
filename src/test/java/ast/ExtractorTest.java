@@ -10,9 +10,8 @@ public class ExtractorTest {
   @Test
   public void commitD4BC() {
     var commit = "d4bce13a443cf12da40a77c16c1e591f4f985b47";
-
     var extractor = new Extractor(repository, branch, commit);
-    var result = extractor.transformModifications();
+    var result = extractor.extract();
     System.out.println(result);
   }
 
@@ -21,7 +20,7 @@ public class ExtractorTest {
     var commit = "0a46ed5c56c8b1576dfc92f3ec5bc2f0ea68aafe";
 
     var extractor = new Extractor(repository, branch, commit);
-    var result = extractor.transformModifications();
+    var result = extractor.extract();
     System.out.println(result);
   }
 }

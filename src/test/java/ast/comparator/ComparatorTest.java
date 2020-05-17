@@ -70,9 +70,7 @@ public class ComparatorTest {
   public void mappingsFromSingleFile() {
     var comparator = new Comparator("antigo.java", beforeA, "novo.java", afterA);
     var result = comparator.generateMappings();
-    for(var mapping: result) {
-      System.out.println(mapping);
-    }
+    System.out.println(result);
     assertThat(result.size(), equalTo(2));
   }
 
@@ -122,9 +120,7 @@ public class ComparatorTest {
   public void mappingsFromSingleFileB() {
     var comparator = new Comparator("antigo.java", beforeB, "novo.java", afterB);
     var result = comparator.generateMappings();
-    for(var mapping: result) {
-      System.out.println(mapping);
-    }
+    System.out.println(result);
     assertThat(result.size(), equalTo(1));
   }
 }

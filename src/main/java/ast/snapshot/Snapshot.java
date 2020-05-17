@@ -51,7 +51,7 @@ public class Snapshot {
     for (var file : diffFiles) {
       var resource = new Resource<String>(
         this.base + file.folder(), 
-        file.file()
+        file.filename()
       );
       resource.setContent(file.get());
       try {

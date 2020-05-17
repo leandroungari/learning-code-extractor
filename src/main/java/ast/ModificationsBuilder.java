@@ -61,17 +61,19 @@ public class ModificationsBuilder {
       .action();
   }
 
-  private String getContentOfFile(Commit commit, String file) {
+  
+
+  private Boolean isJavaFile(String path) {
+
+    return path.contains(".java");
+  }
+
+  private static String getContentOfFile(Commit commit, String file) {
     var content = "";
     if(!file.equals("/dev/null")) {
       content = commit.getFile(file).get();
     }
     return content;
-  }
-
-  private Boolean isJavaFile(String path) {
-
-    return path.contains(".java");
   }
 
   public CommitModifications createModifications() {

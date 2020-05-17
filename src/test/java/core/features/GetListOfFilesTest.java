@@ -18,7 +18,7 @@ public class GetListOfFilesTest {
     var result = command.action();
 
     result.stream().forEach(item -> {
-      System.out.println(item.name());
+      System.out.println(item.fullPath());
     });
   }
 
