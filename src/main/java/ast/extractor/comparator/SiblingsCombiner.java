@@ -54,7 +54,7 @@ public class SiblingsCombiner {
 
   private static Boolean verifyInsertAndDeleteElement(Mapping a, Mapping b) {
     return (a instanceof InsertMapping && b instanceof DeleteMapping) ||
-           (b instanceof DeleteMapping && a instanceof InsertMapping);    
+           (a instanceof DeleteMapping && b instanceof InsertMapping);    
   }
 
   private static ModelMapping identifyElements(Mapping a, Mapping b) {
