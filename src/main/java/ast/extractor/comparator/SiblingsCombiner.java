@@ -39,6 +39,18 @@ public class SiblingsCombiner {
               result = createMoveMapping(map);
             } 
           }
+
+          //TODO
+          //O próximo passo é implementar um verificar de similaridade entre
+          //elementos de código-fonte
+          //Para cada elemento, precisa-se extrair um erro de características
+          //conforme a semântica de cada elemento
+          //a partir disso os arrays devem ser comparados, na estratégia
+          //de pontuação quando elementos em comum são encontrados
+          //a porcentagem de similaridade entre elementos deve ser calculado
+          //pela divisão entre os pontos e o tamanho do maior vetor.
+          //pensar em como lidar com wildcards e pensar se é necessário
+          //acho q não
           
           if(result != null) {
             this.items.set(i, result);

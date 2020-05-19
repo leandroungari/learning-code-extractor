@@ -5,6 +5,7 @@ import spoon.reflect.code.CtStatement;
 import spoon.reflect.declaration.CtClass;
 import spoon.reflect.declaration.CtConstructor;
 import spoon.reflect.declaration.CtElement;
+import spoon.reflect.declaration.CtEnum;
 import spoon.reflect.declaration.CtField;
 import spoon.reflect.declaration.CtInterface;
 import spoon.reflect.declaration.CtMethod;
@@ -20,6 +21,8 @@ public class ElementFactory<T extends Element<? extends CtElement>> {
         return new ClassElement((CtClass<?>) temp);
       } else if (temp instanceof CtInterface) {
         return new InterfaceElement((CtInterface<?>) temp);
+      } else if (temp instanceof CtEnum) {
+        return new EnumElement((CtEnum<?>) temp);
       } else if (temp instanceof CtConstructor) {
         return new ConstructorElement((CtConstructor<?>) temp);
       } else if (temp instanceof CtMethod) {
