@@ -1,6 +1,8 @@
 package ast.extractor.elements;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import spoon.reflect.declaration.CtElement;
 import spoon.reflect.declaration.CtMethod;
@@ -15,6 +17,36 @@ public class MethodElement extends Element<CtMethod<?>> {
   @Override
   public List<? extends CtElement> dependencies() {
     return List.of(element);
+  }
+
+  @Override
+  public List<String> extractTokens() {
+    var result = new ArrayList<String>();
+    result.add(element.getSignature());
+    result.add(String.join(
+      " ", 
+      element.getModifiers()
+        .stream()
+        .map(a -> a.name())
+        .collect(Collectors.toList())
+    ));
+
+    var params = element.getParameters()
+      .stream()
+      .map(item -> item.getType().getSimpleName() + " " + item.getSimpleName())
+      .collect(Collectors.toList());
+
+    result.addAll(params);
+
+    var statements = element.getBody()
+      .getStatements()
+      .stream()
+      .map(state -> state.toString())
+      .collect(Collectors.toList());
+
+    result.addAll(statements);
+
+    return result;
   }
 
   /*@Override

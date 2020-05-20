@@ -17,4 +17,10 @@ public class EnumElement extends Element<CtEnum<?>> {
     return List.of(element);
   }
 
+  @Override
+  public List<String> extractTokens() {
+    
+    return List.of(element.getSimpleName());
+  }
+
 }

@@ -1,6 +1,8 @@
 package ast.extractor.elements;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import spoon.reflect.declaration.CtClass;
 import spoon.reflect.declaration.CtElement;
@@ -17,33 +19,35 @@ public class ClassElement extends Element<CtClass<?>> {
     return List.of(element);
   }
 
-/*  @Override
-  protected List<CtElement> getCompleteChange() {
-    return List.of(this.element);
-  }*/
+  @Override
+  public List<String> extractTokens() {
+    var result = new ArrayList<String>();
+    result.add(element.getSimpleName());
+    
+    for(var field: element.getAllFields()) {
+      var items = field
+        .getModifiers()
+        .stream()
+        .map(a -> a.name())
+        .collect(Collectors.toList());
 
-/*
-  public List<CtFieldReference<?>> getAllFields() {
+      items.add(field.getType().getSimpleName());
+      items.add(field.getSimpleName());
 
-    return element
-      .getAllFields()
-      .stream()
-      .collect(Collectors.toList());
+      result.add(String.join(" ", items));
+    }
+
+    for(var method: element.getAllMethods()) {
+      var items = method
+        .getModifiers()
+        .stream()
+        .map(a -> a.name())
+        .collect(Collectors.toList());
+
+      items.add(method.getSignature());
+      result.add(String.join(" ", items));
+    }
+
+    return result;
   }
-
-  public List<CtMethod<?>> getAllMethods() {
-
-    return element
-      .getAllMethods()
-      .stream()
-      .collect(Collectors.toList());
-  }
-
-  public CtMethod<?> getMethod(String signature) {
-
-    return getAllMethods()
-      .stream()
-      .filter(method -> method.getSignature().contains(signature))
-      .collect(Collectors.toList()).get(0);
-  }*/
 }

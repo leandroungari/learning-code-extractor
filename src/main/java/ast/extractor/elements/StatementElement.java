@@ -113,6 +113,12 @@ public class StatementElement extends Element<CtStatement> {
     return target.getElements(new TypeFilter<>(CtVariableReference.class));
   }
 
+  @Override
+  public List<String> extractTokens() {
+    
+    return List.of(element.toString());
+  }
+
   /*
    * private List<CtVariableReference<?>> getAccessVariables(CtElement target) {
    * return Change.childrenFilter( target, CtVariableAccess.class, item ->
