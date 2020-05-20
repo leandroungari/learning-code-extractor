@@ -2,6 +2,7 @@ package ast.extractor.comparator;
 
 import java.util.List;
 
+import ast.extractor.SimilarityComparator;
 import ast.extractor.comparator.siblings.ModelMapping;
 import ast.extractor.mapping.DeleteMapping;
 import ast.extractor.mapping.InsertMapping;
@@ -19,6 +20,7 @@ public class SiblingsCombiner {
   
   public List<Mapping> combine(List<Mapping> items) {
     this.items = items;
+    var similarity = new SimilarityComparator();
     for (var i = 0; i < items.size() - 1; i++) {
       var a = items.get(i);
       for (var j = i + 1; j < items.size(); j++) {
@@ -33,24 +35,11 @@ public class SiblingsCombiner {
           if(pathParentDestination.equals(pathParentSource)) {
             result = createUpdateMapping(map);
           } else {
-            var sourceItems = map.source().dependencies().toString();
-            var destinationItems = map.destination().dependencies().toString();
-            if(sourceItems.equals(destinationItems)) {
+            similarity.setTargets(map.source(), map.destination());
+            if(similarity.verify()) {
               result = createMoveMapping(map);
-            } 
+            }
           }
-
-          //TODO
-          //O próximo passo é implementar um verificar de similaridade entre
-          //elementos de código-fonte
-          //Para cada elemento, precisa-se extrair um erro de características
-          //conforme a semântica de cada elemento
-          //a partir disso os arrays devem ser comparados, na estratégia
-          //de pontuação quando elementos em comum são encontrados
-          //a porcentagem de similaridade entre elementos deve ser calculado
-          //pela divisão entre os pontos e o tamanho do maior vetor.
-          //pensar em como lidar com wildcards e pensar se é necessário
-          //acho q não
           
           if(result != null) {
             this.items.set(i, result);

@@ -22,7 +22,7 @@ public class MethodElement extends Element<CtMethod<?>> {
   @Override
   public List<String> extractTokens() {
     var result = new ArrayList<String>();
-    result.add(element.getSignature());
+    result.add(element.getSimpleName());
     result.add(String.join(
       " ", 
       element.getModifiers()
