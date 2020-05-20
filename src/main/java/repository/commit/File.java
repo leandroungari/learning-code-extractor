@@ -19,10 +19,20 @@ public class File {
 		this.id = id;
 	}
 	
-	public String name() {
+	/**
+	 * It returns the complete path of file 
+	 * in the repository
+	 * @return The filepath
+	 */
+	public String fullPath() {
 		return name;
 	}
 
+	/**
+	 * It returns the path of folders to 
+	 * the file
+	 * @return Path of folders
+	 */
 	public String folder() {
 		var text = "";
 		var items = name.split("/");
@@ -32,7 +42,11 @@ public class File {
 		return text;
 	}
 
-	public String file() {
+	/**
+	 * It returns the filename with extension
+	 * @return Filename with extension
+	 */
+	public String filename() {
 		var items = name.split("/");
 		return items[items.length-1];
 	}
@@ -50,6 +64,6 @@ public class File {
 			e.printStackTrace();
 		}
 		
-		return null;
+		return "";
 	}
 }

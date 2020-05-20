@@ -61,17 +61,19 @@ public class ModificationsBuilder {
       .action();
   }
 
-  private String getContentOfFile(Commit commit, String file) {
+  
+
+  private Boolean isJavaFile(String path) {
+
+    return path.contains(".java");
+  }
+
+  private static String getContentOfFile(Commit commit, String file) {
     var content = "";
     if(!file.equals("/dev/null")) {
       content = commit.getFile(file).get();
     }
     return content;
-  }
-
-  private Boolean isJavaFile(String path) {
-
-    return path.contains(".java");
   }
 
   public CommitModifications createModifications() {
@@ -88,7 +90,12 @@ public class ModificationsBuilder {
           diff.getNewPath()
         );
 
-        comparator = new Comparator(oldSource, newSource);
+        comparator = new Comparator(
+          diff.getOldPath(), 
+          oldSource, 
+          diff.getNewPath(), 
+          newSource
+        );
         modification.setMappings(comparator.generateMappings());
         this.modifications.add(modification);
       }

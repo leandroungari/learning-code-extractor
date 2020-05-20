@@ -56,7 +56,7 @@ public class Commit {
 	public List<File> allFilesByExtension(String ext) {
 		
 		return allFiles().stream()
-      .filter(file -> file.name().endsWith(ext))
+      .filter(file -> file.fullPath().endsWith(ext))
       .collect(Collectors.toList());
 	}
 	
@@ -129,7 +129,31 @@ public class Commit {
 		}
 		return result;
 	}
+
+	public List<Map<String,String>> getDiffEntries() {
+		var result = new ArrayList<Map<String, String>>();
+		for(var diff: this.diff()) {
+			result.add(Map.of(
+				"source", diff.oldPath(),
+				"destination", diff.newPath()
+			));
+		}
+		return result;
+	}
 	
+	public List<Map<String,String>> getDiffEntries(String extension) {
+		var result = new ArrayList<Map<String, String>>();
+		for(var diff: this.diff()) {
+			if(diff.oldPath().contains(extension) || diff.newPath().contains(extension)) {
+				result.add(Map.of(
+					"source", diff.oldPath(),
+					"destination", diff.newPath()
+				));
+			}
+		}
+		return result;
+	}
+
 	public File getFile(String filename) {
 		
 		var factory = new GitFactory(branch.containedRepository());

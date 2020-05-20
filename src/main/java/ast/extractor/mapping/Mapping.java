@@ -13,6 +13,10 @@ public abstract class Mapping implements Jsonify<Mapping>, Comparable<Mapping> {
 
 	protected Snapshot snapshot;
 
+	protected String oldFile;
+
+  protected String newFile;
+
 	public void setSnapshot(Snapshot snap) {
 		this.snapshot = snap;
 	}
@@ -29,6 +33,22 @@ public abstract class Mapping implements Jsonify<Mapping>, Comparable<Mapping> {
 	public Element<?> destination() {
 		return destination;
 	}
+	
+	public void setOldFile(String oldFile) {
+    this.oldFile = oldFile;
+  }
+
+  public void setNewFile(String newFile) {
+    this.newFile = newFile;
+  }
+
+  public String getOldFile() {
+    return oldFile;
+  }
+  
+  public String getNewFile() {
+    return newFile;
+  }
 
 	@Override
 	public abstract String toString();

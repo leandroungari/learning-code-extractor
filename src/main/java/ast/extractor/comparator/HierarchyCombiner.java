@@ -2,7 +2,6 @@ package ast.extractor.comparator;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.PriorityQueue;
 
 public class HierarchyCombiner {
 
@@ -11,11 +10,10 @@ public class HierarchyCombiner {
   }
 
   public List<Operation> combine(
-    PriorityQueue<Operation> operations) {
+    List<Operation> operations) {
 
     var result = new ArrayList<Operation>();
-    while (!operations.isEmpty()) {
-      var unsetted = operations.poll();
+    for(var unsetted: operations) {
       var assigned = false;
       for (var setted : result) {
         if (setted.isParentOf(unsetted) || setted.equals(unsetted)) {

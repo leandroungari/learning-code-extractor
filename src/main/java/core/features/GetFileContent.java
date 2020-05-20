@@ -32,7 +32,7 @@ public class GetFileContent implements RepositoryFeature<String> {
 
     return result
       .stream()
-      .filter(item -> item.name().contains(file))
+      .filter(item -> item.fullPath().contains(file))
       .findFirst()
       .get()
       .get();

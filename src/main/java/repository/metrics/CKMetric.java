@@ -43,7 +43,7 @@ public class CKMetric extends CK {
 					walk.getObjectId(0)
 				);
 
-				if (file.name().endsWith(fileExtension))
+				if (file.fullPath().endsWith(fileExtension))
 					list.add(file);
 
 			});
@@ -82,7 +82,7 @@ public class CKMetric extends CK {
 
 			Map<String, String> options = JavaCore.getOptions();
 			parser.setCompilerOptions(options);
-			parser.setUnitName("/" + folder + "/" + file.name());
+			parser.setUnitName("/" + folder + "/" + file.fullPath());
 			parser.setEnvironment(
 				new String[] { factory.absoluteFolder() }, 
 				new String[] { "" }, 
@@ -96,7 +96,7 @@ public class CKMetric extends CK {
 			JavaCore.setComplianceOptions(JavaCore.VERSION_11, options);
 			var unit = (CompilationUnit) parser.createAST(null);
 
-			storage.acceptAST(factory.absoluteFolder() + file.name(), unit);
+			storage.acceptAST(factory.absoluteFolder() + file.fullPath(), unit);
 		}
 
 	}
