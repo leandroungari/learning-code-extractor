@@ -9,6 +9,7 @@ public class Resource<T> {
   
   private File resource;
   private T item;
+  private Boolean isFolder;
 
   public Resource(String folder, String file) {
     var parent = new File(folder);
@@ -16,6 +17,15 @@ public class Resource<T> {
       parent.mkdirs();
     }
     this.resource = new File(folder + "/" + file);
+    this.isFolder = false;
+  }
+
+  public Resource(String folder) {
+    this.resource = new File(folder);
+    if(!resource.exists()) {
+      resource.mkdirs();
+    }
+    this.isFolder = true;
   }
 
   public File toFile() {
@@ -26,25 +36,62 @@ public class Resource<T> {
     this.item = content;
   }
 
+  /**
+   * Escreve um novo arquivo do recurso somente
+   * se o arquivo não existir
+   * @param store Formato de armazenamento
+   * @throws IOException
+   */
   public void write(Storable<T> store) throws IOException {
-    System.out.println(resource.getAbsolutePath());
-    this.createFile(store.write(item));
+    if(this.isFolder) 
+      throw new Error("You cannot write a folder, it must be a file!");
+    this.createFile(store.write(item), false);
+  }
+
+  /**
+   * Escreve um novo arquivo do recurso somente
+   * se o arquivo não existir
+   * @param store Formato de armazenamento
+   * @param override Opção de forçar a reescrita de um arquivo existente
+   * @throws IOException
+   */
+  public void write(Storable<T> store, Boolean override) throws IOException {
+    if(this.isFolder) 
+      throw new Error("You cannot write a folder, it must be a file!");
+    this.createFile(store.write(item), override);
   }
 
   public T read(Storable<T> store) throws IOException {
+    if(this.isFolder) 
+      throw new Error("You cannot read a folder, it must be a file!");
     return store.read(this.readFile());
   }
 
-  public void createFile(String data) throws IOException {
-    var out = new FileOutputStream(resource);
-    out.write(data.getBytes());
-    out.close();
+  private void createFile(String data, boolean override) throws IOException {
+    if(!resource.exists() || override) {
+      var out = new FileOutputStream(resource);
+      out.write(data.getBytes());
+      out.close();
+    }
 	}
 	
-  public String readFile() throws IOException {
-    var in = new FileInputStream(resource);
-    var data = new String(in.readAllBytes());
-    in.close();
-    return data;
-	}
+  private String readFile() throws IOException {
+    if(resource.exists()) {
+      var in = new FileInputStream(resource);
+      var data = new String(in.readAllBytes());
+      in.close();
+      return data;
+    }
+    return null;
+  }
+  
+  /**
+   * Remove o arquivo ou pasta do recurso
+   * referido
+   */
+  public void delete() {
+    var result = resource.delete();
+    if(result) 
+      throw new Error("The deletion process failed.");
+  }
 }

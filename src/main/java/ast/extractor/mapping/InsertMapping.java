@@ -35,8 +35,9 @@ public class InsertMapping extends Mapping {
   @Override
   public Mapping fromJson(JsonObject content) {
     var path = InsertMapping.pathOfElement(content, "destination");
-    this.destination = ElementFactory.create(snapshot, path);
     this.newFile = content.get("newFile").getAsString();
+    this.destination = ElementFactory
+      .create(snapshot, path, this.newFile);
     return this;
   }
 

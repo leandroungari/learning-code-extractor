@@ -11,7 +11,7 @@ import ast.extractor.mapping.InsertMapping;
 import ast.extractor.mapping.Mapping;
 import ast.extractor.mapping.MoveMapping;
 import ast.extractor.mapping.UpdateMapping;
-import ast.snapshot.Snapshot;
+import ast.snapshot.CommitSnapshot;
 import core.Jsonify;
 
 public class Modification implements Jsonify<Modification> {
@@ -20,13 +20,13 @@ public class Modification implements Jsonify<Modification> {
   private String newPath;
   private List<Mapping> mappings;
 
-  private Snapshot snapshot;
+  private CommitSnapshot snapshot;
 
   public Modification() {
     mappings = new ArrayList<>();
   }
 
-	public void setSnapshot(Snapshot snap) {
+	public void setSnapshot(CommitSnapshot snap) {
 		this.snapshot = snap;
 	}
 

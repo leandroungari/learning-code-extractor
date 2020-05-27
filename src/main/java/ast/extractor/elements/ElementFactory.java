@@ -1,6 +1,6 @@
 package ast.extractor.elements;
 
-import ast.snapshot.Snapshot;
+import ast.snapshot.CommitSnapshot;
 import spoon.reflect.code.CtStatement;
 import spoon.reflect.declaration.CtClass;
 import spoon.reflect.declaration.CtConstructor;
@@ -9,7 +9,6 @@ import spoon.reflect.declaration.CtEnum;
 import spoon.reflect.declaration.CtField;
 import spoon.reflect.declaration.CtInterface;
 import spoon.reflect.declaration.CtMethod;
-import spoon.reflect.path.CtPathStringBuilder;
 
 public class ElementFactory<T extends Element<? extends CtElement>> {
 
@@ -40,14 +39,12 @@ public class ElementFactory<T extends Element<? extends CtElement>> {
     throw new Error("Unexpected type -- " + item.getClass());
   }
 
-  public static <A extends CtElement> Element<?> create(Snapshot snapshot, String path) {
-    var builder = new CtPathStringBuilder();
-    var pathReference = builder.fromString(path);
+  public static <A extends CtElement> Element<?> create(
+    CommitSnapshot snap, 
+    String elementPath, 
+    String filename) {
 
-    var item = pathReference
-      .evaluateOn(snapshot.model().getRootPackage())
-      .get(0);
-
+    var item = snap.model(elementPath);
     return ElementFactory.create(item);
   }
 

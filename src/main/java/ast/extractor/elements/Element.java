@@ -8,7 +8,6 @@ import com.google.gson.JsonObject;
 
 import core.Jsonify;
 import ast.extractor.Tokenizer;
-import ast.snapshot.Snapshot;
 import spoon.reflect.code.CtLiteral;
 import spoon.reflect.declaration.CtElement;
 import spoon.reflect.reference.CtVariableReference;
@@ -19,17 +18,11 @@ public abstract class Element<T extends CtElement> implements Jsonify<Element<?>
   protected T element;
   private String path;
 
-  private Snapshot snapshot;
-
   protected Integer priority;
 
   Element(T el) {
     this.element = el;
     this.path = el.getPath().toString();
-  }
-
-  public Element(Snapshot snap) {
-    this.snapshot = snap;
   }
 
   public Integer getPriority() {
@@ -65,8 +58,7 @@ public abstract class Element<T extends CtElement> implements Jsonify<Element<?>
 
   @Override
   public Element<?> fromJson(JsonObject content) {
-    var path = content.get("path").getAsString();
-    return ElementFactory.create(this.snapshot, path);
+    return this;
   }
 
   public Boolean isDirectParentOf(Element<?> other) {

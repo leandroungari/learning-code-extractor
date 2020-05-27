@@ -37,14 +37,18 @@ public class UpdateMapping extends Mapping {
 
   @Override
   public Mapping fromJson(JsonObject content) {
-    var destinationPath = MoveMapping.pathOfElement(content, "destination");
-    this.destination = ElementFactory.create(snapshot, destinationPath);
-
-    var sourcePath = MoveMapping.pathOfElement(content, "source");
-    this.source = ElementFactory.create(snapshot, sourcePath);
-
     this.oldFile = content.get("oldFile").getAsString();
     this.newFile = content.get("newFile").getAsString();
+
+    var destinationPath = MoveMapping
+      .pathOfElement(content, "destination");
+    this.destination = ElementFactory
+      .create(snapshot, destinationPath, this.newFile);
+
+    var sourcePath = MoveMapping
+      .pathOfElement(content, "source");
+    this.source = ElementFactory
+      .create(snapshot.previous(), sourcePath, this.oldFile);
 
     return this;
   }

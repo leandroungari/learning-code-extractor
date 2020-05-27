@@ -34,8 +34,9 @@ public class DeleteMapping extends Mapping {
   @Override
   public Mapping fromJson(JsonObject content) {
     var path = DeleteMapping.pathOfElement(content, "source");
-    this.source = ElementFactory.create(snapshot, path);
     this.oldFile = content.get("oldFile").getAsString();
+    this.source = ElementFactory
+      .create(snapshot.previous(), path, this.oldFile);
     return this;
   }
 

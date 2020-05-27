@@ -34,7 +34,7 @@ public class ModificationsBuilder {
     this.branch = branch;
     this.commit = commit;
 
-    this.modifications = new CommitModifications(commit);
+    this.modifications = new CommitModifications(repository, branch, commit);
 
     buildExtractor();
   }

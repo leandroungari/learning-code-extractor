@@ -4,20 +4,20 @@ import com.google.gson.JsonObject;
 
 import core.Jsonify;
 import ast.extractor.elements.Element;
-import ast.snapshot.Snapshot;
+import ast.snapshot.CommitSnapshot;
 
 public abstract class Mapping implements Jsonify<Mapping>, Comparable<Mapping> {
 
 	protected Element<?> source;
 	protected Element<?> destination;
 
-	protected Snapshot snapshot;
+	protected CommitSnapshot snapshot;
 
 	protected String oldFile;
 
   protected String newFile;
 
-	public void setSnapshot(Snapshot snap) {
+	public void setSnapshot(CommitSnapshot snap) {
 		this.snapshot = snap;
 	}
 

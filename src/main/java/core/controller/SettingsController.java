@@ -1,11 +1,6 @@
 package core.controller;
 
 import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.LinkOption;
-import java.nio.file.Paths;
-
 import util.FileUtil;
 
 public class SettingsController {
@@ -79,10 +74,10 @@ public class SettingsController {
 	
 	private void selectOption(Integer optionFolder) {
 		if(optionFolder == USER_FOLDER) {
-			setBase(FileUtil.userFolder() + "/.learning-code-extractor");
+			setBase(FileUtil.userFolder() + "/learning-code-extractor-data");
 		}
 		else {
-			setBase(FileUtil.currentFolder() + "/.learning-code-extractor");
+			setBase(FileUtil.currentFolder() + "/learning-code-extractor-data");
 		}
 	}
 	
@@ -91,18 +86,7 @@ public class SettingsController {
 		folder = new File(getBase());
 		if(!FileUtil.folderExists(folder)) {
 			
-			FileUtil.createFolder(folder);
-			if(System.getProperty("os.name").contains("Windows")) {
-				
-				var path = Paths.get(getBase());
-				
-				try {
-					Files.setAttribute(path, "dos:hidden", true, LinkOption.NOFOLLOW_LINKS);
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-			}
-			
+			FileUtil.createFolder(folder);		
 		}
 	}
 	
