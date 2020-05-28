@@ -4,7 +4,7 @@ import java.io.IOException;
 
 import com.google.gson.JsonObject;
 
-import ast.extractor.CommitModifications;
+import ast.extractor.CommitMappings;
 import core.controller.SettingsController;
 import resource.JSON;
 import resource.Resource;
@@ -19,13 +19,13 @@ public class ModificationsReader {
     this.branch = branch;
   }
 
-  public CommitModifications commit(String id) {
+  public CommitMappings commit(String id) {
 
-    var result = new CommitModifications(repository, branch, id);
+    var result = new CommitMappings(repository, branch, id);
     var resource = new Resource<JsonObject>(
       SettingsController.get().folderOfMetadata() 
         + "/" + repository 
-        + "/modifications", 
+        + "/mappings", 
       id + ".json"
     );
 

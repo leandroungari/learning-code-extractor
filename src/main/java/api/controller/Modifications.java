@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import ast.extractor.CommitModifications;
+import ast.extractor.CommitMappings;
 import core.Player;
 import core.features.FeatureType;
 
@@ -23,7 +23,7 @@ public class Modifications {
     @PathVariable String branch) {
 
     player
-      .<CommitModifications>get(FeatureType.EXTRACT_MODIFICATIONS)
+      .<CommitMappings>get(FeatureType.EXTRACT_MODIFICATIONS)
       .setParams(repository, branch)
       .action();
     

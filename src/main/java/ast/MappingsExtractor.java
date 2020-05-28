@@ -2,15 +2,14 @@ package ast;
 
 import java.util.List;
 
-import ast.extractor.CommitModifications;
-import ast.extractor.Modification;
+import ast.extractor.CommitMappings;
 import ast.extractor.comparator.Comparator;
 import core.Player;
 import core.data.DiffFile;
 import core.features.FeatureType;
 import repository.Commit;
 
-public class ModificationsBuilder {
+public class MappingsExtractor {
 
   private String repository;
   private String branch;
@@ -23,9 +22,9 @@ public class ModificationsBuilder {
 
   private Comparator comparator;
 
-  private CommitModifications modifications;
+  private CommitMappings mappings;
 
-  public ModificationsBuilder(
+  public MappingsExtractor(
     String repository, 
     String branch, 
     String commit) {
@@ -34,7 +33,7 @@ public class ModificationsBuilder {
     this.branch = branch;
     this.commit = commit;
 
-    this.modifications = new CommitModifications(repository, branch, commit);
+    this.mappings = new CommitMappings(repository, branch, commit);
 
     buildExtractor();
   }
@@ -76,7 +75,7 @@ public class ModificationsBuilder {
     return content;
   }
 
-  public CommitModifications createModifications() {
+  public CommitMappings createMappings() {
 
     for (var diff : diffFiles) {
       if(isJavaFile(diff.getOldPath()) ||
@@ -84,11 +83,6 @@ public class ModificationsBuilder {
 
         var oldSource = getContentOfFile(before, diff.getOldPath());
         var newSource = getContentOfFile(current, diff.getNewPath());
-          
-        var modification = createNewModification(
-          diff.getOldPath(),
-          diff.getNewPath()
-        );
 
         comparator = new Comparator(
           diff.getOldPath(), 
@@ -96,22 +90,12 @@ public class ModificationsBuilder {
           diff.getNewPath(), 
           newSource
         );
-        modification.setMappings(comparator.generateMappings());
-        this.modifications.add(modification);
+        
+        this.mappings.add(comparator.generateMappings());
       }
     }
 
-    return modifications;
-  }
-
-  private Modification createNewModification(
-    String oldPath,
-    String newPath) {
-
-    var modification = new Modification();
-    modification.setNewPath(newPath);
-    modification.setOldPath(oldPath);
-    return modification;
+    return mappings;
   }
 
 }

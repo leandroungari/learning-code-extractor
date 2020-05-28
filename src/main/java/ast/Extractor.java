@@ -5,7 +5,7 @@ import java.util.List;
 
 import org.eclipse.jgit.api.errors.GitAPIException;
 
-import ast.extractor.CommitModifications;
+import ast.extractor.CommitMappings;
 import ast.extractor.comparator.Comparator;
 import ast.extractor.mapping.Mapping;
 import repository.Branch;
@@ -58,15 +58,15 @@ public class Extractor {
     return result;
   }
 
-  public CommitModifications transformModifications() {
+  public CommitMappings transform() {
 
-    var builder = new ModificationsBuilder(
+    var builder = new MappingsExtractor(
       repository,
       branch,
       commit
     );
 
-    return builder.createModifications();
+    return builder.createMappings();
   }
 
 }
