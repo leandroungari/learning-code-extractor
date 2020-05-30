@@ -39,7 +39,7 @@ public class CommitMappings implements Jsonify<CommitMappings> {
   }
 
   public void add(List<Mapping> mappings) {
-    mappings.addAll(mappings);
+    this.mappings.addAll(mappings);
   }
 
   public List<Mapping> get() {

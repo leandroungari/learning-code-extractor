@@ -10,8 +10,6 @@ public class MappingsExtractorTest {
 
   @Test
   public void entireCommit() {
-    //extrair as modificações de um commit inteiro
-    //depois verificar como melhorar a análise
     var builder = new MappingsExtractor(repository, branch, commit);
     var result = builder.createMappings();
     System.out.println(result);

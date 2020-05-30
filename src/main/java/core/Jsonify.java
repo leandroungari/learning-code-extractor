@@ -6,4 +6,5 @@ public interface Jsonify<T> {
   
   JsonObject toJson();
   T fromJson(JsonObject content);
+  String toString();
 }

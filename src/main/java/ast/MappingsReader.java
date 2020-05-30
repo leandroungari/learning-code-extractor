@@ -9,23 +9,23 @@ import core.controller.SettingsController;
 import resource.JSON;
 import resource.Resource;
 
-public class ModificationsReader {
+public class MappingsReader {
 
   private String repository;
   private String branch;
 
-  public ModificationsReader(String repositoryName, String branch) {
+  public MappingsReader(String repositoryName, String branch) {
     this.repository = repositoryName;
     this.branch = branch;
   }
 
   public CommitMappings commit(String id) {
-
+    System.out.println("-" + id);
     var result = new CommitMappings(repository, branch, id);
     var resource = new Resource<JsonObject>(
       SettingsController.get().folderOfMetadata() 
         + "/" + repository 
-        + "/mappings", 
+        + "/mappings/", 
       id + ".json"
     );
 

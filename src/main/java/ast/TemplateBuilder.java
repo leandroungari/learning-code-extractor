@@ -1,5 +1,6 @@
 package ast;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -26,8 +27,17 @@ public class TemplateBuilder<T extends Mapping> {
     this.variables = this.extractVariablesFromElement(mapping);
     this.literals = this.extractLiteralsFromElement(mapping);
 
-    this.sources = mapping.source().dependencies();
-    this.destinations = mapping.destination().dependencies();
+    if(mapping.source() != null) {
+      this.sources = mapping.source().dependencies();
+    } else {
+      this.sources = new ArrayList<>();
+    }
+    
+    if(mapping.destination() != null) {
+      this.destinations = mapping.destination().dependencies();
+    } else {
+      this.destinations = new ArrayList<>();
+    }
   }
 
   private List<CtVariableReference<?>> extractVariablesFromElement(T item) {
@@ -82,7 +92,7 @@ public class TemplateBuilder<T extends Mapping> {
     }
   }
 
-  public Map<List<String>,List<String>> model() {    
+  public Pattern model() {    
     this.wildcards = createWildcards();
     for(var variable: variables) {
       this.replaceVariable(variable);
@@ -101,8 +111,10 @@ public class TemplateBuilder<T extends Mapping> {
       .map(item -> item.toString())
       .collect(Collectors.toList());
     
-    
-    return Map.of(sourceItems, destinationItems);
+    return new Pattern(
+      sourceItems.toString(),
+      destinationItems.toString()
+    );
   }
 
   public Map<String, String> createWildcards() {

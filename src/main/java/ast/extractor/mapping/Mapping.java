@@ -15,7 +15,11 @@ public abstract class Mapping implements Jsonify<Mapping>, Comparable<Mapping> {
 
 	protected String oldFile;
 
-  protected String newFile;
+	protected String newFile;
+	
+	public Mapping() {
+
+	}
 
 	public void setSnapshot(CommitSnapshot snap) {
 		this.snapshot = snap;
@@ -57,6 +61,8 @@ public abstract class Mapping implements Jsonify<Mapping>, Comparable<Mapping> {
 
 	public abstract Boolean isChildOf(Mapping other);
 
+	protected abstract Integer getPriority();
+	
 	@Override
 	public boolean equals(Object obj) {
 		var other = (Mapping) obj;
@@ -71,7 +77,6 @@ public abstract class Mapping implements Jsonify<Mapping>, Comparable<Mapping> {
     return item.get("path").getAsString();
 	}
 
-	protected abstract Integer getPriority();
 
 	@Override
 	public int compareTo(Mapping other) {
@@ -81,6 +86,27 @@ public abstract class Mapping implements Jsonify<Mapping>, Comparable<Mapping> {
 			return 1;
 		}
 		return 0;
+	}
+	
+	public static Mapping fromJson(JsonObject mapping, CommitSnapshot snapshot) {
+		var type = mapping.get("type").getAsString();
+    if("insert".equals(type)) {
+      var insert = new InsertMapping();
+      insert.setSnapshot(snapshot);
+      return insert.fromJson(mapping);
+    } else if("delete".equals(type)) {
+      var delete = new DeleteMapping();
+      delete.setSnapshot(snapshot);
+      return delete.fromJson(mapping);
+    } else if("move".equals(type)) {
+      var move = new MoveMapping();
+      move.setSnapshot(snapshot);
+      return move.fromJson(mapping);
+    } else {
+      var update = new UpdateMapping();
+      update.setSnapshot(snapshot);
+      return update.fromJson(mapping);
+    }
 	}
 
 	/*protected Boolean verifyCorrespondence(
