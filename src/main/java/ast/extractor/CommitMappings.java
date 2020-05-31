@@ -30,6 +30,10 @@ public class CommitMappings implements Jsonify<CommitMappings> {
     this.mappings = new ArrayList<>();
   }
 
+  public String getCommit() {
+    return commit;
+  }
+
   public CommitMappings() {
     this.mappings = new ArrayList<>();
   }

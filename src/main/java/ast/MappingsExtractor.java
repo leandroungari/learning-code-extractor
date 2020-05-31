@@ -26,6 +26,7 @@ public class MappingsExtractor {
   public CommitMappings createMappings() {
 
     try {
+      System.out.println(commit);
       var comparator = new Comparator(
         instance.branch(branch).commit(commit)
       );
