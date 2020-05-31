@@ -46,11 +46,19 @@ public class Comparator {
     extractOperationFromCommit(commit);
   }
 
+  private String getContentOfFile(Commit commit, String filename) {
+    var file = commit.getFile(filename);
+    if(file != null) {
+      return file.get();
+    }
+    return "";
+  }
+
   private void extractOperationFromCommit(Commit commit) {
     var diffFiles = commit.getDiffEntries(".java");
     for(var file: diffFiles) {
-      var oldContent = commit.before().getFile(file.get("source")).get();
-      var newContent = commit.getFile(file.get("destination")).get();
+      var oldContent = getContentOfFile(commit.before(), file.get("source"));
+      var newContent = getContentOfFile(commit, file.get("destination"));
 
       var comparator = new Comparator(
         file.get("source"), 

@@ -21,7 +21,7 @@ public class ModificationsResource
     storage = new Storage(
       settings.folderOfMetadata().getAbsolutePath()
       + "/" + repository 
-      + "/modifications"
+      + "/mappings"
     );
 
     storage.plainText(commit + ".json");

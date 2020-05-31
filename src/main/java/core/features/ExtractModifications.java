@@ -49,7 +49,7 @@ public class ExtractModifications implements RepositoryFeature<Void> {
   private void createResource(String commit) {
     System.out.println("- " + commit);
     this.extractor = new Extractor(repository, branch, commit);
-    var result = this.extractor.transformModifications(); 
+    var result = this.extractor.transform(); 
       
     resource.write(result.toJson());
   }

@@ -4,6 +4,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
 import core.Jsonify;
@@ -22,7 +23,11 @@ public abstract class Element<T extends CtElement> implements Jsonify<Element<?>
 
   Element(T el) {
     this.element = el;
-    this.path = el.getPath().toString();
+    if(el != null) {
+      this.path = el.getPath().toString();
+    } else {
+      this.path = "#undefined";
+    }
   }
 
   public Integer getPriority() {
@@ -50,7 +55,11 @@ public abstract class Element<T extends CtElement> implements Jsonify<Element<?>
   @Override
   public JsonObject toJson() {
     var obj = new JsonObject();
-    obj.addProperty("element", this.dependencies().toString());
+    var list = new JsonArray();
+    for(var item: this.dependencies()) {
+      list.add(item.toString());
+    }
+    obj.add("element", list);
     obj.addProperty("path", this.path);
     obj.addProperty("type", this.getClass().getSimpleName());
     return obj;

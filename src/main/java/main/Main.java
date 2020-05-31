@@ -21,7 +21,8 @@ import repository.exception.GitRepositoryException;
  *
  */
 @SpringBootApplication
-@ComponentScan({"api.controller"})
+@ComponentScan({"api"})
+//@ComponentScan({"api.controller"})
 public class Main {
 
   public static void main(String[] args) 

@@ -160,9 +160,9 @@ public class Commit {
 		try {
 			return factory.filterFile(this, filename);
 		} catch (IOException e) {
-			e.printStackTrace();
+			//e.printStackTrace();
+			return null;
 		}
-		return null;
 	}
 	
 	public CommitInfo info() {

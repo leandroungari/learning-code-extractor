@@ -14,6 +14,10 @@ public class ElementFactory<T extends Element<? extends CtElement>> {
 
   public static <A extends CtElement> Element<?> create(A item) {
 
+    if(item == null) {
+      return new UndefinedElement();
+    }
+
     CtElement temp = item;
     do {
       if (temp instanceof CtClass) {
