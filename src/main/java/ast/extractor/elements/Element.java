@@ -22,7 +22,11 @@ public abstract class Element<T extends CtElement> implements Jsonify<Element<?>
 
   Element(T el) {
     this.element = el;
-    this.path = el.getPath().toString();
+    if(el != null) {
+      this.path = el.getPath().toString();
+    } else {
+      this.path = "#undefined";
+    }
   }
 
   public Integer getPriority() {

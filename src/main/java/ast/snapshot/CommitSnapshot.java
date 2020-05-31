@@ -28,6 +28,10 @@ public class CommitSnapshot {
     this.model = createModel();
   }
 
+  public String getCommitId() {
+    return current.id().getName();
+  }
+
   private CtModel createModel() {
 
     for (var file : current.getDiffFiles()) {
@@ -39,7 +43,6 @@ public class CommitSnapshot {
     }
 
     var launcher = new Launcher();
-    System.out.println(this.base);
     launcher.addInputResource(this.base);
     launcher.buildModel();
     return launcher.getModel();
@@ -66,8 +69,14 @@ public class CommitSnapshot {
 
     var packages = this.model.getAllPackages();
 
-    return builder
-      .evaluateOn(packages.toArray(new CtPackage[packages.size()])).get(0);
+    var items = builder
+      .evaluateOn(packages.toArray(new CtPackage[packages.size()]));
+
+    if(items.size() > 0) {
+      return items.get(0);
+    } else {
+      return null;
+    }
   }
 
   public CommitSnapshot previous() {
