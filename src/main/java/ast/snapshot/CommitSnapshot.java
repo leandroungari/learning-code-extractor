@@ -64,6 +64,8 @@ public class CommitSnapshot {
   }
 
   public CtElement model(String path) {
+    if("#undefined".equals(path)) return null;
+
     var builder = new CtPathStringBuilder()
       .fromString(path);
 

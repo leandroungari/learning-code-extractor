@@ -13,24 +13,27 @@ public class ClusterPersistor {
   private String base;
   private String repository;
 
+  private Cluster cluster;
+
   private ClusterItemPersistor persistor;
 
-  public ClusterPersistor(String repository) {
+  public ClusterPersistor(Cluster cluster) {
 
-    this.repository = repository;
+    this.repository = cluster.repository();
+    this.cluster = cluster;
 
     this.base = SettingsController.get()
       .folderOfMetadata() + "/" + 
       this.repository + "/clusters";
 
-    this.persistor = new ClusterItemPersistor(repository);
+    this.persistor = new ClusterItemPersistor(this.repository, cluster);
   }
 
   ClusterItemPersistor item() {
     return persistor;
   }
 
-  void write(Cluster cluster) {
+  void write() {
     var resource = new Resource<JsonObject>(this.base, "#" + repository + ".json");
     System.out.println(this.base + "/#" + repository + ".json");
     resource.setContent(cluster.toJson());

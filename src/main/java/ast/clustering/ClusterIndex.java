@@ -15,13 +15,13 @@ public class ClusterIndex implements Jsonify<ClusterIndex> {
   private Cluster parent;
 
   public ClusterIndex() {
-    this.size = 0;
+    this.size = 1;
   }
 
   public ClusterIndex(Integer code, Pattern pattern, Cluster parent) {
     this.code = code;
     this.pattern = pattern;
-    this.size = 0;
+    this.size = 1;
     this.parent = parent;
   }
 
@@ -29,6 +29,7 @@ public class ClusterIndex implements Jsonify<ClusterIndex> {
     var clusterItem = parent.persistor().item().read(code);
     clusterItem.add(mapping, commit);
     parent.persistor().item().write(clusterItem);
+    this.size = clusterItem.getItems().size();
   }
 
   public Integer getCode() {

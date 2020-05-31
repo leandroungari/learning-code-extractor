@@ -3,6 +3,7 @@ package ast.clustering;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
 import ast.extractor.mapping.Mapping;
@@ -18,7 +19,7 @@ public class Cluster implements Jsonify<Cluster> {
   private ClusterPersistor persistor;
 
   public Cluster() {
-    this.persistor = new ClusterPersistor(repository);
+    this.persistor = new ClusterPersistor(this);
     this.items = new ArrayList<>();
   }
 
@@ -26,20 +27,20 @@ public class Cluster implements Jsonify<Cluster> {
     this.repository = repository;
     this.branch = branch;
     this.items = new ArrayList<>();
-    this.persistor = new ClusterPersistor(repository);
+    this.persistor = new ClusterPersistor(this);
   }
 
   ClusterPersistor persistor() {
     return persistor;
   }
 
-  public void addItem(Mapping mapping) {
-    var item = new ClusterItem(mapping, items.size() + 1, this);
+  public void addItem(Mapping mapping, String commit) {
+    var item = new ClusterItem(mapping, commit, items.size() + 1, this);
     persistor.item().write(item);
 
     var index = new ClusterIndex(item.getCode(), item.getPattern(), this);
     items.add(index);
-    persistor.write(this);
+    persistor.write();
   }
 
   String repository() {
@@ -65,7 +66,11 @@ public class Cluster implements Jsonify<Cluster> {
     var result = new JsonObject();
     result.addProperty("repository", repository);
     result.addProperty("branch", branch);
-    result.addProperty("items", items.toString());
+    var list = new JsonArray();
+    for(var item: items) {
+      list.add(item.toJson());
+    }
+    result.add("items", list);
     return result;
   }
 

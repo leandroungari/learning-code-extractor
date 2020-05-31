@@ -13,9 +13,12 @@ public class ClusterItemPersistor {
   private String base;
   private String repository;
 
-  public ClusterItemPersistor(String repository) {
+  private Cluster parent;
+
+  public ClusterItemPersistor(String repository, Cluster parent) {
 
     this.repository = repository;
+    this.parent = parent;
 
     this.base = SettingsController.get()
       .folderOfMetadata() + "/" + 
@@ -37,7 +40,7 @@ public class ClusterItemPersistor {
     var resource = new Resource<JsonObject>(this.base, "#" + code + ".json");
     try {
       var object = resource.read(new JSON());
-      return new ClusterItem().fromJson(object);
+      return new ClusterItem(parent).fromJson(object);
     } catch (IOException e) {
       e.printStackTrace();
     }

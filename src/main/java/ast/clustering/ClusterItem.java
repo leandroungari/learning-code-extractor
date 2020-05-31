@@ -3,6 +3,7 @@ package ast.clustering;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
 import org.eclipse.jgit.api.errors.GitAPIException;
@@ -21,15 +22,17 @@ public class ClusterItem implements Jsonify<ClusterItem> {
 
   private Cluster parent;
 
-  ClusterItem(Mapping mapping, Integer code, Cluster parent) {
+  ClusterItem(Mapping mapping, String commit, Integer code, Cluster parent) {
     this.pattern = extractPattern(mapping);
     this.items = new ArrayList<>();
     this.code = code;
     this.parent = parent;
+    
+    this.add(mapping, commit);
   }
 
-  ClusterItem() {
-    
+  ClusterItem(Cluster parent) {
+    this.parent = parent;
   }
 
   public void add(Mapping mapping, String commit) {
@@ -38,6 +41,10 @@ public class ClusterItem implements Jsonify<ClusterItem> {
 
   public Integer getCode() {
     return code;
+  }
+
+  public List<Item> getItems() {
+    return items;
   }
 
   public Pattern getPattern() {
@@ -59,7 +66,11 @@ public class ClusterItem implements Jsonify<ClusterItem> {
   public JsonObject toJson() {
     var result = new JsonObject();
     result.add("pattern", pattern.toJson());
-    result.addProperty("items", items.toString());
+    var list = new JsonArray();
+    for(var item: items) {
+      list.add(item.toJson());
+    }
+    result.add("items", list);
     return result;
   }
 

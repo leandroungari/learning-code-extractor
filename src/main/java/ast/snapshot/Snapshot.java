@@ -62,7 +62,7 @@ public class Snapshot {
     var snap = new CommitSnapshot(instance, this);
     commits.put(commit, snap);
     availableCommits[position] = commit;
-    position++;
+    position = (position + 1) % 10;
     return snap;
   }
 

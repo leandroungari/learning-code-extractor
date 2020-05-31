@@ -7,7 +7,10 @@ import org.eclipse.jgit.api.errors.GitAPIException;
 
 import ast.clustering.Cluster;
 import ast.extractor.CommitMappings;
+
 import ast.extractor.mapping.Mapping;
+import ast.extractor.mapping.MoveMapping;
+import ast.extractor.mapping.UpdateMapping;
 import repository.Repository;
 
 public class ClusteringEngine {
@@ -26,6 +29,8 @@ public class ClusteringEngine {
 
   public void generate() {
     for (var commit : getCommits()) {
+      System.out.println("####################");
+      System.out.println(commit);
       var mappings = getMappingsFromCommit(commit).get();
       identifyCluster(mappings, commit);
     }
@@ -33,14 +38,17 @@ public class ClusteringEngine {
 
   private void identifyCluster(List<Mapping> mappings, String commit) {
     for(var mapping: mappings) {
-      var added = false;
-      for(var item: cluster.getItems()) {
-        if(item.getPattern().matches(mapping)) {
-          item.add(mapping, commit);
+      
+      if(mapping instanceof UpdateMapping || mapping instanceof MoveMapping) {
+        var added = false;
+        for(var item: cluster.getItems()) {
+          if(item.getPattern().matches(mapping)) {
+            item.add(mapping, commit);
+          }
         }
-      }
-      if(!added) {
-        cluster.addItem(mapping);
+        if(!added) {
+          cluster.addItem(mapping, commit);
+        }
       }
     }
   }
