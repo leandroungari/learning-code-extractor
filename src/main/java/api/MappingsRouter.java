@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import controller.MappingsController;
+import controller.mappings.MappingsController;
 
 @RestController
 public class MappingsRouter {
@@ -19,9 +19,6 @@ public class MappingsRouter {
     @PathVariable String repository, 
     @PathVariable String branch)
       throws GitAPIException {
-
-    //cd61fd2a70828030ccb3cf46d8719f8b204c52ed
-    //está quebrando - parece o primeiro
 
     var controller = new MappingsController(repository, branch);
     var result = controller.extractMappingsToStore();
