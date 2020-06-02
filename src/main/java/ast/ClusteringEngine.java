@@ -29,8 +29,6 @@ public class ClusteringEngine {
 
   public void generate() {
     for (var commit : getCommits()) {
-      System.out.println("####################");
-      System.out.println(commit);
       var mappings = getMappingsFromCommit(commit).get();
       identifyCluster(mappings, commit);
     }

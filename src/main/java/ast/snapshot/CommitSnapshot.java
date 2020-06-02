@@ -32,6 +32,10 @@ public class CommitSnapshot {
     return current.id().getName();
   }
 
+  public Commit commit() {
+    return current;
+  }
+
   private CtModel createModel() {
 
     for (var file : current.getDiffFiles()) {

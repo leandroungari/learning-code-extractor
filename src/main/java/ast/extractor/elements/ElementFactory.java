@@ -49,6 +49,12 @@ public class ElementFactory<T extends Element<? extends CtElement>> {
     String filename) {
 
     var item = snap.model(elementPath);
+    while(item == null) {
+      if(snap.commit().before() == null) break;
+      snap = snap.previous();
+      item = snap.model(elementPath);
+    }
+    
     return ElementFactory.create(item);
   }
 

@@ -122,22 +122,14 @@ public class TemplateBuilder<T extends Mapping> {
     for(var literal: literals) {
       this.replaceLiteral(literal);
     }
-
-    var sourceItems = sources
-      .stream()
-      .map(item -> item.toString())
-      .collect(Collectors.toList());
-
-    var destinationItems = destinations
-      .stream()
-      .map(item -> item.toString())
-      .collect(Collectors.toList());
     
     return new Pattern(
-      sourceItems.toString(),
-      destinationItems.toString()
+      sources,
+      destinations
     );
   }
+
+  
 
   public Map<String, String> createWildcards() {
     var wildcards = new HashMap<String, String>();

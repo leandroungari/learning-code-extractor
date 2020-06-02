@@ -1,22 +1,50 @@
 package ast;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 import com.google.gson.JsonObject;
 
 import ast.extractor.mapping.Mapping;
 import core.Jsonify;
+import spoon.reflect.declaration.CtElement;
 
 public class Pattern implements Jsonify<Pattern> {
 
   private String input;
   private String output;
 
-  public Pattern(String in, String out) {
-    this.input = in;
-    this.output = out;
+  private List<? extends CtElement> sources;
+  private List<? extends CtElement> destinations;
+
+  public Pattern(List<? extends CtElement> src, List<? extends CtElement> dst) {
+    this.sources = src;
+    this.destinations = dst;
+
+    var sourceItems = sources
+      .stream()
+      .map(item -> item.toString())
+      .collect(Collectors.toList());
+
+    var destinationItems = destinations
+      .stream()
+      .map(item -> item.toString())
+      .collect(Collectors.toList());
+
+    this.input = sourceItems.toString();
+    this.output = destinationItems.toString();
   }
 
   public Pattern() {
 
+  }
+
+  public List<? extends CtElement> destination() {
+    return destinations;
+  }
+
+  public List<? extends CtElement> source() {
+    return sources;
   }
 
   public String input() {
