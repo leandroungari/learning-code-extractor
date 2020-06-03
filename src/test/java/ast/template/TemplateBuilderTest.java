@@ -34,7 +34,7 @@ public class TemplateBuilderTest {
 
 
   @Test
-  public void templateOfMethodInsert() {
+  public void templateOfMethodUpdate() {
     var mapping = mappings.get().get(0);
     var builder = new TemplateBuilder(mapping);
     var template = builder.create();
@@ -51,7 +51,6 @@ public class TemplateBuilderTest {
   @Test
   public void templateOfStatementUpdate() {
     var mapping = mappings.get().get(1);
-    //System.out.println(mappings);
     var builder = new TemplateBuilder(mapping);
     var template = builder.create();
     

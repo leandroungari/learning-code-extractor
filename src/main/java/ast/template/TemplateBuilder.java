@@ -6,13 +6,19 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import ast.extractor.mapping.Mapping;
+import ast.filter.FieldFilter;
 import ast.filter.LiteralFilter;
+import ast.filter.LocalVariableFilter;
+import ast.filter.MethodFilter;
 import ast.filter.VariableReferenceFilter;
 import spoon.pattern.ConflictResolutionMode;
 import spoon.pattern.Pattern;
 import spoon.pattern.PatternBuilder;
 import spoon.reflect.code.CtLiteral;
+import spoon.reflect.code.CtLocalVariable;
 import spoon.reflect.declaration.CtElement;
+import spoon.reflect.declaration.CtField;
+import spoon.reflect.declaration.CtMethod;
 import spoon.reflect.reference.CtVariableReference;
 
 public class TemplateBuilder {
@@ -22,6 +28,9 @@ public class TemplateBuilder {
 
   private List<CtVariableReference<?>> variables;
   private List<CtLiteral<?>> literals;
+  private List<CtMethod<?>> methods;
+  private List<CtField<?>> fields;
+  private List<CtLocalVariable<?>> localVariables;
 
   public TemplateBuilder(Mapping mapping) {
 
@@ -48,6 +57,15 @@ public class TemplateBuilder {
 
     var literalsFilter = new LiteralFilter(elements);
     this.literals = literalsFilter.filter();
+
+    var methodsFilter = new MethodFilter(elements);
+    this.methods = methodsFilter.filter();
+
+    var fieldsFilter = new FieldFilter(elements);
+    this.fields = fieldsFilter.filter();
+
+    var localVariablesFilter = new LocalVariableFilter(elements);
+    this.localVariables = localVariablesFilter.filter();
   }
 
   public Template create() {
@@ -67,13 +85,22 @@ public class TemplateBuilder {
           pb.parameter(reference.getSimpleName())
             .byString(reference.getSimpleName());
         }
+        for(var localVariable: this.localVariables) {
+          pb.parameter(localVariable.getSimpleName())
+            .byString(localVariable.getSimpleName());
+        }
         for(var literal: this.literals) {
           pb.parameter(literal.toString())
             .byString(literal.toString());
         }
-
-        //filtrar o nome de métodos, atributos e classes
-        //para cada variavel, verificar se tem declaração, se sim, verificar a declaração também
+        for(var method: this.methods) {
+          pb.parameter(method.getSignature())
+            .byString(method.getSimpleName());
+        }
+        for(var field: this.fields) {
+          pb.parameter(field.getSimpleName())
+            .byString(field.getSimpleName());
+        }
       })
       .build();
   }
