@@ -85,6 +85,10 @@ public class CommitSnapshot {
     }
   }
 
+  public CtPackage root() {
+    return this.model.getRootPackage();
+  }
+
   public CommitSnapshot previous() {
     return parent.commit(current.before().id().getName());
   }
