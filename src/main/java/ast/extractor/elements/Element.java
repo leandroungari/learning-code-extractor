@@ -158,6 +158,18 @@ public abstract class Element<T extends CtElement> implements Jsonify<Element<?>
     return element.getParent();
   }
 
+  public CtElement getParentOfAllDependencies() {
+    var items = this.dependencies();
+    var parent = items.get(0);
+    for(var i = 1; i < items.size(); i++) {
+      var item = items.get(i);
+      if(!item.hasParent(parent)) {
+        parent = item.getParent();
+      }
+    }
+    return parent;
+  }
+
   public List<CtVariableReference<?>> getVariables() {
     var result = new HashSet<CtVariableReference<?>>();
     for (var item: this.dependencies()) {

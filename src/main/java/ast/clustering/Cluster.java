@@ -38,7 +38,7 @@ public class Cluster implements Jsonify<Cluster> {
     var item = new ClusterItem(mapping, commit, items.size() + 1, this);
     persistor.item().write(item);
 
-    var index = new ClusterIndex(item.getCode(), item.getPattern(), this);
+    var index = new ClusterIndex(item.getCode(), mapping, commit, this);
     items.add(index);
     persistor.write();
   }

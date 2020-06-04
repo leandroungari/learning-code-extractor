@@ -62,4 +62,14 @@ public class TemplateBuilderTest {
       System.out.println(item);
     });
   }
+
+  @Test
+  public void verifyPatternOfElement() {
+    var mapping = mappings.get().get(1);
+    var builder = new TemplateBuilder(mapping);
+    var template = builder.create();
+
+    var result = template.matches(mapping);
+    System.out.println("Correspondência: " + result);
+  }
 }
