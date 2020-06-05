@@ -35,7 +35,6 @@ public class ClusterPersistor {
 
   void write() {
     var resource = new Resource<JsonObject>(this.base, "#" + repository + ".json");
-    System.out.println(this.base + "/#" + repository + ".json");
     resource.setContent(cluster.toJson());
     try {
       resource.write(new JSON(), true);

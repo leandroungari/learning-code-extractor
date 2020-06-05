@@ -1,10 +1,11 @@
 package ast.template;
 
-import java.util.stream.Collectors;
+import java.util.HashSet;
 
 import ast.extractor.elements.Element;
 import ast.extractor.mapping.Mapping;
 import spoon.pattern.Pattern;
+import spoon.reflect.declaration.CtElement;
 
 public class Template {
   
@@ -30,15 +31,19 @@ public class Template {
   }
 
   private Boolean compatibility(Pattern pattern, Element<?> element) {
-    var matches = pattern
+    var matches = new HashSet<CtElement>();
+    pattern
       .getMatches(element.getParentOfAllDependencies())
       .stream()
-      .map(item -> item.getMatchingElement())
-      .collect(Collectors.toList());
-
-    System.out.println(matches);
-    System.out.println("====");
-    System.out.println(element.dependencies());
+      .forEach(item -> {
+        try {
+          matches.add(item.getMatchingElement());
+        } catch(Exception ex) {
+          for(var options: item.getMatchingElements()) {
+            matches.add(options);
+          }
+        }
+      });
   
     for(var dependency: element.dependencies()) {
       if(!matches.contains(dependency)) {

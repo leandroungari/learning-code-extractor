@@ -58,7 +58,7 @@ public class ClusterItem implements Jsonify<ClusterItem> {
   @Override
   public JsonObject toJson() {
     var result = new JsonObject();
-    result.add("pattern", base.toJson());
+    result.add("base", base.toJson());
     var list = new JsonArray();
     for(var item: items) {
       list.add(item.toJson());
@@ -71,7 +71,11 @@ public class ClusterItem implements Jsonify<ClusterItem> {
   public ClusterItem fromJson(JsonObject content) {
     try {
       var snapshot = new Snapshot(parent.repository(), parent.branch());
-      this.base = new Item().fromJson(content.get("base").getAsJsonObject());
+      
+      var base = new Item();
+      base.setSnapshot(snapshot);
+
+      this.base = base.fromJson(content.get("base").getAsJsonObject());
       this.items = new ArrayList<>();
       for(var item: content.get("items").getAsJsonArray()) {
         var instance = new Item();
