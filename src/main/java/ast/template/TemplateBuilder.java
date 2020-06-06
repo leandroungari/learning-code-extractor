@@ -120,8 +120,14 @@ public class TemplateBuilder {
           }
         }
         for(var type: this.types) {    
-          pb.parameter(type.getSimpleName())
+          try{
+            pb.parameter(type.getSimpleName())
             .byType(type);
+          } catch(Exception e) {
+            System.err.println(this.types);
+            System.err.println(e.getMessage());
+            break;
+          }
         }
       })
       .build();

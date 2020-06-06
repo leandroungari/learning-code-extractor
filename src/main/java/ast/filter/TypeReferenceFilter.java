@@ -21,6 +21,8 @@ public class TypeReferenceFilter extends Filter<CtTypeReference<?>> {
     for (var item: this.items) {
       result.addAll(item.getElements(new TypeFilter<>(CtTypeReference.class)));
     }
-    return result.stream().collect(Collectors.toList());
+    return result.stream()
+      .filter(item -> !item.getSimpleName().equals("<nulltype>"))
+      .collect(Collectors.toList());
   }
 }
