@@ -40,7 +40,7 @@ public class ClusterItemPersistor {
     var resource = new Resource<JsonObject>(this.base, "#" + code + ".json");
     try {
       var object = resource.read(new JSON());
-      return new ClusterItem(parent).fromJson(object);
+      return new ClusterItem(code, parent).fromJson(object);
     } catch (IOException e) {
       e.printStackTrace();
     }

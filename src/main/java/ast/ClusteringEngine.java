@@ -43,6 +43,7 @@ public class ClusteringEngine {
         for(var item: cluster.getItems()) {
           if(item.getPattern().matches(mapping)) {
             item.add(mapping, commit);
+            added = true;
           }
         }
         if(!added) {

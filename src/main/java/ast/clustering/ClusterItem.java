@@ -29,8 +29,9 @@ public class ClusterItem implements Jsonify<ClusterItem> {
     this.add(mapping, commit);
   }
 
-  ClusterItem(Cluster parent) {
+  ClusterItem(Integer code, Cluster parent) {
     this.parent = parent;
+    this.code = code;
   }
 
   public void add(Mapping mapping, String commit) {

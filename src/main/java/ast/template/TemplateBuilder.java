@@ -11,6 +11,7 @@ import ast.filter.LiteralFilter;
 import ast.filter.LocalVariableFilter;
 import ast.filter.MethodFilter;
 import ast.filter.ModifierFilter;
+import ast.filter.TypeReferenceFilter;
 import ast.filter.VariableReferenceFilter;
 import spoon.pattern.ConflictResolutionMode;
 import spoon.pattern.Pattern;
@@ -21,6 +22,7 @@ import spoon.reflect.declaration.CtElement;
 import spoon.reflect.declaration.CtField;
 import spoon.reflect.declaration.CtMethod;
 import spoon.reflect.declaration.CtModifiable;
+import spoon.reflect.reference.CtTypeReference;
 import spoon.reflect.reference.CtVariableReference;
 
 public class TemplateBuilder {
@@ -34,6 +36,7 @@ public class TemplateBuilder {
   private List<CtField<?>> fields;
   private List<CtLocalVariable<?>> localVariables;
   private List<CtModifiable> modifiers;
+  private List<CtTypeReference<?>> types;
 
   public TemplateBuilder(Mapping mapping) {
 
@@ -72,6 +75,9 @@ public class TemplateBuilder {
 
     var modifiersFilter = new ModifierFilter(elements);
     this.modifiers = modifiersFilter.filter();
+
+    var typeFilter = new TypeReferenceFilter(elements);
+    this.types = typeFilter.filter();
   }
 
   public Template create() {
@@ -112,6 +118,10 @@ public class TemplateBuilder {
             pb.parameter(item.name())
               .byString(item.name());
           }
+        }
+        for(var type: this.types) {    
+          pb.parameter(type.getSimpleName())
+            .byType(type);
         }
       })
       .build();
