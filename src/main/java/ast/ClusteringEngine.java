@@ -29,9 +29,8 @@ public class ClusteringEngine {
 
   public void generate() {
     for (var commit : getCommits()) {
-      System.out.println("####################");
-      System.out.println(commit);
       var mappings = getMappingsFromCommit(commit).get();
+      System.out.println(commit);
       identifyCluster(mappings, commit);
     }
   }
@@ -44,6 +43,7 @@ public class ClusteringEngine {
         for(var item: cluster.getItems()) {
           if(item.getPattern().matches(mapping)) {
             item.add(mapping, commit);
+            added = true;
           }
         }
         if(!added) {

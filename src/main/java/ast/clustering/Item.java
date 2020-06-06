@@ -17,11 +17,6 @@ public class Item implements Jsonify<Item> {
 
   }
 
-  public Item(Mapping mapping, String commit) {
-    this.mapping = mapping;
-    this.commit = commit;
-  }
-
   public void setSnapshot(Snapshot s) {
     this.snapshot = s;
   }
@@ -29,6 +24,14 @@ public class Item implements Jsonify<Item> {
   public Item(String commit, Mapping mapping) {
     this.commit = commit;
     this.mapping = mapping;
+  }
+
+  public String getCommit() {
+    return commit;
+  }
+
+  public Mapping getMapping() {
+    return mapping;
   }
 
   @Override

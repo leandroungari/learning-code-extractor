@@ -18,22 +18,6 @@ public class StatementElement extends Element<CtStatement> {
     this.priority = 3;
   }
 
-  /*@Override
-  protected List<CtElement> getCompleteChange() {
-    var result = new ArrayList<CtElement>();
-    this.variables = getVariablesDependencies(element);
-
-    var executable = getParentExecutable();
-    var block = executable.getBody().getStatements();
-    for (var i = block.indexOf(element); i >= 0; i--) {
-      if (hasDependency(block.get(i))) {
-        result.add(0, block.get(i));
-      }
-    }
-
-    return result;
-  }*/
-
   @Override
   public List<? extends CtElement> dependencies() {
     var result = new ArrayList<CtElement>();
@@ -45,6 +29,10 @@ public class StatementElement extends Element<CtStatement> {
       if (this.hasDependency(block.get(i), variables)) {
         result.add(0, block.get(i));
       }
+    }
+
+    if(result.isEmpty()) {
+      result.add(this.get());
     }
 
     return result;
@@ -91,14 +79,6 @@ public class StatementElement extends Element<CtStatement> {
     CtStatement state, 
     List<CtVariableReference<?>> variables) {
 
-    // verifica se alguma variável dependência foi atribuída no comando
-    /*
-     * var writeVariables = getWriteVariables(state); for(var variable:
-     * writeVariables) { if(variables.contains(variable)) { return true; } }
-     * //verifica se alguma variável dependência foi definida no comando var
-     * definitionVariables = getDefinitionVariables(state); for(var variable:
-     * definitionVariables) { if(variables.contains(variable)) { return true; } }
-     */
     var dependencies = StatementElement.variablesOfStatement(state);
     for (var variable : dependencies) {
       if (variables.contains(variable)) {
@@ -118,32 +98,4 @@ public class StatementElement extends Element<CtStatement> {
     
     return List.of(element.toString());
   }
-
-  /*
-   * private List<CtVariableReference<?>> getAccessVariables(CtElement target) {
-   * return Change.childrenFilter( target, CtVariableAccess.class, item ->
-   * item.getVariable() ); }
-   */
-
-  /*
-   * private List<CtVariableReference<?>> getDefinitionVariables(CtElement target)
-   * { return Change.childrenFilter( target, CtLocalVariable.class, item ->
-   * item.getReference() ); }
-   * 
-   * private List<CtVariableReference<?>> getReadVariables(CtElement target) {
-   * return Change.childrenFilter( target, CtVariableRead.class, item ->
-   * item.getVariable() ); }
-   * 
-   * private List<CtVariableReference<?>> getWriteVariables(CtElement target) {
-   * return Change.childrenFilter( target, CtVariableWrite.class, item ->
-   * item.getVariable() ); }
-   * 
-   * private List<CtVariableReference<?>> getReadFields(CtElement target) { return
-   * Change.childrenFilter( target, CtFieldRead.class, item -> item.getVariable()
-   * ); }
-   * 
-   * private List<CtVariableReference<?>> getWriteFields(CtElement target) {
-   * return Change.childrenFilter( target, CtFieldWrite.class, item ->
-   * item.getVariable() ); }
-   */
 }

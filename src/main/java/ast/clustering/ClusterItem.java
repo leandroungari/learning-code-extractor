@@ -8,8 +8,6 @@ import com.google.gson.JsonObject;
 
 import org.eclipse.jgit.api.errors.GitAPIException;
 
-import ast.Pattern;
-import ast.TemplateBuilder;
 import ast.extractor.mapping.Mapping;
 import ast.snapshot.Snapshot;
 import core.Jsonify;
@@ -17,13 +15,13 @@ import core.Jsonify;
 public class ClusterItem implements Jsonify<ClusterItem> {
 
   private Integer code;
-  private Pattern pattern;
+  private Item base;
   private List<Item> items;
 
   private Cluster parent;
 
   ClusterItem(Mapping mapping, String commit, Integer code, Cluster parent) {
-    this.pattern = extractPattern(mapping);
+    this.base = new Item(commit, mapping);
     this.items = new ArrayList<>();
     this.code = code;
     this.parent = parent;
@@ -31,12 +29,13 @@ public class ClusterItem implements Jsonify<ClusterItem> {
     this.add(mapping, commit);
   }
 
-  ClusterItem(Cluster parent) {
+  ClusterItem(Integer code, Cluster parent) {
     this.parent = parent;
+    this.code = code;
   }
 
   public void add(Mapping mapping, String commit) {
-    items.add(new Item(mapping, commit));
+    items.add(new Item(commit, mapping));
   }
 
   public Integer getCode() {
@@ -47,13 +46,8 @@ public class ClusterItem implements Jsonify<ClusterItem> {
     return items;
   }
 
-  public Pattern getPattern() {
-    return pattern;
-  }
-
-  private Pattern extractPattern(Mapping mapping) {
-    var template = new TemplateBuilder<>(mapping);
-    return template.model();
+  public Item getBase() {
+    return base;
   }
 
   @Override
@@ -65,7 +59,7 @@ public class ClusterItem implements Jsonify<ClusterItem> {
   @Override
   public JsonObject toJson() {
     var result = new JsonObject();
-    result.add("pattern", pattern.toJson());
+    result.add("base", base.toJson());
     var list = new JsonArray();
     for(var item: items) {
       list.add(item.toJson());
@@ -78,7 +72,11 @@ public class ClusterItem implements Jsonify<ClusterItem> {
   public ClusterItem fromJson(JsonObject content) {
     try {
       var snapshot = new Snapshot(parent.repository(), parent.branch());
-      this.pattern = new Pattern().fromJson(content.get("pattern").getAsJsonObject());
+      
+      var base = new Item();
+      base.setSnapshot(snapshot);
+
+      this.base = base.fromJson(content.get("base").getAsJsonObject());
       this.items = new ArrayList<>();
       for(var item: content.get("items").getAsJsonArray()) {
         var instance = new Item();

@@ -32,6 +32,10 @@ public class CommitSnapshot {
     return current.id().getName();
   }
 
+  public Commit commit() {
+    return current;
+  }
+
   private CtModel createModel() {
 
     for (var file : current.getDiffFiles()) {
@@ -79,6 +83,10 @@ public class CommitSnapshot {
     } else {
       return null;
     }
+  }
+
+  public CtPackage root() {
+    return this.model.getRootPackage();
   }
 
   public CommitSnapshot previous() {
