@@ -20,7 +20,6 @@ public class MappingsReader {
   }
 
   public CommitMappings commit(String id) {
-    System.out.println("-" + id);
     var result = new CommitMappings(repository, branch, id);
     var resource = new Resource<JsonObject>(
       SettingsController.get().folderOfMetadata() 

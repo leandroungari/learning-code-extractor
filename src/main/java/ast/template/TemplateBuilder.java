@@ -92,7 +92,16 @@ public class TemplateBuilder {
       .create(items)
       .configurePatternParameters(pb -> {
         pb.setConflictResolutionMode(ConflictResolutionMode.USE_NEW_NODE);
-
+        for(var type: this.types) {    
+          try{
+            pb.parameter(type.getQualifiedName())
+            .byString(type.getQualifiedName());
+          } catch(Exception e) {
+            System.err.println(this.types);
+            System.err.println(e.getMessage());
+            throw new Error("Type Filter Error");
+          }
+        }
         for(var reference: this.variables) {  
           pb.parameter(reference.getSimpleName())
             .byString(reference.getSimpleName());
@@ -117,16 +126,6 @@ public class TemplateBuilder {
           for(var item: modifier.getModifiers()) {
             pb.parameter(item.name())
               .byString(item.name());
-          }
-        }
-        for(var type: this.types) {    
-          try{
-            pb.parameter(type.getSimpleName())
-            .byType(type);
-          } catch(Exception e) {
-            System.err.println(this.types);
-            System.err.println(e.getMessage());
-            break;
           }
         }
       })
