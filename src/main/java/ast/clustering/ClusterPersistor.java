@@ -2,8 +2,6 @@ package ast.clustering;
 
 import java.io.IOException;
 
-import com.google.gson.JsonObject;
-
 import core.controller.SettingsController;
 import resource.JSON;
 import resource.Resource;
@@ -34,10 +32,9 @@ public class ClusterPersistor {
   }
 
   void write() {
-    var resource = new Resource<JsonObject>(this.base, "#" + repository + ".json");
-    resource.setContent(cluster.toJson());
+    var resource = new Resource(this.base, "#" + repository + ".json");
     try {
-      resource.write(new JSON(), true);
+      resource.write(new JSON<>(cluster), true);
     } catch (IOException e) {
       e.printStackTrace();
     }

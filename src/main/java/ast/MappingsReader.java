@@ -2,8 +2,6 @@ package ast;
 
 import java.io.IOException;
 
-import com.google.gson.JsonObject;
-
 import ast.extractor.CommitMappings;
 import core.controller.SettingsController;
 import resource.JSON;
@@ -21,7 +19,7 @@ public class MappingsReader {
 
   public CommitMappings commit(String id) {
     var result = new CommitMappings(repository, branch, id);
-    var resource = new Resource<JsonObject>(
+    var resource = new Resource(
       SettingsController.get().folderOfMetadata() 
         + "/" + repository 
         + "/mappings/", 
@@ -29,7 +27,7 @@ public class MappingsReader {
     );
 
     try {
-      return result.fromJson(resource.read(new JSON()));
+      return resource.<CommitMappings>read(new JSON<>(result));
     } catch (IOException e) {
       e.printStackTrace();
     }
