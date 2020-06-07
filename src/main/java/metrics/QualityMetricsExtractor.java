@@ -31,7 +31,9 @@ public class QualityMetricsExtractor {
 
   public void extract() {
     for (var commit : getCommits()) {
-      
+      var metrics = this.analyze(repository, commit);
+      var item = new CommitMetrics(metrics);
+      persistor.write(item, commit.id().getName());
     }
   }
 
@@ -73,12 +75,9 @@ public class QualityMetricsExtractor {
   private List<Commit> getCommits() {
     var instance = createRepository();
     try {
-      var items = instance
+      return instance
         .branch(branch)
         .commits();
-
-      items.remove(0);
-      return items;
     } catch (GitAPIException e) {
       e.printStackTrace();
     }

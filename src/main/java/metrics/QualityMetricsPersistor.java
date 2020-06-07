@@ -1,11 +1,9 @@
 package metrics;
 
 import java.io.IOException;
-import java.util.List;
 
-import ast.clustering.ClusterItem;
 import core.controller.SettingsController;
-import resource.JSON;
+import resource.CSV;
 import resource.Resource;
 
 public class QualityMetricsPersistor {
@@ -26,15 +24,22 @@ public class QualityMetricsPersistor {
   }
 
   void write(CommitMetrics item, String commit) {
-    var resource = new Resource(this.base + "/" + branch, "#" + commit + ".csv");
-    //fazer escrita
-    resource.write(new );
+    var resource = new Resource(this.base + "/" + branch, commit + ".csv");
+    try {
+      resource.write(new CSV<>(item));
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
   }
 
   CommitMetrics read(String commit) {
-    var resource = new Resource(this.base, "#" + commit + ".json");
-    var item = new ClusterItem(code, parent);
-    //fazer read
+    var resource = new Resource(this.base + "/" + branch, commit + ".csv");
+    var item = new CommitMetrics();
+    try {
+      return resource.read(new CSV<>(item));
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
     return null;
   }
 }

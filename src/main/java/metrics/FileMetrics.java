@@ -117,15 +117,15 @@ public class FileMetrics implements CSVTransformerItem<FileMetrics> {
 
   public FileMetrics fromCSVItem(String[] content) {
     this.filename = content[0];
-    this.cbo = Double.valueOf(content[1]);
-    this.dit = Double.valueOf(content[2]);
-    this.lcom = Double.valueOf(content[3]);
-    this.loc = Double.valueOf(content[4]);
-    this.nosi = Double.valueOf(content[5]);
-    this.numberOfFields = Double.valueOf(content[6]);
-    this.numberOfMethods = Double.valueOf(content[7]);
-    this.rfc = Double.valueOf(content[7]);
-    this.wmc = Double.valueOf(content[8]);
+    this.cbo = Double.valueOf(content[1] + "d");
+    this.dit = Double.valueOf(content[2] + "d");
+    this.lcom = Double.valueOf(content[3] + "d");
+    this.loc = Double.valueOf(content[4] + "d");
+    this.nosi = Double.valueOf(content[5] + "d");
+    this.numberOfFields = Double.valueOf(content[6] + "d");
+    this.numberOfMethods = Double.valueOf(content[7] + "d");
+    this.rfc = Double.valueOf(content[7] + "d");
+    this.wmc = Double.valueOf(content[8] + "d");
     return this;
   }
 

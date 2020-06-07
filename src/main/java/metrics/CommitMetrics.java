@@ -13,6 +13,10 @@ public class CommitMetrics implements CSVTransformer<CommitMetrics> {
     this.files = new ArrayList<>();
   }
 
+  public CommitMetrics(List<FileMetrics> files) {
+    this.files = files;
+  }
+
   public void add(FileMetrics a) {
     files.add(a);
   }
@@ -24,6 +28,14 @@ public class CommitMetrics implements CSVTransformer<CommitMetrics> {
       result.add(String.join(",", file.toCSVItem()));
     }
     return result;
+  }
+
+  @Override
+  public String toString() {
+    var header = String.join(",", this.getHeader());
+    var list = this.toCSV();
+    list.add(0, header);
+    return String.join("\n", list);
   }
 
   public String[] getHeader() {
