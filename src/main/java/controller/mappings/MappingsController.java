@@ -7,11 +7,11 @@ import org.eclipse.jgit.api.errors.GitAPIException;
 
 import ast.MappingsExtractor;
 import ast.extractor.CommitMappings;
-import core.Settings;
+import persistence.Settings;
 import repository.Commit;
 import repository.Repository;
-import resource.JSON;
-import resource.Resource;
+import persistence.resource.JSON;
+import persistence.resource.Resource;
 
 public class MappingsController {
 
@@ -51,7 +51,7 @@ public class MappingsController {
     );
 
     try {
-      resource.write(new JSON<CommitMappings>(item));
+      resource.write(new JSON<>(item));
       return true;
     } catch (IOException e) {
       e.printStackTrace();

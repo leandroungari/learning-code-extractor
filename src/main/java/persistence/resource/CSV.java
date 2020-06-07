@@ -2,7 +2,7 @@ package persistence.resource;
 
 import java.util.List;
 
-import core.csv.CSVTransformer;
+import persistence.csv.CSVTransformer;
 
 public class CSV<T extends CSVTransformer<T>> implements Storable<T> {
 

@@ -3,8 +3,8 @@ package metrics;
 import java.io.IOException;
 
 import persistence.Settings;
-import resource.CSV;
-import resource.Resource;
+import persistence.resource.CSV;
+import persistence.resource.Resource;
 
 public class QualityMetricsPersistor {
 

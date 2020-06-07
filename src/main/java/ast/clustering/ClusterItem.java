@@ -10,7 +10,7 @@ import org.eclipse.jgit.api.errors.GitAPIException;
 
 import ast.extractor.mapping.Mapping;
 import ast.snapshot.Snapshot;
-import core.Jsonify;
+import persistence.Jsonify;
 
 public class ClusterItem implements Jsonify<ClusterItem> {
 

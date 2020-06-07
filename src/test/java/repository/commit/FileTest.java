@@ -6,7 +6,7 @@ import org.eclipse.jgit.api.errors.GitAPIException;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import core.Settings;
+import persistence.Settings;
 import repository.Branch;
 import repository.Commit;
 import repository.Repository;

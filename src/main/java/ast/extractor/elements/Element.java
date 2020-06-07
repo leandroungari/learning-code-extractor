@@ -7,7 +7,7 @@ import java.util.stream.Collectors;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
-import core.Jsonify;
+import persistence.Jsonify;
 import ast.extractor.Tokenizer;
 import spoon.reflect.code.CtLiteral;
 import spoon.reflect.declaration.CtElement;

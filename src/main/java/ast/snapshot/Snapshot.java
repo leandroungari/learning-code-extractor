@@ -6,7 +6,7 @@ import java.util.Map;
 
 import org.eclipse.jgit.api.errors.GitAPIException;
 
-import core.Settings;
+import persistence.Settings;
 import repository.Commit;
 import repository.Repository;
 import repository.exception.GitRepositoryException;

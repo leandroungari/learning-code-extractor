@@ -7,7 +7,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
 import ast.extractor.mapping.Mapping;
-import core.Jsonify;
+import persistence.Jsonify;
 
 public class Cluster implements Jsonify<Cluster> {
 

@@ -3,7 +3,7 @@ package persistence.resource;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 
-import core.Jsonify;
+import persistence.Jsonify;
 
 public class JSON<T extends Jsonify<T>> implements Storable<T> {
 

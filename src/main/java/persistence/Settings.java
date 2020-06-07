@@ -2,6 +2,8 @@ package persistence;
 
 import java.io.File;
 
+import persistence.system.OperationSystem;
+
 public class Settings {
 
   private static String base;
@@ -13,6 +15,8 @@ public class Settings {
 	
 	public static final int USER_FOLDER = 1;
 	public static final int CURRENT_FOLDER = 2;
+
+	private static OperationSystem os = new OperationSystem();
 
 	private static Settings settings;
 	
@@ -72,20 +76,21 @@ public class Settings {
 	}
 	
 	private void selectOption(Integer optionFolder) {
+		
 		if(optionFolder == USER_FOLDER) {
-			setBase(FileUtil.userFolder() + "/learning-code-extractor-data");
+			setBase(os.directory().getUserFolder() + "/data");
 		}
 		else {
-			setBase(FileUtil.currentFolder() + "/learning-code-extractor-data");
+			setBase(os.directory().getCurrentFolder() + "/data");
 		}
 	}
 	
 	private void createFolder() {
 		
 		folder = new File(getBase());
-		if(!FileUtil.folderExists(folder)) {
+		if(!os.directory().exists(folder)) {
 			
-			FileUtil.createFolder(folder);		
+			os.directory().mkdir(folder);		
 		}
 	}
 	
@@ -95,11 +100,9 @@ public class Settings {
 		
 		repositories = new File(path + "/repositories");
 		metadata = new File(path + "/metadata");
-		metrics = new File(path + "/metrics");
 		
-		FileUtil.createFolder(repositories);
-		FileUtil.createFolder(metadata);
-		FileUtil.createFolder(metrics);
+		os.directory().mkdir(repositories);
+		os.directory().mkdir(metadata);
 	}
 
 	private String getBase() {

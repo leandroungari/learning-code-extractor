@@ -5,7 +5,7 @@ import com.google.gson.JsonObject;
 import ast.extractor.mapping.Mapping;
 import ast.template.Template;
 import ast.template.TemplateBuilder;
-import core.Jsonify;
+import persistence.Jsonify;
 
 public class ClusterIndex implements Jsonify<ClusterIndex> {
 

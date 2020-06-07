@@ -3,8 +3,8 @@ package ast.snapshot;
 import java.io.IOException;
 
 import repository.Commit;
-import resource.PlainText;
-import resource.Resource;
+import persistence.resource.PlainText;
+import persistence.resource.Resource;
 import spoon.Launcher;
 import spoon.reflect.CtModel;
 import spoon.reflect.declaration.CtElement;

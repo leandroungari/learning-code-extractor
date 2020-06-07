@@ -2,9 +2,9 @@ package ast.clustering;
 
 import java.io.IOException;
 
-import core.Settings;
-import resource.JSON;
-import resource.Resource;
+import persistence.Settings;
+import persistence.resource.JSON;
+import persistence.resource.Resource;
 
 public class ClusterItemPersistor {
 
