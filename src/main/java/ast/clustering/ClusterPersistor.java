@@ -20,7 +20,7 @@ public class ClusterPersistor {
     this.repository = cluster.repository();
     this.cluster = cluster;
 
-    this.base = SettingsController.get()
+    this.base = Settings.get()
       .folderOfMetadata() + "/" + 
       this.repository + "/clusters";
 
