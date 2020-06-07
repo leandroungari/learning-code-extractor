@@ -3,8 +3,6 @@ package controller.mappings;
 import java.io.IOException;
 import java.util.List;
 
-import com.google.gson.JsonObject;
-
 import org.eclipse.jgit.api.errors.GitAPIException;
 
 import ast.MappingsExtractor;
@@ -45,17 +43,15 @@ public class MappingsController {
   }
 
   private Boolean store(CommitMappings item) {
-    var resource = new Resource<JsonObject>(
+    var resource = new Resource(
       SettingsController.get().folderOfMetadata() + 
       "/" + repository + 
       "/mappings",
       item.getCommit() + ".json"
     );
 
-    resource.setContent(item.toJson());
-
     try {
-      resource.write(new JSON());
+      resource.write(new JSON<CommitMappings>(item));
       return true;
     } catch (IOException e) {
       e.printStackTrace();

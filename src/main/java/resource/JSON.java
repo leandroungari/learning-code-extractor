@@ -1,20 +1,28 @@
 package resource;
 
-import java.io.IOException;
-
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 
-public class JSON implements Storable<JsonObject> {
+import core.Jsonify;
 
-  @Override
-  public String write(JsonObject item) throws IOException {
-    return item.toString();
+public class JSON<T extends Jsonify<T>> implements Storable<T> {
+
+  private T target;
+
+  public JSON(T target) {
+    this.target = target;
   }
 
   @Override
-  public JsonObject read(String content) throws IOException {
+  public String write() {
+    return target.toJson().toString();
+  }
+
+  @Override
+  public T read(String content) {
     var gson = new Gson();
-    return gson.fromJson(content, JsonObject.class);
+    var data = gson.fromJson(content, JsonObject.class);
+    target = target.fromJson(data);
+    return target;
   }
 }

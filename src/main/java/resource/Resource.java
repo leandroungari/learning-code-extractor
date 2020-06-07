@@ -5,10 +5,9 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
-public class Resource<T> {
+public class Resource {
   
   private File resource;
-  private T item;
   private Boolean isFolder;
 
   public Resource(String folder, String file) {
@@ -32,20 +31,16 @@ public class Resource<T> {
     return this.resource;
   }
 
-  public void setContent(T content) {
-    this.item = content;
-  }
-
   /**
    * Escreve um novo arquivo do recurso somente
    * se o arquivo não existir
    * @param store Formato de armazenamento
    * @throws IOException
    */
-  public void write(Storable<T> store) throws IOException {
+  public void write(Storable<?> store) throws IOException {
     if(this.isFolder) 
       throw new Error("You cannot write a folder, it must be a file!");
-    this.createFile(store.write(item), false);
+    this.createFile(store.write(), false);
   }
 
   /**
@@ -55,13 +50,13 @@ public class Resource<T> {
    * @param override Opção de forçar a reescrita de um arquivo existente
    * @throws IOException
    */
-  public void write(Storable<T> store, Boolean override) throws IOException {
+  public void write(Storable<?> store, Boolean override) throws IOException {
     if(this.isFolder) 
       throw new Error("You cannot write a folder, it must be a file!");
-    this.createFile(store.write(item), override);
+    this.createFile(store.write(), override);
   }
 
-  public T read(Storable<T> store) throws IOException {
+  public <T> T read(Storable<T> store) throws IOException {
     if(this.isFolder) 
       throw new Error("You cannot read a folder, it must be a file!");
     return store.read(this.readFile());

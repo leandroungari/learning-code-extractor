@@ -57,11 +57,9 @@ public class CommitSnapshot {
     String name, 
     String content) {
 
-    var resource = new Resource<String>(folder, name);
-    resource.setContent(content);
-
+    var resource = new Resource(folder, name);
     try {
-      resource.write(new PlainText());
+      resource.write(new PlainText(content));
     } catch (IOException e) {
       e.printStackTrace();
     }
