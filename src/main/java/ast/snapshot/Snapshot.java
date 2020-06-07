@@ -1,67 +1,88 @@
 package ast.snapshot;
 
 import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
+
+import org.eclipse.jgit.api.errors.GitAPIException;
 
 import core.controller.SettingsController;
-import spoon.Launcher;
-import spoon.SpoonAPI;
-import spoon.reflect.CtModel;
-import storage.Storage;
-import util.FileUtil;
+import repository.Commit;
+import repository.Repository;
+import repository.exception.GitRepositoryException;
 
 public class Snapshot {
 
-  private String commit;
-  private List<String> files;
-  private Storage storage;
-  private SpoonAPI api;
+  private String repositoryName;
+  private String branch;
+  private Repository repositoryInstance;
+
+  private String[] availableCommits;
+  private Integer position;
+  private Map<String,CommitSnapshot> commits;
+
+  private String base;
 
   private static SettingsController settings = SettingsController.get();
 
-  public Snapshot(String commit) {
+  public Snapshot(String repository, String branch) throws GitAPIException {
+    this.repositoryName = repository;
+    this.branch = branch;
+    this.repositoryInstance = createRepository(repository);
+    
+    this.availableCommits = new String[10];
+    this.position = 0;
 
-    this.commit = commit;
-    files = new ArrayList<>();
-    storage = new Storage(settings.folderOfMetadata() + "/.temp/" + this.commit);
+    this.commits = new HashMap<>();
 
-    api = new Launcher();
-
-    var parentFolder = new File(settings.folderOfMetadata() + "/.temp");
-    if(parentFolder.exists()) {
-      var listOfFolder = FileUtil.listOfFolders(parentFolder);
-      if(listOfFolder.size() > 3) {
-        var position =  Math.round((float)Math.random()*10) % listOfFolder.size();
-        var oldResource = new Storage(settings.folderOfMetadata() + "/.temp/" + listOfFolder.get(position));
-        oldResource.remove();
-      }
-    }
+    this.base = SettingsController.get()
+      .folderOfMetadata() + "/" + getRepositoryName();
   }
 
-  public void add(String name, String content) {
+  public String getRepositoryName() {
+    return this.repositoryName;
+  }
 
+  String base() {
+    return this.base;
+  }
+
+  public CommitSnapshot commit(String commit) {
+    verifyDeletionOfCommit();
+    return createSnapshotCommit(commit);
+  }
+
+  private CommitSnapshot createSnapshotCommit(String commit) {
+    Commit instance = null;
     try {
-      if (!files.contains(name)) {
-        storage.plainText(name).write(content);
-        files.add(name);
-      }
-    } catch (IOException e) {
+      instance = repositoryInstance.branch(branch).commit(commit);
+    } catch (GitAPIException e) {
       e.printStackTrace();
     }
+    var snap = new CommitSnapshot(instance, this);
+    commits.put(commit, snap);
+    availableCommits[position] = commit;
+    position = (position + 1) % 10;
+    return snap;
   }
 
-  public boolean contains(String filename) {
-    
-    return files.contains(filename);
+  /**
+   * Libera a posição para a adição
+   * de um snapshot de commit
+   */
+  private void verifyDeletionOfCommit() {
+    if(availableCommits[position] != null) {
+      var commit = availableCommits[position];
+      this.commits.remove(commit);
+      availableCommits[position] = null;
+    }
   }
 
-  public String get(String name) {
-
+  private Repository createRepository(String name) {
     try {
-      return storage.plainText(name).read();
-    } catch (IOException e) {
+      return Repository
+        .create(new File(settings.folderOfRepositories() + "/" + name));
+    } catch (GitRepositoryException e) {
       e.printStackTrace();
     }
     return null;
@@ -69,12 +90,5 @@ public class Snapshot {
 
   public void clear() {
 
-    storage.remove();
-  }
-
-  public CtModel model() {
-    api.addInputResource(settings.folderOfMetadata() + "/.temp/"+ this.commit +"/");
-    api.buildModel();
-    return api.getModel();
   }
 }

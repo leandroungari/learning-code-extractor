@@ -6,6 +6,7 @@ import core.resource.resources.CommitsInfoResource;
 import core.resource.resources.ListOfBranchesResource;
 import core.resource.resources.ListOfCommitsResource;
 import core.resource.resources.MetricsFilesResource;
+import core.resource.resources.ModificationsResource;
 
 public class ResourceTrack {
 
@@ -26,6 +27,7 @@ public class ResourceTrack {
 			addResource(ResourceType.LIST_OF_COMMITS, new ListOfCommitsResource());
 			addResource(ResourceType.METRICS_FILES, new MetricsFilesResource());
 			addResource(ResourceType.COMMITS_INFO, new CommitsInfoResource());
+			addResource(ResourceType.MODIFICATIONS, new ModificationsResource());
 		}
 	}
 

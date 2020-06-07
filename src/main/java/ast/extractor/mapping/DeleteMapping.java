@@ -1,63 +1,57 @@
 package ast.extractor.mapping;
 
-import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
-import ast.extractor.Change;
+import ast.extractor.elements.ElementFactory;
 import spoon.reflect.declaration.CtElement;
 
 public class DeleteMapping extends Mapping {
 
-  public DeleteMapping(CtElement source) {
-    super();
-    this.source = Change.createChange(source);
+  public DeleteMapping() {
+    super(); 
   }
 
-  public Change<?> source() {
-
-    return source;
+  public DeleteMapping(CtElement source) {
+    super();
+    this.source = ElementFactory.create(source);
   }
 
   @Override
   public String toString() {
-    
-    return toMap().toString();
+
+    return toJson().toString();
   }
 
   @Override
-  public JsonElement toMap() {
+  public JsonObject toJson() {
     var json = new JsonObject();
-    json.add("source", source.toMap());
+    json.add("source", source.toJson());
+    json.addProperty("type", "delete");
+    json.addProperty("oldFile", oldFile);
     return json;
   }
 
   @Override
+  public Mapping fromJson(JsonObject content) {
+    var path = DeleteMapping.pathOfElement(content, "source");
+    this.oldFile = content.get("oldFile").getAsString();
+    this.source = ElementFactory
+      .create(snapshot.previous(), path, this.oldFile);
+    return this;
+  }
+
+  @Override
   public Boolean isParentOf(Mapping other) {
-    if(isSameType(other)) {
-      var element = (DeleteMapping) other;
-      try {
-        return element.source().get().hasParent(source.get());
-      } catch(NullPointerException ex) {
-        System.err.println("== Erro na definição da modificação ==");
-        System.out.println(element.source().path());
-      }
-    }
-    return false;
+    return this.source().isParentOf(other.source());
   }
 
   @Override
   public Boolean isChildOf(Mapping other) {
-    if(isSameType(other)) {
-      var element = (DeleteMapping) other;
-      try {
-        return source.get().hasParent(element.source().get());
-      } catch(NullPointerException ex) {
-        System.err.println("== Erro na definição da modificação ==");
-        System.out.println(element.source().path());
-      }
-    }
-    return false;
+    return this.source().isChildOf(other.source());
   }
-  
 
+  @Override
+  protected Integer getPriority() {
+    return source().getPriority();
+  }
 }

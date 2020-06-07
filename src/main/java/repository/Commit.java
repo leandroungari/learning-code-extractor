@@ -56,7 +56,7 @@ public class Commit {
 	public List<File> allFilesByExtension(String ext) {
 		
 		return allFiles().stream()
-      .filter(file -> file.name().endsWith(ext))
+      .filter(file -> file.fullPath().endsWith(ext))
       .collect(Collectors.toList());
 	}
 	
@@ -108,17 +108,61 @@ public class Commit {
 		}
 
 	  return list;
-  }
+	}
 	
+	public List<File> getDiffFiles() {
+		var result = new ArrayList<File>();
+		for(var diff: this.diff()) {
+			if(!"/dev/null".equals(diff.newPath())) {
+				result.add(this.getFile(diff.newPath()));
+			}
+		}
+		return result;
+	}
+
+	public List<File> getDiffFiles(String extension) {
+		var result = new ArrayList<File>();
+		for(var diff: this.diff()) {
+			if(diff.newPath().contains(extension)) {
+				result.add(this.getFile(diff.newPath()));
+			}
+		}
+		return result;
+	}
+
+	public List<Map<String,String>> getDiffEntries() {
+		var result = new ArrayList<Map<String, String>>();
+		for(var diff: this.diff()) {
+			result.add(Map.of(
+				"source", diff.oldPath(),
+				"destination", diff.newPath()
+			));
+		}
+		return result;
+	}
+	
+	public List<Map<String,String>> getDiffEntries(String extension) {
+		var result = new ArrayList<Map<String, String>>();
+		for(var diff: this.diff()) {
+			if(diff.oldPath().contains(extension) || diff.newPath().contains(extension)) {
+				result.add(Map.of(
+					"source", diff.oldPath(),
+					"destination", diff.newPath()
+				));
+			}
+		}
+		return result;
+	}
+
 	public File getFile(String filename) {
 		
 		var factory = new GitFactory(branch.containedRepository());
 		try {
 			return factory.filterFile(this, filename);
 		} catch (IOException e) {
-			e.printStackTrace();
+			//e.printStackTrace();
+			return null;
 		}
-		return null;
 	}
 	
 	public CommitInfo info() {

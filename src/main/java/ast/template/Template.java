@@ -1,89 +1,55 @@
 package ast.template;
 
-import java.util.LinkedHashSet;
+import java.util.HashSet;
 
+import ast.extractor.elements.Element;
+import ast.extractor.mapping.Mapping;
+import spoon.pattern.Pattern;
 import spoon.reflect.declaration.CtElement;
-import spoon.reflect.visitor.filter.TypeFilter;
 
 public class Template {
+  
+  private Pattern input;
+  private Pattern output;
 
-  private CtElement element;
-
-  public Template(CtElement element) {
-
-    this.element = element;
+  public Template(Pattern in, Pattern out) {
+    this.input = in;
+    this.output = out;
   }
 
-  public LinkedHashSet<SyntaxElement> extract() {
-
-    var syntax = new SyntaxElement(getType(element), null);
-    var tree = new LinkedHashSet<SyntaxElement>();
-
-    tree.add(syntax);
-    return extractChildNodes(syntax.getChildren(), element);
+  public Pattern getInput() {
+    return input;
   }
 
-  /**
-   * Nesse método são extraídos os elementos
-   * 
-   * A princípio optou-se por identificar somente os valores dos elementos
-   * com 2 ou menos elementos.
-   * @param tree
-   * @param element
-   * @return
-   */
-  private LinkedHashSet<SyntaxElement> extractChildNodes(
-    LinkedHashSet<SyntaxElement> tree, 
-    CtElement element) {
+  public Pattern getOutput() {
+    return output;
+  }
 
-    element.descendantIterator().forEachRemaining(item -> {
-      if(element == item.getParent()) {
-        
-        var syntax = new SyntaxElement(
-          getType(item), 
-          item.isImplicit() || howManyChildren(item) > 2 ? null : getValue(item)
-        );
-        tree.add(syntax);
+  public Boolean matches(Mapping mapping) {
+    return this.compatibility(input, mapping.source())
+      && this.compatibility(output, mapping.destination());
+  }
 
-        if(hasChildren(item)) {
-          syntax.setChildren(extractChildNodes(syntax.getChildren(), item));
+  private Boolean compatibility(Pattern pattern, Element<?> element) {
+    var matches = new HashSet<CtElement>();
+    pattern
+      .getMatches(element.getParentOfAllDependencies())
+      .stream()
+      .forEach(item -> {
+        try {
+          matches.add(item.getMatchingElement());
+        } catch(Exception ex) {
+          for(var options: item.getMatchingElements()) {
+            matches.add(options);
+          }
         }
-        else {
-          syntax.setChildren(null);
-        }
-        
-        /*if(getType(item) != null) {
-          syntax.setChildren(extractChildNodes(syntax.getChildren(), item));
-        }*/
+      });
+  
+    for(var dependency: element.dependencies()) {
+      if(!matches.contains(dependency)) {
+        return false;
       }
-    });
-
-    return tree;
+    }
+    return true;
   }
-
-  private Integer howManyChildren(CtElement item) {
-
-    return item.getElements(
-      new TypeFilter<>(CtElement.class)
-    ).size();
-  }
-
-  private boolean hasChildren(CtElement item) {
-    
-    return howManyChildren(item) != 1;
-  }
-
-  public String getValue(CtElement element) {
-
-    if(element == null) return null;
-    return element.toString();
-  }
-
-  public String getType(CtElement element) {
-
-    if(element == null) return null;
-    return element.getClass().getSimpleName();
-  }
-
-
 }

@@ -1,63 +1,58 @@
 package ast.extractor.mapping;
 
-import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
-import ast.extractor.Change;
+import ast.extractor.elements.ElementFactory;
 import spoon.reflect.declaration.CtElement;
 
 public class InsertMapping extends Mapping {
 
-  public InsertMapping(CtElement destination) {
-    super();
-    this.destination = Change.createChange(destination);
+  public InsertMapping() {
+    super(); 
   }
 
-  public Change<?> destination() {
+  public InsertMapping(CtElement destination) {
+    super();
 
-    return destination;
+    this.destination = ElementFactory.create(destination);
   }
 
   @Override
   public String toString() {
 
-    return toMap().toString();
+    return toJson().toString();
   }
 
   @Override
-  public JsonElement toMap() {
+  public JsonObject toJson() {
     var json = new JsonObject();
-    json.add("destination", destination.toMap());
+    json.add("destination", destination.toJson());
+    json.addProperty("type", "insert");
+    json.addProperty("newFile", newFile);
     return json;
   }
 
   @Override
+  public Mapping fromJson(JsonObject content) {
+    var path = InsertMapping.pathOfElement(content, "destination");
+    this.newFile = content.get("newFile").getAsString();
+    this.destination = ElementFactory
+      .create(snapshot, path, this.newFile);
+    return this;
+  }
+
+  @Override
   public Boolean isParentOf(Mapping other) {
-    if(isSameType(other)) {
-      var element = (InsertMapping) other;
-      try {
-        return element.destination().get().hasParent(destination.get());
-      } catch(NullPointerException ex) {
-        System.err.println("== Erro na definição da modificação ==");
-        System.out.println(element.destination.path());
-      }
-    }
-    return false;
+    return this.destination().isParentOf(other.destination());
   }
 
   @Override
   public Boolean isChildOf(Mapping other) {
-    if(isSameType(other)) {
-      var element = (InsertMapping) other;
-      try {
-        return destination.get().hasParent(element.destination().get());
-      } catch(NullPointerException ex) {
-        System.err.println("== Erro na definição da modificação ==");
-        System.out.println(element.destination.path());
-      }
-    }
-    return false;
+    return this.destination().isChildOf(other.destination());
   }
 
-
+  @Override
+  protected Integer getPriority() {
+    return destination().getPriority();
+  }
 }
