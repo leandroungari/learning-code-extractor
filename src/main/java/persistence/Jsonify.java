@@ -1,4 +1,4 @@
-package core;
+package persistence;
 
 import com.google.gson.JsonObject;
 

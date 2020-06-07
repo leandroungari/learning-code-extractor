@@ -1,4 +1,4 @@
-package resource;
+package persistence.resource;
 
 public interface Storable<T> {
   String write();

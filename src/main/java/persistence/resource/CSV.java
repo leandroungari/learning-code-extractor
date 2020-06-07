@@ -1,4 +1,4 @@
-package resource;
+package persistence.resource;
 
 import java.util.List;
 

@@ -1,4 +1,4 @@
-package core.csv;
+package persistence.csv;
 
 import java.util.List;
 

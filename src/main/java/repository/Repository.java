@@ -10,7 +10,7 @@ import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.api.errors.InvalidRemoteException;
 import org.eclipse.jgit.api.errors.TransportException;
 
-import core.Settings;
+import persistence.Settings;
 import repository.exception.GitRepositoryException;
 
 public class Repository {

@@ -2,7 +2,7 @@ package metrics;
 
 import java.io.IOException;
 
-import core.Settings;
+import persistence.Settings;
 import resource.CSV;
 import resource.Resource;
 

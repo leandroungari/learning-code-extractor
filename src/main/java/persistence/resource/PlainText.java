@@ -1,4 +1,4 @@
-package resource;
+package persistence.resource;
 
 public class PlainText implements Storable<String> {
 
