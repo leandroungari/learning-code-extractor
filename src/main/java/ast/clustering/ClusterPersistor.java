@@ -2,7 +2,7 @@ package ast.clustering;
 
 import java.io.IOException;
 
-import core.controller.SettingsController;
+import core.Settings;
 import resource.JSON;
 import resource.Resource;
 
