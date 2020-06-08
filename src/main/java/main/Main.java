@@ -16,6 +16,7 @@ import org.springframework.web.filter.CorsFilter;
 
 import command.ClusteringCommand;
 import command.MappingsCommand;
+import command.repository.DownloadCommand;
 import repository.exception.GitRepositoryException;
 
 /**
@@ -38,10 +39,12 @@ public class Main {
   	else {
       var mappings = new MappingsCommand();
       var cluster = new ClusteringCommand();
+      var download = new DownloadCommand();
 
       var cmd = JCommander.newBuilder()
         .addCommand("mappings", mappings)
         .addCommand("clustering", cluster)
+        .addCommand("download", download)
         .build();
 
       cmd.parse(args);
@@ -56,6 +59,11 @@ public class Main {
           cluster.run();
           System.out.println("=> Criação de clusters de mapeamentos concluída");
           break;
+
+        case "download":
+          download.run();
+          break;
+          
         default:
       } 
       
