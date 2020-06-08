@@ -1,6 +1,6 @@
 package metrics;
 
-import core.csv.CSVTransformerItem;
+import persistence.csv.CSVTransformerItem;
 
 public class FileMetrics implements CSVTransformerItem<FileMetrics> {
 

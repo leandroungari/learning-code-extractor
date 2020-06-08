@@ -3,7 +3,7 @@ package metrics;
 import java.util.ArrayList;
 import java.util.List;
 
-import core.csv.CSVTransformer;
+import persistence.csv.CSVTransformer;
 
 public class CommitMetrics implements CSVTransformer<CommitMetrics> {
  

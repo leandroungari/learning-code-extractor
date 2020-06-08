@@ -12,7 +12,6 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
 
-import commandline.CommandLine;
 import repository.exception.GitRepositoryException;
 
 /**
@@ -33,8 +32,7 @@ public class Main {
   		runAPI(args);
   	}
   	else {
-  		var commandLine = new CommandLine();
-    	commandLine.exec(args);
+  		System.out.println("Implementação da linha de comando");
   	}  	
   }
 

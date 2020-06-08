@@ -6,7 +6,7 @@ import java.util.Map;
 
 import org.eclipse.jgit.api.errors.GitAPIException;
 
-import core.controller.SettingsController;
+import persistence.Settings;
 import repository.Commit;
 import repository.Repository;
 import repository.exception.GitRepositoryException;
@@ -23,8 +23,6 @@ public class Snapshot {
 
   private String base;
 
-  private static SettingsController settings = SettingsController.get();
-
   public Snapshot(String repository, String branch) throws GitAPIException {
     this.repositoryName = repository;
     this.branch = branch;
@@ -35,7 +33,7 @@ public class Snapshot {
 
     this.commits = new HashMap<>();
 
-    this.base = SettingsController.get()
+    this.base = Settings.get()
       .folderOfMetadata() + "/" + getRepositoryName();
   }
 
@@ -81,7 +79,7 @@ public class Snapshot {
   private Repository createRepository(String name) {
     try {
       return Repository
-        .create(new File(settings.folderOfRepositories() + "/" + name));
+        .create(new File(Settings.get().folderOfRepositories() + "/" + name));
     } catch (GitRepositoryException e) {
       e.printStackTrace();
     }

@@ -1,14 +1,10 @@
 package repository;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.jgit.lib.ObjectId;
-
-import core.controller.SettingsController;
-import repository.exception.GitRepositoryException;
 
 public class Branch {
 
@@ -98,21 +94,5 @@ public class Branch {
 
 	public Repository containedRepository() {
 		return repository;
-	}
-
-	public static Branch fromData(String repository, String id, String name) {
-
-		var settings = SettingsController.get();
-
-		try {
-			var repo = Repository
-				.create(new File(settings.folderOfRepositories() + "/" + repository));
-
-			return new Branch(repo, name, id);
-		} catch (GitRepositoryException e) {
-			e.printStackTrace();
-		}
-
-		return null;
 	}
 }

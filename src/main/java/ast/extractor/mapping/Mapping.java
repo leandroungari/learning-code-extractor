@@ -2,7 +2,7 @@ package ast.extractor.mapping;
 
 import com.google.gson.JsonObject;
 
-import core.Jsonify;
+import persistence.Jsonify;
 import ast.extractor.elements.Element;
 import ast.snapshot.CommitSnapshot;
 

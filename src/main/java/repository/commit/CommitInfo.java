@@ -78,16 +78,4 @@ public class CommitInfo {
 		this.fullMessage = message;
 		return this;
 	}
-
-	public core.data.CommitInfo data() {
-		var item = new core.data.CommitInfo();
-		item.setId(this.getId());
-		item.setName(this.getAuthorName());
-		item.setEmail(this.getEmail());
-		item.setShortMessage(this.getShortMessage());
-		item.setFullMessage(this.getFullMessage());
-		item.setDate(this.getDate());
-
-		return item;
-	}
 }

@@ -220,12 +220,4 @@ public class Commit {
 	  }
 		return result;
 	}
-
-	public static Commit fromData(String repository, String branch, String commit) {
-
-		return new Commit(
-			Branch.fromData(repository, branch, null), 
-			ObjectId.fromString(commit)
-		);
-	}
 }

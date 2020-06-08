@@ -53,18 +53,6 @@
 			<artifactId>org.eclipse.jdt.core</artifactId>
 			<version>3.17.0</version>
 		</dependency>
-		<dependency>
-			<groupId>org.apache.commons</groupId>
-			<artifactId>commons-csv</artifactId>
-			<version>1.8</version>
-		</dependency>
-		<!-- https://mvnrepository.com/artifact/org.deeplearning4j/deeplearning4j-core -->
-		<dependency>
-		  <groupId>org.deeplearning4j</groupId>
-		  <artifactId>deeplearning4j-core</artifactId>
-		  <version>1.0.0-beta7</version>
-		</dependency>
-
 	</dependencies>
 	<properties>
 		<maven.compiler.release>11</maven.compiler.release>

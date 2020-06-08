@@ -4,7 +4,7 @@ import com.google.gson.JsonObject;
 
 import ast.extractor.mapping.Mapping;
 import ast.snapshot.Snapshot;
-import core.Jsonify;
+import persistence.Jsonify;
 
 public class Item implements Jsonify<Item> {
 
