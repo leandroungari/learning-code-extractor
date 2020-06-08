@@ -53,6 +53,13 @@
 			<artifactId>org.eclipse.jdt.core</artifactId>
 			<version>3.17.0</version>
 		</dependency>
+		<!-- https://mvnrepository.com/artifact/com.beust/jcommander -->
+		<dependency>
+    	<groupId>com.beust</groupId>
+    	<artifactId>jcommander</artifactId>
+    	<version>1.78</version>
+		</dependency>
+
 	</dependencies>
 	<properties>
 		<maven.compiler.release>11</maven.compiler.release>
