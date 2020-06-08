@@ -2,6 +2,8 @@ package main;
 
 import java.io.FileNotFoundException;
 
+import com.beust.jcommander.JCommander;
+
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
@@ -12,6 +14,8 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
 
+import command.ClusteringCommand;
+import command.MappingsCommand;
 import repository.exception.GitRepositoryException;
 
 /**
@@ -32,7 +36,29 @@ public class Main {
   		runAPI(args);
   	}
   	else {
-  		System.out.println("Implementação da linha de comando");
+      var mappings = new MappingsCommand();
+      var cluster = new ClusteringCommand();
+
+      var cmd = JCommander.newBuilder()
+        .addCommand("mappings", mappings)
+        .addCommand("clustering", cluster)
+        .build();
+
+      cmd.parse(args);
+
+      switch(cmd.getParsedCommand()) {
+        case "mappings":
+          mappings.run();
+          System.out.println("=> Extração de mapeamentos concluída");
+          break;
+
+        case "clustering":
+          cluster.run();
+          System.out.println("=> Criação de clusters de mapeamentos concluída");
+          break;
+        default:
+      } 
+      
   	}  	
   }
 
