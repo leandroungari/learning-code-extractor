@@ -1,4 +1,4 @@
-package controller.mappings;
+package controller;
 
 import java.io.File;
 

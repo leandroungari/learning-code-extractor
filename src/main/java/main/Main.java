@@ -16,6 +16,7 @@ import org.springframework.web.filter.CorsFilter;
 
 import command.ClusteringCommand;
 import command.MappingsCommand;
+import command.MetricsCommand;
 import command.repository.DownloadCommand;
 import repository.exception.GitRepositoryException;
 
@@ -40,11 +41,13 @@ public class Main {
       var mappings = new MappingsCommand();
       var cluster = new ClusteringCommand();
       var download = new DownloadCommand();
+      var metrics = new MetricsCommand();
 
       var cmd = JCommander.newBuilder()
         .addCommand("mappings", mappings)
         .addCommand("clustering", cluster)
         .addCommand("download", download)
+        .addCommand("metrics", metrics)
         .build();
 
       cmd.parse(args);
@@ -62,6 +65,12 @@ public class Main {
 
         case "download":
           download.run();
+          System.out.println("=> Download do repositório concluído");
+          break;
+
+        case "metrics":
+          metrics.run();
+          System.out.println("=> Extração das métricas concluída");
           break;
           
         default:

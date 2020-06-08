@@ -2,7 +2,7 @@ package command.repository;
 
 import com.beust.jcommander.Parameter;
 
-import controller.mappings.RepositoryController;
+import controller.RepositoryController;
 
 public class DownloadCommand {
   
