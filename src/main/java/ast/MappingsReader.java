@@ -3,9 +3,9 @@ package ast;
 import java.io.IOException;
 
 import ast.extractor.CommitMappings;
-import core.controller.SettingsController;
-import resource.JSON;
-import resource.Resource;
+import persistence.Settings;
+import persistence.resource.JSON;
+import persistence.resource.Resource;
 
 public class MappingsReader {
 
@@ -20,9 +20,10 @@ public class MappingsReader {
   public CommitMappings commit(String id) {
     var result = new CommitMappings(repository, branch, id);
     var resource = new Resource(
-      SettingsController.get().folderOfMetadata() 
-        + "/" + repository 
-        + "/mappings/", 
+      Settings.get().folderOfMetadata() 
+        + "/" + repository  
+        + "/mappings"
+        + "/" + branch, 
       id + ".json"
     );
 

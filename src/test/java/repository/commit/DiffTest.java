@@ -4,15 +4,13 @@ import org.eclipse.jgit.api.errors.GitAPIException;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import core.controller.SettingsController;
+import persistence.Settings;
 import repository.Commit;
 import repository.GitFactory;
 import repository.Repository;
 import repository.exception.GitRepositoryException;
 
 public class DiffTest {
-
-  private static SettingsController settings;
 
   private static Repository repo;
   private static Commit commit;
@@ -24,11 +22,9 @@ public class DiffTest {
   @BeforeClass
   public static void start() 
     throws GitRepositoryException, GitAPIException {
-    
-    settings = SettingsController.get();
 
     repo = Repository.create(new java.io.File(
-	    settings.folderOfRepositories() + "/" +
+	    Settings.get().folderOfRepositories() + "/" +
 	    REPOSITORY
     ));
     

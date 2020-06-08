@@ -10,7 +10,7 @@ import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.api.errors.InvalidRemoteException;
 import org.eclipse.jgit.api.errors.TransportException;
 
-import core.controller.SettingsController;
+import persistence.Settings;
 import repository.exception.GitRepositoryException;
 
 public class Repository {
@@ -19,7 +19,7 @@ public class Repository {
 	private String url;
 	private File folder;
 
-	private static SettingsController settings = SettingsController.get();
+	private static Settings settings = Settings.get();
 
 	public static Repository create(String name) {
 		try {

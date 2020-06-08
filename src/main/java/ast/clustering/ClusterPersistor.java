@@ -2,9 +2,9 @@ package ast.clustering;
 
 import java.io.IOException;
 
-import core.controller.SettingsController;
-import resource.JSON;
-import resource.Resource;
+import persistence.Settings;
+import persistence.resource.JSON;
+import persistence.resource.Resource;
 
 public class ClusterPersistor {
 
@@ -20,7 +20,7 @@ public class ClusterPersistor {
     this.repository = cluster.repository();
     this.cluster = cluster;
 
-    this.base = SettingsController.get()
+    this.base = Settings.get()
       .folderOfMetadata() + "/" + 
       this.repository + "/clusters";
 

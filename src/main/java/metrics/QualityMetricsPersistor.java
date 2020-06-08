@@ -2,9 +2,9 @@ package metrics;
 
 import java.io.IOException;
 
-import core.controller.SettingsController;
-import resource.CSV;
-import resource.Resource;
+import persistence.Settings;
+import persistence.resource.CSV;
+import persistence.resource.Resource;
 
 public class QualityMetricsPersistor {
 
@@ -18,7 +18,7 @@ public class QualityMetricsPersistor {
     this.repository = repository;
     this.branch = branch;
 
-    this.base = SettingsController.get()
+    this.base = Settings.get()
       .folderOfMetadata() + "/" + 
       this.repository + "/metrics";
   }

@@ -14,7 +14,7 @@ import ast.extractor.mapping.Mapping;
 import ast.extractor.mapping.MoveMapping;
 import ast.extractor.mapping.UpdateMapping;
 import ast.snapshot.Snapshot;
-import core.Jsonify;
+import persistence.Jsonify;
 
 public class CommitMappings implements Jsonify<CommitMappings> {
 

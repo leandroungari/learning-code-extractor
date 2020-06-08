@@ -7,11 +7,11 @@ import org.eclipse.jgit.api.errors.GitAPIException;
 
 import ast.MappingsExtractor;
 import ast.extractor.CommitMappings;
-import core.controller.SettingsController;
+import persistence.Settings;
 import repository.Commit;
 import repository.Repository;
-import resource.JSON;
-import resource.Resource;
+import persistence.resource.JSON;
+import persistence.resource.Resource;
 
 public class MappingsController {
 
@@ -44,9 +44,10 @@ public class MappingsController {
 
   private Boolean store(CommitMappings item) {
     var resource = new Resource(
-      SettingsController.get().folderOfMetadata() + 
+      Settings.get().folderOfMetadata() + 
       "/" + repository + 
-      "/mappings",
+      "/mappings" +
+      "/" + branch ,
       item.getCommit() + ".json"
     );
 
