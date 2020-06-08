@@ -46,12 +46,13 @@ public class MappingsController {
     var resource = new Resource(
       Settings.get().folderOfMetadata() + 
       "/" + repository + 
-      "/mappings",
+      "/mappings" +
+      "/" + branch ,
       item.getCommit() + ".json"
     );
 
     try {
-      resource.write(new JSON<>(item));
+      resource.write(new JSON<CommitMappings>(item));
       return true;
     } catch (IOException e) {
       e.printStackTrace();

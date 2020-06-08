@@ -21,8 +21,9 @@ public class MappingsReader {
     var result = new CommitMappings(repository, branch, id);
     var resource = new Resource(
       Settings.get().folderOfMetadata() 
-        + "/" + repository 
-        + "/mappings/", 
+        + "/" + repository  
+        + "/mappings"
+        + "/" + branch, 
       id + ".json"
     );
 
