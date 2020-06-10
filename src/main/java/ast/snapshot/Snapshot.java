@@ -2,7 +2,6 @@ package ast.snapshot;
 
 import java.io.File;
 import java.util.HashMap;
-import java.util.Map;
 
 import org.eclipse.jgit.api.errors.GitAPIException;
 
@@ -17,9 +16,9 @@ public class Snapshot {
   private String branch;
   private Repository repositoryInstance;
 
-  private String[] availableCommits;
-  private Integer position;
-  private Map<String,CommitSnapshot> commits;
+  private static String[] availableCommits = new String[10];
+  private static Integer position = 0;
+  private static HashMap<String,CommitSnapshot> commits = new HashMap<>();
 
   private String base;
 
@@ -27,11 +26,6 @@ public class Snapshot {
     this.repositoryName = repository;
     this.branch = branch;
     this.repositoryInstance = createRepository(repository);
-    
-    this.availableCommits = new String[10];
-    this.position = 0;
-
-    this.commits = new HashMap<>();
 
     this.base = Settings.get()
       .folderOfMetadata() + "/" + getRepositoryName();
@@ -46,8 +40,21 @@ public class Snapshot {
   }
 
   public CommitSnapshot commit(String commit) {
-    verifyDeletionOfCommit();
-    return createSnapshotCommit(commit);
+    var contains = false;
+    for(var item: availableCommits) {
+      if(commit.equals(item)) {
+        contains = true;
+        break;
+      }
+    }
+
+    if(contains) {
+      return commits.get(commit);
+    }
+    else {
+      verifyDeletionOfCommit();
+      return createSnapshotCommit(commit);
+    }
   }
 
   private CommitSnapshot createSnapshotCommit(String commit) {
@@ -71,7 +78,8 @@ public class Snapshot {
   private void verifyDeletionOfCommit() {
     if(availableCommits[position] != null) {
       var commit = availableCommits[position];
-      this.commits.remove(commit);
+      commits.get(commit).clear();
+      commits.remove(commit);
       availableCommits[position] = null;
     }
   }

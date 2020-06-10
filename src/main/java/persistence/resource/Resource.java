@@ -85,8 +85,15 @@ public class Resource {
    * referido
    */
   public void delete() {
-    var result = resource.delete();
-    if(result) 
-      throw new Error("The deletion process failed.");
+    this.deleteRecursive(resource);
+  }
+
+  private void deleteRecursive(File element) {
+    if (element.isDirectory()) {
+      for (File sub : element.listFiles()) {
+        deleteRecursive(sub);
+      }
+    }
+    element.delete();
   }
 }

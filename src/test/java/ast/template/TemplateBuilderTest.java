@@ -73,6 +73,10 @@ public class TemplateBuilderTest {
 
   @Test
   public void verifyPatternOfElement() {
+    var commit = "d4bce13a443cf12da40a77c16c1e591f4f985b47";
+    extractor = new Extractor(repository, branch, commit);
+    mappings = extractor.transform();
+    
     var mapping = mappings.get().get(1);
     var builder = new TemplateBuilder(mapping);
     var template = builder.create();

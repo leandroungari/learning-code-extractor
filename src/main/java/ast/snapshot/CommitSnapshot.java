@@ -38,7 +38,7 @@ public class CommitSnapshot {
 
   private CtModel createModel() {
 
-    for (var file : current.getDiffFiles()) {
+    for (var file : current.allFilesByExtension(".java")) {
       createFileInTempCommit(
         base + "/" + file.folder(), 
         file.filename(), 
@@ -89,5 +89,10 @@ public class CommitSnapshot {
 
   public CommitSnapshot previous() {
     return parent.commit(current.before().id().getName());
+  }
+
+  public void clear() {
+    var resource = new Resource(this.base);
+    resource.delete();
   }
 }
