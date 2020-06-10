@@ -11,8 +11,10 @@ import ast.filter.LiteralFilter;
 import ast.filter.LocalVariableFilter;
 import ast.filter.MethodFilter;
 import ast.filter.ModifierFilter;
+import ast.filter.PrimitiveTypeFilter;
 import ast.filter.TypeReferenceFilter;
 import ast.filter.VariableReferenceFilter;
+import javassist.CtPrimitiveType;
 import spoon.pattern.ConflictResolutionMode;
 import spoon.pattern.Pattern;
 import spoon.pattern.PatternBuilder;
@@ -37,6 +39,7 @@ public class TemplateBuilder {
   private List<CtLocalVariable<?>> localVariables;
   private List<CtModifiable> modifiers;
   private List<CtTypeReference<?>> types;
+  private List<CtPrimitiveType> primitives;
 
   public TemplateBuilder(Mapping mapping) {
 
@@ -78,6 +81,9 @@ public class TemplateBuilder {
 
     var typeFilter = new TypeReferenceFilter(elements);
     this.types = typeFilter.filter();
+
+    var primitiveFilter = new PrimitiveTypeFilter(elements);
+    this.primitives = primitiveFilter.filter();
   }
 
   public Template create() {
@@ -127,6 +133,10 @@ public class TemplateBuilder {
             pb.parameter(item.name())
               .byString(item.name());
           }
+        }
+        for(var primitive: this.primitives) {
+          pb.parameter(primitive.getSimpleName())
+            .byString(primitive.getSimpleName());
         }
       })
       .build();

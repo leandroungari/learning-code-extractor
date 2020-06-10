@@ -32,8 +32,11 @@ public class Template {
 
   private Boolean compatibility(Pattern pattern, Element<?> element) {
     var matches = new HashSet<CtElement>();
+    var parent = element.getParentOfAllDependencies();
+    System.out.println("parent:");
+    System.out.println(parent);
     pattern
-      .getMatches(element.getParentOfAllDependencies())
+      .getMatches(parent)
       .stream()
       .forEach(item -> {
         try {

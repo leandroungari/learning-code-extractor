@@ -50,4 +50,9 @@ public class ClassElement extends Element<CtClass<?>> {
 
     return result;
   }
+
+  @Override
+  public CtElement getParentOfAllDependencies() {
+    return element;
+  }
 }
