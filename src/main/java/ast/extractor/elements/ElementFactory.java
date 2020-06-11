@@ -2,6 +2,7 @@ package ast.extractor.elements;
 
 import ast.snapshot.CommitSnapshot;
 import spoon.reflect.code.CtStatement;
+import spoon.reflect.declaration.CtAnnotationType;
 import spoon.reflect.declaration.CtClass;
 import spoon.reflect.declaration.CtConstructor;
 import spoon.reflect.declaration.CtElement;
@@ -34,6 +35,8 @@ public class ElementFactory<T extends Element<? extends CtElement>> {
         return new FieldElement((CtField<?>) temp);
       } else if (temp instanceof CtStatement) {
         return new StatementElement((CtStatement) temp);
+      } else if (temp instanceof CtAnnotationType) {
+        return new AnnotationTypeElement((CtAnnotationType<?>) temp);
       }
 
       temp = temp.getParent();
