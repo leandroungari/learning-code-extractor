@@ -1,6 +1,7 @@
 package ast.clustering;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import com.google.gson.JsonArray;
@@ -40,6 +41,7 @@ public class Cluster implements Jsonify<Cluster> {
 
     var index = new ClusterIndex(item.getCode(), mapping, commit, this);
     items.add(index);
+    Collections.sort(items);
     persistor.write();
   }
 
