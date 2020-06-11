@@ -7,7 +7,7 @@ import ast.template.Template;
 import ast.template.TemplateBuilder;
 import persistence.Jsonify;
 
-public class ClusterIndex implements Jsonify<ClusterIndex> {
+public class ClusterIndex implements Jsonify<ClusterIndex>, Comparable<ClusterIndex> {
 
   private Integer code;
   private Item base;
@@ -63,6 +63,16 @@ public class ClusterIndex implements Jsonify<ClusterIndex> {
     this.base = new Item().fromJson(content.get("base").getAsJsonObject());
     this.size = Integer.valueOf(content.get("size").getAsInt());
     return this;
+  }
+
+  @Override
+  public int compareTo(ClusterIndex other) {
+    if(this.size < other.size) {
+      return 1;
+    } else if(this.size > other.size) {
+      return -1;
+    }
+    return 0;
   }
 
 }
