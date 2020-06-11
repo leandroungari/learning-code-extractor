@@ -4,6 +4,7 @@ import java.util.HashSet;
 
 import ast.extractor.elements.Element;
 import ast.extractor.mapping.Mapping;
+import spoon.SpoonException;
 import spoon.pattern.Pattern;
 import spoon.reflect.declaration.CtElement;
 
@@ -34,7 +35,8 @@ public class Template {
     var matches = new HashSet<CtElement>();
     var parent = element.getParentOfAllDependencies();
 
-    pattern
+    try {
+      pattern
       .getMatches(parent)
       .stream()
       .forEach(item -> {
@@ -46,6 +48,12 @@ public class Template {
           }
         }
       });
+    } catch(SpoonException e) {
+      System.err.println(e.getMessage());
+      e.printStackTrace();
+    } catch(Exception e) {
+      e.printStackTrace();
+    }
   
     for(var dependency: element.dependencies()) {
       if(!matches.contains(dependency)) {
