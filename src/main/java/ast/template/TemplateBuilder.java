@@ -10,22 +10,21 @@ import ast.filter.FieldFilter;
 import ast.filter.LiteralFilter;
 import ast.filter.LocalVariableFilter;
 import ast.filter.MethodFilter;
-import ast.filter.ModifierFilter;
-import ast.filter.PrimitiveTypeFilter;
 import ast.filter.TypeReferenceFilter;
 import ast.filter.VariableReferenceFilter;
-import javassist.CtPrimitiveType;
 import spoon.pattern.ConflictResolutionMode;
 import spoon.pattern.Pattern;
 import spoon.pattern.PatternBuilder;
 import spoon.reflect.code.CtLiteral;
 import spoon.reflect.code.CtLocalVariable;
+import spoon.reflect.declaration.CtClass;
 import spoon.reflect.declaration.CtElement;
 import spoon.reflect.declaration.CtField;
 import spoon.reflect.declaration.CtMethod;
-import spoon.reflect.declaration.CtModifiable;
+import spoon.reflect.path.CtRole;
 import spoon.reflect.reference.CtTypeReference;
 import spoon.reflect.reference.CtVariableReference;
+import spoon.reflect.visitor.filter.TypeFilter;
 
 public class TemplateBuilder {
 
@@ -37,9 +36,7 @@ public class TemplateBuilder {
   private List<CtMethod<?>> methods;
   private List<CtField<?>> fields;
   private List<CtLocalVariable<?>> localVariables;
-  private List<CtModifiable> modifiers;
   private List<CtTypeReference<?>> types;
-  private List<CtPrimitiveType> primitives;
 
   public TemplateBuilder(Mapping mapping) {
 
@@ -76,14 +73,8 @@ public class TemplateBuilder {
     var localVariablesFilter = new LocalVariableFilter(elements);
     this.localVariables = localVariablesFilter.filter();
 
-    var modifiersFilter = new ModifierFilter(elements);
-    this.modifiers = modifiersFilter.filter();
-
     var typeFilter = new TypeReferenceFilter(elements);
     this.types = typeFilter.filter();
-
-    var primitiveFilter = new PrimitiveTypeFilter(elements);
-    this.primitives = primitiveFilter.filter();
   }
 
   public Template create() {
@@ -101,11 +92,11 @@ public class TemplateBuilder {
         for(var type: this.types) {    
           try{
             pb.parameter(type.getQualifiedName())
-            .byString(type.getQualifiedName());
+              .byType(type);
           } catch(Exception e) {
             System.err.println(this.types);
             System.err.println(e.getMessage());
-            throw new Error("Type Filter Error");
+            //throw new Error("Type Filter Error");
           }
         }
         for(var reference: this.variables) {  
@@ -128,16 +119,15 @@ public class TemplateBuilder {
           pb.parameter(field.getSimpleName())
             .byString(field.getSimpleName());
         }
-        for(var modifier: this.modifiers) {
-          for(var item: modifier.getModifiers()) {
-            pb.parameter(item.name())
-              .byString(item.name());
-          }
-        }
-        for(var primitive: this.primitives) {
-          pb.parameter(primitive.getSimpleName())
-            .byString(primitive.getSimpleName());
-        }
+
+        pb.parameter("modifier-class")
+          .byRole(CtRole.MODIFIER, new TypeFilter<>(CtClass.class));
+
+        pb.parameter("modifier-method")
+          .byRole(CtRole.MODIFIER, new TypeFilter<>(CtMethod.class));
+
+        pb.parameter("modifier-field")
+          .byRole(CtRole.MODIFIER, new TypeFilter<>(CtMethod.class));
       })
       .build();
   }
