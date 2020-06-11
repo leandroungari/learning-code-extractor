@@ -95,7 +95,8 @@ public class StatementElement extends Element<CtStatement> {
 
   @Override
   public List<String> extractTokens() {
-    
-    return List.of(element.toString());
+    var result = new ArrayList<String>();
+    result.add(element.toString());
+    return result;
   }
 }

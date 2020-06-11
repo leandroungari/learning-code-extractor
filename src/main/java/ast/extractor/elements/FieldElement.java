@@ -1,7 +1,7 @@
 package ast.extractor.elements;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import spoon.reflect.declaration.CtElement;
 import spoon.reflect.declaration.CtField;
@@ -20,14 +20,14 @@ public class FieldElement extends Element<CtField<?>> {
 
   @Override
   public List<String> extractTokens() {
-    var items = element
+    var result = new ArrayList<String>();
+    element
       .getModifiers()
       .stream()
-      .map(a -> a.name())
-      .collect(Collectors.toList());
+      .forEach(a -> result.add(a.name()));
 
-    items.add(element.getSimpleName());
-    return items;
+    result.add(element.getSimpleName());
+    return result;
   }
   
 }

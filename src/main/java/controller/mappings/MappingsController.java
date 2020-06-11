@@ -24,7 +24,12 @@ public class MappingsController {
   }
 
   private List<Commit> getCommits() throws GitAPIException {
-    var items = Repository.create(repository).branch(branch).commits();
+    var items = Repository
+      .create(repository)
+      .branch(branch)
+      .commits();
+
+    items.remove(0);
     return items;
   }
 

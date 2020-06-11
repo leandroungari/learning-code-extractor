@@ -1,5 +1,6 @@
 package ast.extractor.elements;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import spoon.reflect.declaration.CtElement;
@@ -19,8 +20,9 @@ public class EnumElement extends Element<CtEnum<?>> {
 
   @Override
   public List<String> extractTokens() {
-    
-    return List.of(element.getSimpleName());
+    var result = new ArrayList<String>();
+    result.add(element.getSimpleName());
+    return result;
   }
 
 }
