@@ -12,6 +12,7 @@ import ast.extractor.mapping.Mapping;
 import ast.extractor.mapping.MoveMapping;
 import ast.extractor.mapping.UpdateMapping;
 import repository.Repository;
+import spoon.SpoonException;
 
 public class ClusteringEngine {
 
@@ -41,9 +42,14 @@ public class ClusteringEngine {
       if(mapping instanceof UpdateMapping || mapping instanceof MoveMapping) {
         var added = false;
         for(var item: cluster.getItems()) {
-          if(item.getPattern().matches(mapping)) {
-            item.add(mapping, commit);
-            added = true;
+          try {
+            if(item.getPattern().matches(mapping)) {
+              item.add(mapping, commit);
+              added = true;
+            }
+          } catch(SpoonException ex) {
+            System.err.println(ex.getMessage());
+            ex.printStackTrace();
           }
         }
         if(!added) {
