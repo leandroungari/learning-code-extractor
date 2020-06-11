@@ -38,13 +38,15 @@ public class MethodElement extends Element<CtMethod<?>> {
 
     result.addAll(params);
 
-    var statements = element.getBody()
-      .getStatements()
-      .stream()
-      .map(state -> state.toString())
-      .collect(Collectors.toList());
-
-    result.addAll(statements);
+    if(element.getBody() != null) {
+      var statements = element.getBody()
+        .getStatements()
+        .stream()
+        .map(state -> state.toString())
+        .collect(Collectors.toList());
+      
+      result.addAll(statements);
+    }
 
     return result;
   }

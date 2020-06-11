@@ -24,10 +24,12 @@ public class StatementElement extends Element<CtStatement> {
     var variables = StatementElement.variablesOfStatement(element);
 
     var executable = parentMethodOrConstructor();
-    var block = executable.getBody().getStatements();
-    for (var i = block.indexOf(element); i >= 0; i--) {
-      if (this.hasDependency(block.get(i), variables)) {
-        result.add(0, block.get(i));
+    if(executable != null && executable.getBody() != null) {
+      var block = executable.getBody().getStatements();
+      for (var i = block.indexOf(element); i >= 0; i--) {
+        if (this.hasDependency(block.get(i), variables)) {
+          result.add(0, block.get(i));
+        }
       }
     }
 
