@@ -51,8 +51,7 @@ public class MappingsController {
     var resource = new Resource(
       Settings.get().folderOfMetadata() + 
       "/" + repository + 
-      "/mappings" +
-      "/" + branch ,
+      "/mappings",
       item.getCommit() + ".json"
     );
 

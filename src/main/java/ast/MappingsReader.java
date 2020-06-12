@@ -22,8 +22,7 @@ public class MappingsReader {
     var resource = new Resource(
       Settings.get().folderOfMetadata() 
         + "/" + repository  
-        + "/mappings"
-        + "/" + branch, 
+        + "/mappings", 
       id + ".json"
     );
 

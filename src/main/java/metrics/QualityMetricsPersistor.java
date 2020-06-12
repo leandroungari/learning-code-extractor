@@ -24,7 +24,7 @@ public class QualityMetricsPersistor {
   }
 
   void write(CommitMetrics item, String commit) {
-    var resource = new Resource(this.base + "/" + branch, commit + ".csv");
+    var resource = new Resource(this.base, commit + ".csv");
     try {
       resource.write(new CSV<>(item));
     } catch (IOException e) {
@@ -33,7 +33,7 @@ public class QualityMetricsPersistor {
   }
 
   CommitMetrics read(String commit) {
-    var resource = new Resource(this.base + "/" + branch, commit + ".csv");
+    var resource = new Resource(this.base, commit + ".csv");
     var item = new CommitMetrics();
     try {
       return resource.read(new CSV<>(item));
