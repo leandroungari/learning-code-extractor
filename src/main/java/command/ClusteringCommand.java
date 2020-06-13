@@ -4,7 +4,7 @@ import com.beust.jcommander.Parameter;
 
 import controller.mappings.ClusteringController;
 
-public class ClusteringCommand {
+public class ClusteringCommand implements Command {
   
   @Parameter(names={"-repo"})
   private String repository;

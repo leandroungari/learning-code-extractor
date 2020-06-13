@@ -4,7 +4,7 @@ import com.beust.jcommander.Parameter;
 
 import controller.MetricsController;
 
-public class MetricsCommand {
+public class MetricsCommand implements Command {
 
   @Parameter(names = { "-repo" })
   private String repository;

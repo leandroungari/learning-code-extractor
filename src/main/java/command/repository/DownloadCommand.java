@@ -2,9 +2,10 @@ package command.repository;
 
 import com.beust.jcommander.Parameter;
 
+import command.Command;
 import controller.RepositoryController;
 
-public class DownloadCommand {
+public class DownloadCommand implements Command {
   
   @Parameter(names={"-repo"})
   private String repository;

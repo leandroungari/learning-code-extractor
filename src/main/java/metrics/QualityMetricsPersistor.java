@@ -9,14 +9,14 @@ import persistence.resource.Resource;
 public class QualityMetricsPersistor {
 
   private String repository;
-  private String branch;
+  //private String branch;
 
   private String base;
 
   public QualityMetricsPersistor(String repository, String branch) {
 
     this.repository = repository;
-    this.branch = branch;
+    //this.branch = branch;
 
     this.base = Settings.get()
       .folderOfMetadata() + "/" + 

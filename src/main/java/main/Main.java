@@ -2,8 +2,6 @@ package main;
 
 import java.io.FileNotFoundException;
 
-import com.beust.jcommander.JCommander;
-
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
@@ -15,8 +13,10 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
 
 import command.ClusteringCommand;
+import command.CommandExecutor;
 import command.MappingsCommand;
 import command.MetricsCommand;
+import command.repository.CommitsCommand;
 import command.repository.DownloadCommand;
 import repository.exception.GitRepositoryException;
 
@@ -38,44 +38,14 @@ public class Main {
   		runAPI(args);
   	}
   	else {
-      var mappings = new MappingsCommand();
-      var cluster = new ClusteringCommand();
-      var download = new DownloadCommand();
-      var metrics = new MetricsCommand();
+      var executor = new CommandExecutor(args);
+      executor.add("mappings", new MappingsCommand());
+      executor.add("clustering", new ClusteringCommand());
+      executor.add("download", new DownloadCommand());
+      executor.add("metrics", new MetricsCommand());
+      executor.add("commits", new CommitsCommand());
 
-      var cmd = JCommander.newBuilder()
-        .addCommand("mappings", mappings)
-        .addCommand("clustering", cluster)
-        .addCommand("download", download)
-        .addCommand("metrics", metrics)
-        .build();
-
-      cmd.parse(args);
-
-      switch(cmd.getParsedCommand()) {
-        case "mappings":
-          mappings.run();
-          System.out.println("=> Extração de mapeamentos concluída");
-          break;
-
-        case "clustering":
-          cluster.run();
-          System.out.println("=> Criação de clusters de mapeamentos concluída");
-          break;
-
-        case "download":
-          download.run();
-          System.out.println("=> Download do repositório concluído");
-          break;
-
-        case "metrics":
-          metrics.run();
-          System.out.println("=> Extração das métricas concluída");
-          break;
-          
-        default:
-      } 
-      
+      executor.execute();
   	}  	
   }
 

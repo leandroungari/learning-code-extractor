@@ -6,7 +6,7 @@ import org.eclipse.jgit.api.errors.GitAPIException;
 
 import controller.mappings.MappingsController;
 
-public class MappingsCommand {
+public class MappingsCommand implements Command {
 
   @Parameter(names = { "-repo" })
   private String repository;
