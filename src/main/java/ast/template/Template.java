@@ -50,7 +50,7 @@ public class Template {
       });
     } catch(SpoonException e) {
       System.err.println(e.getMessage());
-      e.printStackTrace();
+      //e.printStackTrace();
     } catch(Exception e) {
       e.printStackTrace();
     }
