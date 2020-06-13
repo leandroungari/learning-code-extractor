@@ -88,7 +88,11 @@ public class CommitSnapshot {
   }
 
   public CommitSnapshot previous() {
-    return parent.commit(current.before().id().getName());
+    return parent.commit(
+      current
+      .before()
+      .id().getName()
+    );
   }
 
   public void clear() {

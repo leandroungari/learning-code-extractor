@@ -94,8 +94,8 @@ public class TemplateBuilder {
             pb.parameter(type.getQualifiedName())
               .byType(type);
           } catch(Exception e) {
-            System.err.println(this.types);
-            System.err.println(e.getMessage());
+            //System.err.println(this.types);
+            //System.err.println(e.getMessage());
             //throw new Error("Type Filter Error");
           }
         }
