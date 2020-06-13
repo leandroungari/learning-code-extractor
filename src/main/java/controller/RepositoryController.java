@@ -52,7 +52,7 @@ public class RepositoryController {
 
   private void toStore(String branch, List<String> result) {
     var base = Settings.get().folderOfMetadata();
-    var resource = new Resource(base.getAbsolutePath() + "/" + name, "commits." + branch + ".json");
+    var resource = new Resource(base.getAbsolutePath() + "/" + name, "commits.json");
     var gson = new Gson();
     try {
       resource.write(new PlainText(gson.toJson(result)));
