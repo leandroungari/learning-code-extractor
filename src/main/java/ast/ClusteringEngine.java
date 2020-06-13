@@ -59,9 +59,11 @@ public class ClusteringEngine {
     }
   }
 
-  private CommitMappings getMappingsFromCommit(String id) {
-    var reader = new MappingsReader(repository, branch);
-    return reader.commit(id);
+  private CommitMappings getMappingsFromCommit(String commit) {
+    //var reader = new MappingsReader(repository, branch);
+    //return reader.commit(id);
+    var extractor = new Extractor(repository, branch, commit);
+    return extractor.transform();
   }
 
   private Repository createRepository() {
