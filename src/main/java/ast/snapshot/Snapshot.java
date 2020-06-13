@@ -16,7 +16,8 @@ public class Snapshot {
   private String branch;
   private Repository repositoryInstance;
 
-  private static String[] availableCommits = new String[10];
+  private static Integer LENGTH = 50;
+  private static String[] availableCommits = new String[LENGTH];
   private static Integer position = 0;
   private static HashMap<String,CommitSnapshot> commits = new HashMap<>();
 
@@ -67,7 +68,7 @@ public class Snapshot {
     var snap = new CommitSnapshot(instance, this);
     commits.put(commit, snap);
     availableCommits[position] = commit;
-    position = (position + 1) % 10;
+    position = (position + 1) % LENGTH;
     return snap;
   }
 
