@@ -48,8 +48,8 @@ public class ClusteringEngine {
               added = true;
             }
           } catch(SpoonException ex) {
-            System.err.println(ex.getMessage());
-            ex.printStackTrace();
+            //System.err.println(ex.getMessage());
+            //ex.printStackTrace();
           }
         }
         if(!added) {
