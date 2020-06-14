@@ -64,14 +64,18 @@ public class SiblingsCombiner {
         b.getOldFile(),
         b.source(),
         a.getNewFile(),
-        a.destination()
+        a.destination(),
+        a.getOldCommit(),
+        a.getNewCommit()
       );
     } else {
       return new ModelMapping(
         a.getOldFile(),
         a.source(),
         b.getNewFile(),
-        b.destination()
+        b.destination(),
+        a.getOldCommit(),
+        a.getNewCommit()
       );
     }
   }
@@ -80,6 +84,8 @@ public class SiblingsCombiner {
     var newMapping = new UpdateMapping(map.source().get(), map.destination().get());
     newMapping.setOldFile(map.oldFile());
     newMapping.setNewFile(map.newFile());
+    newMapping.setNewCommit(map.getNewCommit());
+    newMapping.setOldCommit(map.getOldCommit());
     
     return newMapping;
   }
@@ -88,6 +94,8 @@ public class SiblingsCombiner {
     var newMapping = new MoveMapping(map.source().get(), map.destination().get());
     newMapping.setOldFile(map.oldFile());
     newMapping.setNewFile(map.newFile());
+    newMapping.setNewCommit(map.getNewCommit());
+    newMapping.setOldCommit(map.getOldCommit());
     
     return newMapping;
   }

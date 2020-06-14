@@ -10,17 +10,25 @@ public class ModelMapping {
   private String oldFile;
   private String newFile;
 
+  private String oldCommit;
+  private String newCommit;
+
   public ModelMapping(
     String oldFile, 
     Element<?> source, 
     String newFile,
-    Element<?> destination) {
+    Element<?> destination,
+    String oldCommit,
+    String newCommit) {
 
     this.oldFile = oldFile;
     this.newFile = newFile;
 
     this.source = source;
     this.destination = destination;
+
+    this.oldCommit = oldCommit;
+    this.newCommit = newCommit;
   }
 
   public String oldFile() {
@@ -37,5 +45,13 @@ public class ModelMapping {
 
   public Element<?> destination() {
     return destination;
+  }
+
+  public String getOldCommit() {
+    return oldCommit;
+  }
+
+  public String getNewCommit() {
+    return newCommit;
   }
 }
