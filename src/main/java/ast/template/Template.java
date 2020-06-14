@@ -52,7 +52,7 @@ public class Template {
       System.err.println(e.getMessage());
       //e.printStackTrace();
     } catch(Exception e) {
-      //e.printStackTrace();
+      e.printStackTrace();
     }
   
     for(var dependency: element.dependencies()) {

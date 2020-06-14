@@ -10,8 +10,25 @@ public class OperationConverter {
 
   private String oldFile;
   private String newFile;
+  private String oldCommit;
+  private String newCommit;
 
-  OperationConverter(String oldFile, String newFile) {
+  OperationConverter(
+    String oldFile, 
+    String oldCommit,
+    String newFile,
+    String newCommit) {
+
+    this.oldFile = oldFile;
+    this.newFile = newFile;
+    this.oldCommit = oldCommit;
+    this.newCommit = newCommit;
+  }
+
+  OperationConverter(
+    String oldFile, 
+    String newFile) {
+
     this.oldFile = oldFile;
     this.newFile = newFile;
   }
@@ -22,7 +39,7 @@ public class OperationConverter {
    */
   public List<Operation> convert(Diff diff) {
     var result = new PriorityQueue<Operation>();
-    
+
     for(var o: diff.getAllOperations()) {
       var operationType = o.getAction().toString();
       Operation operation = null;
@@ -39,6 +56,11 @@ public class OperationConverter {
       
       operation.setOldFile(this.oldFile);
       operation.setNewFile(this.newFile);
+
+      if(this.newCommit != null) {
+        operation.setNewCommit(this.newCommit);
+        operation.setOldCommit(this.oldCommit);
+      }
 
       result.add(operation);
     }

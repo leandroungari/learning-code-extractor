@@ -11,6 +11,9 @@ public class Operation implements Comparable<Operation> {
   private String oldFile;
   private String newFile;
 
+  private String oldCommit;
+  private String newCommit;
+
   public Operation(
     OperationType type, 
     CtElement source, 
@@ -19,6 +22,22 @@ public class Operation implements Comparable<Operation> {
     this.type = type;
     this.source = source;
     this.destination = destination;
+  }
+
+  public String getNewCommit() {
+    return newCommit;
+  }
+
+  public String getOldCommit() {
+    return oldCommit;
+  }
+
+  public void setNewCommit(String newCommit) {
+    this.newCommit = newCommit;
+  }
+
+  public void setOldCommit(String oldCommit) {
+    this.oldCommit = oldCommit;
   }
 
   public CtElement source() {

@@ -32,6 +32,9 @@ public class UpdateMapping extends Mapping {
     json.addProperty("oldFile", oldFile);
     json.addProperty("newFile", newFile);
 
+    json.addProperty("oldCommit", oldCommit);
+    json.addProperty("newCommit", newCommit);
+
     return json;
   }
 
@@ -40,15 +43,19 @@ public class UpdateMapping extends Mapping {
     this.oldFile = content.get("oldFile").getAsString();
     this.newFile = content.get("newFile").getAsString();
 
-    var destinationPath = MoveMapping
+    this.newCommit = content.get("newCommit").getAsString();
+    var destinationPath = UpdateMapping
       .pathOfElement(content, "destination");
     this.destination = ElementFactory
       .create(snapshot, destinationPath, this.newFile);
 
-    var sourcePath = MoveMapping
+    this.oldCommit = content.get("oldCommit").getAsString();
+    var sourcePath = UpdateMapping
       .pathOfElement(content, "source");
+
+    var oldSnap = snapshot.getParent().commit(oldCommit);
     this.source = ElementFactory
-      .create(snapshot.previous(), sourcePath, this.oldFile);
+      .create(oldSnap, sourcePath, this.oldFile);
 
     return this;
   }

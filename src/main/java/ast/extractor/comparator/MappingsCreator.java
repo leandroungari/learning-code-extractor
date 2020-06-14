@@ -30,6 +30,9 @@ public class MappingsCreator {
       mapping.setOldFile(op.getOldFile());
       mapping.setNewFile(op.getNewFile());
 
+      mapping.setOldCommit(op.getOldCommit());
+      mapping.setNewCommit(op.getNewCommit());
+
       result.add(mapping);
     }
     return result.stream().collect(Collectors.toList());

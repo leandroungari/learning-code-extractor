@@ -68,7 +68,7 @@ public class ComparatorTest {
   
   @Test
   public void mappingsFromSingleFile() {
-    var comparator = new Comparator("antigo.java", beforeA, "novo.java", afterA);
+    var comparator = new Comparator("antigo.java", beforeA, null, "novo.java", afterA, null);
     var result = comparator.generateMappings();
     System.out.println(result);
     assertThat(result.size(), equalTo(2));
@@ -118,7 +118,7 @@ public class ComparatorTest {
 
   @Test
   public void mappingsFromSingleFileB() {
-    var comparator = new Comparator("antigo.java", beforeB, "novo.java", afterB);
+    var comparator = new Comparator("antigo.java", beforeB, null, "novo.java", afterB, null);
     var result = comparator.generateMappings();
     System.out.println(result);
     assertThat(result.size(), equalTo(1));

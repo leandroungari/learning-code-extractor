@@ -31,6 +31,9 @@ public class MoveMapping extends Mapping {
     json.addProperty("oldFile", oldFile);
     json.addProperty("newFile", newFile);
 
+    json.addProperty("oldCommit", oldCommit);
+    json.addProperty("newCommit", newCommit);
+
     return json;
   }
 
@@ -39,15 +42,19 @@ public class MoveMapping extends Mapping {
     this.oldFile = content.get("oldFile").getAsString();
     this.newFile = content.get("newFile").getAsString();
 
+    this.newCommit = content.get("newCommit").getAsString();
     var destinationPath = MoveMapping
       .pathOfElement(content, "destination");
     this.destination = ElementFactory
       .create(snapshot, destinationPath, this.newFile);
     
+    this.oldCommit = content.get("oldCommit").getAsString();
     var sourcePath = MoveMapping
       .pathOfElement(content, "source");
+
+    var oldSnap = snapshot.getParent().commit(oldCommit);
     this.source = ElementFactory
-      .create(snapshot.previous(), sourcePath, this.oldFile);
+      .create(oldSnap, sourcePath, this.oldFile);
 
     return this;
   }

@@ -29,6 +29,7 @@ public class InsertMapping extends Mapping {
     json.add("destination", destination.toJson());
     json.addProperty("type", "insert");
     json.addProperty("newFile", newFile);
+    json.addProperty("newCommit", newCommit);
     return json;
   }
 
@@ -36,6 +37,8 @@ public class InsertMapping extends Mapping {
   public Mapping fromJson(JsonObject content) {
     var path = InsertMapping.pathOfElement(content, "destination");
     this.newFile = content.get("newFile").getAsString();
+    this.newCommit = content.get("newCommit").getAsString();
+    
     this.destination = ElementFactory
       .create(snapshot, path, this.newFile);
     return this;

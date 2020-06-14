@@ -36,6 +36,10 @@ public class CommitSnapshot {
     return current;
   }
 
+  public Snapshot getParent() {
+    return parent;
+  }
+
   private CtModel createModel() {
 
     for (var file : current.allFilesByExtension(".java")) {

@@ -17,8 +17,15 @@ public class Comparator {
 
   private List<Operation> operations;
 
-  public Comparator(String oldFile, String oldContent, String newFile, String newContent) {
-    converter = new OperationConverter(oldFile, newFile);
+  public Comparator(
+    String oldFile, 
+    String oldContent, 
+    String oldCommit,
+    String newFile, 
+    String newContent,
+    String newCommit) {
+
+    converter = new OperationConverter(oldFile, oldCommit, newFile, newCommit);
     hierarchy = new HierarchyCombiner();
     mapper = new MappingsCreator();
     siblings = new SiblingsCombiner();
@@ -57,14 +64,17 @@ public class Comparator {
   private void extractOperationFromCommit(Commit commit) {
     var diffFiles = commit.getDiffEntries(".java");
     for(var file: diffFiles) {
-      var oldContent = getContentOfFile(commit.before(), file.get("source"));
+      var previousCommit = commit.before();
+      var oldContent = getContentOfFile(previousCommit, file.get("source"));
       var newContent = getContentOfFile(commit, file.get("destination"));
 
       var comparator = new Comparator(
         file.get("source"), 
         oldContent, 
+        previousCommit.id().getName(),
         file.get("destination"),
-        newContent
+        newContent,
+        commit.id().getName()
       );
 
       this.operations.addAll(comparator.operations);

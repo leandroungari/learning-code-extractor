@@ -14,8 +14,10 @@ public abstract class Mapping implements Jsonify<Mapping>, Comparable<Mapping> {
 	protected CommitSnapshot snapshot;
 
 	protected String oldFile;
-
 	protected String newFile;
+
+	protected String oldCommit;
+	protected String newCommit;
 	
 	public Mapping() {
 
@@ -52,7 +54,23 @@ public abstract class Mapping implements Jsonify<Mapping>, Comparable<Mapping> {
   
   public String getNewFile() {
     return newFile;
-  }
+	}
+	
+	public void setOldCommit(String oldCommit) {
+		this.oldCommit = oldCommit;
+	}
+
+	public void setNewCommit(String newCommit) {
+		this.newCommit = newCommit;
+	}
+
+	public String getOldCommit() {
+		return oldCommit;
+	}
+
+	public String getNewCommit() {
+		return newCommit;
+	}
 
 	@Override
 	public abstract String toString();
