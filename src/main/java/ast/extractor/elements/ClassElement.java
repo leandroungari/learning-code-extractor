@@ -51,7 +51,7 @@ public class ClassElement extends Element<CtClass<?>> {
       }
     } catch(SpoonException e) {
       System.err.println("Cannot create MethodTypingContext for method declared in different ClassTypingContext");
-      e.printStackTrace();
+      //e.printStackTrace();
     } catch(Exception e) {
       e.printStackTrace();
     }
