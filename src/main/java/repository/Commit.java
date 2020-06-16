@@ -52,6 +52,15 @@ public class Commit {
 		}				
 		return list;
 	}
+
+	public Boolean contains(String filename) {
+		var files = allFiles()
+			.stream()
+			.map(item -> item.filename())
+			.collect(Collectors.toList());
+
+		return files.contains(filename);
+	}
 	
 	public List<File> allFilesByExtension(String ext) {
 		

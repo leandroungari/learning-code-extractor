@@ -50,7 +50,8 @@ public class ElementFactory<T extends Element<? extends CtElement>> {
     CommitSnapshot snap, 
     String elementPath, 
     String filename) {
-
+    
+    System.out.println("> getting " + elementPath + " in " + snap.getCommitId());
     var item = snap.model(elementPath);
     while(item == null) {
       if(snap.commit().before() == null) break;

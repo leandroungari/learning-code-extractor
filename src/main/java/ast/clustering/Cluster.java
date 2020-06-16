@@ -36,6 +36,9 @@ public class Cluster implements Jsonify<Cluster> {
   }
 
   public void addItem(Mapping mapping, String commit) {
+    System.out.println("> creating cluster");
+    System.out.println("> " + commit);
+    System.out.println(mapping);
     var item = new ClusterItem(mapping, commit, items.size() + 1, this);
     persistor.item().write(item);
 

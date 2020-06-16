@@ -4,6 +4,7 @@ import java.util.List;
 
 import ast.extractor.SimilarityComparator;
 import ast.extractor.comparator.siblings.ModelMapping;
+import ast.extractor.elements.Element;
 import ast.extractor.mapping.DeleteMapping;
 import ast.extractor.mapping.InsertMapping;
 import ast.extractor.mapping.Mapping;
@@ -17,6 +18,19 @@ public class SiblingsCombiner {
   SiblingsCombiner() {
 
   }
+
+  /**
+   * Obtém o path do elemento pai do elemento passado como parâmetro
+   * @param e
+   * @return
+   */
+  private String getPathFromParentElementOf(Element<?> e) {
+    try {
+      return e.getParent().getPath().toString();
+    } catch(Exception ex) {
+      return "";
+    }
+  }
   
   public List<Mapping> combine(List<Mapping> items) {
     this.items = items;
@@ -28,16 +42,16 @@ public class SiblingsCombiner {
         if(verifyInsertAndDeleteElement(a, b)) {
           var map = identifyElements(a, b);
 
-          var pathParentSource = map.source().getParent().getPath().toString();
-          var pathParentDestination = map.destination().getParent().getPath().toString();
+          var parentSource = getPathFromParentElementOf(map.source());
+          var parentDestination = getPathFromParentElementOf(map.destination());
 
           Mapping result = null;
-          if(pathParentDestination.equals(pathParentSource)) {
-            result = createUpdateMapping(map);
-          } else {
-            similarity.setTargets(map.source(), map.destination());
-            if(similarity.verify()) {
-              result = createMoveMapping(map);
+          similarity.setTargets(map.source(), map.destination());
+          if(similarity.verify()) {
+            if(parentSource.equals(parentDestination)) { 
+              result = createUpdateMapping(map);
+            } else {
+              result = createMoveMapping(map);  
             }
           }
           
