@@ -6,11 +6,20 @@ import org.junit.Test;
 public class MappingsControllerTest {
 
   @Test
-  public void entireBranch() throws GitAPIException {
+  public void testRefactoring() throws GitAPIException {
 
     var repository = "refactoring-toy-example";
     var branch = "d4bce13a443cf12da40a77c16c1e591f4f985b47";
     var controller = new MappingsController(repository, branch);
     controller.extractMappingsToStore();
   }
+
+  @Test
+  public void testJunit() throws GitAPIException {
+    var repository = "junit4";
+    var branch = "50a285d3ce69b4556ac46d8633f6beb4527b4679";
+    var controller = new MappingsController(repository, branch);
+    controller.extractMappingsToStore();
+  }
+
 }
