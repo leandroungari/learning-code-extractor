@@ -51,7 +51,7 @@ public class Extractor {
 
     var commits = this.getListOfCommits();
     for(var commit: commits) {
-      var comparator = new Comparator(commit);
+      var comparator = new Comparator(repository, branch, commit.id().getName());
       result.addAll(comparator.generateMappings());
     }
 
