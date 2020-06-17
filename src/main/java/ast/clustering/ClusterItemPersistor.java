@@ -25,7 +25,7 @@ public class ClusterItemPersistor {
 
   void write(ClusterItem item) {
     var resource = new Resource(this.base, "#" + item.getCode() + ".json");
-    System.out.println(this.base + "/#" + item.getCode() + ".json");
+    System.out.println("> write cluster #" + item.getCode() + ".json");
     try {
       resource.write(new JSON<ClusterItem>(item), true);
     } catch (IOException e) {
@@ -35,6 +35,7 @@ public class ClusterItemPersistor {
 
   ClusterItem read(Integer code) {
     var resource = new Resource(this.base, "#" + code + ".json");
+    System.out.println("> read cluster #" + code + ".json");
     try {
       var item = new ClusterItem(code, parent);
       return resource.read(new JSON<ClusterItem>(item));

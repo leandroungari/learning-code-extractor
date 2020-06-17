@@ -72,7 +72,7 @@ public class CommitSnapshot {
       .fromString(path);
 
     var packages = this.model.getAllPackages();
-
+    System.out.println("> getting element " + path + " in " + getCommitId());
     var items = builder
       .evaluateOn(packages.toArray(new CtPackage[packages.size()]));
 
