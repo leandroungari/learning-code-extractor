@@ -32,14 +32,15 @@ public class SiblingsCombiner {
           var pathParentDestination = map.destination().getParent().getPath().toString();
 
           Mapping result = null;
-          if(pathParentDestination.equals(pathParentSource)) {
-            result = createUpdateMapping(map);
-          } else {
-            similarity.setTargets(map.source(), map.destination());
-            if(similarity.verify()) {
+          similarity.setTargets(map.source(), map.destination());
+          if(similarity.verify()) {
+            if(pathParentDestination.equals(pathParentSource)) {
+              result = createUpdateMapping(map);
+            } else {
               result = createMoveMapping(map);
             }
           }
+          
           
           if(result != null) {
             this.items.set(i, result);
