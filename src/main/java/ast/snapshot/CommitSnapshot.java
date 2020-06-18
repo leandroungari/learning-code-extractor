@@ -6,6 +6,7 @@ import repository.Commit;
 import persistence.resource.PlainText;
 import persistence.resource.Resource;
 import spoon.Launcher;
+import spoon.MavenLauncher;
 import spoon.reflect.CtModel;
 import spoon.reflect.declaration.CtElement;
 import spoon.reflect.declaration.CtPackage;
@@ -46,11 +47,17 @@ public class CommitSnapshot {
       );
     }
 
-    var launcher = new Launcher();
-    launcher.addInputResource(this.base);
-    launcher.getEnvironment().setComplianceLevel(11);
-    launcher.buildModel();
-    return launcher.getModel();
+    if(current.contains("pom.xml")) {
+      var launcher = new MavenLauncher(this.base, MavenLauncher.SOURCE_TYPE.APP_SOURCE);
+      launcher.buildModel();
+      return launcher.getModel();
+    } else {
+      var launcher = new Launcher();
+      launcher.addInputResource(this.base);
+      launcher.getEnvironment().setComplianceLevel(11);
+      launcher.buildModel();
+      return launcher.getModel();
+    }
   }
 
   private void createFileInTempCommit(

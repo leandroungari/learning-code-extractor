@@ -30,6 +30,7 @@ public class Comparator {
   private String repository;
   private Branch instanceBranch;
   private CommitSnapshot currentSnap;
+  
   private CommitSnapshot beforeSnap;
 
   public Comparator(String oldFile, String oldContent, String newFile, String newContent) {

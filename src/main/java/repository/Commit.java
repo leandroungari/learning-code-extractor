@@ -59,6 +59,15 @@ public class Commit {
       .filter(file -> file.fullPath().endsWith(ext))
       .collect(Collectors.toList());
 	}
+
+	public Boolean contains(String name) {
+		var items = allFiles()
+			.stream()
+			.filter(item -> item.filename().equals(name))
+			.collect(Collectors.toList());
+		
+		return items.size() > 0;
+	}
 	
 	private AbstractTreeIterator createTreeParser() {
 
