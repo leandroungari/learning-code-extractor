@@ -48,6 +48,7 @@ public class CommitSnapshot {
 
     var launcher = new Launcher();
     launcher.addInputResource(this.base);
+    launcher.getEnvironment().setComplianceLevel(11);
     launcher.buildModel();
     return launcher.getModel();
   }
