@@ -63,10 +63,10 @@ public class Commit {
 	public Boolean contains(String name) {
 		var items = allFiles()
 			.stream()
-			.filter(item -> item.filename().equals(name))
+			.map(item -> item.filename())
 			.collect(Collectors.toList());
 		
-		return items.size() > 0;
+		return items.contains(name);
 	}
 	
 	private AbstractTreeIterator createTreeParser() {

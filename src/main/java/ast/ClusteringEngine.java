@@ -18,6 +18,8 @@ public class ClusteringEngine {
 
   private String repository;
   private String branch;
+  private Integer from;
+  private Integer to;
 
   private Cluster cluster;
 
@@ -28,10 +30,19 @@ public class ClusteringEngine {
     this.cluster = new Cluster(repository, branch);
   }
 
+  public ClusteringEngine(String repository, String branch, Integer from, Integer to) {
+    this.repository = repository;
+    this.branch = branch;
+    this.from = from;
+    this.to = to;
+
+    this.cluster = new Cluster(repository, branch);
+  }
+
   public void generate() {
     for (var commit : getCommits()) {
       var mappings = getMappingsFromCommit(commit).get();
-      System.out.println(commit);
+      System.out.println("> " + commit);
       identifyCluster(mappings, commit);
     }
   }
@@ -71,13 +82,24 @@ public class ClusteringEngine {
   private List<String> getCommits() {
     var instance = createRepository();
     try {
-      var items = instance.branch(branch)
-        .commits()
-        .stream()
-        .map(item -> item.id().getName())
-        .collect(Collectors.toList());
+      List<String> items = null;
+      if(from != null && to != null) {
+        items = instance.branch(branch)
+          .commits(from, to)
+          .stream()
+          .map(item -> item.id().getName())
+          .collect(Collectors.toList());
+      } else {
+        items = instance.branch(branch)
+          .commits()
+          .stream()
+          .map(item -> item.id().getName())
+          .collect(Collectors.toList());
 
-      items.remove(0);
+        items.remove(0);
+      }
+
+      
       return items;
     } catch (GitAPIException e) {
       e.printStackTrace();

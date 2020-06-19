@@ -22,4 +22,36 @@ public class MappingsControllerTest {
     controller.extractMappingsToStore();
   }
 
+  @Test
+  public void testGson() throws GitAPIException {
+    var repository = "gson";
+    var branch = "ceae88bd6667f4263bbe02e6b3710b8a683906a2";
+    var controller = new MappingsController(repository, branch);
+    controller.extractMappingsToStore();
+  }
+
+  @Test
+  public void testGsonFrom1050() throws GitAPIException {
+    var repository = "gson";
+    var branch = "ceae88bd6667f4263bbe02e6b3710b8a683906a2";
+    var controller = new MappingsController(repository, branch, 1050, 1484);
+    controller.extractMappingsToStore();
+  }
+
+  @Test
+  public void testGsonFrom1330() throws GitAPIException {
+    var repository = "gson";
+    var branch = "ceae88bd6667f4263bbe02e6b3710b8a683906a2";
+    var controller = new MappingsController(repository, branch, 1330, 1484);
+    controller.extractMappingsToStore();
+  }
+
+  @Test
+  public void testGsonFrom1430() throws GitAPIException {
+    var repository = "gson";
+    var branch = "ceae88bd6667f4263bbe02e6b3710b8a683906a2";
+    var controller = new MappingsController(repository, branch, 1430, 1484);
+    controller.extractMappingsToStore();
+  }
+
 }

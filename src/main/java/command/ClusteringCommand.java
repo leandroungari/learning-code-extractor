@@ -12,8 +12,19 @@ public class ClusteringCommand implements Command {
   @Parameter(names={"-branch"})
   private String branch;
 
+  @Parameter(names={"-from"})
+  private Integer from;
+
+  @Parameter(names={"-to"})
+  private Integer to;
+
   public void run() {
-    var controller = new ClusteringController(repository, branch);
-    controller.clusterToStore();
+    if(from != null && to != null) {
+      var controller = new ClusteringController(repository, branch, from, to);
+      controller.clusterToStore();
+    } else {
+      var controller = new ClusteringController(repository, branch);
+      controller.clusterToStore();
+    }
   }
 }
