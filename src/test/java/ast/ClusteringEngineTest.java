@@ -21,4 +21,13 @@ public class ClusteringEngineTest {
     var engine = new ClusteringEngine(repository, branch);
     engine.generate();
   }
+
+  @Test
+  public void testGson() {
+    var repository = "gson";
+    var branch = "ceae88bd6667f4263bbe02e6b3710b8a683906a2";
+    
+    var engine = new ClusteringEngine(repository, branch);
+    engine.generate();
+  }
 }

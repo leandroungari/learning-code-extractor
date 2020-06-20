@@ -7,6 +7,7 @@ import repository.commit.File;
 import persistence.resource.PlainText;
 import persistence.resource.Resource;
 import spoon.Launcher;
+import spoon.MavenLauncher;
 //import spoon.MavenLauncher;
 import spoon.reflect.CtModel;
 import spoon.reflect.declaration.CtElement;
@@ -47,43 +48,41 @@ public class CommitSnapshot {
   }
 
   private void generateFiles() {
-    for (var file : current.allFilesByExtension(".java")) {
-    //for (var file : current.allFiles()) {
+    //for (var file : current.allFilesByExtension(".java")) {
+    for (var file : current.allFiles()) {
       writeTempFile(file);
     }
+  }
+
+  private CtModel createMavenProject() {
+    var launcher = new MavenLauncher(this.base, MavenLauncher.SOURCE_TYPE.APP_SOURCE);
+    launcher.buildModel();
+    System.out.println("> It's a Maven Project");
+    return launcher.getModel();
+  }
+
+  private CtModel createSimpleProject() {
+    var launcher = new Launcher();
+    launcher.addInputResource(this.base);
+    //Para permitir arquivos duplicados esse método é interessante
+    //launcher.getEnvironment().isIgnoreDuplicateDeclarations()
+    launcher.getEnvironment().setIgnoreDuplicateDeclarations(true);
+    launcher.getEnvironment().setComplianceLevel(11);
+    launcher.buildModel();
+    System.out.println("> It's a Simple Project");
+    return launcher.getModel();
   }
 
   private CtModel createModel() {
 
     generateFiles();
-
-    /*var pomFile = current.getFile("pom.xml");
-    if(pomFile != null) {
-      System.out.println(pomFile.folder());
-      writeTempFile(pomFile);
-      var launcher = new MavenLauncher(this.base, MavenLauncher.SOURCE_TYPE.APP_SOURCE);
-      launcher.buildModel();
-      return launcher.getModel();
-    } else {
-    */
-      var launcher = new Launcher();
-      launcher.addInputResource(this.base);
-      
-      //Para permitir arquivos duplicados esse método é interessante
-      //launcher.getEnvironment().isIgnoreDuplicateDeclarations()
-      try {
-        launcher.getEnvironment().setIgnoreDuplicateDeclarations(true);
-        launcher.getEnvironment().setComplianceLevel(11);
-        launcher.buildModel();
-      } catch(Exception ex) {
-        ex.printStackTrace();
-        launcher.getEnvironment().setIgnoreDuplicateDeclarations(true);
-        launcher.getEnvironment().setComplianceLevel(11);
-        launcher.getEnvironment().setNoClasspath(true);
-        launcher.buildModel();
-      }
-      return launcher.getModel();
-    //}
+    CtModel model = null;
+    try {
+      model = createMavenProject();
+    } catch(Exception ex) {
+      model = createSimpleProject();
+    }
+    return model;
   }
 
   private void createFileInTempCommit(
@@ -106,7 +105,7 @@ public class CommitSnapshot {
       .fromString(path);
 
     var packages = this.model.getAllPackages();
-    System.out.println("> getting element " + path + " in " + getCommitId());
+    System.err.println("> getting element " + path + " in " + getCommitId());
     var items = builder
       .evaluateOn(packages.toArray(new CtPackage[packages.size()]));
 
