@@ -1,6 +1,7 @@
 package ast.extractor.elements;
 
 import ast.snapshot.CommitSnapshot;
+import ast.snapshot.exception.NotFoundElementInSnapshotException;
 import spoon.reflect.code.CtStatement;
 import spoon.reflect.declaration.CtAnnotationType;
 import spoon.reflect.declaration.CtClass;
@@ -54,8 +55,13 @@ public class ElementFactory<T extends Element<? extends CtElement>> {
     var item = snap.model(elementPath);
     while(item == null) {
       if(snap.commit().before() == null) break;
-      snap = snap.previous();
-      item = snap.model(elementPath);
+      
+      try {
+        snap = snap.previous();
+        item = snap.model(elementPath);
+      } catch(NotFoundElementInSnapshotException ex) {
+        item = null;
+      }
     }
     
     return ElementFactory.create(item);

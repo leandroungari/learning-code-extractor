@@ -2,6 +2,7 @@ package ast.snapshot;
 
 import java.io.IOException;
 
+import ast.snapshot.exception.NotFoundElementInSnapshotException;
 import repository.Commit;
 import repository.commit.File;
 import persistence.resource.PlainText;
@@ -20,6 +21,8 @@ public class CommitSnapshot {
   private Commit current;
   private CtModel model;
   private String base;
+
+  private String currentPath;
 
   CommitSnapshot(Commit commit, Snapshot parent) {
     this.parent = parent;
@@ -100,12 +103,14 @@ public class CommitSnapshot {
 
   public CtElement model(String path) {
     if("#undefined".equals(path)) return null;
+    
+    this.currentPath = path;
 
     var builder = new CtPathStringBuilder()
       .fromString(path);
 
     var packages = this.model.getAllPackages();
-    System.err.println("> getting element " + path + " in " + getCommitId());
+    System.out.println("> getting element " + path + " in " + getCommitId());
     var items = builder
       .evaluateOn(packages.toArray(new CtPackage[packages.size()]));
 
@@ -121,11 +126,16 @@ public class CommitSnapshot {
   }
 
   public CommitSnapshot previous() {
-    return parent.commit(
-      current
-      .before()
-      .id().getName()
-    );
+    
+    try {
+      return parent.commit(
+        current
+        .before()
+        .id().getName()
+      ); 
+    } catch(Exception ex) {
+      throw new NotFoundElementInSnapshotException(getCommitId(), currentPath);
+    }
   }
 
   public void clear() {
