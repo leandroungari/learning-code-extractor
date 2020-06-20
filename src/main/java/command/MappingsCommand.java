@@ -14,8 +14,21 @@ public class MappingsCommand implements Command {
   @Parameter(names = { "-branch" })
   private String branch;
 
+  @Parameter(names = { "-from" })
+  private Integer from;
+
+  @Parameter(names = { "-to" })
+  private Integer to;
+  
+
   public void run() {
-    var controller = new MappingsController(repository, branch);
+    MappingsController controller = null;
+    if(from != null && to != null) {
+      controller = new MappingsController(repository, branch, from, to);
+    } else {
+      controller = new MappingsController(repository, branch);
+    }
+
     try {
       controller.extractMappingsToStore();
     } catch (GitAPIException e) {

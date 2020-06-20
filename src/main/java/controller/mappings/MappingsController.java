@@ -17,19 +17,37 @@ public class MappingsController {
 
   private String repository;
   private String branch;
+  private Integer from;
+  private Integer to;
 
   public MappingsController(String repository, String branch) {
     this.repository = repository;
     this.branch = branch;
   }
 
-  private List<Commit> getCommits() throws GitAPIException {
-    var items = Repository
-      .create(repository)
-      .branch(branch)
-      .commits();
+  public MappingsController(String repository, String branch, Integer from, Integer to) {
+    this.repository = repository;
+    this.branch = branch;
+    this.from = from;
+    this.to = to;
+  }
 
-    items.remove(0);
+  private List<Commit> getCommits() throws GitAPIException {
+    List<Commit> items = null;
+
+    if(from != null && to != null) {
+      items = Repository
+        .create(repository)
+        .branch(branch)
+        .commits(from, to);
+    } else {
+      items = Repository
+        .create(repository)
+        .branch(branch)
+        .commits();
+
+      items.remove(0);
+    }
     return items;
   }
 

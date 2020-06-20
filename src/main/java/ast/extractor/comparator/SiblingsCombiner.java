@@ -4,6 +4,7 @@ import java.util.List;
 
 import ast.extractor.SimilarityComparator;
 import ast.extractor.comparator.siblings.ModelMapping;
+import ast.extractor.elements.Element;
 import ast.extractor.mapping.DeleteMapping;
 import ast.extractor.mapping.InsertMapping;
 import ast.extractor.mapping.Mapping;
@@ -17,6 +18,14 @@ public class SiblingsCombiner {
   SiblingsCombiner() {
 
   }
+
+  private static String getPathFromParent(Element<?> e) {
+    try {
+      return e.getParent().getPath().toString();
+    } catch(Exception ex) {
+      return "";
+    }
+  }
   
   public List<Mapping> combine(List<Mapping> items) {
     this.items = items;
@@ -28,23 +37,26 @@ public class SiblingsCombiner {
         if(verifyInsertAndDeleteElement(a, b)) {
           var map = identifyElements(a, b);
 
-          var pathParentSource = map.source().getParent().getPath().toString();
-          var pathParentDestination = map.destination().getParent().getPath().toString();
+          if(verifyTypeEquality(map.source(), map.destination())) {
+            
+            var pathParentSource = getPathFromParent(map.source());
+            var pathParentDestination = getPathFromParent(map.destination());
 
-          Mapping result = null;
-          if(pathParentDestination.equals(pathParentSource)) {
-            result = createUpdateMapping(map);
-          } else {
+            Mapping result = null;
             similarity.setTargets(map.source(), map.destination());
             if(similarity.verify()) {
-              result = createMoveMapping(map);
+              if(pathParentDestination.equals(pathParentSource)) {
+                result = createUpdateMapping(map);
+              } else {
+                result = createMoveMapping(map);
+              }
             }
-          }
-          
-          if(result != null) {
-            this.items.set(i, result);
-            this.items.remove(j);
-            break;
+
+            if(result != null) {
+              this.items.set(i, result);
+              this.items.remove(j);
+              break;
+            }
           }
         }
         
@@ -56,6 +68,10 @@ public class SiblingsCombiner {
   private static Boolean verifyInsertAndDeleteElement(Mapping a, Mapping b) {
     return (a instanceof InsertMapping && b instanceof DeleteMapping) ||
            (a instanceof DeleteMapping && b instanceof InsertMapping);    
+  }
+
+  private static Boolean verifyTypeEquality(Element<?> a, Element<?> b) {
+    return a.type().equals(b.type());
   }
 
   private static ModelMapping identifyElements(Mapping a, Mapping b) {

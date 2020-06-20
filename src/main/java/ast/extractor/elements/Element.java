@@ -65,6 +65,10 @@ public abstract class Element<T extends CtElement> implements Jsonify<Element<?>
     return obj;
   }
 
+  public String type() {
+    return this.getClass().getSimpleName();
+  }
+
   @Override
   public Element<?> fromJson(JsonObject content) {
     return this;
