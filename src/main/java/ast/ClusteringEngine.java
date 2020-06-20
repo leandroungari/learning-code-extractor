@@ -42,7 +42,7 @@ public class ClusteringEngine {
   public void generate() {
     for (var commit : getCommits()) {
       var mappings = getMappingsFromCommit(commit).get();
-      System.err.println("> " + commit);
+      System.err.println("> clustering commit " + commit);
       identifyCluster(mappings, commit);
     }
   }
