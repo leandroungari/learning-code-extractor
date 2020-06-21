@@ -47,20 +47,30 @@ public class ClusteringEngine {
     }
   }
 
+  private Boolean isSameTypeMappings(Mapping base, Mapping other) {
+    var srcType = base.source().type();
+    var destType = base.destination().type();
+
+    return (srcType.equals(other.source().type()) ||
+            destType.equals(other.destination().type()));
+  }
+
   private void identifyCluster(List<Mapping> mappings, String commit) {
     for(var mapping: mappings) {
       
       if(mapping instanceof UpdateMapping || mapping instanceof MoveMapping) {
         var added = false;
         for(var item: cluster.getItems()) {
-          try {
-            if(item.getPattern().matches(mapping)) {
-              item.add(mapping, commit);
-              added = true;
+          if(isSameTypeMappings(item.getBase().getMapping(), mapping)) {
+            try {
+              if(item.getPattern().matches(mapping)) {
+                item.add(mapping, commit);
+                added = true;
+              }
+            } catch(SpoonException ex) {
+              System.err.println(ex.getMessage());
+              ex.printStackTrace();
             }
-          } catch(SpoonException ex) {
-            System.err.println(ex.getMessage());
-            ex.printStackTrace();
           }
         }
         if(!added) {

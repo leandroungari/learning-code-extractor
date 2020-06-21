@@ -42,6 +42,10 @@ public class ClusterIndex implements Jsonify<ClusterIndex>, Comparable<ClusterIn
     return builder.create();
   }
 
+  public Item getBase() {
+    return base;
+  }
+
   @Override
   public String toString() {
     return toJson().toString();
