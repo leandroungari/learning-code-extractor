@@ -41,9 +41,14 @@ public class ClusteringEngine {
 
   public void generate() {
     for (var commit : getCommits()) {
-      var mappings = getMappingsFromCommit(commit).get();
-      System.err.println("> clustering commit " + commit);
-      identifyCluster(mappings, commit);
+      var items = getMappingsFromCommit(commit);
+      if(items != null) {
+        var mappings = items.get();
+        System.err.println("> clustering commit " + commit);
+        identifyCluster(mappings, commit);
+      } else {
+        System.out.println("> clustering commit não encontrado: " + commit);
+      }
     }
   }
 
