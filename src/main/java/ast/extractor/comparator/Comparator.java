@@ -16,6 +16,7 @@ import persistence.resource.Resource;
 import repository.Branch;
 import repository.Commit;
 import repository.Repository;
+import spoon.SpoonException;
 import spoon.reflect.declaration.CtElement;
 
 public class Comparator {
@@ -40,7 +41,14 @@ public class Comparator {
     siblings = new SiblingsCombiner();
 
     var astComparator = new AstComparator();
-    operations = converter.convert(astComparator.compare(oldContent, newContent));
+    try {
+      operations = converter.convert(astComparator.compare(oldContent, newContent));
+    } catch(SpoonException ex) {
+      System.err.println("> Falha na extração das operações nos arquivos");
+      System.err.println("> " + (currentSnap != null ? currentSnap.getCommitId() : ""));
+      System.err.println("> Arquivo antigo: " + oldFile);
+      System.err.println("> Arquivo novo: " + newFile);
+    }
   }
 
   public Comparator(String oldFile, CtElement before, String newFile, CtElement after) {
