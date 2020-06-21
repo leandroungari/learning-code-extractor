@@ -77,4 +77,13 @@ public class MappingsControllerTest {
     var controller = new MappingsController(repository, branch, 829, 1000);
     controller.extractMappingsToStore();
   }
+
+  @Test
+  public void testGuavaFrom1700ToNext() throws GitAPIException {
+    var repository = "guava";
+    var branch = "ac0c3424411c0974010d754042d75e9d82665379";
+    
+    var controller = new MappingsController(repository, branch, 1700, 5287);
+    controller.extractMappingsToStore();
+  }
 }
