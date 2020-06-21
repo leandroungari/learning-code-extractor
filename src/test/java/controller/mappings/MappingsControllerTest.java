@@ -23,6 +23,22 @@ public class MappingsControllerTest {
   }
 
   @Test
+  public void testJunitFrom0To480() throws GitAPIException {
+    var repository = "junit4";
+    var branch = "50a285d3ce69b4556ac46d8633f6beb4527b4679";
+    var controller = new MappingsController(repository, branch, 0, 480);
+    controller.extractMappingsToStore();
+  }
+
+  @Test
+  public void testJunitFrom470ToNext() throws GitAPIException {
+    var repository = "junit4";
+    var branch = "50a285d3ce69b4556ac46d8633f6beb4527b4679";
+    var controller = new MappingsController(repository, branch, 470, 1000);
+    controller.extractMappingsToStore();
+  }
+
+  @Test
   public void testGson() throws GitAPIException {
     var repository = "gson";
     var branch = "ceae88bd6667f4263bbe02e6b3710b8a683906a2";
@@ -54,4 +70,11 @@ public class MappingsControllerTest {
     controller.extractMappingsToStore();
   }
 
+  @Test
+  public void testTruthFrom825() throws GitAPIException {
+    var repository = "truth";
+    var branch = "15453e7104802763fec1770efa13545ee564d526";
+    var controller = new MappingsController(repository, branch, 829, 1000);
+    controller.extractMappingsToStore();
+  }
 }

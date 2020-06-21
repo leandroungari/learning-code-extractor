@@ -59,6 +59,7 @@ public class CommitSnapshot {
 
   private CtModel createMavenProject() {
     var launcher = new MavenLauncher(this.base, MavenLauncher.SOURCE_TYPE.APP_SOURCE);
+    launcher.getEnvironment().setIgnoreDuplicateDeclarations(true);
     launcher.buildModel();
     System.out.println("> It's a Maven Project");
     return launcher.getModel();
@@ -80,11 +81,13 @@ public class CommitSnapshot {
 
     generateFiles();
     CtModel model = null;
+    System.err.println("> project commit " + current.id().getName());
     try {
       model = createMavenProject();
     } catch(Exception ex) {
+      //ex.printStackTrace();
       model = createSimpleProject();
-    }
+    } 
     return model;
   }
 

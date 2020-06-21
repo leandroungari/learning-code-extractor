@@ -37,5 +37,16 @@ public class MappingsExtractorTest {
     System.out.println(result);
   }
 
+  @Test
+  public void testTruthCommitA54686() {
+    var repository = "truth";
+    var branch = "15453e7104802763fec1770efa13545ee564d526";
+    var commit = "a54686c08844c4d4f5524ac45963eda6a48c918e";
+    
+    var builder = new MappingsExtractor(repository, branch, commit);
+    var result = builder.createMappings();
+    System.out.println(result);
+  }
+
   
 }

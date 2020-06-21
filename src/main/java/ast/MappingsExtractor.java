@@ -18,14 +18,18 @@ public class MappingsExtractor {
 
   public CommitMappings createMappings() {
 
-    System.out.println(commit);
-    var comparator = new Comparator(repository, branch, commit);
-    var items = comparator.generateMappings();
+    System.err.println("> " + commit);
+    try {
+      var comparator = new Comparator(repository, branch, commit);
+      var items = comparator.generateMappings();
 
-    var result = new CommitMappings(repository, branch, commit);
-    result.add(items);
+      var result = new CommitMappings(repository, branch, commit);
+      result.add(items);
 
-    return result;
+      return result;
+    } catch(NullPointerException ex) {
+      return new CommitMappings(repository, branch, commit);
+    }
   }
 
 }

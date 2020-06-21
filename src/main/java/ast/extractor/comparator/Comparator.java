@@ -49,7 +49,9 @@ public class Comparator {
     operations = converter.convert(astComparator.compare(oldFile, newFile));
   }
 
-  public Comparator(String repository, String branch, String commit) {
+  public Comparator(String repository, String branch, String commit) 
+    throws NullPointerException {
+      
     hierarchy = new HierarchyCombiner();
     mapper = new MappingsCreator();
     siblings = new SiblingsCombiner();

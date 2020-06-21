@@ -7,6 +7,7 @@ import org.eclipse.jgit.api.errors.GitAPIException;
 
 import ast.MappingsExtractor;
 import ast.extractor.CommitMappings;
+import ast.snapshot.exception.NotFoundElementInSnapshotException;
 import persistence.Settings;
 import repository.Commit;
 import repository.Repository;
@@ -61,8 +62,14 @@ public class MappingsController {
   public Boolean extractMappingsToStore(String commit) {
     var extractor = new MappingsExtractor(repository, branch, commit);
 
-    var result = extractor.createMappings();
-    return this.store(result);
+    try {
+      var result = extractor.createMappings();
+      return this.store(result);
+    } catch(NotFoundElementInSnapshotException ex) {
+      System.err.println("Erro na leitura do commit " + commit);
+    }
+
+    return false;
   }
 
   private Boolean store(CommitMappings item) {
