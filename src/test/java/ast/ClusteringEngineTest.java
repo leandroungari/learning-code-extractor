@@ -39,4 +39,22 @@ public class ClusteringEngineTest {
     var engine = new ClusteringEngine(repository, branch, 30, 100);
     engine.generate();
   }
+
+  @Test
+  public void testTruthEntire() {
+    var repository = "truth";
+    var branch = "15453e7104802763fec1770efa13545ee564d526";
+    
+    var engine = new ClusteringEngine(repository, branch);
+    engine.generate();
+  }
+
+  @Test
+  public void testJunitEntire() {
+    var repository = "junit4";
+    var branch = "50a285d3ce69b4556ac46d8633f6beb4527b4679";
+    
+    var engine = new ClusteringEngine(repository, branch);
+    engine.generate();
+  }
 }

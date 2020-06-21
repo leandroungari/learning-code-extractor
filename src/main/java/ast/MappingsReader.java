@@ -28,7 +28,7 @@ public class MappingsReader {
 
     try {
       return resource.<CommitMappings>read(new JSON<>(result));
-    } catch (IOException e) {
+    } catch (IOException | NullPointerException e) {
       e.printStackTrace();
     }
     return null;
