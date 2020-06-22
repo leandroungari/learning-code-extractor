@@ -31,13 +31,23 @@ public class ClusterPersistor {
     return persistor;
   }
 
-  void write() {
+  public void write() {
     var resource = new Resource(this.base, "#" + repository + ".json");
     try {
       resource.write(new JSON<>(cluster), true);
     } catch (IOException e) {
       e.printStackTrace();
     }
+  }
+
+  public Cluster read() {
+    var resource = new Resource(this.base, "#" + repository + ".json");
+    try {
+      return resource.read(new JSON<>(cluster));
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+    return null;
   }
 
 }
