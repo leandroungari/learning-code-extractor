@@ -33,7 +33,13 @@ public class Template {
 
   private Boolean compatibility(Pattern pattern, Element<?> element) {
     var matches = new HashSet<CtElement>();
-    var parent = element.getParentOfAllDependencies();
+    CtElement parent = null;
+    try {
+      parent = element.getParentOfAllDependencies();
+    } catch(NullPointerException ex) {
+      System.out.println("O elemento pai é nulo");
+      return false;
+    }
 
     try {
       pattern
