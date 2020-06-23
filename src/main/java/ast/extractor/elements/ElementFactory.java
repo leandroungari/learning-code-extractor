@@ -53,9 +53,11 @@ public class ElementFactory<T extends Element<? extends CtElement>> {
     String filename) {
 
     var item = snap.model(elementPath);
+    var counter = 0;
     while(item == null) {
+      if(counter < 10) break;
       if(snap.commit().before() == null) break;
-      
+      counter++;
       try {
         snap = snap.previous();
         item = snap.model(elementPath);
