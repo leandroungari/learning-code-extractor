@@ -16,7 +16,7 @@ public class Snapshot {
   private String branch;
   private Repository repositoryInstance;
 
-  private static Integer LENGTH = 10;
+  private static Integer LENGTH = 5;
   private static String[] availableCommits = new String[LENGTH];
   private static Integer position = 0;
   private static HashMap<String,CommitSnapshot> commits = new HashMap<>();
