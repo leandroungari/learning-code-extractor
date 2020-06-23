@@ -10,6 +10,7 @@ import ast.extractor.mapping.InsertMapping;
 import ast.extractor.mapping.Mapping;
 import ast.extractor.mapping.MoveMapping;
 import ast.extractor.mapping.UpdateMapping;
+import spoon.SpoonException;
 
 public class SiblingsCombiner {
 
@@ -44,12 +45,16 @@ public class SiblingsCombiner {
 
             Mapping result = null;
             similarity.setTargets(map.source(), map.destination());
-            if(similarity.verify()) {
-              if(pathParentDestination.equals(pathParentSource)) {
-                result = createUpdateMapping(map);
-              } else {
-                result = createMoveMapping(map);
+            try {
+              if(similarity.verify()) {
+                if(pathParentDestination.equals(pathParentSource)) {
+                  result = createUpdateMapping(map);
+                } else {
+                  result = createMoveMapping(map);
+                }
               }
+            } catch(SpoonException ex) {
+              System.err.println("> Falha na comparação de elementos irmãos");
             }
 
             if(result != null) {
