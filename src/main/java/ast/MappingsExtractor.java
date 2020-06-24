@@ -2,6 +2,7 @@ package ast;
 
 import ast.extractor.CommitMappings;
 import ast.extractor.comparator.Comparator;
+import spoon.support.SpoonClassNotFoundException;
 
 public class MappingsExtractor {
 
@@ -18,7 +19,6 @@ public class MappingsExtractor {
 
   public CommitMappings createMappings() {
 
-    System.err.println("> " + commit);
     try {
       var comparator = new Comparator(repository, branch, commit);
       var items = comparator.generateMappings();
@@ -27,7 +27,7 @@ public class MappingsExtractor {
       result.add(items);
 
       return result;
-    } catch(NullPointerException ex) {
+    } catch(NullPointerException | SpoonClassNotFoundException ex) {
       return new CommitMappings(repository, branch, commit);
     }
   }

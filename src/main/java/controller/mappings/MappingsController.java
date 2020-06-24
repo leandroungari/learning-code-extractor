@@ -53,8 +53,11 @@ public class MappingsController {
   }
 
   public Boolean extractMappingsToStore() throws GitAPIException {
+    var counter = 0;
     for (var item : getCommits()) {
+      System.err.println("> #" + counter + " - " + item.id().getName());
       this.extractMappingsToStore(item.id().getName());
+      counter++;
     }
     return true;
   }

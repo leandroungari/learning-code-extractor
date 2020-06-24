@@ -89,7 +89,7 @@ public abstract class Element<T extends CtElement> implements Jsonify<Element<?>
         }
       }
     } catch (NullPointerException ex) {
-      ex.printStackTrace();
+      //ex.printStackTrace();
     }
     return false;
   }
@@ -109,7 +109,7 @@ public abstract class Element<T extends CtElement> implements Jsonify<Element<?>
         }
       }
     } catch (NullPointerException ex) {
-      ex.printStackTrace();
+      //ex.printStackTrace();
     }
     return false;
   }
@@ -129,7 +129,7 @@ public abstract class Element<T extends CtElement> implements Jsonify<Element<?>
         }
       }
     } catch (NullPointerException ex) {
-      ex.printStackTrace();
+      //ex.printStackTrace();
     }
     return false;
   }
@@ -149,7 +149,7 @@ public abstract class Element<T extends CtElement> implements Jsonify<Element<?>
         }
       }
     } catch (NullPointerException ex) {
-      ex.printStackTrace();
+      //ex.printStackTrace();
     }
     return false;
   }
