@@ -14,6 +14,7 @@ import org.springframework.web.filter.CorsFilter;
 
 import command.ClusteringCommand;
 import command.CommandExecutor;
+import command.FinderCommand;
 import command.MappingsCommand;
 import command.MetricsCommand;
 import command.repository.CommitsCommand;
@@ -44,6 +45,7 @@ public class Main {
       executor.add("download", new DownloadCommand());
       executor.add("metrics", new MetricsCommand());
       executor.add("commits", new CommitsCommand());
+      executor.add("find", new FinderCommand());
 
       executor.execute();
   	}  	
