@@ -6,10 +6,7 @@ import java.util.List;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
-import org.eclipse.jgit.api.errors.GitAPIException;
-
 import ast.extractor.mapping.Mapping;
-import ast.snapshot.Snapshot;
 import persistence.Jsonify;
 
 public class ClusterItem implements Jsonify<ClusterItem> {
@@ -25,7 +22,7 @@ public class ClusterItem implements Jsonify<ClusterItem> {
     this.items = new ArrayList<>();
     this.code = code;
     this.parent = parent;
-    
+
     this.add(mapping, commit);
   }
 
@@ -55,13 +52,12 @@ public class ClusterItem implements Jsonify<ClusterItem> {
     return toJson().toString();
   }
 
-
   @Override
   public JsonObject toJson() {
     var result = new JsonObject();
     result.add("base", base.toJson());
     var list = new JsonArray();
-    for(var item: items) {
+    for (var item : items) {
       list.add(item.toJson());
     }
     result.add("items", list);
@@ -70,24 +66,17 @@ public class ClusterItem implements Jsonify<ClusterItem> {
 
   @Override
   public ClusterItem fromJson(JsonObject content) {
-    try {
-      var snapshot = new Snapshot(parent.repository(), parent.branch());
-      
-      var base = new Item();
-      base.setSnapshot(snapshot);
 
-      this.base = base.fromJson(content.get("base").getAsJsonObject());
-      this.items = new ArrayList<>();
-      for(var item: content.get("items").getAsJsonArray()) {
-        var instance = new Item();
-        instance.setSnapshot(snapshot);
-        this.items.add(instance.fromJson(item.getAsJsonObject()));
-      }
-      snapshot.clear();
-    } catch (GitAPIException e) {
-      e.printStackTrace();
+    var base = new Item();
+    base.setSnapshot(parent.getSnapshot());
+
+    this.base = base.fromJson(content.get("base").getAsJsonObject());
+    this.items = new ArrayList<>();
+    for (var item : content.get("items").getAsJsonArray()) {
+      var instance = new Item();
+      instance.setSnapshot(parent.getSnapshot());
+      this.items.add(instance.fromJson(item.getAsJsonObject()));
     }
-    
     return this;
   }
 }

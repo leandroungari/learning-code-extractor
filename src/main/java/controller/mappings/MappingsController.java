@@ -7,10 +7,10 @@ import org.eclipse.jgit.api.errors.GitAPIException;
 
 import ast.MappingsExtractor;
 import ast.extractor.CommitMappings;
+import ast.snapshot.Snapshot;
 import ast.snapshot.exception.NotFoundElementInSnapshotException;
 import persistence.Settings;
 import repository.Commit;
-import repository.Repository;
 import persistence.resource.JSON;
 import persistence.resource.Resource;
 
@@ -21,32 +21,33 @@ public class MappingsController {
   private Integer from;
   private Integer to;
 
-  public MappingsController(String repository, String branch) {
+  private Snapshot snapshot;
+
+  public MappingsController(String repository, String branch) throws GitAPIException {
     this.repository = repository;
     this.branch = branch;
+
+    this.snapshot = Snapshot.create(repository, branch);
   }
 
-  public MappingsController(String repository, String branch, Integer from, Integer to) {
+  public MappingsController(String repository, String branch, Integer from, Integer to) 
+    throws GitAPIException {
+    
     this.repository = repository;
     this.branch = branch;
     this.from = from;
     this.to = to;
+
+    this.snapshot = Snapshot.create(repository, branch);
   }
 
   private List<Commit> getCommits() throws GitAPIException {
     List<Commit> items = null;
 
     if(from != null && to != null) {
-      items = Repository
-        .create(repository)
-        .branch(branch)
-        .commits(from, to);
+      items = snapshot.getBranch().commits(from, to);
     } else {
-      items = Repository
-        .create(repository)
-        .branch(branch)
-        .commits();
-
+      items = snapshot.getBranch().commits();
       items.remove(0);
     }
     return items;

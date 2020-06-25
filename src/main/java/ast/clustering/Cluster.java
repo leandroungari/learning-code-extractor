@@ -7,8 +7,6 @@ import java.util.List;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
-import org.eclipse.jgit.api.errors.GitAPIException;
-
 import ast.extractor.mapping.Mapping;
 import ast.snapshot.Snapshot;
 import persistence.Jsonify;
@@ -17,6 +15,7 @@ public class Cluster implements Jsonify<Cluster> {
 
   private String repository;
   private String branch;
+  private Snapshot snapshot;
 
   private List<ClusterIndex> items;
 
@@ -32,14 +31,11 @@ public class Cluster implements Jsonify<Cluster> {
     this.branch = branch;
     this.items = new ArrayList<>();
     this.persistor = new ClusterPersistor(this);
+    this.snapshot = Snapshot.get(repository);
   }
 
   ClusterPersistor persistor() {
     return persistor;
-  }
-
-  public void setSnapshot() {
-
   }
 
   public void addItem(Mapping mapping, String commit) {
@@ -58,6 +54,10 @@ public class Cluster implements Jsonify<Cluster> {
 
   String branch() {
     return branch;
+  }
+
+  Snapshot getSnapshot() {
+    return snapshot;
   }
 
   public List<ClusterIndex> getItems() {
@@ -88,16 +88,9 @@ public class Cluster implements Jsonify<Cluster> {
     this.branch = content.get("branch").getAsString();
     this.items = new ArrayList<>();
     var list = content.get("items").getAsJsonArray();
-    try {
-      var snapshot = new Snapshot(repository, branch);
-      for(var item: list) {
-        var index = new ClusterIndex();
-        index.setSnapshot(snapshot);
-        this.items.add(index.fromJson(item.getAsJsonObject()));
-      }
-    } catch (GitAPIException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
+
+    for (var item : list) {
+      this.items.add(new ClusterIndex().fromJson(item.getAsJsonObject()));
     }
     return this;
   }

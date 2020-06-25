@@ -6,38 +6,46 @@ import java.util.HashMap;
 import org.eclipse.jgit.api.errors.GitAPIException;
 
 import persistence.Settings;
-import repository.Commit;
+import repository.Branch;
 import repository.Repository;
 import repository.exception.GitRepositoryException;
 
 public class Snapshot {
 
-  private String repositoryName;
+  private String repository;
   private String branch;
-  private Repository repositoryInstance;
+  private Branch instance;
 
-  private static Integer LENGTH = 5;
-  private static String[] availableCommits = new String[LENGTH];
-  private static Integer position = 0;
-  private static HashMap<String,CommitSnapshot> commits = new HashMap<>();
+  private Integer LENGTH = 5;
+  private String[] availableCommits = new String[LENGTH];
+  private Integer position = 0;
+  private HashMap<String,CommitSnapshot> commits = new HashMap<>();
 
-  private String base;
+  private static HashMap<String,Snapshot> snap = new HashMap<>();
 
-  public Snapshot(String repository, String branch) throws GitAPIException {
-    this.repositoryName = repository;
-    this.branch = branch;
-    this.repositoryInstance = createRepository(repository);
-
-    this.base = Settings.get()
-      .folderOfMetadata() + "/" + getRepositoryName();
+  public static Snapshot create(String repo, String branch) throws GitAPIException {
+    var novo = new Snapshot(repo, branch);
+    snap.put(repo, novo);
+    return novo;
   }
 
-  public String getRepositoryName() {
-    return this.repositoryName;
+  public static Snapshot get(String repo) {
+    return snap.get(repo);
+  }
+
+  public Branch getBranch() {
+    return instance;
+  }
+
+  private Snapshot(String repository, String branch) throws GitAPIException {
+    this.repository = repository;
+    this.branch = branch;
+    this.instance = createRepository(this.repository)
+      .branch(this.branch);
   }
 
   String base() {
-    return this.base;
+    return Settings.get().folderOfMetadata() + "/" + repository;
   }
 
   public CommitSnapshot commit(String commit) {
@@ -63,13 +71,8 @@ public class Snapshot {
   }
 
   private CommitSnapshot createSnapshotCommit(String commit) {
-    Commit instance = null;
-    try {
-      instance = repositoryInstance.branch(branch).commit(commit);
-    } catch (GitAPIException e) {
-      e.printStackTrace();
-    }
-    var snap = new CommitSnapshot(instance, this);
+    var snapCommit = this.instance.commit(commit);
+    var snap = new CommitSnapshot(snapCommit, this);
     commits.put(commit, snap);
     availableCommits[position] = commit;
     position = (position + 1) % LENGTH;
