@@ -76,7 +76,6 @@ public class ClusteringEngine {
               }
             } catch(SpoonException ex) {
               System.err.println(ex.getMessage());
-              //ex.printStackTrace();
             }
           }
         }
