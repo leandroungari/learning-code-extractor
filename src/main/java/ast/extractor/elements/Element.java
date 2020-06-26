@@ -17,7 +17,9 @@ import spoon.reflect.visitor.filter.TypeFilter;
 public abstract class Element<T extends CtElement> implements Jsonify<Element<?>>, Tokenizer {
 
   protected T element;
-  private String path;
+  protected String path;
+
+  private String type;
 
   protected Integer priority;
 
@@ -28,6 +30,7 @@ public abstract class Element<T extends CtElement> implements Jsonify<Element<?>
     } else {
       this.path = "#undefined";
     }
+    this.type = this.getClass().getSimpleName();
   }
 
   public Integer getPriority() {
@@ -55,18 +58,24 @@ public abstract class Element<T extends CtElement> implements Jsonify<Element<?>
   @Override
   public JsonObject toJson() {
     var obj = new JsonObject();
-    var list = new JsonArray();
-    for(var item: this.dependencies()) {
-      list.add(item.toString());
+    if((!(this instanceof TempElement)) && ElementFactory.isLoadElementEnabled()) {
+      var list = new JsonArray();
+      for(var item: this.dependencies()) {
+        list.add(item.toString());
+      }
+      obj.add("element", list);
     }
-    obj.add("element", list);
     obj.addProperty("path", this.path);
-    obj.addProperty("type", this.getClass().getSimpleName());
+    obj.addProperty("type", this.type);
     return obj;
   }
 
   public String type() {
-    return this.getClass().getSimpleName();
+    return type;
+  }
+
+  public void setType(String type) {
+    this.type = type;
   }
 
   @Override

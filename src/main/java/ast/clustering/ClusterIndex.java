@@ -3,7 +3,6 @@ package ast.clustering;
 import com.google.gson.JsonObject;
 
 import ast.extractor.mapping.Mapping;
-import ast.snapshot.Snapshot;
 import ast.template.Template;
 import ast.template.TemplateBuilder;
 import persistence.Jsonify;
@@ -15,8 +14,6 @@ public class ClusterIndex implements Jsonify<ClusterIndex>, Comparable<ClusterIn
   private Integer size;
 
   private Cluster parent;
-
-  private Snapshot snap;
 
   public ClusterIndex() {
     this.size = 1;
@@ -34,10 +31,6 @@ public class ClusterIndex implements Jsonify<ClusterIndex>, Comparable<ClusterIn
     clusterItem.add(mapping, commit);
     parent.persistor().item().write(clusterItem);
     this.size = clusterItem.getItems().size();
-  }
-
-  public void setSnapshot(Snapshot snap) {
-    this.snap = snap;
   }
 
   public Integer getCode() {
@@ -73,7 +66,7 @@ public class ClusterIndex implements Jsonify<ClusterIndex>, Comparable<ClusterIn
     this.code = content.get("code").getAsInt();
     
     var item = new Item();
-    item.setSnapshot(snap);
+    item.setSnapshot(parent.getSnapshot());
     this.base = item.fromJson(content.get("base").getAsJsonObject());
     this.size = Integer.valueOf(content.get("size").getAsInt());
     return this;

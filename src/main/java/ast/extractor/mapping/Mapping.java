@@ -4,19 +4,22 @@ import com.google.gson.JsonObject;
 
 import persistence.Jsonify;
 import ast.extractor.elements.Element;
+import ast.extractor.elements.ElementFactory;
+import ast.extractor.elements.TempElement;
 import ast.snapshot.CommitSnapshot;
+import ast.snapshot.Snapshot;
 
 public abstract class Mapping implements Jsonify<Mapping>, Comparable<Mapping> {
 
 	protected Element<?> source;
 	protected Element<?> destination;
 
-	protected CommitSnapshot snapshot;
-
 	protected String oldFile;
-
 	protected String newFile;
-	
+
+	protected CommitSnapshot snapshot;
+	protected String commit;
+
 	public Mapping() {
 
 	}
@@ -25,34 +28,56 @@ public abstract class Mapping implements Jsonify<Mapping>, Comparable<Mapping> {
 		this.snapshot = snap;
 	}
 
+	public void setCommit(String commit) {
+		this.commit = commit;
+	}
+
 	public Boolean isSameType(Mapping other) {
 
 		return getClass() == other.getClass();
 	}
 
 	public Element<?> source() {
+		if(source instanceof TempElement) {
+			var temp = (TempElement) source;
+			var snap = Snapshot
+				.get(ElementFactory.getTempRepository())
+				.commit(commit);
+			var result = ElementFactory.create(snap.previous(), temp.path());
+			this.source.setType(result.getClass().getSimpleName());
+			return result;
+		}
+		
 		return source;
 	}
 
 	public Element<?> destination() {
+		if(destination instanceof TempElement) {
+			var temp = (TempElement) destination;
+			var snap = Snapshot
+				.get(ElementFactory.getTempRepository())
+				.commit(commit);
+			var result = ElementFactory.create(snap, temp.path());
+			this.destination.setType(result.getClass().getSimpleName());
+		}
 		return destination;
 	}
-	
+
 	public void setOldFile(String oldFile) {
-    this.oldFile = oldFile;
-  }
+		this.oldFile = oldFile;
+	}
 
-  public void setNewFile(String newFile) {
-    this.newFile = newFile;
-  }
+	public void setNewFile(String newFile) {
+		this.newFile = newFile;
+	}
 
-  public String getOldFile() {
-    return oldFile;
-  }
-  
-  public String getNewFile() {
-    return newFile;
-  }
+	public String getOldFile() {
+		return oldFile;
+	}
+
+	public String getNewFile() {
+		return newFile;
+	}
 
 	@Override
 	public abstract String toString();
@@ -62,71 +87,61 @@ public abstract class Mapping implements Jsonify<Mapping>, Comparable<Mapping> {
 	public abstract Boolean isChildOf(Mapping other);
 
 	protected abstract Integer getPriority();
-	
+
 	@Override
 	public boolean equals(Object obj) {
 		var other = (Mapping) obj;
 		return toString().equals(other.toString());
 	}
 
-	protected static String pathOfElement(
-		JsonObject object, 
-		String element) {
+	protected static String pathOfElement(JsonObject object, String element) {
 
 		var item = object.get(element).getAsJsonObject();
-    return item.get("path").getAsString();
+		return item.get("path").getAsString();
 	}
-
 
 	@Override
 	public int compareTo(Mapping other) {
-		if(this.getPriority() < other.getPriority()) {
+		if (this.getPriority() < other.getPriority()) {
 			return -1;
-		} else if(this.getPriority() > other.getPriority()) {
+		} else if (this.getPriority() > other.getPriority()) {
 			return 1;
 		}
 		return 0;
 	}
-	
-	public static Mapping fromJson(JsonObject mapping, CommitSnapshot snapshot) {
+
+	public static Mapping fromJson(JsonObject mapping, Snapshot snap, String commit) {
+
 		var type = mapping.get("type").getAsString();
-    if("insert".equals(type)) {
-      var insert = new InsertMapping();
-      insert.setSnapshot(snapshot);
-      return insert.fromJson(mapping);
-    } else if("delete".equals(type)) {
-      var delete = new DeleteMapping();
-      delete.setSnapshot(snapshot);
-      return delete.fromJson(mapping);
-    } else if("move".equals(type)) {
-      var move = new MoveMapping();
-      move.setSnapshot(snapshot);
-      return move.fromJson(mapping);
-    } else {
-      var update = new UpdateMapping();
-      update.setSnapshot(snapshot);
-      return update.fromJson(mapping);
-    }
+		Mapping map = null;
+		if ("insert".equals(type)) {
+			map = new InsertMapping();
+		} else if ("delete".equals(type)) {
+			map = new DeleteMapping();
+		} else if ("move".equals(type)) {
+			map = new MoveMapping();
+		} else {
+			map = new UpdateMapping();
+		}
+
+		if (ElementFactory.isLoadElementEnabled()) {
+			var instance = snap.commit(commit);
+			map.setSnapshot(instance);
+		} else {
+			map.setCommit(commit);
+		}
+
+		return map.fromJson(mapping);
 	}
 
-	/*protected Boolean verifyCorrespondence(
-    Integer totalOfElements, 
-    Integer numberOfMatches) {
+	protected String prevCommit(String current) {
+		var branch = Snapshot
+      .get(ElementFactory.getTempRepository())
+      .getBranch();
 
-    if (totalOfElements == numberOfMatches) {
-      return true;
-    } else if (totalOfElements != 0) {
-      System.err.println("Correspondência parcial");
-    }
-    return false;
+    return branch
+      .commit(current)
+      .before()
+      .id().getName();
 	}
-	
-	protected List<CtElement> dependencies(
-		CtElement target) {
-			
-		return Change
-      .createChange(target)
-      .getCompleteChange();
-	}
-	*/
 }

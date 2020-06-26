@@ -22,14 +22,13 @@ public class MappingsCommand implements Command {
   
 
   public void run() {
-    MappingsController controller = null;
-    if(from != null && to != null) {
-      controller = new MappingsController(repository, branch, from, to);
-    } else {
-      controller = new MappingsController(repository, branch);
-    }
-
     try {
+      MappingsController controller = null;
+      if(from != null && to != null) {
+        controller = new MappingsController(repository, branch, from, to);
+      } else {
+        controller = new MappingsController(repository, branch);
+      }
       controller.extractMappingsToStore();
     } catch (GitAPIException e) {
       e.printStackTrace();

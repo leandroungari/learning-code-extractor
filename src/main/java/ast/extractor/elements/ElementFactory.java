@@ -14,6 +14,9 @@ import spoon.reflect.declaration.CtMethod;
 
 public class ElementFactory<T extends Element<? extends CtElement>> {
 
+  private static Boolean isLoadElementEnabled = true;
+  private static String tempRepository;
+
   public static <A extends CtElement> Element<?> create(A item) {
 
     if(item == null) {
@@ -49,8 +52,7 @@ public class ElementFactory<T extends Element<? extends CtElement>> {
 
   public static <A extends CtElement> Element<?> create(
     CommitSnapshot snap, 
-    String elementPath, 
-    String filename) {
+    String elementPath) {
 
     var item = snap.model(elementPath);
     var counter = 0;
@@ -69,52 +71,28 @@ public class ElementFactory<T extends Element<? extends CtElement>> {
     return ElementFactory.create(item);
   }
 
-  /* 
-  public CtClass<?> getParentClass() {
-
-    return element.getParent(new TypeFilter<>(CtClass.class));
+  public static Element<?> create(String path, String commit) {
+    return new TempElement(path, commit);
   }
 
-  public T get() {
-
-    return element;
+  public static Boolean isLoadElementEnabled() {
+    return isLoadElementEnabled;
   }
 
-  protected static <A, B> List<B> childrenFilter(CtElement target, Class<A> clazz, Function<A, B> action) {
-
-    return target.getElements(new TypeFilter<>(clazz)).stream().map(item -> action.apply(item))
-        .collect(Collectors.toList());
+  public static void setTempRepository(String name) {
+    tempRepository = name;
   }
 
-  public List<CtVariableReference<?>> getVariablesDependencies() {
-
-    return Change.childrenFilter(
-      element, 
-      CtVariableReference.class, 
-      item -> item
-    );
+  public static String getTempRepository() {
+    return tempRepository;
   }
 
-  public List<CtLiteral<?>> getLiterals() {
-    return Change.childrenFilter(
-      element, 
-      CtLiteral.class, 
-      item -> item
-    );
+  public static void enableLoadElement() {
+    isLoadElementEnabled = true;
   }
 
-  @Override
-  public JsonElement toMap() {
-    var json = new JsonObject();
-    json.addProperty("element", element.toString());
-    json.addProperty("path", path);
-    json.addProperty("type", getClass().getSimpleName());
-    return json;
+  public static void disableLoadElement() {
+    isLoadElementEnabled = false;
   }
-
-  @Override
-  public String toString() {
-    return toMap().toString();
-  }
-  */
+  
 }

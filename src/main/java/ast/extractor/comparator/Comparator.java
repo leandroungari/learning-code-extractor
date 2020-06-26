@@ -4,8 +4,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.jgit.api.errors.GitAPIException;
-
 import ast.extractor.mapping.Mapping;
 import ast.snapshot.CommitSnapshot;
 import ast.snapshot.Snapshot;
@@ -15,7 +13,6 @@ import persistence.resource.PlainText;
 import persistence.resource.Resource;
 import repository.Branch;
 import repository.Commit;
-import repository.Repository;
 import spoon.SpoonException;
 import spoon.reflect.declaration.CtElement;
 
@@ -67,19 +64,9 @@ public class Comparator {
 
     this.repository = repository;
 
-    try {
-      instanceBranch = Repository.create(repository).branch(branch);
-    } catch (GitAPIException e) {
-      e.printStackTrace();
-    }
-
-    try {
-      var snapshot = new Snapshot(repository, branch);
-      currentSnap = snapshot.commit(commit);
-      beforeSnap = currentSnap.previous();
-    } catch (GitAPIException e) {
-      e.printStackTrace();
-    }
+    instanceBranch = Snapshot.get(repository).getBranch(); 
+    currentSnap = Snapshot.get(repository).commit(commit);
+    beforeSnap = currentSnap.previous();
 
     extractOperationFromCommit(commit);
   }

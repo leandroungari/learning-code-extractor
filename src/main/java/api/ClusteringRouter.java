@@ -2,6 +2,7 @@ package api;
 
 import java.util.Map;
 
+import org.eclipse.jgit.api.errors.GitAPIException;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -11,13 +12,14 @@ import controller.mappings.ClusteringController;
 
 @RestController
 public class ClusteringRouter {
-  
+
   @GetMapping("/cluster/{repository}/{branch}")
   @ResponseBody
-  public Map<String,Boolean> clustering(
-    @PathVariable String repository,
-    @PathVariable String branch
-  ) {
+  public Map<String, Boolean> clustering(
+    @PathVariable String repository, 
+    @PathVariable String branch)
+      throws GitAPIException {
+        
     var controller = new ClusteringController(repository, branch);
     var result = controller.clusterToStore();
     return Map.of("result", result);

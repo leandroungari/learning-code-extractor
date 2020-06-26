@@ -6,8 +6,6 @@ import java.util.List;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
-import org.eclipse.jgit.api.errors.GitAPIException;
-
 import ast.extractor.mapping.DeleteMapping;
 import ast.extractor.mapping.InsertMapping;
 import ast.extractor.mapping.Mapping;
@@ -71,39 +69,33 @@ public class CommitMappings implements Jsonify<CommitMappings> {
 
   @Override
   public CommitMappings fromJson(JsonObject content) {
-    try {
-      var snapshot = new Snapshot(repository, branch);
-      var snapCommit = snapshot.commit(commit);
-      this.repository = content.get("repository").getAsString();
-      this.branch = content.get("branch").getAsString();
-      this.commit = content.get("commit").getAsString();
-      this.mappings = new ArrayList<>();
-      for(var item: content.get("mappings").getAsJsonArray()) {
-        var mapping = item.getAsJsonObject();
-        var type = mapping.get("type").getAsString();
-        if("insert".equals(type)) {
-          var insert = new InsertMapping();
-          insert.setSnapshot(snapCommit);
-          this.mappings.add(insert.fromJson(mapping));
-        } else if("delete".equals(type)) {
-          var delete = new DeleteMapping();
-          delete.setSnapshot(snapCommit);
-          this.mappings.add(delete.fromJson(mapping));
-        } else if("move".equals(type)) {
-          var move = new MoveMapping();
-          move.setSnapshot(snapCommit);
-          this.mappings.add(move.fromJson(mapping));
-        } else {
-          var update = new UpdateMapping();
-          update.setSnapshot(snapCommit);
-          this.mappings.add(update.fromJson(mapping));
-        }
+    var snapCommit = Snapshot.get(repository).commit(commit);
+    this.repository = content.get("repository").getAsString();
+    this.branch = content.get("branch").getAsString();
+    this.commit = content.get("commit").getAsString();
+    this.mappings = new ArrayList<>();
+    for (var item : content.get("mappings").getAsJsonArray()) {
+      var mapping = item.getAsJsonObject();
+      var type = mapping.get("type").getAsString();
+      if ("insert".equals(type)) {
+        var insert = new InsertMapping();
+        insert.setSnapshot(snapCommit);
+        this.mappings.add(insert.fromJson(mapping));
+      } else if ("delete".equals(type)) {
+        var delete = new DeleteMapping();
+        delete.setSnapshot(snapCommit);
+        this.mappings.add(delete.fromJson(mapping));
+      } else if ("move".equals(type)) {
+        var move = new MoveMapping();
+        move.setSnapshot(snapCommit);
+        this.mappings.add(move.fromJson(mapping));
+      } else {
+        var update = new UpdateMapping();
+        update.setSnapshot(snapCommit);
+        this.mappings.add(update.fromJson(mapping));
       }
-      snapshot.clear();
-    } catch (GitAPIException e) {
-      e.printStackTrace();
     }
     return this;
-  }  
+  }
 
 }

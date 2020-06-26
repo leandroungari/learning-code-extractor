@@ -24,7 +24,7 @@ public class TemplateBuilderTest {
 
   @BeforeClass
   public static void init() throws GitAPIException {
-    snap = new Snapshot(repository, branch);
+    snap = Snapshot.create(repository, branch);
   }
 
   @Test
