@@ -25,8 +25,8 @@ public class MoveMapping extends Mapping {
   @Override
   public JsonObject toJson() {
     var json = new JsonObject();
-    json.add("source", source.toJson());
-    json.add("destination", destination.toJson());
+    json.add("source", source().toJson());
+    json.add("destination", destination().toJson());
     json.addProperty("type", "move");
     json.addProperty("oldFile", oldFile);
     json.addProperty("newFile", newFile);
@@ -41,13 +41,19 @@ public class MoveMapping extends Mapping {
 
     var destinationPath = MoveMapping
       .pathOfElement(content, "destination");
-    this.destination = ElementFactory
-      .create(snapshot, destinationPath, this.newFile);
+    if(snapshot != null) {
+      destination = ElementFactory.create(snapshot, destinationPath);
+    } else {
+      destination = ElementFactory.create(destinationPath, commit);
+    }
     
     var sourcePath = MoveMapping
       .pathOfElement(content, "source");
-    this.source = ElementFactory
-      .create(snapshot.previous(), sourcePath, this.oldFile);
+    if(snapshot != null) {
+      source = ElementFactory.create(snapshot.previous(), sourcePath);
+    } else {
+      source = ElementFactory.create(sourcePath, commit);
+    }
 
     return this;
   }

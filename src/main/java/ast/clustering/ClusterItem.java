@@ -6,6 +6,7 @@ import java.util.List;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
+import ast.extractor.elements.ElementFactory;
 import ast.extractor.mapping.Mapping;
 import persistence.Jsonify;
 
@@ -55,7 +56,9 @@ public class ClusterItem implements Jsonify<ClusterItem> {
   @Override
   public JsonObject toJson() {
     var result = new JsonObject();
+    ElementFactory.enableLoadElement();
     result.add("base", base.toJson());
+    ElementFactory.disableLoadElement();
     var list = new JsonArray();
     for (var item : items) {
       list.add(item.toJson());

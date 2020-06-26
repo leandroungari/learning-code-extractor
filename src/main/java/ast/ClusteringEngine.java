@@ -7,7 +7,7 @@ import org.eclipse.jgit.api.errors.GitAPIException;
 
 import ast.clustering.Cluster;
 import ast.extractor.CommitMappings;
-
+import ast.extractor.elements.ElementFactory;
 import ast.extractor.mapping.Mapping;
 import ast.extractor.mapping.MoveMapping;
 import ast.extractor.mapping.UpdateMapping;
@@ -28,6 +28,7 @@ public class ClusteringEngine {
     this.branch = branch;
 
     this.cluster = new Cluster(repository, branch);
+    ElementFactory.setTempRepository(repository);
   }
 
   public ClusteringEngine(String repository, String branch, Integer from, Integer to) {
@@ -37,6 +38,7 @@ public class ClusteringEngine {
     this.to = to;
 
     this.cluster = new Cluster(repository, branch);
+    ElementFactory.setTempRepository(repository);
   }
 
   public void generate() {

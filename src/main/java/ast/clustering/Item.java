@@ -52,7 +52,8 @@ public class Item implements Jsonify<Item> {
     this.commit = content.get("commit").getAsString();
     this.mapping = Mapping.fromJson(
       content.get("mapping").getAsJsonObject(),
-      snapshot.commit(this.commit)
+      snapshot,
+      this.commit
     );
       
     return this;
