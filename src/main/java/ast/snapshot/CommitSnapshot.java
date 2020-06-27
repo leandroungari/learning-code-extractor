@@ -24,14 +24,21 @@ public class CommitSnapshot {
 
   private String currentPath;
 
-  CommitSnapshot(Commit commit, Snapshot parent) {
+  CommitSnapshot(Commit commit, Snapshot parent) 
+    throws NullPointerException {
+    
     this.parent = parent;
     this.current = commit;
     
     this.base = parent.base() +
       "/snapshots/" + current.id().getName();
     
-    this.model = createModel();
+    try {
+      this.model = createModel();
+    } catch(Exception ex) {
+      this.model = null;
+      throw new NullPointerException("Fail to read commit snapshot " + commit);
+    }
   }
 
   public String getCommitId() {

@@ -70,7 +70,9 @@ public class Snapshot {
     }
   }
 
-  private CommitSnapshot createSnapshotCommit(String commit) {
+  private CommitSnapshot createSnapshotCommit(String commit) 
+    throws NullPointerException {
+      
     var snapCommit = this.instance.commit(commit);
     var snap = new CommitSnapshot(snapCommit, this);
     commits.put(commit, snap);

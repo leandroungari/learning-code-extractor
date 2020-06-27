@@ -14,4 +14,13 @@ public class ClusteringControllerTest {
     var controller = new ClusteringController(repository, branch);
     controller.clusterToStore();
   }
+
+  @Test
+  public void gsonFrom475To502() throws GitAPIException {
+
+    var repository = "gson";
+    var branch = "ceae88bd6667f4263bbe02e6b3710b8a683906a2";
+    var controller = new ClusteringController(repository, branch, 475, 502);
+    controller.clusterToStore();
+  }
 }
