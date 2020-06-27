@@ -24,6 +24,19 @@ public class Finder {
   private String target;
   private String branchTarget;
   private Cluster clusterTarget;
+
+  private static final String[] categories = new String[]{
+    "annotationtype",
+    "class",
+    "constructor",
+    "enum",
+    "field",
+    "interface",
+    "method",
+    "statement",
+    "temp",
+    "undefined"
+  };
   
   public Finder(String repository, String branch) {
     this.origin = repository;
@@ -49,11 +62,10 @@ public class Finder {
     return persistor.read();
   }
 
-  public Map<String, List<Integer>> compatibility() {
-    var result = new HashMap<String, List<Integer>>();
-    for(var index: clusterOrigin.getItems()) {
+  private void process(String category, HashMap<String, List<Integer>> result) {
+    for(var index: clusterOrigin.getItems(category)) {
       var patternOrigin = index.getPattern();
-      for(var outer: clusterTarget.getItems()) {
+      for(var outer: clusterTarget.getItems(category)) {
         var mapping = outer.getBase().getMapping();
         if(patternOrigin.matches(mapping)) {
           
@@ -67,6 +79,15 @@ public class Finder {
         }
       }
     }
+  }
+
+  public Map<String, List<Integer>> compatibility() {
+    var result = new HashMap<String, List<Integer>>();
+    
+    for(var category: categories) {
+      this.process(category, result);
+    }
+
     return result;
   }
 

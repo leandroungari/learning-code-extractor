@@ -69,7 +69,8 @@ public class ClusteringEngine {
       
       if(mapping instanceof UpdateMapping || mapping instanceof MoveMapping) {
         var added = false;
-        for(var item: cluster.getItems()) {
+        var type = mapping.source().type();
+        for(var item: cluster.getItems(type)) {
           if(isSameTypeMappings(item.getBase().getMapping(), mapping)) {
             try {
               if(item.getPattern().matches(mapping)) {

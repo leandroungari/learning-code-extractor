@@ -2,6 +2,7 @@ package ast.clustering;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 
 import com.google.gson.JsonArray;
@@ -17,19 +18,19 @@ public class Cluster implements Jsonify<Cluster> {
   private String branch;
   private Snapshot snapshot;
 
-  private List<ClusterIndex> items;
+  private HashMap<String,List<ClusterIndex>> items;
 
   private ClusterPersistor persistor;
 
   public Cluster() {
     this.persistor = new ClusterPersistor(this);
-    this.items = new ArrayList<>();
+    this.items = new HashMap<>();
   }
 
   public Cluster(String repository, String branch) {
     this.repository = repository;
     this.branch = branch;
-    this.items = new ArrayList<>();
+    this.items = new HashMap<>();
     this.persistor = new ClusterPersistor(this);
     this.snapshot = Snapshot.get(repository);
   }
@@ -38,13 +39,36 @@ public class Cluster implements Jsonify<Cluster> {
     return persistor;
   }
 
+  private Integer getTotal() {
+    var size = 0;
+    for(var item: items.values()) {
+      size += item.size();
+    }
+    return size;
+  }
+
+  private String transformToKey(String type) {
+    return type.replace("Element", "").toLowerCase();
+  }
+
   public void addItem(Mapping mapping, String commit) {
-    var item = new ClusterItem(mapping, commit, items.size() + 1, this);
+    var type = mapping.source().type();
+    var key = transformToKey(type);
+
+    var position = getTotal() + 1;
+    var item = new ClusterItem(mapping, commit, position, this);
     persistor.item().write(item);
 
-    var index = new ClusterIndex(item.getCode(), mapping, commit, this);
-    items.add(index);
-    Collections.sort(items);
+    var index = new ClusterIndex(position, mapping, commit, this);
+    
+    var list = items.get(key);
+    if(list == null) {
+      list = new ArrayList<ClusterIndex>();
+      items.put(key, list);
+    }
+    list.add(index);
+
+    Collections.sort(list);
     persistor.write();
   }
 
@@ -60,8 +84,14 @@ public class Cluster implements Jsonify<Cluster> {
     return snapshot;
   }
 
-  public List<ClusterIndex> getItems() {
-    return items;
+  public List<ClusterIndex> getItems(String type) {
+    var key = transformToKey(type);
+    var instance = items.get(key);
+    if(instance == null) {
+      instance = new ArrayList<>();
+      items.put(key, instance);
+    }
+    return instance;
   }
 
   @Override
@@ -74,11 +104,16 @@ public class Cluster implements Jsonify<Cluster> {
     var result = new JsonObject();
     result.addProperty("repository", repository);
     result.addProperty("branch", branch);
-    var list = new JsonArray();
-    for (var item : items) {
-      list.add(item.toJson());
+    var conjunto = new JsonObject();
+    for (var entry : items.entrySet()) {
+      var list = entry.getValue();
+      var listagem = new JsonArray();
+      for(var item: list) {
+        listagem.add(item.toJson());
+      }
+      conjunto.add(entry.getKey(), listagem);
     }
-    result.add("items", list);
+    result.add("items", conjunto);
     return result;
   }
 
@@ -86,11 +121,17 @@ public class Cluster implements Jsonify<Cluster> {
   public Cluster fromJson(JsonObject content) {
     this.repository = content.get("repository").getAsString();
     this.branch = content.get("branch").getAsString();
-    this.items = new ArrayList<>();
-    var list = content.get("items").getAsJsonArray();
+    this.items = new HashMap<>();
 
-    for (var item : list) {
-      this.items.add(new ClusterIndex().fromJson(item.getAsJsonObject()));
+    var conjunto = content.get("items").getAsJsonObject();
+    for(var entry: conjunto.entrySet()) {
+      var listagem = entry.getValue().getAsJsonArray();
+      var list = new ArrayList<ClusterIndex>();
+      for(var item: listagem) {
+        list.add(new ClusterIndex().fromJson(item.getAsJsonObject()));
+      }
+
+      items.put(entry.getKey(), list);
     }
     return this;
   }
