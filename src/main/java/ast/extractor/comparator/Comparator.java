@@ -55,7 +55,7 @@ public class Comparator {
   }
 
   public Comparator(String repository, String branch, String commit) 
-    throws NullPointerException {
+    throws NullPointerException, ClassCastException {
       
     hierarchy = new HierarchyCombiner();
     mapper = new MappingsCreator();

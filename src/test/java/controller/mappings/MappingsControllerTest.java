@@ -86,4 +86,13 @@ public class MappingsControllerTest {
     var controller = new MappingsController(repository, branch, 1700, 5287);
     controller.extractMappingsToStore();
   }
+
+  @Test
+  public void testSpringFrom2255To2270() throws GitAPIException {
+    var repository = "spring-boot";
+    var branch = "39b2d015412738178bf1ac834853c3b22f2efd00";
+    
+    var controller = new MappingsController(repository, branch, 2258, 2270);
+    controller.extractMappingsToStore();
+  }
 }
