@@ -1,5 +1,6 @@
 package ast;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -64,27 +65,45 @@ public class ClusteringEngine {
             destType.equals(other.destination().type()));
   }
 
-  private void identifyCluster(List<Mapping> mappings, String commit) {
+  private List<Mapping> filterMappings(List<Mapping> list) {
+    var result = new ArrayList<Mapping>();
+    for(var item: list) {
+      if(item instanceof UpdateMapping || item instanceof MoveMapping) {
+        result.add(item);
+      }
+    }
+    return result;
+  }
+
+  private void identifyCluster(List<Mapping> items, String commit) {
+    //filtrando mapeamentos
+    var mappings = this.filterMappings(items);
+    //ordenando mapeamentos
+    mappings.sort((a, b) -> {
+      var first = a.source().type();
+      var sec = b.source().type();
+      return first.compareTo(sec);
+    });
+
+    //extraindo clusters
     for(var mapping: mappings) {
-      
-      if(mapping instanceof UpdateMapping || mapping instanceof MoveMapping) {
-        var added = false;
-        var type = mapping.source().type();
-        for(var item: cluster.getItems(type)) {
-          if(isSameTypeMappings(item.getBase().getMapping(), mapping)) {
-            try {
-              if(item.getPattern().matches(mapping)) {
-                item.add(mapping, commit);
-                added = true;
-              }
-            } catch(SpoonException ex) {
-              System.err.println(ex.getMessage());
+      var added = false;
+      var type = mapping.source().type();
+      for(var item: cluster.getItems(type)) {
+        if(isSameTypeMappings(item.getBase().getMapping(), mapping)) {
+          try {
+            if(item.getPattern().matches(mapping)) {
+              item.add(mapping, commit);
+              added = true;
+              break;
             }
+          } catch(SpoonException ex) {
+            //System.err.println(ex.getMessage());
           }
         }
-        if(!added) {
-          cluster.addItem(mapping, commit);
-        }
+      }
+      if(!added) {
+        cluster.addItem(mapping, commit);
       }
     }
   }

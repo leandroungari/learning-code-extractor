@@ -26,11 +26,16 @@ public class ClusterIndex implements Jsonify<ClusterIndex>, Comparable<ClusterIn
     this.parent = parent;
   }
 
+  public Integer getSize() {
+    return size;
+  }
+
   public void add(Mapping mapping, String commit) {
     var clusterItem = parent.persistor().item().read(code);
     clusterItem.add(mapping, commit);
     parent.persistor().item().write(clusterItem);
     this.size = clusterItem.getItems().size();
+    parent.writeClusterIndexSet();
   }
 
   public Integer getCode() {
@@ -59,6 +64,10 @@ public class ClusterIndex implements Jsonify<ClusterIndex>, Comparable<ClusterIn
     result.add("base", base.toJson());
     result.addProperty("size", size);
     return result;
+  }
+
+  public void setParent(Cluster cluster) {
+    this.parent = cluster;
   }
 
   @Override
