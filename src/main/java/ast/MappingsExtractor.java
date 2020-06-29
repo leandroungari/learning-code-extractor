@@ -27,9 +27,7 @@ public class MappingsExtractor {
       result.add(items);
 
       return result;
-    } catch(NullPointerException | 
-            SpoonClassNotFoundException | 
-            ClassCastException ex) {
+    } catch(Exception ex) {
               
       return new CommitMappings(repository, branch, commit);
     }
