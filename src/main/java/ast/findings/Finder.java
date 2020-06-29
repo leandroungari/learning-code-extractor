@@ -9,8 +9,12 @@ import java.util.Map;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
+import org.eclipse.jgit.api.errors.GitAPIException;
+
 import ast.clustering.Cluster;
 import ast.clustering.ClusterPersistor;
+import ast.extractor.elements.ElementFactory;
+import ast.snapshot.Snapshot;
 import persistence.Settings;
 import persistence.resource.PlainText;
 import persistence.resource.Resource;
@@ -20,25 +24,17 @@ public class Finder {
   private String origin;
   private String branchOrigin;
   private Cluster clusterOrigin;
-  
+
   private String target;
   private String branchTarget;
   private Cluster clusterTarget;
 
-  private static final String[] categories = new String[]{
-    "annotationtype",
-    "class",
-    "constructor",
-    "enum",
-    "field",
-    "interface",
-    "method",
-    "statement",
-    "temp",
-    "undefined"
-  };
-  
-  public Finder(String repository, String branch) {
+  private static final String[] categories = new String[] { "annotationtype", "class", "constructor", "enum", "field",
+      "interface", "method", "statement", "temp", "undefined" };
+
+  public Finder(String repository, String branch) throws GitAPIException {
+    Snapshot.create(repository, branch);
+    
     this.origin = repository;
     this.branchOrigin = branch;
     this.clusterOrigin = getClusterOrigin();
@@ -50,7 +46,12 @@ public class Finder {
     return persistor.read();
   }
 
-  public void setRepositoryTarget(String repository, String branch) {
+  public void setRepositoryTarget(String repository, String branch) throws GitAPIException {
+    Snapshot.create(repository, branch);
+
+    //TODO 
+    //adicionar no finder as mesmas configurações 
+    //do clustering com ajustes para funcionar
     this.target = repository;
     this.branchTarget = branch;
     this.clusterTarget = getClusterTarget();
@@ -63,8 +64,10 @@ public class Finder {
   }
 
   private void process(String category, HashMap<String, List<Integer>> result) {
+    ElementFactory.setTempRepository(origin);
     for(var index: clusterOrigin.getItems(category)) {
       var patternOrigin = index.getPattern();
+      ElementFactory.setTempRepository(target);
       for(var outer: clusterTarget.getItems(category)) {
         var mapping = outer.getBase().getMapping();
         if(patternOrigin.matches(mapping)) {
@@ -78,6 +81,7 @@ public class Finder {
           }
         }
       }
+      ElementFactory.setTempRepository(origin);
     }
   }
 
