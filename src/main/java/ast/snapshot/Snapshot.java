@@ -64,7 +64,7 @@ public class Snapshot {
       verifyDeletionOfCommit();
       try {
         return createSnapshotCommit(commit);
-      } catch(NullPointerException ex) {
+      } catch(Exception ex) {
         return null;
       }
     }
