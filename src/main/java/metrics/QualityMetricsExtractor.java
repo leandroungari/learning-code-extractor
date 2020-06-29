@@ -15,6 +15,8 @@ public class QualityMetricsExtractor {
 
   private String repository;
   private String branch;
+  private Integer from;
+  private Integer to;
 
   private QualityMetricsPersistor persistor;
 
@@ -23,6 +25,17 @@ public class QualityMetricsExtractor {
   public QualityMetricsExtractor(String repository, String branch) {
     this.repository = repository;
     this.branch = branch;
+
+    this.persistor = new QualityMetricsPersistor(repository, branch);
+
+    analyzer = new MetricsAnalyzer();
+  }
+
+  public QualityMetricsExtractor(String repository, String branch, Integer from, Integer to) {
+    this.repository = repository;
+    this.branch = branch;
+    this.from = from;
+    this.to = to;
 
     this.persistor = new QualityMetricsPersistor(repository, branch);
 
@@ -41,12 +54,16 @@ public class QualityMetricsExtractor {
     
     var data = new ArrayList<FileMetrics>();
     
-    analyzer.repository(this.createRepository())
-    .enableLogs(false)
-    .process(commit, (file, result) -> {
-      var metrics = this.createFile(file, result);        
-	    data.add(metrics);
-    });
+    try {
+      analyzer.repository(this.createRepository())
+      .enableLogs(false)
+      .process(commit, (file, result) -> {
+        var metrics = this.createFile(file, result);        
+	      data.add(metrics);
+      });
+    } catch(Exception ex) {
+      System.err.println("> falha na leitura do repositório");
+    }
     
     return data;
   }
@@ -75,9 +92,15 @@ public class QualityMetricsExtractor {
   private List<Commit> getCommits() {
     var instance = createRepository();
     try {
-      return instance
-        .branch(branch)
-        .commits();
+      if(from == null) {
+        return instance
+          .branch(branch)
+          .commits();
+      } else {
+        return instance
+          .branch(branch)
+          .commits(from, to);
+      }
     } catch (GitAPIException e) {
       e.printStackTrace();
     }

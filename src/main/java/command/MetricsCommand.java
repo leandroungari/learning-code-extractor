@@ -12,8 +12,21 @@ public class MetricsCommand implements Command {
   @Parameter(names = { "-branch" })
   private String branch;
 
+  @Parameter(names = { "-from" })
+  private Integer from;
+
+  @Parameter(names = { "-to" })
+  private Integer to;
+
   public void run() {
-    var controller = new MetricsController(repository, branch);
+
+    MetricsController controller = null;
+    if(from != null && to != null) {
+      controller = new MetricsController(repository, branch, from, to);
+    } else {
+      controller = new MetricsController(repository, branch);
+    }
+    
     controller.extract();
   }
 }

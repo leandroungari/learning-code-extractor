@@ -13,4 +13,11 @@ public class QualityMetricsExtractorTest {
     var extractor = new QualityMetricsExtractor(repository, branch);
     extractor.extract();
   }
+
+  @Test
+  public void generateFrom10To20() {
+
+    var extractor = new QualityMetricsExtractor(repository, branch, 10, 20);
+    extractor.extract();
+  }
 }

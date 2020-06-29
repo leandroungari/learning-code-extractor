@@ -2,7 +2,6 @@ package ast;
 
 import ast.extractor.CommitMappings;
 import ast.extractor.comparator.Comparator;
-import spoon.support.SpoonClassNotFoundException;
 
 public class MappingsExtractor {
 
