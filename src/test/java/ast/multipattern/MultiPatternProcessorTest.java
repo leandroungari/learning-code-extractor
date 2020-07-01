@@ -13,4 +13,13 @@ public class MultiPatternProcessorTest {
     var processor = new MultiPatternProcessor(repository, branch);
     processor.identify();
   }
+
+  @Test
+  public void repoGson() throws GitAPIException {
+    var repository = "gson";
+    var branch = "ceae88bd6667f4263bbe02e6b3710b8a683906a2";
+
+    var processor = new MultiPatternProcessor(repository, branch);
+    processor.identify();
+  }
 }

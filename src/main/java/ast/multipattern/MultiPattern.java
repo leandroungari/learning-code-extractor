@@ -46,6 +46,10 @@ public class MultiPattern implements Jsonify<MultiPattern> {
     return code;
   }
 
+  public void setCode(Integer code) {
+    this.code = code;
+  }
+
   public Integer getSize() {
     return this.size;
   }

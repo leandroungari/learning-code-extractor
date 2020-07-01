@@ -49,15 +49,17 @@ public class MultiPatternProcessor {
   }
 
   public void identify() {
-
+    var number = 1;
     var current = new ArrayList<MultiPattern>();
     for (var commit : this.commits) {
+      System.err.println("> #" + number + " - " + commit);
+      number++;
       var result = new ArrayList<MultiPattern>();
       var mappings = getMappingsFromCommit(commit).get();
       if (current.isEmpty()) {
         for (var mapping : mappings) {
           if (mapping instanceof MoveMapping || mapping instanceof UpdateMapping) {
-            result.add(new MultiPattern(++counter, commit, mapping));
+            result.add(new MultiPattern(null, commit, mapping));
           }
         }
       } else {
@@ -85,7 +87,7 @@ public class MultiPatternProcessor {
 
         // cria patterns para os mapeamentos que não tem pattern correspondente
         for (var mapping : mappings) {
-          result.add(new MultiPattern(++counter, commit, mapping));
+          result.add(new MultiPattern(null, commit, mapping));
         }
       }
       // percorrer todos os patterns
@@ -96,6 +98,9 @@ public class MultiPatternProcessor {
       while (i < result.size()) {
         var pattern = result.get(i);
         if (pattern.getSize() > 1 && pattern.getLastCommit().equals(commit)) {
+          if(pattern.getCode() == null) {
+            pattern.setCode(++counter);
+          }
           persistor.write(pattern);
           i++;
         } else if (!pattern.getLastCommit().equals(commit)) {
