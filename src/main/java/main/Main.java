@@ -17,6 +17,7 @@ import command.CommandExecutor;
 import command.FinderCommand;
 import command.MappingsCommand;
 import command.MetricsCommand;
+import command.MultiPatternCommand;
 import command.repository.CommitsCommand;
 import command.repository.DownloadCommand;
 import repository.exception.GitRepositoryException;
@@ -46,6 +47,7 @@ public class Main {
       executor.add("metrics", new MetricsCommand());
       executor.add("commits", new CommitsCommand());
       executor.add("find", new FinderCommand());
+      executor.add("multi-pattern", new MultiPatternCommand());
 
       executor.execute();
   	}  	
