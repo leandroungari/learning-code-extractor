@@ -154,8 +154,12 @@ public class MultiPatternProcessor {
   }
 
   private CommitMappings getMappingsFromCommit(String id) {
-    var reader = new MappingsReader(repository, branch);
-    return reader.commit(id);
+    try {
+      var reader = new MappingsReader(repository, branch);
+      return reader.commit(id);
+    } catch(Exception ex) {
+      return new CommitMappings(repository, branch, id);
+    }
   }
 
 }
