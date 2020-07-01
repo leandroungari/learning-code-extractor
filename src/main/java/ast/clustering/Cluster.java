@@ -1,6 +1,7 @@
 package ast.clustering;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import com.google.gson.JsonObject;
@@ -120,14 +121,13 @@ public class Cluster implements Jsonify<Cluster> {
 
   public List<ClusterIndex> getItems(String type) {
     var key = transformToKey(type);
-    /*var instance = items.get(key);
-    if(instance == null) {
-      instance = new ArrayList<>();
-      items.put(key, instance);
+    
+    try {
+      var set = readClusterIndexSet(key);
+      return set.getElements();
+    } catch(Exception ex) {
+      return new ArrayList<>();
     }
-    return instance;*/
-    var set = readClusterIndexSet(key);
-    return set.getElements();
   }
 
   @Override
