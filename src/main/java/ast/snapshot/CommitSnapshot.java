@@ -88,7 +88,7 @@ public class CommitSnapshot {
 
     generateFiles();
     CtModel model = null;
-    System.err.println("> project commit " + current.id().getName());
+    System.out.println("> project commit " + current.id().getName());
     try {
       model = createMavenProject();
     } catch(Exception ex) {
