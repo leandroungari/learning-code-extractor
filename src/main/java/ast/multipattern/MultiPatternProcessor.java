@@ -90,9 +90,17 @@ public class MultiPatternProcessor {
   public void identify() {
     var number = 1;
     var current = new ArrayList<MultiPattern>();
+    System.out.println("Total de commits: " + this.commits.size());
+
+    var janela = new ArrayList<>();
     for (var commit : this.commits) {
       System.err.println("> #" + number + " - " + commit);
       number++;
+      janela.add(commit);
+      if(janela.size() > 5) {
+        janela.remove(0);
+      }
+
       var result = new ArrayList<MultiPattern>();
       var mappings = getMappingsFromCommit(commit).get();
       if (current.isEmpty()) {
@@ -142,7 +150,7 @@ public class MultiPatternProcessor {
           }
           persistor.write(pattern);
           i++;
-        } else if (!pattern.getLastCommit().equals(commit)) {
+        } else if (!janela.contains(pattern.getLastCommit())) {
           result.remove(i);
         } else {
           i++;

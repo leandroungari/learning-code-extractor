@@ -12,8 +12,7 @@ import persistence.Jsonify;
 public class MultiPattern implements Jsonify<MultiPattern> {
 
   private Integer code;
-  private String initialCommit;
-  private String lastCommit;
+  private List<String> commits;
   private Integer size;
 
   private List<Mapping> items;
@@ -24,8 +23,8 @@ public class MultiPattern implements Jsonify<MultiPattern> {
 
   public MultiPattern(Integer code, String commit, Mapping mapping) {
     this.code = code;
-    this.initialCommit = commit;
-    this.lastCommit = commit;
+    this.commits = new ArrayList<>();
+    this.commits.add(commit);
     this.size = 1;
 
     this.items = new ArrayList<>();
@@ -35,7 +34,7 @@ public class MultiPattern implements Jsonify<MultiPattern> {
   public void add(String commit, Mapping mapping) {
     this.items.add(mapping);
     this.size++;
-    this.lastCommit = commit;
+    this.commits.add(commit);
   }
 
   public void setProcessor(MultiPatternProcessor processor) {
@@ -55,12 +54,9 @@ public class MultiPattern implements Jsonify<MultiPattern> {
   }
 
   public String getLastCommit() {
-    return lastCommit;
+    return commits.get(commits.size()-1);
   }
 
-  public String getInitialCommit() {
-    return initialCommit;
-  }
 
   public Boolean compatibility(Mapping other) {
     var last = items.get(items.size()-1);
@@ -92,8 +88,14 @@ public class MultiPattern implements Jsonify<MultiPattern> {
   public JsonObject toJson() {
     var object = new JsonObject();
     object.addProperty("code", code);
-    object.addProperty("initialCommit", initialCommit);
-    object.addProperty("lastCommit", lastCommit);
+
+    var items = new JsonArray();
+    for(var commit: commits) {
+      items.add(commit);
+    }
+
+    object.add("commits", items);
+    
     object.addProperty("size", size);
 
     var list = new JsonArray(this.items.size());
@@ -107,19 +109,20 @@ public class MultiPattern implements Jsonify<MultiPattern> {
   @Override
   public MultiPattern fromJson(JsonObject content) {
     this.code = content.get("code").getAsInt();
-    this.initialCommit = content.get("initialCommit").getAsString();
-    this.lastCommit = content.get("lastCommit").getAsString();
+    this.commits = new ArrayList<>();
+    for(var item: content.get("commits").getAsJsonArray()) {
+      this.commits.add(item.getAsString());
+    }
+
     this.size = content.get("size").getAsInt();
 
-    var commits = processor.getCommits();
-    var position = commits.indexOf(this.initialCommit);
-
+    var position = 0;
     this.items = new ArrayList<>();
     for(var element: content.get("items").getAsJsonArray()) {
       this.items.add(Mapping.fromJson(
         element.getAsJsonObject(), 
         processor.getSnapshot(),
-        commits.get(position) 
+        this.commits.get(position) 
       ));
       position++;
     }

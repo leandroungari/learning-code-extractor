@@ -19,7 +19,8 @@ public class MultiPatternProcessorTest {
     var repository = "gson";
     var branch = "ceae88bd6667f4263bbe02e6b3710b8a683906a2";
 
-    var processor = new MultiPatternProcessor(repository, branch);
+    //var processor = new MultiPatternProcessor(repository, branch, 700, 1400);
+    var processor = new MultiPatternProcessor(repository, branch, 700, 900);
     processor.identify();
   }
 }
