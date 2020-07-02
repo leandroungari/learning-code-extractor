@@ -1,7 +1,5 @@
 package ast;
 
-import java.io.IOException;
-
 import ast.extractor.CommitMappings;
 import persistence.Settings;
 import persistence.resource.JSON;
@@ -28,7 +26,7 @@ public class MappingsReader {
 
     try {
       return resource.<CommitMappings>read(new JSON<>(result));
-    } catch (IOException | NullPointerException e) {
+    } catch (Exception e) {
       e.printStackTrace();
     }
     return null;
