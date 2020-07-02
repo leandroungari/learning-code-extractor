@@ -14,6 +14,9 @@ public class MultiPatternCommand implements Command {
   @Parameter(names = { "-branch" })
   private String branch;
 
+  @Parameter(names = { "-distancia", "-dist" })
+  private Integer distancia;
+
   @Parameter(names = { "-from" })
   private Integer from;
 
@@ -22,7 +25,7 @@ public class MultiPatternCommand implements Command {
 
   public void run() {
 
-    var controller = new MultiPatternController(repository, branch, from, to);
+    var controller = new MultiPatternController(repository, branch, distancia, from, to);
     try {
       controller.execute();
     } catch (GitAPIException e) {

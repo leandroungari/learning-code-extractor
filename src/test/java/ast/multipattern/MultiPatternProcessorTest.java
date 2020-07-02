@@ -10,7 +10,7 @@ public class MultiPatternProcessorTest {
     var repository = "refactoring-toy-example";
     var branch = "d4bce13a443cf12da40a77c16c1e591f4f985b47";
 
-    var processor = new MultiPatternProcessor(repository, branch);
+    var processor = new MultiPatternProcessor(repository, branch, 10);
     processor.identify();
   }
 
@@ -20,7 +20,7 @@ public class MultiPatternProcessorTest {
     var branch = "ceae88bd6667f4263bbe02e6b3710b8a683906a2";
 
     //var processor = new MultiPatternProcessor(repository, branch, 700, 1400);
-    var processor = new MultiPatternProcessor(repository, branch, 700, 900);
+    var processor = new MultiPatternProcessor(repository, branch, 10, 700, 750);
     processor.identify();
   }
 }

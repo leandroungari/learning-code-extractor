@@ -19,6 +19,7 @@ public class MultiPatternProcessor {
   private String branch;
   private Integer from;
   private Integer to;
+  private Integer distancia;
 
   private Snapshot snapshot;
   private List<String> commits;
@@ -28,10 +29,12 @@ public class MultiPatternProcessor {
 
   public MultiPatternProcessor(
     String repository, 
-    String branch) throws GitAPIException {
+    String branch,
+    Integer distancia) throws GitAPIException {
 
     this.repository = repository;
     this.branch = branch;
+    this.distancia = distancia;
 
     this.init();
   }
@@ -39,6 +42,7 @@ public class MultiPatternProcessor {
   public MultiPatternProcessor(
     String repository, 
     String branch,
+    Integer distancia,
     Integer from,
     Integer to) throws GitAPIException {
     
@@ -46,6 +50,7 @@ public class MultiPatternProcessor {
     this.branch = branch;
     this.from = from;
     this.to = to;
+    this.distancia = distancia;
 
     this.init();
   }
@@ -88,7 +93,7 @@ public class MultiPatternProcessor {
   }
 
   public void identify() {
-    var number = 1;
+    var number = 0;
     var current = new ArrayList<MultiPattern>();
     System.out.println("Total de commits: " + this.commits.size());
 
@@ -97,7 +102,7 @@ public class MultiPatternProcessor {
       System.err.println("> #" + number + " - " + commit);
       number++;
       janela.add(commit);
-      if(janela.size() > 5) {
+      if(janela.size() > distancia) {
         janela.remove(0);
       }
 
