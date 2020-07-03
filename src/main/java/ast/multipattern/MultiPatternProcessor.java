@@ -9,6 +9,7 @@ import org.eclipse.jgit.api.errors.GitAPIException;
 import ast.MappingsReader;
 import ast.extractor.CommitMappings;
 import ast.extractor.elements.ElementFactory;
+import ast.extractor.mapping.Mapping;
 import ast.extractor.mapping.MoveMapping;
 import ast.extractor.mapping.UpdateMapping;
 import ast.snapshot.Snapshot;
@@ -96,7 +97,12 @@ public class MultiPatternProcessor {
       }
 
       var result = new ArrayList<MultiPattern>();
-      var mappings = getMappingsFromCommit(commit).get();
+      List<Mapping> mappings = null;
+      try {
+        mappings = getMappingsFromCommit(commit).get();
+      } catch(Exception ex) {
+        mappings = new ArrayList<>();
+      }
       if (current.isEmpty()) {
         for (var mapping : mappings) {
           if (mapping instanceof MoveMapping || mapping instanceof UpdateMapping) {
