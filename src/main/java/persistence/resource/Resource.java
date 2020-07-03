@@ -27,6 +27,10 @@ public class Resource {
     this.isFolder = true;
   }
 
+  public Boolean exists() {
+    return this.resource.exists();
+  }
+
   public File toFile() {
     return this.resource;
   }

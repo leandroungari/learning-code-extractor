@@ -8,7 +8,6 @@ import org.eclipse.jgit.api.errors.GitAPIException;
 import ast.MappingsExtractor;
 import ast.extractor.CommitMappings;
 import ast.snapshot.Snapshot;
-import ast.snapshot.exception.NotFoundElementInSnapshotException;
 import persistence.Settings;
 import repository.Commit;
 import persistence.resource.JSON;
@@ -23,11 +22,14 @@ public class MappingsController {
 
   private Snapshot snapshot;
 
+  private String base;
+
   public MappingsController(String repository, String branch) throws GitAPIException {
     this.repository = repository;
     this.branch = branch;
 
     this.snapshot = Snapshot.create(repository, branch);
+    this.base = Settings.get().folderOfMetadata().getAbsolutePath();
   }
 
   public MappingsController(String repository, String branch, Integer from, Integer to) 
@@ -64,12 +66,15 @@ public class MappingsController {
   }
 
   public Boolean extractMappingsToStore(String commit) {
-    var extractor = new MappingsExtractor(repository, branch, commit);
 
+    var resource = new Resource(base + "/" + repository + "/mappings", commit + ".json");
+    if(resource.exists()) return true;
+
+    var extractor = new MappingsExtractor(repository, branch, commit);
     try {
       var result = extractor.createMappings();
       return this.store(result);
-    } catch(NotFoundElementInSnapshotException ex) {
+    } catch(Exception ex) {
       System.err.println("Erro na leitura do commit " + commit);
     }
 
