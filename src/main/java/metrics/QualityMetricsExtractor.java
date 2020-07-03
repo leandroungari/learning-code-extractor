@@ -7,6 +7,8 @@ import com.github.mauricioaniche.ck.CKClassResult;
 
 import org.eclipse.jgit.api.errors.GitAPIException;
 
+import persistence.Settings;
+import persistence.resource.Resource;
 import repository.Commit;
 import repository.Repository;
 import repository.metrics.MetricsAnalyzer;
@@ -21,6 +23,8 @@ public class QualityMetricsExtractor {
   private QualityMetricsPersistor persistor;
 
   private static MetricsAnalyzer analyzer;
+
+  private String base;
   
   public QualityMetricsExtractor(String repository, String branch) {
     this.repository = repository;
@@ -29,6 +33,7 @@ public class QualityMetricsExtractor {
     this.persistor = new QualityMetricsPersistor(repository, branch);
 
     analyzer = new MetricsAnalyzer();
+    this.base = Settings.get().folderOfMetadata().getAbsolutePath();
   }
 
   public QualityMetricsExtractor(String repository, String branch, Integer from, Integer to) {
@@ -40,13 +45,21 @@ public class QualityMetricsExtractor {
     this.persistor = new QualityMetricsPersistor(repository, branch);
 
     analyzer = new MetricsAnalyzer();
+    this.base = Settings.get().folderOfMetadata().getAbsolutePath();
   }
 
   public void extract() {
+    var counter = 0;
     for (var commit : getCommits()) {
-      var metrics = this.analyze(repository, commit);
-      var item = new CommitMetrics(metrics);
-      persistor.write(item, commit.id().getName());
+
+      System.err.println("> " + counter + " - " + commit.id().getName());
+      counter++;
+      var resource = new Resource(base + "/" + repository + "/metrics", commit.id().getName() + ".csv");
+      if(!resource.exists()) {
+        var metrics = this.analyze(repository, commit);
+        var item = new CommitMetrics(metrics);
+        persistor.write(item, commit.id().getName());
+      }
     }
   }
 

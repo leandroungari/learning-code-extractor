@@ -41,6 +41,7 @@ public class MappingsController {
     this.to = to;
 
     this.snapshot = Snapshot.create(repository, branch);
+    this.base = Settings.get().folderOfMetadata().getAbsolutePath();
   }
 
   private List<Commit> getCommits() throws GitAPIException {
