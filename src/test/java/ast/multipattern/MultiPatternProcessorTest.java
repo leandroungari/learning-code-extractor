@@ -10,7 +10,7 @@ public class MultiPatternProcessorTest {
     var repository = "refactoring-toy-example";
     var branch = "d4bce13a443cf12da40a77c16c1e591f4f985b47";
 
-    var processor = new MultiPatternProcessor(repository, branch, 10);
+    var processor = new MultiPatternProcessor(repository, branch, 5);
     processor.identify();
   }
 

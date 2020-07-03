@@ -27,10 +27,7 @@ public class MultiPatternProcessor {
   private Integer counter;
   private MultiPatternPersistor persistor;
 
-  public MultiPatternProcessor(
-    String repository, 
-    String branch,
-    Integer distancia) throws GitAPIException {
+  public MultiPatternProcessor(String repository, String branch, Integer distancia) throws GitAPIException {
 
     this.repository = repository;
     this.branch = branch;
@@ -39,13 +36,9 @@ public class MultiPatternProcessor {
     this.init();
   }
 
-  public MultiPatternProcessor(
-    String repository, 
-    String branch,
-    Integer distancia,
-    Integer from,
-    Integer to) throws GitAPIException {
-    
+  public MultiPatternProcessor(String repository, String branch, Integer distancia, Integer from, Integer to)
+      throws GitAPIException {
+
     this.repository = repository;
     this.branch = branch;
     this.from = from;
@@ -75,21 +68,17 @@ public class MultiPatternProcessor {
 
   void obtainingCommits() {
 
-    if(from != null && to != null) {
-      this.commits = snapshot.getBranch()
-        .commits(from, to).stream()
-        .map(item -> item.id().getName())
-        .collect(Collectors.toList());
+    if (from != null && to != null) {
+      this.commits = snapshot.getBranch().commits(from, to).stream().map(item -> item.id().getName())
+          .collect(Collectors.toList());
 
     } else {
-      this.commits = snapshot.getBranch()
-        .commits().stream()
-        .map(item -> item.id().getName())
-        .collect(Collectors.toList());
+      this.commits = snapshot.getBranch().commits().stream().map(item -> item.id().getName())
+          .collect(Collectors.toList());
 
       this.commits.remove(0);
     }
-    
+
   }
 
   public void identify() {
@@ -102,7 +91,7 @@ public class MultiPatternProcessor {
       System.err.println("> #" + number + " - " + commit);
       number++;
       janela.add(commit);
-      if(janela.size() > distancia) {
+      if (janela.size() > distancia) {
         janela.remove(0);
       }
 
@@ -111,7 +100,7 @@ public class MultiPatternProcessor {
       if (current.isEmpty()) {
         for (var mapping : mappings) {
           if (mapping instanceof MoveMapping || mapping instanceof UpdateMapping) {
-            result.add(new MultiPattern(null, commit, mapping));
+            result.add(new MultiPattern(counter++, commit, mapping));
           }
         }
       } else {
@@ -139,38 +128,34 @@ public class MultiPatternProcessor {
 
         // cria patterns para os mapeamentos que não tem pattern correspondente
         for (var mapping : mappings) {
-          result.add(new MultiPattern(null, commit, mapping));
+          result.add(new MultiPattern(counter++, commit, mapping));
         }
       }
+
+      current.addAll(result);
       // percorrer todos os patterns
       // você deve persistir todos (com tamanho maior ou igual a 2)
       // e remover os que
       // o último commit não é igual ao commit atual
       var i = 0;
-      while (i < result.size()) {
-        var pattern = result.get(i);
-        if (pattern.getSize() > 1 && pattern.getLastCommit().equals(commit)) {
-          if(pattern.getCode() == null) {
-            pattern.setCode(++counter);
-          }
-          persistor.write(pattern);
-          i++;
-        } else if (!janela.contains(pattern.getLastCommit())) {
-          result.remove(i);
+      while (i < current.size()) {
+        var pattern = current.get(i);
+        if ((!janela.contains(pattern.getLastCommit())) || number == this.commits.size()) {
+          persistor.write(pattern, number, commit);
+          current.remove(i);
         } else {
           i++;
         }
       }
-
-      current = result;
     }
+
   }
 
   private CommitMappings getMappingsFromCommit(String id) {
     try {
       var reader = new MappingsReader(repository, branch);
       return reader.commit(id);
-    } catch(Exception ex) {
+    } catch (Exception ex) {
       return new CommitMappings(repository, branch, id);
     }
   }
