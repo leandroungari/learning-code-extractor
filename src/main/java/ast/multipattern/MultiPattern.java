@@ -19,7 +19,8 @@ public class MultiPattern implements Jsonify<MultiPattern> {
 
   private MultiPatternProcessor processor;
 
-  MultiPattern() {}
+  MultiPattern() {
+  }
 
   public MultiPattern(Integer code, String commit, Mapping mapping) {
     this.code = code;
@@ -54,34 +55,35 @@ public class MultiPattern implements Jsonify<MultiPattern> {
   }
 
   public String getLastCommit() {
-    return commits.get(commits.size()-1);
+    return commits.get(commits.size() - 1);
   }
 
-
   public Boolean compatibility(Mapping other) {
-    var last = items.get(items.size()-1);
+    try {
+      var last = items.get(items.size() - 1);
 
-    //criar verificação se o source e os dests de cada um são diferentes
-    var lastSrcCode = last.source().dependencies().toString();
-    var lastDestCode = last.destination().dependencies().toString();
+      // criar verificação se o source e os dests de cada um são diferentes
+      var lastSrcCode = last.source().dependencies().toString();
+      var lastDestCode = last.destination().dependencies().toString();
 
-    var otherSrcCode = other.source().dependencies().toString();
-    var otherDestCode = other.destination().dependencies().toString();
+      var otherSrcCode = other.source().dependencies().toString();
+      var otherDestCode = other.destination().dependencies().toString();
 
-    if(lastSrcCode.equals(otherSrcCode) &&
-       lastDestCode.equals(otherDestCode)) {
-      
+      if (lastSrcCode.equals(otherSrcCode) && lastDestCode.equals(otherDestCode)) {
+
+        return false;
+      }
+
+      var destinationPath = last.destination().path();
+      var sourcePath = other.source().path();
+      if (!sourcePath.equals(destinationPath)) {
+        return false;
+      }
+
+      return lastDestCode.equals(otherSrcCode);
+    } catch (Exception ex) {
       return false;
     }
-  
-    var destinationPath = last.destination().path();
-    var sourcePath = other.source().path();
-    if(!sourcePath.equals(destinationPath)) {
-      return false;
-    }
-    
-    
-    return lastDestCode.equals(otherSrcCode);
   }
 
   @Override
@@ -90,16 +92,16 @@ public class MultiPattern implements Jsonify<MultiPattern> {
     object.addProperty("code", code);
 
     var items = new JsonArray();
-    for(var commit: commits) {
+    for (var commit : commits) {
       items.add(commit);
     }
 
     object.add("commits", items);
-    
+
     object.addProperty("size", size);
 
     var list = new JsonArray(this.items.size());
-    for(var item: this.items) {
+    for (var item : this.items) {
       list.add(item.toJson());
     }
     object.add("items", list);
@@ -110,7 +112,7 @@ public class MultiPattern implements Jsonify<MultiPattern> {
   public MultiPattern fromJson(JsonObject content) {
     this.code = content.get("code").getAsInt();
     this.commits = new ArrayList<>();
-    for(var item: content.get("commits").getAsJsonArray()) {
+    for (var item : content.get("commits").getAsJsonArray()) {
       this.commits.add(item.getAsString());
     }
 
@@ -118,12 +120,8 @@ public class MultiPattern implements Jsonify<MultiPattern> {
 
     var position = 0;
     this.items = new ArrayList<>();
-    for(var element: content.get("items").getAsJsonArray()) {
-      this.items.add(Mapping.fromJson(
-        element.getAsJsonObject(), 
-        processor.getSnapshot(),
-        this.commits.get(position) 
-      ));
+    for (var element : content.get("items").getAsJsonArray()) {
+      this.items.add(Mapping.fromJson(element.getAsJsonObject(), processor.getSnapshot(), this.commits.get(position)));
       position++;
     }
 

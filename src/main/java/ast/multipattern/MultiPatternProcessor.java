@@ -116,15 +116,19 @@ public class MultiPatternProcessor {
           while (i < mappings.size()) {
             var mapping = mappings.get(i);
             if (mapping instanceof MoveMapping || mapping instanceof UpdateMapping) {
-              if (pattern.compatibility(mapping)) {
+              try {
+                if (pattern.compatibility(mapping)) {
 
-                pattern.add(commit, mapping);
-                result.add(pattern);
-
+                  pattern.add(commit, mapping);
+                  result.add(pattern);
+  
+                  mappings.remove(i);
+                  break;
+                } else {
+                  i++;
+                }
+              } catch(Exception ex) {
                 mappings.remove(i);
-                break;
-              } else {
-                i++;
               }
             } else {
               mappings.remove(i);
