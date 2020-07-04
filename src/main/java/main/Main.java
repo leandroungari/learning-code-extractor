@@ -12,6 +12,7 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
 
+import command.ClusterExtractorCommand;
 import command.ClusteringCommand;
 import command.CommandExecutor;
 import command.FinderCommand;
@@ -48,6 +49,7 @@ public class Main {
       executor.add("commits", new CommitsCommand());
       executor.add("find", new FinderCommand());
       executor.add("multi-pattern", new MultiPatternCommand());
+      executor.add("cluster-extractor", new ClusterExtractorCommand());
 
       executor.execute();
   	}  	

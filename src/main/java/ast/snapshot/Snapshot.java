@@ -16,7 +16,7 @@ public class Snapshot {
   private String branch;
   private Branch instance;
 
-  private Integer LENGTH = 5;
+  private Integer LENGTH = 10;
   private String[] availableCommits = new String[LENGTH];
   private Integer position = 0;
   private HashMap<String,CommitSnapshot> commits = new HashMap<>();

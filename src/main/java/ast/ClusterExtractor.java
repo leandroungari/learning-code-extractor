@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
@@ -44,22 +43,29 @@ public class ClusterExtractor {
     this.repository = repository;
     this.branch = branch;
 
-    this.cluster = new Cluster(repository, branch);
     this.snapshot = Snapshot.create(this.repository, this.branch);
     ElementFactory.setTempRepository(this.repository);
-
+    
+    this.cluster = new Cluster(repository, branch);
     this.counter = 0;
     this.base = Settings.get().folderOfMetadata().getAbsolutePath();
   }
 
   public void execute() {
     var manager = loadBaseFile();
-    for(var entry: manager.entrySet()) {
+    for (var entry : manager.entrySet()) {
       var commit = entry.getKey();
-      for(var item: entry.getValue().entrySet()) {
+      System.err.println("> clustering commit #" + counter + " " + commit);
+      counter++;
+      for (var item : entry.getValue().entrySet()) {
         var file = item.getKey();
         var mappings = getMappings(commit, file);
+        if (mappings != null) {
+
+          identifyCluster(mappings, commit);
+        }
       }
+      counter++;
     }
   }
 
@@ -70,9 +76,8 @@ public class ClusterExtractor {
       instance.setSnapshot(snapshot);
       var item = resource.read(new JSON<>(instance));
       var list = item.getMappings();
-      System.out.println(list);
       return list;
-    } catch (IOException e) {
+    } catch (Exception e) {
       // TODO Auto-generated catch block
       e.printStackTrace();
     }
@@ -85,20 +90,20 @@ public class ClusterExtractor {
       var data = resource.read(new PlainText(new String()));
       var content = new Gson().fromJson(data, JsonObject.class);
 
-      var result = new HashMap<String, Map<String,Integer>>();
+      var result = new HashMap<String, Map<String, Integer>>();
       content.entrySet().forEach(entry -> {
 
-        var commit = new HashMap<String,Integer>();
+        var commit = new HashMap<String, Integer>();
         var contemDiferente = false;
-        for(var map: entry.getValue().getAsJsonObject().entrySet()) {
+        for (var map : entry.getValue().getAsJsonObject().entrySet()) {
           var valor = map.getValue().getAsInt();
-          if(valor != 0) {
+          if (valor != 0) {
             contemDiferente = true;
+            commit.put(map.getKey(), valor);
           }
-          commit.put(map.getKey(), valor);
         }
 
-        if(contemDiferente) {
+        if (contemDiferente) {
           result.put(entry.getKey(), commit);
         }
 
@@ -111,32 +116,26 @@ public class ClusterExtractor {
     return null;
   }
 
-  public void generate() {
-    for (var commit : getCommits()) {
-      var items = getMappingsFromCommit(commit);
-      if(items != null) {
-        var mappings = items.get();
-        System.err.println("> clustering commit #" + counter + " " + commit);
-        identifyCluster(mappings, commit);
-      } else {
-        System.out.println("> clustering commit não encontrado: " + commit);
-      }
-      counter++;
-    }
-  }
+  /*
+   * public void generate() { for (var commit : getCommits()) { var items =
+   * getMappingsFromCommit(commit); if(items != null) { var mappings =
+   * items.get(); System.err.println("> clustering commit #" + counter + " " +
+   * commit); identifyCluster(mappings, commit); } else {
+   * System.out.println("> clustering commit não encontrado: " + commit); }
+   * counter++; } }
+   */
 
   private Boolean isSameTypeMappings(Mapping base, Mapping other) {
     var srcType = base.source().type();
     var destType = base.destination().type();
 
-    return (srcType.equals(other.source().type()) ||
-            destType.equals(other.destination().type()));
+    return (srcType.equals(other.source().type()) || destType.equals(other.destination().type()));
   }
 
   private List<Mapping> filterMappings(List<Mapping> list) {
     var result = new ArrayList<Mapping>();
-    for(var item: list) {
-      if(item instanceof UpdateMapping || item instanceof MoveMapping) {
+    for (var item : list) {
+      if (item instanceof UpdateMapping || item instanceof MoveMapping) {
         result.add(item);
       }
     }
@@ -144,33 +143,34 @@ public class ClusterExtractor {
   }
 
   private void identifyCluster(List<Mapping> items, String commit) {
-    //filtrando mapeamentos
+    // filtrando mapeamentos
     var mappings = this.filterMappings(items);
-    //ordenando mapeamentos
+    // ordenando mapeamentos
     mappings.sort((a, b) -> {
       var first = a.source().type();
       var sec = b.source().type();
       return first.compareTo(sec);
     });
 
-    //extraindo clusters
-    for(var mapping: mappings) {
+    // extraindo clusters
+    for (var mapping : mappings) {
       var added = false;
       var type = mapping.source().type();
-      for(var item: cluster.getItems(type)) {
-        if(isSameTypeMappings(item.getBase().getMapping(), mapping)) {
+      var elements = cluster.getItems(type);
+      for (var item : elements) {
+        if (isSameTypeMappings(item.getBase().getMapping(), mapping)) {
           try {
-            if(item.getPattern().matches(mapping)) {
+            if (item.getPattern().matches(mapping)) {
               item.add(mapping, commit);
               added = true;
               break;
             }
-          } catch(SpoonException ex) {
-            //System.err.println(ex.getMessage());
+          } catch (SpoonException ex) {
+            // System.err.println(ex.getMessage());
           }
         }
       }
-      if(!added) {
+      if (!added) {
         cluster.addItem(mapping, commit);
       }
     }
@@ -185,33 +185,19 @@ public class ClusterExtractor {
     return Repository.create(repository);
   }
 
-  private List<String> getCommits() {
-    var instance = createRepository();
-    try {
-      List<String> items = null;
-      if(from != null && to != null) {
-        items = instance.branch(branch)
-          .commits(from, to)
-          .stream()
-          .map(item -> item.id().getName())
-          .collect(Collectors.toList());
-      } else {
-        items = instance.branch(branch)
-          .commits()
-          .stream()
-          .map(item -> item.id().getName())
-          .collect(Collectors.toList());
+  /*
+   * private List<String> getCommits() { var instance = createRepository(); try {
+   * List<String> items = null; if(from != null && to != null) { items =
+   * instance.branch(branch) .commits(from, to) .stream() .map(item ->
+   * item.id().getName()) .collect(Collectors.toList()); } else { items =
+   * instance.branch(branch) .commits() .stream() .map(item ->
+   * item.id().getName()) .collect(Collectors.toList());
+   * 
+   * items.remove(0); }
+   * 
+   * 
+   * return items; } catch (GitAPIException e) { e.printStackTrace(); } return
+   * null; }
+   */
 
-        items.remove(0);
-      }
-
-      
-      return items;
-    } catch (GitAPIException e) {
-      e.printStackTrace();
-    }
-    return null;
-  }
-
-    
 }

@@ -60,7 +60,7 @@ public class Item implements Jsonify<Item> {
 
     this.items = new ArrayList<>();
     var counter = 0;
-    for (var item : content.get("mappings").getAsJsonArray()) {
+    for (var item : content.get("items").getAsJsonArray()) {
       var currentCommit = this.commits.get(counter);
       counter++;
       var mapping = item.getAsJsonObject();

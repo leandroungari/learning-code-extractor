@@ -57,6 +57,7 @@ public class ClusterIndexSet implements Jsonify<ClusterIndexSet> {
 
   @Override
   public ClusterIndexSet fromJson(JsonObject content) {
+    //problema na leitura
     if(content != null) {
       this.type = content.get("type").getAsString();
       this.elements = new ArrayList<>();
