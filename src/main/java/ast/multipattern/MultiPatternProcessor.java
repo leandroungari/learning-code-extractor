@@ -151,7 +151,7 @@ public class MultiPatternProcessor {
       while (i < current.size()) {
         var pattern = current.get(i);
         if ((!janela.contains(pattern.getLastCommit())) || number == this.commits.size()) {
-          persistor.write(pattern, number, commit);
+          persistor.write(pattern, commit);
           current.remove(i);
         } else {
           i++;

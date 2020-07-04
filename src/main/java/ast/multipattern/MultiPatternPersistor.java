@@ -19,8 +19,8 @@ public class MultiPatternPersistor {
       "/" + this.repository + "/" + "multipattern";
   }
 
-  public void write(MultiPattern item, Integer pos, String currentCommit) {
-    var resource = new Resource(this.base + "/" + pos + " - " + currentCommit,  "#" + item.getCode() + ".json");
+  public void write(MultiPattern item, String currentCommit) {
+    var resource = new Resource(this.base + "/" + currentCommit,  "#" + item.getCode() + ".json");
     try {
       resource.write(new JSON<>(item));
     } catch (IOException e) {
