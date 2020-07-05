@@ -7,6 +7,9 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
 import ast.extractor.mapping.Mapping;
+import ast.extractor.mapping.MoveMapping;
+import ast.extractor.mapping.UpdateMapping;
+import ast.snapshot.Snapshot;
 import persistence.Jsonify;
 
 public class MultiPattern implements Jsonify<MultiPattern> {
@@ -18,8 +21,9 @@ public class MultiPattern implements Jsonify<MultiPattern> {
   private List<Mapping> items;
 
   private MultiPatternProcessor processor;
+  private Snapshot snapshot;
 
-  MultiPattern() {
+  public MultiPattern() {
   }
 
   public MultiPattern(Integer code, String commit, Mapping mapping) {
@@ -32,6 +36,10 @@ public class MultiPattern implements Jsonify<MultiPattern> {
     this.items.add(mapping);
   }
 
+  public void setSnapshot(Snapshot snapshot) {
+    this.snapshot = snapshot;
+  }
+
   public void add(String commit, Mapping mapping) {
     this.items.add(mapping);
     this.size++;
@@ -40,6 +48,10 @@ public class MultiPattern implements Jsonify<MultiPattern> {
 
   public void setProcessor(MultiPatternProcessor processor) {
     this.processor = processor;
+  }
+
+  public String getType() {
+    return getLastMapping().source().type();
   }
 
   public Integer getCode() {
@@ -56,6 +68,42 @@ public class MultiPattern implements Jsonify<MultiPattern> {
 
   public String getLastCommit() {
     return commits.get(commits.size() - 1);
+  }
+
+  public String getFirstCommit() {
+    return commits.get(0);
+  }
+
+  public Mapping getLastMapping() {
+    return items.get(items.size() - 1);
+  }
+
+  public Mapping getFirstMapping() {
+    return items.get(0);
+  }
+
+  public Mapping getOverallMapping() {
+
+    if(items.size() == 1) return this.getLastMapping();
+
+    var isUpdate = false;
+    for(var item: this.items) {
+      if(item instanceof UpdateMapping) {
+        isUpdate = true;
+        break;
+      }
+    }
+
+    Mapping mapping = null;
+    var before = this.getFirstMapping().source().get();
+    var after = this.getLastMapping().destination().get();
+    if(isUpdate) {
+      mapping = new UpdateMapping(before, after);
+    } else {
+      mapping = new MoveMapping(before, after);
+    }
+
+    return mapping;
   }
 
   public Boolean compatibility(Mapping other) {
@@ -121,7 +169,19 @@ public class MultiPattern implements Jsonify<MultiPattern> {
     var position = 0;
     this.items = new ArrayList<>();
     for (var element : content.get("items").getAsJsonArray()) {
-      this.items.add(Mapping.fromJson(element.getAsJsonObject(), processor.getSnapshot(), this.commits.get(position)));
+      if(snapshot != null) {
+        this.items.add(Mapping.fromJson(
+          element.getAsJsonObject(), 
+          snapshot,
+          this.commits.get(position))
+        );
+      } else {
+        this.items.add(Mapping.fromJson(
+          element.getAsJsonObject(), 
+          processor.getSnapshot(), 
+          this.commits.get(position))
+        );
+      }
       position++;
     }
 
