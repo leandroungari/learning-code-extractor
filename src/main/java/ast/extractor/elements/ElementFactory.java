@@ -57,7 +57,7 @@ public class ElementFactory<T extends Element<? extends CtElement>> {
     var item = snap.model(elementPath);
     var counter = 0;
     while(item == null) {
-      if(counter > 10) break;
+      if(counter > 5) break;
       if(snap.commit().before() == null) break;
       counter++;
       try {

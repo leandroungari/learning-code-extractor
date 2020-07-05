@@ -6,7 +6,6 @@ public class ClusterExtractorControllerTest {
   
   @Test
   public void repoRefactoring() {
-    ////o cluster está com snapshot null
     var repository = "refactoring-toy-example";
     var branch = "d4bce13a443cf12da40a77c16c1e591f4f985b47";
     var controller = new ClusterExtractorController(repository, branch);
