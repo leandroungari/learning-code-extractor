@@ -11,8 +11,8 @@ import com.google.gson.JsonObject;
 
 import org.eclipse.jgit.api.errors.GitAPIException;
 
-import ast.clustering.Cluster;
-import ast.clustering.ClusterPersistor;
+import ast.cluster.ClusterSet;
+import ast.cluster.ClusterSetPersistor;
 import ast.extractor.elements.ElementFactory;
 import ast.snapshot.Snapshot;
 import persistence.Settings;
@@ -23,11 +23,11 @@ public class Finder {
 
   private String origin;
   private String branchOrigin;
-  private Cluster clusterOrigin;
+  private ClusterSet clusterOrigin;
 
   private String target;
   private String branchTarget;
-  private Cluster clusterTarget;
+  private ClusterSet clusterTarget;
 
   private static final String[] categories = new String[] { "annotationtype", "class", "constructor", "enum", "field",
       "interface", "method", "statement", "temp", "undefined" };
@@ -40,9 +40,9 @@ public class Finder {
     this.clusterOrigin = getClusterOrigin();
   }
 
-  private Cluster getClusterOrigin() {
-    var cluster = new Cluster(origin, branchOrigin);
-    var persistor = new ClusterPersistor(cluster);
+  private ClusterSet getClusterOrigin() {
+    var cluster = new ClusterSet(origin, branchOrigin);
+    var persistor = new ClusterSetPersistor(cluster);
     return persistor.read();
   }
 
@@ -57,9 +57,9 @@ public class Finder {
     this.clusterTarget = getClusterTarget();
   }
 
-  private Cluster getClusterTarget() {
-    var cluster = new Cluster(target, branchTarget);
-    var persistor = new ClusterPersistor(cluster);
+  private ClusterSet getClusterTarget() {
+    var cluster = new ClusterSet(target, branchTarget);
+    var persistor = new ClusterSetPersistor(cluster);
     return persistor.read();
   }
 
@@ -69,8 +69,8 @@ public class Finder {
       var patternOrigin = index.getPattern();
       ElementFactory.setTempRepository(target);
       for(var outer: clusterTarget.getItems(category)) {
-        var mapping = outer.getBase().getMapping();
-        if(patternOrigin.matches(mapping)) {
+        var instance = outer.getBase().getOverallMapping();
+        if(patternOrigin.matches(instance)) {
           
           if(result.containsKey("#" + index.getCode())) {
             result.get("#" + index.getCode()).add(outer.getCode());
