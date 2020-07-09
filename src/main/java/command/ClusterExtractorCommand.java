@@ -5,6 +5,7 @@ import com.beust.jcommander.Parameter;
 import org.eclipse.jgit.api.errors.GitAPIException;
 
 import ast.ClusterExtractor;
+import controller.ClusterExtractorController;
 
 public class ClusterExtractorCommand implements Command {
 
@@ -15,13 +16,9 @@ public class ClusterExtractorCommand implements Command {
   private String branch;
 
   public void run() {
-    try {
 
-      var controller = new ClusterExtractor(repository, branch);
-      controller.execute();
+    var controller = new ClusterExtractorController(repository, branch);
+    controller.execute();
 
-    } catch (GitAPIException e) {
-      e.printStackTrace();
-    }
   }
 }
