@@ -13,22 +13,14 @@ public class ClusterSetPersistor {
 
   private ClusterSet cluster;
 
-  private ClusterItemPersistor persistor;
-
   public ClusterSetPersistor(ClusterSet cluster) {
 
-    this.repository = cluster.repository();
+    this.repository = cluster.getRepository();
     this.cluster = cluster;
 
     this.base = Settings.get()
       .folderOfMetadata() + "/" + 
       this.repository + "/clusters";
-
-    this.persistor = new ClusterItemPersistor(this.repository, cluster);
-  }
-
-  ClusterItemPersistor item() {
-    return persistor;
   }
 
   public void write() {

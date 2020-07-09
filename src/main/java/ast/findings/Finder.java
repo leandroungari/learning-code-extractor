@@ -1,7 +1,6 @@
 package ast.findings;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -13,7 +12,6 @@ import org.eclipse.jgit.api.errors.GitAPIException;
 
 import ast.cluster.ClusterSet;
 import ast.cluster.ClusterSetPersistor;
-import ast.extractor.elements.ElementFactory;
 import ast.snapshot.Snapshot;
 import persistence.Settings;
 import persistence.resource.PlainText;
@@ -63,7 +61,7 @@ public class Finder {
     return persistor.read();
   }
 
-  private void process(String category, HashMap<String, List<Integer>> result) {
+  /*private void process(String category, HashMap<String, List<Integer>> result) {
     ElementFactory.setTempRepository(origin);
     for(var index: clusterOrigin.getItems(category)) {
       var patternOrigin = index.getPattern();
@@ -83,13 +81,13 @@ public class Finder {
       }
       ElementFactory.setTempRepository(origin);
     }
-  }
+  }*/
 
   public Map<String, List<Integer>> compatibility() {
     var result = new HashMap<String, List<Integer>>();
     
     for(var category: categories) {
-      this.process(category, result);
+      //this.process(category, result);
     }
 
     return result;

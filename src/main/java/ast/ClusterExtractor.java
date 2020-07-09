@@ -18,7 +18,6 @@ import persistence.Settings;
 import persistence.resource.JSON;
 import persistence.resource.PlainText;
 import persistence.resource.Resource;
-import spoon.SpoonException;
 
 public class ClusterExtractor {
 
@@ -45,10 +44,10 @@ public class ClusterExtractor {
 
   public void execute() {
     var manager = loadBaseFile();
+    
     for (var entry : manager.entrySet()) {
       var commit = entry.getKey();
       System.err.println("> clustering commit #" + counter + " " + commit);
-      counter++;
       for (var item : entry.getValue().entrySet()) {
         var file = item.getKey();
         var instance = getInstance(commit, file);
@@ -56,6 +55,8 @@ public class ClusterExtractor {
           identifyCluster(instance);
         }
       }
+      
+      cluster.persistor().write();
       counter++;
     }
   }
@@ -104,14 +105,6 @@ public class ClusterExtractor {
     return null;
   }
 
-  /*
-   * public void generate() { for (var commit : getCommits()) { var items =
-   * getMappingsFromCommit(commit); if(items != null) { var mappings =
-   * items.get(); System.err.println("> clustering commit #" + counter + " " +
-   * commit); identifyCluster(mappings, commit); } else {
-   * System.out.println("> clustering commit não encontrado: " + commit); }
-   * counter++; } }
-   */
 
   private Boolean isSameTypeMappings(String type, Mapping base) {
     var srcType = base.source().type();
@@ -124,8 +117,33 @@ public class ClusterExtractor {
 
     var added = false;
     var type = instance.getType();
-    var elements = cluster.getItems(type);
+
+    //Evita elementos incorretos
+    if("UndefinedElement".equals(instance.getType())) return;
+
     var mapping = instance.getOverallMapping();
+
+    for(var item: cluster.getGroup(type)) {
+      if (isSameTypeMappings(type, item.getBase().getOverallMapping())) {
+        try {
+          if (item.getPattern().matches(mapping)) {
+            item.add(instance);
+            added = true;
+            break;
+          }
+        } catch(Exception ex) {
+          System.out.println("> falha na comparação de multipatterns");
+        }
+      }
+    }
+
+    if (!added) {
+      cluster.addItem(instance);
+    }
+
+    /*var elements = cluster.getItems(type);
+    var mapping = instance.getOverallMapping();
+    
     for (var item : elements) {
       if (isSameTypeMappings(type, item.getBase().getOverallMapping())) {
         try {
@@ -141,6 +159,6 @@ public class ClusterExtractor {
     }
     if (!added) {
       cluster.addItem(instance);
-    }
+    }*/
   }
 }
