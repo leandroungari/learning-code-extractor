@@ -3,6 +3,7 @@ package controller;
 import org.eclipse.jgit.api.errors.GitAPIException;
 
 import ast.multipattern.MultiPatternProcessor;
+import util.Timer;
 
 public class MultiPatternController {
 
@@ -21,13 +22,16 @@ public class MultiPatternController {
   }
 
   public void execute() throws GitAPIException {
+    var timer = new Timer();
     MultiPatternProcessor processor = null;
     if (from != null && to != null) {
       processor = new MultiPatternProcessor(repository, branch, distancia, from, to);
     } else {
       processor = new MultiPatternProcessor(repository, branch, distancia);
     }
-
+    timer.start();
     processor.identify();
+    timer.finish();
+    timer.show();
   }
 }
