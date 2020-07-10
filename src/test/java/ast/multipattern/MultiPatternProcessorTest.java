@@ -20,7 +20,18 @@ public class MultiPatternProcessorTest {
     var branch = "ceae88bd6667f4263bbe02e6b3710b8a683906a2";
 
     //var processor = new MultiPatternProcessor(repository, branch, 700, 1400);
-    var processor = new MultiPatternProcessor(repository, branch, 5, 700, 750);
+    //var processor = new MultiPatternProcessor(repository, branch, 5, 700, 750);
+    var processor = new MultiPatternProcessor(repository, branch, 5);
+    processor.identify();
+  }
+
+  @Test
+  public void repoGson18To25() throws GitAPIException {
+    var repository = "gson";
+    var branch = "ceae88bd6667f4263bbe02e6b3710b8a683906a2";
+
+    //var processor = new MultiPatternProcessor(repository, branch, 700, 1400);
+    var processor = new MultiPatternProcessor(repository, branch, 5, 18, 25);
     processor.identify();
   }
 }

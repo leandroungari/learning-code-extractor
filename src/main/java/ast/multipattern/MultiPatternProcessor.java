@@ -153,6 +153,7 @@ public class MultiPatternProcessor {
         if ((!janela.contains(pattern.getLastCommit())) || number == this.commits.size()) {
           try {
             persistor.write(pattern, commit);
+            current.remove(i);
           } catch(Exception ex) {
             System.err.println("> falha na escrita do multipattern");
             System.err.println("  commit " + commit);
