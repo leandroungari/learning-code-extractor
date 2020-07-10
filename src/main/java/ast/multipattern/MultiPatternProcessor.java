@@ -157,6 +157,7 @@ public class MultiPatternProcessor {
           } catch(Exception ex) {
             System.err.println("> falha na escrita do multipattern");
             System.err.println("  commit " + commit);
+            current.remove(i);
           }
         } else {
           i++;
