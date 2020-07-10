@@ -171,7 +171,7 @@ public class MultiPatternProcessor {
     try {
       var reader = new MappingsReader(repository, branch);
       return reader.commit(id);
-    } catch (Exception ex) {
+    } catch (Throwable ex) {
       return new CommitMappings(repository, branch, id);
     }
   }
