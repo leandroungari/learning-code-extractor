@@ -15,4 +15,15 @@ public class FinderTest {
     var data = finder.compatibility();
     finder.toStore(data);
   }
+
+  @Test
+  public void finderRefactoringToGson() throws GitAPIException {
+    var repository = "refactoring-toy-example";
+    var branch = "d4bce13a443cf12da40a77c16c1e591f4f985b47";
+
+    var finder = new Finder(repository, branch);
+    finder.setRepositoryTarget("gson", "ceae88bd6667f4263bbe02e6b3710b8a683906a2");
+    var data = finder.compatibility();
+    finder.toStore(data);
+  }
 }
