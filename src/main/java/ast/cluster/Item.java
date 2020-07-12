@@ -23,6 +23,13 @@ public class Item implements Jsonify<Item> {
     this.parent = parent;
   }
 
+  public Item(Integer code, ClusterSet parent) {
+    this.code = code;
+    this.items = new ArrayList<>();
+    this.parent = parent;
+  }
+
+
   public void add(Integer code) {
     this.items.add(code);
   }

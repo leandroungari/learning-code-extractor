@@ -1,6 +1,7 @@
 package ast.findings;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -11,7 +12,8 @@ import com.google.gson.JsonObject;
 import org.eclipse.jgit.api.errors.GitAPIException;
 
 import ast.cluster.ClusterSet;
-import ast.cluster.ClusterSetPersistor;
+import ast.cluster.Index;
+import ast.extractor.elements.ElementFactory;
 import ast.snapshot.Snapshot;
 import persistence.Settings;
 import persistence.resource.PlainText;
@@ -27,86 +29,102 @@ public class Finder {
   private String branchTarget;
   private ClusterSet clusterTarget;
 
-  private static final String[] categories = new String[] { "annotationtype", "class", "constructor", "enum", "field",
-      "interface", "method", "statement", "temp", "undefined" };
-
   public Finder(String repository, String branch) throws GitAPIException {
     Snapshot.create(repository, branch);
-    
+
     this.origin = repository;
     this.branchOrigin = branch;
-    this.clusterOrigin = getClusterOrigin();
-  }
-
-  private ClusterSet getClusterOrigin() {
-    var cluster = new ClusterSet(origin, branchOrigin);
-    var persistor = new ClusterSetPersistor(cluster);
-    return persistor.read();
+    this.clusterOrigin = new ClusterSet(origin, branchOrigin);
   }
 
   public void setRepositoryTarget(String repository, String branch) throws GitAPIException {
     Snapshot.create(repository, branch);
 
-    //TODO 
-    //adicionar no finder as mesmas configurações 
-    //do clustering com ajustes para funcionar
     this.target = repository;
     this.branchTarget = branch;
-    this.clusterTarget = getClusterTarget();
+    this.clusterTarget = new ClusterSet(target, branchTarget);
   }
 
-  private ClusterSet getClusterTarget() {
-    var cluster = new ClusterSet(target, branchTarget);
-    var persistor = new ClusterSetPersistor(cluster);
-    return persistor.read();
-  }
+  private void process(HashMap<String, List<Integer>> result) {
+    var originReader = new ClusterItemReader(clusterOrigin);
+    var targetReader = new ClusterItemReader(clusterTarget);
 
-  /*private void process(String category, HashMap<String, List<Integer>> result) {
-    ElementFactory.setTempRepository(origin);
-    for(var index: clusterOrigin.getItems(category)) {
-      var patternOrigin = index.getPattern();
-      ElementFactory.setTempRepository(target);
-      for(var outer: clusterTarget.getItems(category)) {
-        var instance = outer.getBase().getOverallMapping();
-        if(patternOrigin.matches(instance)) {
+    try {
+      var clusterListOrigin = originReader.getListOfClusters();
+      var clusterListTarget = targetReader.getListOfClusters();
+
+      var map = new HashMap<Integer, Index>();
+      var counter = 0;
+
+      ElementFactory.setTempRepository(origin);
+      for (var i = 0; i < clusterListOrigin.size(); ) {
+        ++counter;
+        var indexCode = clusterListOrigin.get(i);
+        var index = originReader.getIndexElement(indexCode);
+        var patternOrigin = index.getPattern();
+        ElementFactory.setTempRepository(target);
+        var adicionado = false;
+        for (var j = 0; j < clusterListTarget.size(); j++) {
+          var outerCode = clusterListTarget.get(j);
+          System.err.println("> Verificando recorrência do cluster " + indexCode + " (" + outerCode + ") #" + counter);
           
-          if(result.containsKey("#" + index.getCode())) {
-            result.get("#" + index.getCode()).add(outer.getCode());
+          Index outer = null;
+          if(map.containsKey(outerCode)) {
+            outer = map.get(outerCode);
           } else {
-            var list = new ArrayList<Integer>();
-            list.add(outer.getCode());
-            result.put("#" + index.getCode(), list);
+            outer = targetReader.getIndexElement(outerCode);
+            map.put(outerCode, outer);
+          }
+          
+          var instance = outer.getBase().getOverallMapping();
+          if (patternOrigin.matches(instance)) {
+
+            if (result.containsKey("#" + index.getCode())) {
+              result.get("#" + index.getCode()).add(outer.getCode());
+            } else {
+              var list = new ArrayList<Integer>();
+              list.add(outer.getCode());
+              result.put("#" + index.getCode(), list);
+            }
+
+            map.remove(outerCode);
+            var position = clusterListTarget.indexOf(outerCode);
+            clusterListTarget.remove(position);
+
+            position = clusterListOrigin.indexOf(indexCode);
+            clusterListOrigin.remove(position);
+            adicionado = true;
+            break;
           }
         }
+        if(!adicionado) {
+          i++;
+        }
+        ElementFactory.setTempRepository(origin);
       }
-      ElementFactory.setTempRepository(origin);
+    } catch (IOException e) {
+      e.printStackTrace();
     }
-  }*/
+  }
 
   public Map<String, List<Integer>> compatibility() {
     var result = new HashMap<String, List<Integer>>();
-    
-    for(var category: categories) {
-      //this.process(category, result);
-    }
-
+    this.process(result);
     return result;
   }
 
   public void toStore(Map<String, List<Integer>> data) {
-    var base = Settings.get()
-      .folderOfMetadata() + "/" + 
-      this.origin + "/findings";
+    var base = Settings.get().folderOfMetadata() + "/" + this.origin + "/findings";
 
     var resource = new Resource(base, "#" + target + ".json");
     var result = new JsonObject();
     result.addProperty("origin", origin);
     result.addProperty("target", target);
-    
+
     var clusters = new JsonObject();
-    for(var entry: data.entrySet()) {
+    for (var entry : data.entrySet()) {
       var list = new JsonArray();
-      for(var item: entry.getValue()) {
+      for (var item : entry.getValue()) {
         list.add(item);
       }
       clusters.add(entry.getKey(), list);

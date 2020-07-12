@@ -67,7 +67,7 @@ public class ClusterSet implements Jsonify<ClusterSet> {
     this.groups.get(key).add(index);
   }
 
-  String getRepository() {
+  public String getRepository() {
     return repository;
   }
 

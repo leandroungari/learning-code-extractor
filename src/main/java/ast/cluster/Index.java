@@ -53,6 +53,10 @@ public class Index implements Comparable<Index>, Jsonify<Index> {
     this.size++;
   }
 
+  public Integer getCode() {
+    return code;
+  }
+
   public MultiPattern getBase() {
     return base;
   }
