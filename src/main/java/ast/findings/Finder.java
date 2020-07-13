@@ -61,14 +61,14 @@ public class Finder {
         ++counter;
         var indexCode = clusterListOrigin.get(i);
         var index = originReader.getIndexElement(indexCode);
-        var patternOrigin = index.getPattern();
-        ElementFactory.setTempRepository(target);
-        var adicionado = false;
-        for (var j = 0; j < clusterListTarget.size(); j++) {
-          var outerCode = clusterListTarget.get(j);
-          System.err.println("> Verificando recorrência do cluster " + origin + " " + indexCode + " (" + outerCode + ") #" + counter);
-
-          try {
+        try {
+          var patternOrigin = index.getPattern();
+          ElementFactory.setTempRepository(target);
+          var adicionado = false;
+          for (var j = 0; j < clusterListTarget.size(); j++) {
+            var outerCode = clusterListTarget.get(j);
+            System.err.println("> Verificando recorrência do cluster " + origin + " " + indexCode + " (" + outerCode
+                + ") #" + counter);
 
             Index outer = null;
             if (map.containsKey(outerCode)) {
@@ -98,13 +98,15 @@ public class Finder {
               adicionado = true;
               break;
             }
-          } catch (Throwable ex) {
-            System.err.println("> falha na comparação dos elementos");
           }
+          if (!adicionado) {
+            i++;
+          }
+        } catch (Throwable ex) {
+          System.err.println("> falha na comparação dos elementos");
         }
-        if (!adicionado) {
-          i++;
-        }
+
+        
         ElementFactory.setTempRepository(origin);
       }
     } catch (IOException e) {
