@@ -1,6 +1,7 @@
 package ast;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -10,6 +11,7 @@ import com.google.gson.JsonObject;
 import org.eclipse.jgit.api.errors.GitAPIException;
 
 import ast.cluster.ClusterSet;
+import ast.cluster.Index;
 import ast.extractor.elements.ElementFactory;
 import ast.extractor.mapping.Mapping;
 import ast.multipattern.MultiPattern;
@@ -52,7 +54,7 @@ public class ClusterExtractor {
         var file = item.getKey();
         var instance = getInstance(commit, file);
         if (instance != null) {
-          identifyCluster(instance);
+          identifyCluster(instance, counter);
         }
       }
       
@@ -113,7 +115,7 @@ public class ClusterExtractor {
     return (srcType.equals(type) || destType.equals(type));
   }
 
-  private void identifyCluster(MultiPattern instance) {
+  private void identifyCluster(MultiPattern instance, Integer position) {
 
     var added = false;
     var type = instance.getType();
@@ -122,23 +124,33 @@ public class ClusterExtractor {
     if("UndefinedElement".equals(instance.getType())) return;
 
     var mapping = instance.getOverallMapping();
-
+    var listRemove = new ArrayList<Index>();
+    
     for(var item: cluster.getGroup(type)) {
       if (isSameTypeMappings(type, item.getBase().getOverallMapping())) {
         try {
           if (item.getPattern().matches(mapping)) {
-            item.add(instance);
+            item.add(instance, position);
             added = true;
             break;
-          }
+          } 
         } catch(Exception ex) {
           System.out.println("> falha na comparação de multipatterns");
-        }
+        } 
+      }
+
+      if(position - item.getPosition() > 100) {
+        listRemove.add(item);
       }
     }
 
+    //remove os elementos sem potencial de cluster
+    if(!listRemove.isEmpty()) {
+      cluster.getGroup(type).removeAll(listRemove);
+    }
+
     if (!added) {
-      cluster.addItem(instance);
+      cluster.addItem(instance, position);
     }
 
     /*var elements = cluster.getItems(type);

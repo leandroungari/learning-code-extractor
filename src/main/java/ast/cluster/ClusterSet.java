@@ -57,13 +57,13 @@ public class ClusterSet implements Jsonify<ClusterSet> {
     return item;
   }
 
-  public void addItem(MultiPattern instance) {
+  public void addItem(MultiPattern instance, Integer i) {
     var type = instance.getType();
     var key = transformToKey(type);
 
     var position = ++counter;
 
-    var index = new Index(position, instance, this);
+    var index = new Index(position, instance, this, i);
     this.groups.get(key).add(index);
   }
 

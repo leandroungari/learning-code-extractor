@@ -58,7 +58,8 @@ public class ClusterItemReader {
     return new Index(
       cluster.getCode(), 
       cluster.getBase(), 
-      this.clusterSet
+      this.clusterSet,
+      -1
     );
   }
 }
