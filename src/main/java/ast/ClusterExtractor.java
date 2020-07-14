@@ -111,10 +111,14 @@ public class ClusterExtractor {
   private void identifyCluster(MultiPattern instance, Integer position) {
 
     var added = false;
-    var type = instance.getType();
 
-    //Evita elementos incorretos
-    if("UndefinedElement".equals(instance.getType())) return;
+    String type = null;
+    try {
+      type = instance.getType();
+      if("UndefinedElement".equals(instance.getType())) return;
+    } catch(Exception ex) {
+      return;
+    }
 
     var mapping = instance.getOverallMapping();
     var listRemove = new ArrayList<Index>();
