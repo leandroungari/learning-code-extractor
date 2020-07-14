@@ -85,19 +85,12 @@ public class ClusterExtractor {
       content.entrySet().forEach(entry -> {
 
         var commit = new HashMap<String, Integer>();
-        var contemDiferente = false;
+  
         for (var map : entry.getValue().getAsJsonObject().entrySet()) {
           var valor = map.getValue().getAsInt();
-          if (valor != 0) {
-            contemDiferente = true;
-            commit.put(map.getKey(), valor);
-          }
+          commit.put(map.getKey(), valor);
         }
-
-        if (contemDiferente) {
-          result.put(entry.getKey(), commit);
-        }
-
+        result.put(entry.getKey(), commit);  
       });
 
       return result;
