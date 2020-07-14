@@ -1,7 +1,6 @@
 package ast;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -11,7 +10,6 @@ import com.google.gson.JsonObject;
 import org.eclipse.jgit.api.errors.GitAPIException;
 
 import ast.cluster.ClusterSet;
-import ast.cluster.Index;
 import ast.extractor.elements.ElementFactory;
 import ast.extractor.mapping.Mapping;
 import ast.multipattern.MultiPattern;
@@ -88,9 +86,13 @@ public class ClusterExtractor {
   
         for (var map : entry.getValue().getAsJsonObject().entrySet()) {
           var valor = map.getValue().getAsInt();
-          commit.put(map.getKey(), valor);
+          if(valor != 0) {
+            commit.put(map.getKey(), valor);
+          }
         }
-        result.put(entry.getKey(), commit);  
+        if(!commit.isEmpty()) {
+          result.put(entry.getKey(), commit);
+        }  
       });
 
       return result;
@@ -121,7 +123,6 @@ public class ClusterExtractor {
     }
 
     var mapping = instance.getOverallMapping();
-    var listRemove = new ArrayList<Index>();
     
     for(var item: cluster.getGroup(type)) {
       if (isSameTypeMappings(type, item.getBase().getOverallMapping())) {
@@ -135,15 +136,6 @@ public class ClusterExtractor {
           System.out.println("> falha na comparação de multipatterns");
         } 
       }
-
-      if(position - item.getPosition() > 100) {
-        listRemove.add(item);
-      }
-    }
-
-    //remove os elementos sem potencial de cluster
-    if(!listRemove.isEmpty()) {
-      cluster.getGroup(type).removeAll(listRemove);
     }
 
     if (!added) {
