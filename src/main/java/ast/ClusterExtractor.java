@@ -69,7 +69,7 @@ public class ClusterExtractor {
       var instance = new MultiPattern();
       instance.setSnapshot(snapshot);
       return resource.read(new JSON<>(instance));
-    } catch (Exception e) {
+    } catch (Throwable e) {
       e.printStackTrace();
     }
     return null;
