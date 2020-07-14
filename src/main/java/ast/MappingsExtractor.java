@@ -26,7 +26,7 @@ public class MappingsExtractor {
       result.add(items);
 
       return result;
-    } catch(Exception ex) {
+    } catch(Throwable ex) {
               
       return new CommitMappings(repository, branch, commit);
     }
