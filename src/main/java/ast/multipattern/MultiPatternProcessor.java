@@ -127,7 +127,7 @@ public class MultiPatternProcessor {
                 } else {
                   i++;
                 }
-              } catch(Exception ex) {
+              } catch(Throwable ex) {
                 mappings.remove(i);
               }
             } else {
