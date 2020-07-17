@@ -61,44 +61,51 @@ public class Finder {
         ++counter;
         var indexCode = clusterListOrigin.get(i);
         var index = originReader.getIndexElement(indexCode);
+
         try {
-          var patternOrigin = index.getPattern();
-          ElementFactory.setTempRepository(target);
           var adicionado = false;
-          for (var j = 0; j < clusterListTarget.size(); j++) {
-            var outerCode = clusterListTarget.get(j);
-            System.err.println("> Verificando recorrência do cluster " + origin + " " + indexCode + " (" + outerCode
-                + ") #" + counter);
 
-            Index outer = null;
-            if (map.containsKey(outerCode)) {
-              outer = map.get(outerCode);
-            } else {
-              outer = targetReader.getIndexElement(outerCode);
-              map.put(outerCode, outer);
-            }
+          if (index.getSize() > 1) {
+            var patternOrigin = index.getPattern();
+            ElementFactory.setTempRepository(target);
+            for (var j = 0; j < clusterListTarget.size(); j++) {
+              var outerCode = clusterListTarget.get(j);
+              System.err.println("> Verificando recorrência do cluster " + origin + " " + indexCode + " (" + outerCode
+                  + ") #" + counter);
 
-            var instance = outer.getBase().getOverallMapping();
-            if (patternOrigin.matches(instance)) {
-
-              if (result.containsKey("#" + index.getCode())) {
-                result.get("#" + index.getCode()).add(outer.getCode());
+              Index outer = null;
+              if (map.containsKey(outerCode)) {
+                outer = map.get(outerCode);
               } else {
-                var list = new ArrayList<Integer>();
-                list.add(outer.getCode());
-                result.put("#" + index.getCode(), list);
+                outer = targetReader.getIndexElement(outerCode);
+                map.put(outerCode, outer);
               }
 
-              map.remove(outerCode);
-              var position = clusterListTarget.indexOf(outerCode);
-              clusterListTarget.remove(position);
+              if (outer.getSize() > 1) {
+                var instance = outer.getBase().getOverallMapping();
+                if (patternOrigin.matches(instance)) {
 
-              position = clusterListOrigin.indexOf(indexCode);
-              clusterListOrigin.remove(position);
-              adicionado = true;
-              break;
+                  if (result.containsKey("#" + index.getCode())) {
+                    result.get("#" + index.getCode()).add(outer.getCode());
+                  } else {
+                    var list = new ArrayList<Integer>();
+                    list.add(outer.getCode());
+                    result.put("#" + index.getCode(), list);
+                  }
+
+                  map.remove(outerCode);
+                  var position = clusterListTarget.indexOf(outerCode);
+                  clusterListTarget.remove(position);
+
+                  position = clusterListOrigin.indexOf(indexCode);
+                  clusterListOrigin.remove(position);
+                  adicionado = true;
+                  break;
+                }
+              }
             }
           }
+
           if (!adicionado) {
             i++;
           }
@@ -106,7 +113,6 @@ public class Finder {
           System.err.println("> falha na comparação dos elementos");
         }
 
-        
         ElementFactory.setTempRepository(origin);
       }
     } catch (IOException e) {

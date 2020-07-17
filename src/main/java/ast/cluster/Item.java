@@ -29,6 +29,9 @@ public class Item implements Jsonify<Item> {
     this.parent = parent;
   }
 
+  public ArrayList<Integer> getItems() {
+    return items;
+  }
 
   public void add(Integer code) {
     this.items.add(code);

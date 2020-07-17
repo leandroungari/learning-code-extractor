@@ -25,8 +25,6 @@ public class Index implements Comparable<Index>, Jsonify<Index> {
     this.parent = parent;
     this.persistor = new ItemPersistor(this.parent);
     this.position = counter;
-
-    this.createItemFile();
   }
 
   public void setPosition(Integer position) {
@@ -37,15 +35,14 @@ public class Index implements Comparable<Index>, Jsonify<Index> {
     return position;
   }
 
-  private void createItemFile() {
-    var item = new Item(this.code, this.base, this.parent);
-    item.add(this.base.getCode());
-
-    this.persistor.write(item);
-  }
+  
 
   public Index(ClusterSet parent) {
     this.parent = parent;
+  }
+
+  public void setSize(Integer size) {
+    this.size = size;
   }
 
   public void add(MultiPattern item, Integer position) {
@@ -69,6 +66,10 @@ public class Index implements Comparable<Index>, Jsonify<Index> {
 
   public MultiPattern getBase() {
     return base;
+  }
+
+  public Integer getSize() {
+    return size;
   }
 
   public Template getPattern() {

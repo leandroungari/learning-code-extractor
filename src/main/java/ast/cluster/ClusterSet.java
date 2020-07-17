@@ -64,7 +64,16 @@ public class ClusterSet implements Jsonify<ClusterSet> {
     var position = ++counter;
 
     var index = new Index(position, instance, this, i);
+    this.createItemFile(position, instance);
     this.groups.get(key).add(index);
+  }
+
+  private void createItemFile(Integer code, MultiPattern base) {
+    var item = new Item(code, base, this);
+    item.add(base.getCode());
+
+    var itemPersistor = new ItemPersistor(this);
+    itemPersistor.write(item);
   }
 
   public String getRepository() {
