@@ -19,6 +19,7 @@ import command.FinderCommand;
 import command.MappingsCommand;
 import command.MetricsCommand;
 import command.MultiPatternCommand;
+import command.ObtainCommitInfoCommand;
 import command.repository.CommitsCommand;
 import command.repository.DownloadCommand;
 import repository.exception.GitRepositoryException;
@@ -47,6 +48,7 @@ public class Main {
       executor.add("download", new DownloadCommand());
       executor.add("metrics", new MetricsCommand());
       executor.add("commits", new CommitsCommand());
+      executor.add("commit-info", new ObtainCommitInfoCommand());
       executor.add("find", new FinderCommand());
       executor.add("multi-pattern", new MultiPatternCommand());
       executor.add("cluster-extractor", new ClusterExtractorCommand());
