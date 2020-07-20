@@ -34,6 +34,7 @@ public class ObtainCommitInfoController {
       .map(item -> {
         var info = item.info();
         var map = Map.of(
+          "commit", info.getId(),
           "email", info.getEmail(),
           "data", info.getDate()
         );
