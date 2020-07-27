@@ -100,7 +100,7 @@ public class MultiPatternProcessor {
       List<Mapping> mappings = null;
       try {
         mappings = getMappingsFromCommit(commit).get();
-      } catch(Exception ex) {
+      } catch (Exception ex) {
         mappings = new ArrayList<>();
       }
       if (current.isEmpty()) {
@@ -115,22 +115,17 @@ public class MultiPatternProcessor {
           var i = 0;
           while (i < mappings.size()) {
             var mapping = mappings.get(i);
-            if (mapping instanceof MoveMapping || mapping instanceof UpdateMapping) {
-              try {
-                if (pattern.compatibility(mapping)) {
+            try {
+              if (pattern.compatibility(mapping)) {
+                pattern.add(commit, mapping);
+                result.add(pattern);
 
-                  pattern.add(commit, mapping);
-                  result.add(pattern);
-  
-                  mappings.remove(i);
-                  break;
-                } else {
-                  i++;
-                }
-              } catch(Throwable ex) {
                 mappings.remove(i);
+                break;
+              } else {
+                i++;
               }
-            } else {
+            } catch (Throwable ex) {
               mappings.remove(i);
             }
           }
@@ -154,7 +149,7 @@ public class MultiPatternProcessor {
           try {
             persistor.write(pattern, commit);
             current.remove(i);
-          } catch(Exception ex) {
+          } catch (Exception ex) {
             System.err.println("> falha na escrita do multipattern");
             System.err.println("  commit " + commit);
             current.remove(i);

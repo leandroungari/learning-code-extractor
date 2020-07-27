@@ -6,6 +6,7 @@ import java.util.List;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
+import ast.extractor.elements.Element;
 import ast.extractor.mapping.Mapping;
 import ast.extractor.mapping.MoveMapping;
 import ast.extractor.mapping.UpdateMapping;
@@ -84,11 +85,12 @@ public class MultiPattern implements Jsonify<MultiPattern> {
 
   public Mapping getOverallMapping() {
 
-    if(items.size() == 1) return this.getLastMapping();
+    if (items.size() == 1)
+      return this.getLastMapping();
 
     var isUpdate = false;
-    for(var item: this.items) {
-      if(item instanceof UpdateMapping) {
+    for (var item : this.items) {
+      if (item instanceof UpdateMapping) {
         isUpdate = true;
         break;
       }
@@ -97,7 +99,7 @@ public class MultiPattern implements Jsonify<MultiPattern> {
     Mapping mapping = null;
     var before = this.getFirstMapping().source().get();
     var after = this.getLastMapping().destination().get();
-    if(isUpdate) {
+    if (isUpdate) {
       mapping = new UpdateMapping(before, after);
     } else {
       mapping = new MoveMapping(before, after);
@@ -106,29 +108,51 @@ public class MultiPattern implements Jsonify<MultiPattern> {
     return mapping;
   }
 
+  private String getSourceCode(Element<?> item) {
+    if (item != null) {
+      return item.dependencies().toString();
+    }
+    return null;
+  }
+
   public Boolean compatibility(Mapping other) {
     try {
       var last = items.get(items.size() - 1);
 
       // criar verificação se o source e os dests de cada um são diferentes
-      var lastSrcCode = last.source().dependencies().toString();
-      var lastDestCode = last.destination().dependencies().toString();
+      Element<?> source = last.source();
+      Element<?> dest = last.destination();
+      
+      var lastSrcCode = getSourceCode(source);
+      var lastDestCode = getSourceCode(dest);      
 
-      var otherSrcCode = other.source().dependencies().toString();
-      var otherDestCode = other.destination().dependencies().toString();
+      var otherSrcCode = getSourceCode(other.source());
+      var otherDestCode = getSourceCode(other.destination());
 
-      if (lastSrcCode.equals(otherSrcCode) && lastDestCode.equals(otherDestCode)) {
+      var matches = 0;
+      if(lastSrcCode != null && lastSrcCode.equals(otherSrcCode)) {
+        matches++;
+      }
 
+      if(lastDestCode != null && lastDestCode.equals(otherDestCode)) {
+        matches++;
+      }
+
+      if(matches > 0) {
         return false;
       }
 
-      var destinationPath = last.destination().path();
-      var sourcePath = other.source().path();
-      if (!sourcePath.equals(destinationPath)) {
+      if(other instanceof UpdateMapping || other instanceof MoveMapping) {
+        var destinationPath = last.destination().path();
+        var sourcePath = other.source().path();
+        if (!sourcePath.equals(destinationPath)) {
+          return false;
+        }
+
+        return lastDestCode.equals(otherSrcCode);
+      } else {
         return false;
       }
-
-      return lastDestCode.equals(otherSrcCode);
     } catch (Exception ex) {
       return false;
     }
@@ -169,18 +193,11 @@ public class MultiPattern implements Jsonify<MultiPattern> {
     var position = 0;
     this.items = new ArrayList<>();
     for (var element : content.get("items").getAsJsonArray()) {
-      if(snapshot != null) {
-        this.items.add(Mapping.fromJson(
-          element.getAsJsonObject(), 
-          snapshot,
-          this.commits.get(position))
-        );
+      if (snapshot != null) {
+        this.items.add(Mapping.fromJson(element.getAsJsonObject(), snapshot, this.commits.get(position)));
       } else {
-        this.items.add(Mapping.fromJson(
-          element.getAsJsonObject(), 
-          processor.getSnapshot(), 
-          this.commits.get(position))
-        );
+        this.items
+            .add(Mapping.fromJson(element.getAsJsonObject(), processor.getSnapshot(), this.commits.get(position)));
       }
       position++;
     }
