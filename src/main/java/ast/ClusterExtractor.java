@@ -1,6 +1,7 @@
 package ast;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -10,6 +11,7 @@ import com.google.gson.JsonObject;
 import org.eclipse.jgit.api.errors.GitAPIException;
 
 import ast.cluster.ClusterSet;
+import ast.cluster.Index;
 import ast.extractor.elements.ElementFactory;
 import ast.extractor.mapping.Mapping;
 import ast.multipattern.MultiPattern;
@@ -86,13 +88,10 @@ public class ClusterExtractor {
   
         for (var map : entry.getValue().getAsJsonObject().entrySet()) {
           var valor = map.getValue().getAsInt();
-          if(valor != 0) {
-            commit.put(map.getKey(), valor);
-          }
+          commit.put(map.getKey(), valor);
+          
         }
-        if(!commit.isEmpty()) {
-          result.put(entry.getKey(), commit);
-        }  
+        result.put(entry.getKey(), commit);
       });
 
       return result;
@@ -104,8 +103,18 @@ public class ClusterExtractor {
 
 
   private Boolean isSameTypeMappings(String type, Mapping base) {
-    var srcType = base.source().type();
-    var destType = base.destination().type();
+    String srcType = "", destType = "";
+
+    var srcElement = base.source();
+    var destElement = base.destination();
+    
+    if(srcElement != null) {
+      srcType = srcElement.type();
+    }
+
+    if(destElement != null) {
+      destType = destElement.type();
+    }
 
     return (srcType.equals(type) || destType.equals(type));
   }
@@ -123,6 +132,7 @@ public class ClusterExtractor {
     }
 
     var mapping = instance.getOverallMapping();
+    var deleteList = new ArrayList<Index>();
     
     for(var item: cluster.getGroup(type)) {
       if (isSameTypeMappings(type, item.getBase().getOverallMapping())) {
@@ -136,10 +146,18 @@ public class ClusterExtractor {
           System.out.println("> falha na comparação de multipatterns");
         } 
       }
+      
+      if(item.getSize() == 1 && position - item.getPosition() > 100) {
+        deleteList.add(item);
+      }
     }
 
     if (!added) {
       cluster.addItem(instance, position);
+    }
+
+    if(!deleteList.isEmpty()){
+      cluster.getGroup(type).removeAll(deleteList);
     }
 
     /*var elements = cluster.getItems(type);

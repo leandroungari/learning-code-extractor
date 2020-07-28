@@ -52,7 +52,7 @@ public class MultiPattern implements Jsonify<MultiPattern> {
   }
 
   public String getType() {
-    return getLastMapping().source().type();
+    return getLastElement().type();
   }
 
   public Integer getCode() {
@@ -75,18 +75,28 @@ public class MultiPattern implements Jsonify<MultiPattern> {
     return commits.get(0);
   }
 
-  public Mapping getLastMapping() {
-    return items.get(items.size() - 1);
+  public Element<?> getLastElement() {
+    var item = items.get(items.size() - 1);
+    var dest = item.destination();
+    if(dest == null) {
+      return item.source();
+    }
+    return dest;
   }
 
-  public Mapping getFirstMapping() {
-    return items.get(0);
+  public Element<?> getFirstElement() {
+    var item = items.get(0);
+    var source = item.source();
+    if(source == null) {
+      return item.destination();
+    }
+    return source;
   }
 
   public Mapping getOverallMapping() {
 
     if (items.size() == 1)
-      return this.getLastMapping();
+      return this.items.get(0);
 
     var isUpdate = false;
     for (var item : this.items) {
@@ -97,8 +107,8 @@ public class MultiPattern implements Jsonify<MultiPattern> {
     }
 
     Mapping mapping = null;
-    var before = this.getFirstMapping().source().get();
-    var after = this.getLastMapping().destination().get();
+    var before = this.getFirstElement().get();
+    var after = this.getLastElement().get();
     if (isUpdate) {
       mapping = new UpdateMapping(before, after);
     } else {
