@@ -45,6 +45,7 @@ public class MergeCluster {
     var i = 0;
     while (i < list.size()) {
       var cluster = this.getElement(i);
+      System.err.println("> #" + i + " cluster " + cluster.getCode());
       if (cluster != null) {
         this.tryMergeWithThisCluster(cluster, i);
       }
@@ -63,9 +64,9 @@ public class MergeCluster {
 
     try {
       item = reader.getItemElement(code);
-      //if(item.getItems().size() > 1) {
+      if(item.getItems().size() > 1) {
         map.put(code, item);
-      //}
+      }
 
       return item;
     } catch(Throwable ex) {
