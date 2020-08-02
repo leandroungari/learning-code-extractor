@@ -51,6 +51,12 @@ public class ClusterItemReader {
     }
   }
 
+  public Item getItemElement(Integer code) {
+    var cluster = new Item(code, this.clusterSet);
+    cluster = persistor.read(cluster);
+    return cluster;
+  }
+
   public Index getIndexElement(Integer code) {
     var cluster = new Item(code, this.clusterSet);
     cluster = persistor.read(cluster);

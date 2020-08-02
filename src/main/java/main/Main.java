@@ -17,6 +17,7 @@ import command.ClusteringCommand;
 import command.CommandExecutor;
 import command.FinderCommand;
 import command.MappingsCommand;
+import command.MergeCommand;
 import command.MetricsCommand;
 import command.MultiPatternCommand;
 import command.ObtainCommitInfoCommand;
@@ -52,6 +53,7 @@ public class Main {
       executor.add("find", new FinderCommand());
       executor.add("multi-pattern", new MultiPatternCommand());
       executor.add("cluster-extractor", new ClusterExtractorCommand());
+      executor.add("merge", new MergeCommand());
 
       executor.execute();
   	}  	

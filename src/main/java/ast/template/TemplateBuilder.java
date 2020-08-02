@@ -85,6 +85,9 @@ public class TemplateBuilder {
   }
 
   private Pattern manipulate(List<? extends CtElement> items) {
+    if(items.isEmpty()) {
+      return null;
+    }
     return PatternBuilder
       .create(items)
       .configurePatternParameters(pb -> {

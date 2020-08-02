@@ -6,6 +6,8 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
 import ast.multipattern.MultiPattern;
+import ast.template.Template;
+import ast.template.TemplateBuilder;
 import persistence.Jsonify;
 
 public class Item implements Jsonify<Item> {
@@ -31,6 +33,11 @@ public class Item implements Jsonify<Item> {
 
   public ArrayList<Integer> getItems() {
     return items;
+  }
+
+  public Template getPattern() {
+    var builder = new TemplateBuilder(base.getOverallMapping());
+    return builder.create();
   }
 
   public void add(Integer code) {

@@ -36,4 +36,9 @@ public class ItemPersistor {
       throw new NullPointerException();
     }
   }
+
+  public void delete(Item item) {
+    var resource = new Resource(this.base, "#" + item.getCode() + ".json");
+    resource.delete();
+  }
 }

@@ -32,6 +32,9 @@ public class Template {
   }
 
   private Boolean compatibility(Pattern pattern, Element<?> element) {
+    if(pattern == null) {
+      return element == null;
+    }
     var matches = new HashSet<CtElement>();
     CtElement parent = null;
     try {
