@@ -49,6 +49,8 @@ public class MergeCluster {
       if (cluster != null) {
         this.tryMergeWithThisCluster(cluster, i);
       }
+      //remove da lista de mapeamentos quando já verificado
+      this.map.remove(cluster.getCode());
       i++;
     }
   }
@@ -64,7 +66,7 @@ public class MergeCluster {
 
     try {
       item = reader.getItemElement(code);
-      if(item.getItems().size() > 1) {
+      if(item.getItems().size() > 1 && map.size() < 1000) {
         map.put(code, item);
       }
 
