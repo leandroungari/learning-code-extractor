@@ -1,6 +1,7 @@
 package ast.merger;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -23,7 +24,11 @@ public class MergeCluster {
   private List<Integer> list;
   private ClusterItemReader reader;
   private ItemPersistor persistor;
+
   private HashMap<Integer,Item> map;
+  private HashMap<String,List<Integer>> types;
+
+  private Integer counterI;
 
   public MergeCluster(String repository, String branch) throws GitAPIException {
     Snapshot.create(repository, branch);
@@ -36,28 +41,36 @@ public class MergeCluster {
     this.persistor = new ItemPersistor(this.set);
 
     this.map = new HashMap<>();
+    this.types = new HashMap<>();
   }
 
   public void merge() throws IOException {
     this.reader = new ClusterItemReader(this.set);
     this.list = reader.getListOfClusters();
 
-    var i = 0;
-    while (i < list.size()) {
-      var cluster = this.getElement(i);
-      System.err.println("> #" + i + " cluster " + cluster.getCode());
+    this.counterI = 0;
+    while (counterI < list.size()) {
+      var cluster = this.getElement(counterI, null);
+      System.err.println("> #" + counterI + " cluster " + cluster.getCode());
       if (cluster != null) {
-        this.tryMergeWithThisCluster(cluster, i);
+        this.tryMergeWithThisCluster(cluster);
       }
       //remove da lista de mapeamentos quando já verificado
       this.map.remove(cluster.getCode());
-      i++;
+      counterI++;
     }
   }
 
-  private Item getElement(Integer id) {
+  private Item getElement(Integer id, String currentType) {
     
     var code = list.get(id);
+
+    if(this.counterI > 1 &&
+       currentType != null &&
+       !this.types.get(currentType).contains(code)) {
+      
+      return null;
+    }
     
     var item = map.get(code);
     if(item != null) {
@@ -66,6 +79,19 @@ public class MergeCluster {
 
     try {
       item = reader.getItemElement(code);
+      var type = item.getBase().getType();
+      
+      if(this.counterI < 1) {
+
+        if(!types.containsKey(type)) {
+          types.put(type, new ArrayList<>());
+        }
+
+        if(!types.get(type).contains(item.getCode())) {
+          types.get(type).add(item.getCode());
+        }
+      }
+
       if(item.getItems().size() > 1 && map.size() < 1000) {
         map.put(code, item);
       }
@@ -76,12 +102,14 @@ public class MergeCluster {
     }
   }
 
-  private void tryMergeWithThisCluster(Item cluster, Integer position) {
-    var i = position + 1;
+  private void tryMergeWithThisCluster(Item cluster) {
+    var i = this.counterI + 1;
     while(i < list.size()) {
-      var item = this.getElement(i);
+      var item = this.getElement(i, cluster.getBase().getType());
       if(item != null &&
+        cluster.getBase().getType().equals(item.getBase().getType()) &&
         cluster.getPattern().matches(item.getBase().getOverallMapping())) {
+
         this.joinClusters(cluster, item, i);
       } else {
         i++;
@@ -97,7 +125,7 @@ public class MergeCluster {
 
     persistor.delete(other);
     map.remove(other.getCode());
-
+    types.get(other.getBase().getType()).remove(other.getCode());
     list.remove(otherPosition);
   }
 }
