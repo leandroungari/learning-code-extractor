@@ -25,15 +25,14 @@ public class MergeCluster {
   private ClusterItemReader reader;
   private ItemPersistor persistor;
 
-  private HashMap<Integer,Item> map;
-  private HashMap<String,List<Integer>> types;
+  private HashMap<Integer, Item> map;
+  private HashMap<String, List<Integer>> types;
 
   private Integer counterI;
 
   public MergeCluster(String repository, String branch) throws GitAPIException {
     Snapshot.create(repository, branch);
     ElementFactory.setTempRepository(this.repository);
-
 
     this.repository = repository;
     this.branch = branch;
@@ -55,64 +54,65 @@ public class MergeCluster {
       if (cluster != null) {
         this.tryMergeWithThisCluster(cluster);
       }
-      //remove da lista de mapeamentos quando já verificado
+      // remove da lista de mapeamentos quando já verificado
       this.map.remove(cluster.getCode());
       counterI++;
     }
   }
 
   private Item getElement(Integer id, String currentType) {
-    
+
     var code = list.get(id);
 
-    if(this.counterI > 1 &&
-       currentType != null &&
-       !this.types.get(currentType).contains(code)) {
-      
+    if (this.counterI > 1 && currentType != null && !this.types.get(currentType).contains(code)) {
+
       return null;
     }
-    
+
     var item = map.get(code);
-    if(item != null) {
+    if (item != null) {
       return item;
     }
 
     try {
       item = reader.getItemElement(code);
       var type = item.getBase().getType();
-      
-      if(this.counterI < 1) {
 
-        if(!types.containsKey(type)) {
+      if (this.counterI < 1) {
+
+        if (!types.containsKey(type)) {
           types.put(type, new ArrayList<>());
         }
 
-        if(!types.get(type).contains(item.getCode())) {
+        if (!types.get(type).contains(item.getCode())) {
           types.get(type).add(item.getCode());
         }
       }
 
-      if(item.getItems().size() > 1 && map.size() < 1000) {
+      if (item.getItems().size() > 1 && map.size() < 1000) {
         map.put(code, item);
       }
 
       return item;
-    } catch(Throwable ex) {
+    } catch (Throwable ex) {
       return null;
     }
   }
 
   private void tryMergeWithThisCluster(Item cluster) {
     var i = this.counterI + 1;
-    while(i < list.size()) {
+    while (i < list.size()) {
       var item = this.getElement(i, cluster.getBase().getType());
-      if(item != null &&
-        cluster.getBase().getType().equals(item.getBase().getType()) &&
-        cluster.getPattern().matches(item.getBase().getOverallMapping())) {
+      try {
+        if (item != null && cluster.getBase().getType().equals(item.getBase().getType())
+            && cluster.getPattern().matches(item.getBase().getOverallMapping())) {
 
-        this.joinClusters(cluster, item, i);
-      } else {
-        i++;
+          this.joinClusters(cluster, item, i);
+        } else {
+          i++;
+        }
+      } catch (Throwable ex) {
+        return;
       }
     }
   }
