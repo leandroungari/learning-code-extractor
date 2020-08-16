@@ -88,10 +88,14 @@ public class ClusterExtractor {
   
         for (var map : entry.getValue().getAsJsonObject().entrySet()) {
           var valor = map.getValue().getAsInt();
-          commit.put(map.getKey(), valor);
-          
+          if(valor != 0) {
+            commit.put(map.getKey(), valor);
+          }
         }
-        result.put(entry.getKey(), commit);
+        
+        if(!commit.isEmpty()) {
+          result.put(entry.getKey(), commit);
+        }
       });
 
       return result;
@@ -132,7 +136,7 @@ public class ClusterExtractor {
     }
 
     var mapping = instance.getOverallMapping();
-    var deleteList = new ArrayList<Index>();
+    //var deleteList = new ArrayList<Index>();
     
     for(var item: cluster.getGroup(type)) {
       if (isSameTypeMappings(type, item.getBase().getOverallMapping())) {
@@ -147,18 +151,18 @@ public class ClusterExtractor {
         } 
       }
       
-      if(item.getSize() == 1 && position - item.getPosition() > 100) {
+      /*if(item.getSize() == 1 && position - item.getPosition() > 100) {
         deleteList.add(item);
-      }
+      }*/
     }
 
     if (!added) {
       cluster.addItem(instance, position);
     }
 
-    if(!deleteList.isEmpty()){
+    /*if(!deleteList.isEmpty()){
       cluster.getGroup(type).removeAll(deleteList);
-    }
+    }*/
 
     /*var elements = cluster.getItems(type);
     var mapping = instance.getOverallMapping();
