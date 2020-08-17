@@ -14,6 +14,7 @@ import ast.cluster.ClusterSet;
 import ast.cluster.Index;
 import ast.extractor.elements.ElementFactory;
 import ast.extractor.mapping.Mapping;
+import ast.findings.ClusterItemReader;
 import ast.multipattern.MultiPattern;
 import ast.snapshot.Snapshot;
 import persistence.Settings;
@@ -28,9 +29,10 @@ public class ClusterExtractor {
 
   private ClusterSet cluster;
 
-  private Integer counter;
+  private Integer contagemCommit;
   private Snapshot snapshot;
   private String base;
+  private ClusterItemReader reader;
 
   public ClusterExtractor(String repository, String branch) throws GitAPIException {
     this.repository = repository;
@@ -40,8 +42,9 @@ public class ClusterExtractor {
     ElementFactory.setTempRepository(this.repository);
     
     this.cluster = new ClusterSet(repository, branch);
-    this.counter = 0;
+    this.contagemCommit = 0;
     this.base = Settings.get().folderOfMetadata().getAbsolutePath();
+    this.reader = new ClusterItemReader(this.cluster);
   }
 
   public void execute() {
@@ -49,17 +52,17 @@ public class ClusterExtractor {
     
     for (var entry : manager.entrySet()) {
       var commit = entry.getKey();
-      System.err.println("> clustering commit #" + counter + " " + commit);
+      System.err.println("> clustering commit #" + contagemCommit + " " + commit);
       for (var item : entry.getValue().entrySet()) {
         var file = item.getKey();
         var instance = getInstance(commit, file);
         if (instance != null) {
-          identifyCluster(instance, counter);
+          identifyCluster(instance);
         }
       }
       
-      cluster.persistor().write();
-      counter++;
+      //cluster.persistor().write();
+      this.contagemCommit++;
     }
   }
 
@@ -123,7 +126,12 @@ public class ClusterExtractor {
     return (srcType.equals(type) || destType.equals(type));
   }
 
-  private void identifyCluster(MultiPattern instance, Integer position) {
+  private Index readElement(String code) {
+    var numberCode = Integer.valueOf(code);
+    return reader.getIndexElement(numberCode);
+  }
+
+  private void identifyCluster(MultiPattern instance) {
 
     var added = false;
 
@@ -136,13 +144,18 @@ public class ClusterExtractor {
     }
 
     var mapping = instance.getOverallMapping();
-    //var deleteList = new ArrayList<Index>();
+    var deleteList = new ArrayList<Integer>();
     
-    for(var item: cluster.getGroup(type)) {
-      if (isSameTypeMappings(type, item.getBase().getOverallMapping())) {
+    for(var entry: cluster.getGroup(type).entrySet()) {
+      var value = entry.getValue();
+      if(value == null) {
+        value = this.readElement(entry.getKey());
+      }
+
+      if (isSameTypeMappings(type, value.getBase().getOverallMapping())) {
         try {
-          if (item.getPattern().matches(mapping)) {
-            item.add(instance, position);
+          if (value.getPattern().matches(mapping)) {
+            value.add(instance, this.contagemCommit);
             added = true;
             break;
           } 
@@ -150,19 +163,22 @@ public class ClusterExtractor {
           System.out.println("> falha na comparação de multipatterns");
         } 
       }
-      
-      /*if(item.getSize() == 1 && position - item.getPosition() > 100) {
-        deleteList.add(item);
-      }*/
+
+      if(value.getSize() > 1) {
+        cluster.getGroup(type).replace(value.getCode().toString(), value);
+      } else if(value.getSize() == 1 && this.contagemCommit - value.getPosition() > 200) {
+        deleteList.add(value.getCode());
+      }
     }
 
     if (!added) {
-      cluster.addItem(instance, position);
+      cluster.addItem(instance, this.contagemCommit);
     }
 
-    /*if(!deleteList.isEmpty()){
-      cluster.getGroup(type).removeAll(deleteList);
-    }*/
+    for(var item: deleteList) {
+      cluster.getGroup(type).replace(item.toString(), null);
+    }
+    System.gc();
 
     /*var elements = cluster.getItems(type);
     var mapping = instance.getOverallMapping();

@@ -16,7 +16,7 @@ public class ClusterSet implements Jsonify<ClusterSet> {
   private String branch;
   private Snapshot snapshot;
 
-  private HashMap<String, PriorityQueue<Index>> groups;
+  private HashMap<String, HashMap<String,Index>> groups;
   
   private ClusterSetPersistor persistor;
   
@@ -46,12 +46,12 @@ public class ClusterSet implements Jsonify<ClusterSet> {
     return type.replace("Element", "").toLowerCase();
   }
 
-  public PriorityQueue<Index> getGroup(String type) {
+  public HashMap<String,Index> getGroup(String type) {
     var name = this.transformToKey(type);
 
     var item = this.groups.get(name);
     if(item == null) {
-      item = new PriorityQueue<>();
+      item = new HashMap<>();
       this.groups.put(name, item);
     }
     return item;
@@ -65,7 +65,7 @@ public class ClusterSet implements Jsonify<ClusterSet> {
 
     var index = new Index(position, instance, this, i);
     this.createItemFile(position, instance);
-    this.groups.get(key).add(index);
+    this.groups.get(key).put(index.getCode().toString(),index);
   }
 
   private void createItemFile(Integer code, MultiPattern base) {
@@ -103,9 +103,9 @@ public class ClusterSet implements Jsonify<ClusterSet> {
     for(var entry: this.groups.entrySet()) {
       var type = entry.getKey();
       
-      var list = new JsonArray();
-      for(var item: entry.getValue()) {
-        list.add(item.toJson());
+      var list = new JsonObject();
+      for(var item: entry.getValue().entrySet()) {
+        list.add(item.getKey(), item.getValue().toJson());
       }
 
       instance.add(type, list);
@@ -124,10 +124,10 @@ public class ClusterSet implements Jsonify<ClusterSet> {
     for(var entry: content.get("groups").getAsJsonObject().entrySet()) {
       var type = entry.getKey();
 
-      var list = new PriorityQueue<Index>();
+      var list = new HashMap<String,Index>();
       for(var item: entry.getValue().getAsJsonArray()) {
         var index = new Index(this);
-        list.add(index.fromJson(item.getAsJsonObject()));
+        list.put(index.getCode().toString(), index.fromJson(item.getAsJsonObject()));
       }
       this.groups.put(type, list);
     }
