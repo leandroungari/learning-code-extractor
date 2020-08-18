@@ -91,14 +91,15 @@ public class ClusterExtractor {
   
         for (var map : entry.getValue().getAsJsonObject().entrySet()) {
           var valor = map.getValue().getAsInt();
-          if(valor != 0) {
+          /*if(valor != 0) {
             commit.put(map.getKey(), valor);
-          }
+          }*/
+          commit.put(map.getKey(), valor);
         }
         
-        if(!commit.isEmpty()) {
-          result.put(entry.getKey(), commit);
-        }
+        //if(!commit.isEmpty()) {
+        result.put(entry.getKey(), commit);
+        //}
       });
 
       return result;
@@ -166,7 +167,7 @@ public class ClusterExtractor {
 
       if(value.getSize() > 1) {
         cluster.getGroup(type).replace(value.getCode().toString(), value);
-      } else if(value.getSize() == 1 && this.contagemCommit - value.getPosition() > 200) {
+      } else if(value.getSize() == 1 && this.contagemCommit - value.getPosition() > 100) {
         deleteList.add(value.getCode());
       }
     }
