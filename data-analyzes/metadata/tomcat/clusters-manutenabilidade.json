@@ -1,0 +1,1420 @@
+{
+  "#1": {
+    "average": 0,
+    "indexes": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ]
+  },
+  "#10": {
+    "average": 0,
+    "indexes": [
+      0
+    ]
+  },
+  "#100": {
+    "average": 0,
+    "indexes": [
+      0
+    ]
+  },
+  "#101": {
+    "average": 0,
+    "indexes": [
+      0
+    ]
+  },
+  "#102": {
+    "average": 0,
+    "indexes": [
+      0
+    ]
+  },
+  "#103": {
+    "average": 0,
+    "indexes": [
+      0
+    ]
+  },
+  "#104": {
+    "average": 0,
+    "indexes": [
+      0
+    ]
+  },
+  "#105": {
+    "average": 0,
+    "indexes": [
+      0
+    ]
+  },
+  "#106": {
+    "average": 0,
+    "indexes": [
+      0
+    ]
+  },
+  "#107": {
+    "average": -1,
+    "indexes": [
+      -1
+    ]
+  },
+  "#108": {
+    "average": 1,
+    "indexes": [
+      1
+    ]
+  },
+  "#109": {
+    "average": 1,
+    "indexes": [
+      1,
+      1
+    ]
+  },
+  "#11": {
+    "average": 1,
+    "indexes": [
+      1
+    ]
+  },
+  "#110": {
+    "average": 0,
+    "indexes": [
+      0
+    ]
+  },
+  "#111": {
+    "average": 0,
+    "indexes": [
+      0
+    ]
+  },
+  "#112": {
+    "average": 0,
+    "indexes": [
+      0
+    ]
+  },
+  "#113": {
+    "average": 1,
+    "indexes": [
+      1
+    ]
+  },
+  "#114": {
+    "average": 0,
+    "indexes": [
+      0
+    ]
+  },
+  "#115": {
+    "average": 0,
+    "indexes": [
+      0
+    ]
+  },
+  "#116": {
+    "average": 0,
+    "indexes": [
+      0
+    ]
+  },
+  "#117": {
+    "average": 0,
+    "indexes": [
+      0
+    ]
+  },
+  "#118": {
+    "average": 0,
+    "indexes": [
+      0,
+      0
+    ]
+  },
+  "#119": {
+    "average": 0,
+    "indexes": [
+      0,
+      0
+    ]
+  },
+  "#12": {
+    "average": 1,
+    "indexes": [
+      1
+    ]
+  },
+  "#120": {
+    "average": 0,
+    "indexes": [
+      0,
+      0
+    ]
+  },
+  "#121": {
+    "average": 0,
+    "indexes": [
+      0,
+      0
+    ]
+  },
+  "#122": {
+    "average": 0,
+    "indexes": [
+      0,
+      0
+    ]
+  },
+  "#123": {
+    "average": 0,
+    "indexes": [
+      0
+    ]
+  },
+  "#124": {
+    "average": 0,
+    "indexes": [
+      0
+    ]
+  },
+  "#125": {
+    "average": 0,
+    "indexes": [
+      0
+    ]
+  },
+  "#126": {
+    "average": 0,
+    "indexes": [
+      0,
+      0
+    ]
+  },
+  "#127": {
+    "average": 0,
+    "indexes": [
+      0
+    ]
+  },
+  "#128": {
+    "average": 0,
+    "indexes": [
+      0
+    ]
+  },
+  "#129": {
+    "average": 0,
+    "indexes": [
+      0
+    ]
+  },
+  "#13": {
+    "average": 0,
+    "indexes": [
+      0
+    ]
+  },
+  "#130": {
+    "average": 0,
+    "indexes": [
+      0
+    ]
+  },
+  "#131": {
+    "average": 0,
+    "indexes": [
+      0,
+      0,
+      0
+    ]
+  },
+  "#132": {
+    "average": 0,
+    "indexes": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ]
+  },
+  "#133": {
+    "average": 0,
+    "indexes": [
+      0
+    ]
+  },
+  "#134": {
+    "average": 0,
+    "indexes": [
+      0
+    ]
+  },
+  "#135": {
+    "average": 0,
+    "indexes": [
+      0,
+      0,
+      0
+    ]
+  },
+  "#136": {
+    "average": 0,
+    "indexes": [
+      0,
+      0,
+      0,
+      0
+    ]
+  },
+  "#137": {
+    "average": 0,
+    "indexes": [
+      0,
+      0
+    ]
+  },
+  "#138": {
+    "average": 0,
+    "indexes": [
+      0,
+      0,
+      0
+    ]
+  },
+  "#139": {
+    "average": 0,
+    "indexes": [
+      0
+    ]
+  },
+  "#14": {
+    "average": 0,
+    "indexes": [
+      0
+    ]
+  },
+  "#140": {
+    "average": 0,
+    "indexes": [
+      0
+    ]
+  },
+  "#141": {
+    "average": 0,
+    "indexes": [
+      0
+    ]
+  },
+  "#142": {
+    "average": 0,
+    "indexes": [
+      0
+    ]
+  },
+  "#143": {
+    "average": 0,
+    "indexes": [
+      0
+    ]
+  },
+  "#144": {
+    "average": 0,
+    "indexes": [
+      0
+    ]
+  },
+  "#145": {
+    "average": 0,
+    "indexes": [
+      0,
+      0
+    ]
+  },
+  "#146": {
+    "average": 0,
+    "indexes": [
+      0
+    ]
+  },
+  "#147": {
+    "average": 0,
+    "indexes": [
+      0
+    ]
+  },
+  "#148": {
+    "average": 0,
+    "indexes": [
+      0,
+      0,
+      0
+    ]
+  },
+  "#149": {
+    "average": 3,
+    "indexes": [
+      3
+    ]
+  },
+  "#15": {
+    "average": 0,
+    "indexes": [
+      0
+    ]
+  },
+  "#150": {
+    "average": 0,
+    "indexes": [
+      0
+    ]
+  },
+  "#151": {
+    "average": 0,
+    "indexes": [
+      0,
+      0
+    ]
+  },
+  "#152": {
+    "average": 0,
+    "indexes": [
+      0,
+      0
+    ]
+  },
+  "#153": {
+    "average": 3,
+    "indexes": [
+      3
+    ]
+  },
+  "#154": {
+    "average": 3,
+    "indexes": [
+      3
+    ]
+  },
+  "#155": {
+    "average": 0,
+    "indexes": [
+      0
+    ]
+  },
+  "#156": {
+    "average": 0,
+    "indexes": [
+      0
+    ]
+  },
+  "#157": {
+    "average": 3,
+    "indexes": [
+      3
+    ]
+  },
+  "#158": {
+    "average": 3,
+    "indexes": [
+      3
+    ]
+  },
+  "#159": {
+    "average": 0,
+    "indexes": [
+      0,
+      0
+    ]
+  },
+  "#16": {
+    "average": 1,
+    "indexes": [
+      1
+    ]
+  },
+  "#160": {
+    "average": 0,
+    "indexes": [
+      0,
+      0
+    ]
+  },
+  "#161": {
+    "average": 0,
+    "indexes": [
+      0,
+      0,
+      0,
+      0
+    ]
+  },
+  "#162": {
+    "average": 0,
+    "indexes": [
+      0,
+      0,
+      0,
+      0
+    ]
+  },
+  "#163": {
+    "average": 0,
+    "indexes": [
+      0
+    ]
+  },
+  "#164": {
+    "average": 0,
+    "indexes": [
+      0
+    ]
+  },
+  "#165": {
+    "average": 0,
+    "indexes": [
+      0
+    ]
+  },
+  "#166": {
+    "average": 0,
+    "indexes": [
+      0
+    ]
+  },
+  "#167": {
+    "average": 0,
+    "indexes": [
+      0,
+      0
+    ]
+  },
+  "#168": {
+    "average": 0,
+    "indexes": [
+      0
+    ]
+  },
+  "#169": {
+    "average": 0,
+    "indexes": [
+      0
+    ]
+  },
+  "#17": {
+    "average": 1,
+    "indexes": [
+      1
+    ]
+  },
+  "#170": {
+    "average": 0,
+    "indexes": [
+      0
+    ]
+  },
+  "#171": {
+    "average": 0,
+    "indexes": [
+      0
+    ]
+  },
+  "#172": {
+    "average": 0,
+    "indexes": [
+      0
+    ]
+  },
+  "#173": {
+    "average": 0,
+    "indexes": [
+      0
+    ]
+  },
+  "#174": {
+    "average": 0,
+    "indexes": [
+      0
+    ]
+  },
+  "#175": {
+    "average": 0,
+    "indexes": [
+      0
+    ]
+  },
+  "#176": {
+    "average": 0,
+    "indexes": [
+      0
+    ]
+  },
+  "#177": {
+    "average": 0,
+    "indexes": [
+      0
+    ]
+  },
+  "#178": {
+    "average": 0,
+    "indexes": [
+      0
+    ]
+  },
+  "#179": {
+    "average": 0,
+    "indexes": [
+      0
+    ]
+  },
+  "#18": {
+    "average": 1,
+    "indexes": [
+      1
+    ]
+  },
+  "#180": {
+    "average": 0,
+    "indexes": [
+      0
+    ]
+  },
+  "#181": {
+    "average": 0,
+    "indexes": [
+      0
+    ]
+  },
+  "#182": {
+    "average": 0,
+    "indexes": [
+      0
+    ]
+  },
+  "#183": {
+    "average": 0,
+    "indexes": [
+      0
+    ]
+  },
+  "#184": {
+    "average": 0,
+    "indexes": [
+      0
+    ]
+  },
+  "#185": {
+    "average": 0,
+    "indexes": [
+      0
+    ]
+  },
+  "#186": {
+    "average": 0,
+    "indexes": [
+      0
+    ]
+  },
+  "#187": {
+    "average": 0,
+    "indexes": [
+      0
+    ]
+  },
+  "#188": {
+    "average": 0,
+    "indexes": [
+      0
+    ]
+  },
+  "#189": {
+    "average": 0,
+    "indexes": [
+      0
+    ]
+  },
+  "#19": {
+    "average": 0,
+    "indexes": [
+      0
+    ]
+  },
+  "#190": {
+    "average": 0,
+    "indexes": [
+      0
+    ]
+  },
+  "#191": {
+    "average": 0,
+    "indexes": [
+      0
+    ]
+  },
+  "#192": {
+    "average": 0,
+    "indexes": [
+      0
+    ]
+  },
+  "#193": {
+    "average": 0,
+    "indexes": [
+      0
+    ]
+  },
+  "#194": {
+    "average": 0,
+    "indexes": [
+      0
+    ]
+  },
+  "#195": {
+    "average": 0,
+    "indexes": [
+      0
+    ]
+  },
+  "#196": {
+    "average": 0,
+    "indexes": [
+      0
+    ]
+  },
+  "#197": {
+    "average": 0,
+    "indexes": [
+      0
+    ]
+  },
+  "#198": {
+    "average": 0,
+    "indexes": [
+      0
+    ]
+  },
+  "#199": {
+    "average": 0,
+    "indexes": [
+      0
+    ]
+  },
+  "#2": {
+    "average": 0,
+    "indexes": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ]
+  },
+  "#20": {
+    "average": -3,
+    "indexes": [
+      -3
+    ]
+  },
+  "#200": {
+    "average": 0,
+    "indexes": [
+      0
+    ]
+  },
+  "#201": {
+    "average": 0,
+    "indexes": [
+      0
+    ]
+  },
+  "#202": {
+    "average": 0,
+    "indexes": [
+      0
+    ]
+  },
+  "#203": {
+    "average": 0,
+    "indexes": [
+      0
+    ]
+  },
+  "#204": {
+    "average": 0,
+    "indexes": [
+      0
+    ]
+  },
+  "#205": {
+    "average": 0,
+    "indexes": [
+      0
+    ]
+  },
+  "#206": {
+    "average": 0,
+    "indexes": [
+      0
+    ]
+  },
+  "#207": {
+    "average": 0,
+    "indexes": [
+      0
+    ]
+  },
+  "#208": {
+    "average": 0,
+    "indexes": [
+      0
+    ]
+  },
+  "#209": {
+    "average": -2,
+    "indexes": [
+      -2
+    ]
+  },
+  "#21": {
+    "average": 1,
+    "indexes": [
+      1
+    ]
+  },
+  "#210": {
+    "average": 0,
+    "indexes": [
+      0
+    ]
+  },
+  "#211": {
+    "average": 0,
+    "indexes": [
+      0,
+      0
+    ]
+  },
+  "#212": {
+    "average": 0,
+    "indexes": [
+      0
+    ]
+  },
+  "#213": {
+    "average": 0,
+    "indexes": [
+      0,
+      0,
+      0
+    ]
+  },
+  "#214": {
+    "average": 2,
+    "indexes": [
+      2
+    ]
+  },
+  "#215": {
+    "average": 0,
+    "indexes": [
+      0
+    ]
+  },
+  "#216": {
+    "average": 2,
+    "indexes": [
+      2
+    ]
+  },
+  "#217": {
+    "average": 0,
+    "indexes": [
+      0
+    ]
+  },
+  "#218": {
+    "average": 0,
+    "indexes": [
+      0
+    ]
+  },
+  "#22": {
+    "average": 0,
+    "indexes": [
+      0
+    ]
+  },
+  "#23": {
+    "average": -3,
+    "indexes": [
+      -3
+    ]
+  },
+  "#24": {
+    "average": 0,
+    "indexes": [
+      0
+    ]
+  },
+  "#25": {
+    "average": 0,
+    "indexes": [
+      0
+    ]
+  },
+  "#26": {
+    "average": 0,
+    "indexes": [
+      0
+    ]
+  },
+  "#27": {
+    "average": -3,
+    "indexes": [
+      -3
+    ]
+  },
+  "#28": {
+    "average": 0,
+    "indexes": [
+      0
+    ]
+  },
+  "#29": {
+    "average": 1,
+    "indexes": [
+      1
+    ]
+  },
+  "#3": {
+    "average": 0.08333333333333333,
+    "indexes": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      1
+    ]
+  },
+  "#30": {
+    "average": 0,
+    "indexes": [
+      0
+    ]
+  },
+  "#31": {
+    "average": 0,
+    "indexes": [
+      0
+    ]
+  },
+  "#32": {
+    "average": 0,
+    "indexes": [
+      0
+    ]
+  },
+  "#33": {
+    "average": 0,
+    "indexes": [
+      0
+    ]
+  },
+  "#34": {
+    "average": 0,
+    "indexes": [
+      0
+    ]
+  },
+  "#35": {
+    "average": 0,
+    "indexes": [
+      0
+    ]
+  },
+  "#36": {
+    "average": 0,
+    "indexes": [
+      0
+    ]
+  },
+  "#37": {
+    "average": 0,
+    "indexes": [
+      0
+    ]
+  },
+  "#38": {
+    "average": 0,
+    "indexes": [
+      0
+    ]
+  },
+  "#39": {
+    "average": 1,
+    "indexes": [
+      1
+    ]
+  },
+  "#4": {
+    "average": -3,
+    "indexes": [
+      -3
+    ]
+  },
+  "#40": {
+    "average": 0,
+    "indexes": [
+      0
+    ]
+  },
+  "#41": {
+    "average": 0,
+    "indexes": [
+      0
+    ]
+  },
+  "#42": {
+    "average": 0,
+    "indexes": [
+      0
+    ]
+  },
+  "#43": {
+    "average": 0,
+    "indexes": [
+      0
+    ]
+  },
+  "#44": {
+    "average": 0,
+    "indexes": [
+      0
+    ]
+  },
+  "#45": {
+    "average": 0,
+    "indexes": [
+      0
+    ]
+  },
+  "#46": {
+    "average": 0,
+    "indexes": [
+      0
+    ]
+  },
+  "#47": {
+    "average": 0,
+    "indexes": [
+      0
+    ]
+  },
+  "#48": {
+    "average": 0,
+    "indexes": [
+      0
+    ]
+  },
+  "#49": {
+    "average": -1,
+    "indexes": [
+      -1,
+      -1,
+      -1
+    ]
+  },
+  "#5": {
+    "average": 0,
+    "indexes": [
+      0,
+      0
+    ]
+  },
+  "#50": {
+    "average": 0,
+    "indexes": [
+      0
+    ]
+  },
+  "#51": {
+    "average": 0,
+    "indexes": [
+      0
+    ]
+  },
+  "#52": {
+    "average": 0,
+    "indexes": [
+      0
+    ]
+  },
+  "#53": {
+    "average": -1,
+    "indexes": [
+      -1
+    ]
+  },
+  "#54": {
+    "average": 0,
+    "indexes": [
+      0,
+      0,
+      0,
+      0
+    ]
+  },
+  "#55": {
+    "average": 0,
+    "indexes": [
+      0
+    ]
+  },
+  "#56": {
+    "average": -1,
+    "indexes": [
+      -1,
+      -1
+    ]
+  },
+  "#57": {
+    "average": 0,
+    "indexes": [
+      0
+    ]
+  },
+  "#58": {
+    "average": -1,
+    "indexes": [
+      -1,
+      -1
+    ]
+  },
+  "#59": {
+    "average": -1,
+    "indexes": [
+      -1
+    ]
+  },
+  "#6": {
+    "average": 0,
+    "indexes": [
+      0
+    ]
+  },
+  "#60": {
+    "average": 0,
+    "indexes": [
+      0
+    ]
+  },
+  "#61": {
+    "average": 0,
+    "indexes": [
+      0
+    ]
+  },
+  "#62": {
+    "average": 0,
+    "indexes": [
+      0
+    ]
+  },
+  "#63": {
+    "average": 0,
+    "indexes": [
+      0
+    ]
+  },
+  "#64": {
+    "average": 0,
+    "indexes": [
+      0
+    ]
+  },
+  "#65": {
+    "average": 0,
+    "indexes": [
+      0
+    ]
+  },
+  "#66": {
+    "average": 0,
+    "indexes": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ]
+  },
+  "#67": {
+    "average": 0,
+    "indexes": [
+      0
+    ]
+  },
+  "#68": {
+    "average": 0,
+    "indexes": [
+      0
+    ]
+  },
+  "#69": {
+    "average": 0,
+    "indexes": [
+      0,
+      0,
+      0
+    ]
+  },
+  "#7": {
+    "average": 0,
+    "indexes": [
+      0
+    ]
+  },
+  "#70": {
+    "average": 0,
+    "indexes": [
+      0
+    ]
+  },
+  "#71": {
+    "average": 0,
+    "indexes": [
+      0,
+      0
+    ]
+  },
+  "#72": {
+    "average": 0,
+    "indexes": [
+      0,
+      0
+    ]
+  },
+  "#73": {
+    "average": 0,
+    "indexes": [
+      0
+    ]
+  },
+  "#74": {
+    "average": 0,
+    "indexes": [
+      0
+    ]
+  },
+  "#75": {
+    "average": 0,
+    "indexes": [
+      0,
+      0
+    ]
+  },
+  "#76": {
+    "average": 0,
+    "indexes": [
+      0
+    ]
+  },
+  "#77": {
+    "average": 0,
+    "indexes": [
+      0,
+      0
+    ]
+  },
+  "#78": {
+    "average": 0,
+    "indexes": [
+      0
+    ]
+  },
+  "#79": {
+    "average": 0,
+    "indexes": [
+      0,
+      0
+    ]
+  },
+  "#8": {
+    "average": 0,
+    "indexes": [
+      0
+    ]
+  },
+  "#80": {
+    "average": 0,
+    "indexes": [
+      0
+    ]
+  },
+  "#81": {
+    "average": 0,
+    "indexes": [
+      0
+    ]
+  },
+  "#82": {
+    "average": 0,
+    "indexes": [
+      0
+    ]
+  },
+  "#83": {
+    "average": 1,
+    "indexes": [
+      1
+    ]
+  },
+  "#84": {
+    "average": 0,
+    "indexes": [
+      0
+    ]
+  },
+  "#85": {
+    "average": 0,
+    "indexes": [
+      0
+    ]
+  },
+  "#86": {
+    "average": 1,
+    "indexes": [
+      1
+    ]
+  },
+  "#87": {
+    "average": 1,
+    "indexes": [
+      1
+    ]
+  },
+  "#88": {
+    "average": 0,
+    "indexes": [
+      0
+    ]
+  },
+  "#89": {
+    "average": 1,
+    "indexes": [
+      1
+    ]
+  },
+  "#9": {
+    "average": 0,
+    "indexes": [
+      0
+    ]
+  },
+  "#90": {
+    "average": 0,
+    "indexes": [
+      0
+    ]
+  },
+  "#91": {
+    "average": 1,
+    "indexes": [
+      1
+    ]
+  },
+  "#92": {
+    "average": 0,
+    "indexes": [
+      0
+    ]
+  },
+  "#93": {
+    "average": 0,
+    "indexes": [
+      0
+    ]
+  },
+  "#94": {
+    "average": 0,
+    "indexes": [
+      0
+    ]
+  },
+  "#95": {
+    "average": 0,
+    "indexes": [
+      0
+    ]
+  },
+  "#96": {
+    "average": 0,
+    "indexes": [
+      0
+    ]
+  },
+  "#97": {
+    "average": 0,
+    "indexes": [
+      0
+    ]
+  },
+  "#98": {
+    "average": 0,
+    "indexes": [
+      0
+    ]
+  },
+  "#99": {
+    "average": 0,
+    "indexes": [
+      0
+    ]
+  }
+}
